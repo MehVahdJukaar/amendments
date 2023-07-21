@@ -1,0 +1,41 @@
+
+modLoader="javafml" #mandatory
+
+loaderVersion="[41,)" #mandatory This is typically bumped every Minecraft version by Forge. See our download page for lists of versions.
+
+license="ARR"
+[[mods]] #mandatory
+
+modId="betterjukebox" #mandatory
+version = "${version}"
+displayName="Better Jukeboxes" #mandatory
+logoFile="icon.png" #optional
+authors="MehVahdJukaar" #optional
+
+description='''Jukebox Visual Overhaul'''
+
+displayURL="https://www.curseforge.com/minecraft/mc-mods/better-jukeboxes" #optional
+issueTrackerURL="https://www.curseforge.com/minecraft/mc-mods/better-jukeboxes/issues" #optional
+itemIcon="minecraft:painting" #catalogue icon
+
+
+[[dependencies.betterjukebox]] #optional
+    modId="forge" #mandatory
+    mandatory=true #mandatory
+    versionRange="[41,)" #mandatory
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.betterjukebox]]
+    modId="minecraft"
+    mandatory=true
+    versionRange="[1.20,)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.betterjukebox]]
+    modId="moonlight"
+    mandatory=true
+    versionRange="[1.20-2.5.16,)"
+    ordering="NONE"
+    side="BOTH"

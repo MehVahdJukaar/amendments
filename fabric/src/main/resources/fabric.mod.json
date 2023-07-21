@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "betterjukebox",
+  "version": "${version}",
+  "name": "Better Jukebox",
+  "description": "Jukebox Visual Overhaul",
+  "authors": [
+    "Mehvahdjukaar"
+  ],
+  "contact": {
+    "homepage": "https://www.curseforge.com/minecraft/mc-mods/better-jukeboxes"
+  },
+  "license": "ARR",
+  "icon": "icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "client": [
+    ],
+    "main": [
+      "net.mehvahdjukaar.betterjukebox.fabric.BetterJukeboxesFabric"
+    ]
+  },
+  "mixins": [
+    "${mod_id}.mixins.json"
+  ],
+  "depends": {
+    "fabric": "*",
+    "minecraft": ">=1.20",
+    "moonlight": ">=1.20-2.5.16"
+  }
+}
