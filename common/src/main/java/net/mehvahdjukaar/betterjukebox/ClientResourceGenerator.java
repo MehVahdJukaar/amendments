@@ -3,8 +3,7 @@ package net.mehvahdjukaar.betterjukebox;
 import net.mehvahdjukaar.moonlight.api.resources.RPUtils;
 import net.mehvahdjukaar.moonlight.api.resources.pack.DynClientResourcesGenerator;
 import net.mehvahdjukaar.moonlight.api.resources.pack.DynamicTexturePack;
-import net.mehvahdjukaar.moonlight.api.resources.textures.ImageTransformer;
-import net.mehvahdjukaar.moonlight.api.resources.textures.TextureImage;
+import net.mehvahdjukaar.moonlight.api.resources.textures.*;
 import net.minecraft.server.packs.resources.ResourceManager;
 import org.apache.logging.log4j.Logger;
 
@@ -35,20 +34,31 @@ public class ClientResourceGenerator extends DynClientResourcesGenerator {
                 .copyRect(5, 8, 1, 1, 6, 9)
                 .build();
         try (TextureImage template = TextureImage.open(manager,
-                BetterJukeboxes.res("block/music_disc_template"))) {
+                BetterJukeboxes.res("block/music_disc_template"));
+             TextureImage mask = TextureImage.open(manager,
+                     BetterJukeboxes.res("block/music_disc_mask"));) {
+            Respriter respriter = Respriter.of(template);
+
             for (var e : BetterJukeboxes.getRecords().entrySet()) {
                 //hanging sign extension textures
                 try (TextureImage vanillaTexture = TextureImage.open(manager,
                         RPUtils.findFirstItemTextureLocation(manager, e.getKey()))) {
 
-                    TextureImage newImage = template.makeCopy();
+                    var p = Palette.fromImage(vanillaTexture, mask);
+                    if (p.getAverageLuminanceStep() > 0.06) {
+                        var newDark = p.increaseInner();
+                        PaletteColor darkest = p.getDarkest();
+                        p.remove(darkest);
+                        p.add(new PaletteColor(newDark.lab().mixWith(darkest.lab())));
+                    }
+                    TextureImage newImage = respriter.recolor(p);
                     transformer.apply(vanillaTexture, newImage);
-                    this.dynamicPack.addAndCloseTexture(BetterJukeboxes.res( e.getValue().texture().getPath()), newImage);
+                    this.dynamicPack.addAndCloseTexture(BetterJukeboxes.res(e.getValue().texture().getPath()), newImage);
                 } catch (Exception ex) {
-                    getLogger().warn("Failed to generate record item texture for {}",e.getKey(), ex);
+                    getLogger().warn("Failed to generate record item texture for {}", e.getKey(), ex);
                 }
             }
-        }catch (Exception ignored){
+        } catch (Exception ignored) {
 
         }
     }

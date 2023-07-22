@@ -79,7 +79,7 @@ public abstract class JukeboxBlockEntityMixin extends BlockEntity implements IBe
     }
 
     public float getRotation(float partialTicks) {
-        return Mth.lerp(partialTicks, betterJukeboxes$prevRot, betterJukeboxes$rot);
+        return Mth.rotLerp(partialTicks, betterJukeboxes$prevRot, betterJukeboxes$rot);
     }
 
     @Override
