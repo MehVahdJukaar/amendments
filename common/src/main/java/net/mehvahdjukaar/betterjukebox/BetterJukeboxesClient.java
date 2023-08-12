@@ -4,16 +4,10 @@ import net.mehvahdjukaar.moonlight.api.platform.ClientHelper;
 import net.mehvahdjukaar.moonlight.api.util.Utils;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.resources.model.Material;
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.RecordItem;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraft.world.level.block.entity.JukeboxBlockEntity;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -31,10 +25,10 @@ public class BetterJukeboxesClient {
     }
 
     private static final Map<Item, Material> RECORDS = new HashMap<>();
-    public static final Material DEFAULT = new Material(TextureAtlas.LOCATION_BLOCKS,
+    private static final Material DEFAULT = new Material(TextureAtlas.LOCATION_BLOCKS,
           BetterJukeboxes.  res("block/music_disc_template"));
 
-    public static Map<Item, Material> getRecords() {
+    public static Map<Item, Material> getAllRecords() {
         if (RECORDS.isEmpty()) {
             for (var i : BuiltInRegistries.ITEM) {
                 if (i instanceof RecordItem) {
@@ -46,6 +40,10 @@ public class BetterJukeboxesClient {
             }
         }
         return RECORDS;
+    }
+
+    public static Material getRecordMaterial(Item item) {
+        return getAllRecords().getOrDefault(item, DEFAULT);
     }
 
 }

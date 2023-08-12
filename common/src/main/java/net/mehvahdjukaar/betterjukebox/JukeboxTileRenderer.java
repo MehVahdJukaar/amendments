@@ -28,13 +28,12 @@ public class JukeboxTileRenderer implements BlockEntityRenderer<JukeboxBlockEnti
             poseStack.mulPose(RotHlpr.X90);
 
 
-            Material material = BetterJukeboxes.getRecords().getOrDefault(item.getItem(), BetterJukeboxes.DEFAULT);
+            Material material = BetterJukeboxesClient.getRecordMaterial(item.getItem());
             var builder = material.buffer(bufferSource, RenderType::entityCutout);
             int upLight = LevelRenderer.getLightColor(blockEntity.getLevel(), blockEntity.getBlockPos().above(2));
             int lu = upLight & '\uffff';
             int lv = upLight >> 16 & '\uffff';
-            VertexUtil.addQuad(builder, poseStack, -0.5f, -0.5f, 0.5f, 0.5f,
-                    lu, lv);
+            VertexUtil.addQuad(builder, poseStack, -0.5f, -0.5f, 0.5f, 0.5f, lu, lv);
         }
     }
 

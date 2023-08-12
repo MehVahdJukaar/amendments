@@ -39,7 +39,7 @@ public class ClientResourceGenerator extends DynClientResourcesGenerator {
                      BetterJukeboxes.res("block/music_disc_mask"));) {
             Respriter respriter = Respriter.of(template);
 
-            for (var e : BetterJukeboxesClient.getRecords().entrySet()) {
+            for (var e : BetterJukeboxesClient.getAllRecords().entrySet()) {
                 //hanging sign extension textures
                 try (TextureImage vanillaTexture = TextureImage.open(manager,
                         RPUtils.findFirstItemTextureLocation(manager, e.getKey()))) {
