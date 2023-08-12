@@ -21,38 +21,12 @@ import java.util.Map;
 
 public class BetterJukeboxes {
     public static final String MOD_ID = "betterjukebox";
-    public static final Logger LOGGER = LogManager.getLogger("Fast Paintings");
+    public static final Logger LOGGER = LogManager.getLogger("Better Jukeboxes");
     private static boolean installedOnServer = false;
 
     public static ResourceLocation res(String name) {
 
         return new ResourceLocation(MOD_ID, name);
-    }
-    public static void init() {
-        ClientHelper.addBlockEntityRenderersRegistration(BetterJukeboxes::registerTileRenderers);
-        new ClientResourceGenerator().register();
-    }
-
-    private static void registerTileRenderers(ClientHelper.BlockEntityRendererEvent event) {
-        event.register(BlockEntityType.JUKEBOX, JukeboxTileRenderer::new);
-    }
-
-    private static final Map<Item, Material> RECORDS = new HashMap<>();
-    public static final Material DEFAULT = new Material(TextureAtlas.LOCATION_BLOCKS,
-            res("block/music_disc_template"));
-
-    public static Map<Item, Material> getRecords() {
-        if (RECORDS.isEmpty()) {
-            for (var i : BuiltInRegistries.ITEM) {
-                if (i instanceof RecordItem) {
-                    RECORDS.put(i, new Material(TextureAtlas.LOCATION_BLOCKS,
-                            res("block/" + Utils.getID(i).toString()
-                                    .replace("minecraft:", "")
-                                    .replace(":", "/"))));
-                }
-            }
-        }
-        return RECORDS;
     }
 
     public static void setIsInstalledOnServer() {

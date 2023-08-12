@@ -1,6 +1,7 @@
 package net.mehvahdjukaar.betterjukebox.forge;
 
 import net.mehvahdjukaar.betterjukebox.BetterJukeboxes;
+import net.mehvahdjukaar.betterjukebox.BetterJukeboxesClient;
 import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
 import net.minecraftforge.fml.common.Mod;
 
@@ -14,7 +15,7 @@ public class BetterJukeboxForge {
 
     public BetterJukeboxForge() {
         if (PlatHelper.getPhysicalSide().isClient()) {
-            BetterJukeboxes.init();
+            BetterJukeboxesClient.init();
 
         }
     }
