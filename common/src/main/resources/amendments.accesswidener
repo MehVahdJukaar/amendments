@@ -1,0 +1,7 @@
+accessWidener   v2  named
+
+#sign renderer
+accessible method net/minecraft/client/renderer/blockentity/SignRenderer translateSignText (Lcom/mojang/blaze3d/vertex/PoseStack;ZLnet/minecraft/world/phys/Vec3;)V
+accessible method net/minecraft/client/renderer/blockentity/SignRenderer getTextOffset ()Lnet/minecraft/world/phys/Vec3;
+
+

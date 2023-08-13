@@ -6,34 +6,34 @@ loaderVersion="[41,)" #mandatory This is typically bumped every Minecraft versio
 license="ARR"
 [[mods]] #mandatory
 
-modId="betterjukebox" #mandatory
+modId="amendments" #mandatory
 version = "${version}"
-displayName="Better Jukeboxes" #mandatory
+displayName="Amendments" #mandatory
 logoFile="icon.png" #optional
-authors="MehVahdJukaar" #optional
+authors="MehVahdJukaar, Plantkillable" #optional
 
 description='''Jukebox Visual Overhaul'''
 
-displayURL="https://www.curseforge.com/minecraft/mc-mods/better-jukeboxes" #optional
-issueTrackerURL="https://www.curseforge.com/minecraft/mc-mods/better-jukeboxes/issues" #optional
+displayURL="https://www.curseforge.com/minecraft/mc-mods/amendments" #optional
+issueTrackerURL="https://www.curseforge.com/minecraft/mc-mods/amendments/issues" #optional
 itemIcon="minecraft:painting" #catalogue icon
 
 
-[[dependencies.betterjukebox]] #optional
+[[dependencies.amendments]] #optional
     modId="forge" #mandatory
     mandatory=true #mandatory
     versionRange="[41,)" #mandatory
     ordering="NONE"
     side="BOTH"
 
-[[dependencies.betterjukebox]]
+[[dependencies.amendments]]
     modId="minecraft"
     mandatory=true
     versionRange="[1.20,)"
     ordering="NONE"
     side="BOTH"
 
-[[dependencies.betterjukebox]]
+[[dependencies.amendments]]
     modId="moonlight"
     mandatory=true
     versionRange="[1.20-2.5.16,)"

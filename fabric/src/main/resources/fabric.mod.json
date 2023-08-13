@@ -1,14 +1,14 @@
 {
   "schemaVersion": 1,
-  "id": "betterjukebox",
+  "id": "amendments",
   "version": "${version}",
-  "name": "Better Jukebox",
-  "description": "Jukebox Visual Overhaul",
+  "name": "Amendments",
+  "description": "Improvements to various vanilla blocks",
   "authors": [
-    "Mehvahdjukaar"
+    "Mehvahdjukaar", "Plantkillable"
   ],
   "contact": {
-    "homepage": "https://www.curseforge.com/minecraft/mc-mods/better-jukeboxes"
+    "homepage": "https://www.curseforge.com/minecraft/mc-mods/amendments"
   },
   "license": "ARR",
   "icon": "icon.png",
@@ -17,7 +17,7 @@
     "client": [
     ],
     "main": [
-      "net.mehvahdjukaar.betterjukebox.fabric.BetterJukeboxesFabric"
+      "net.mehvahdjukaar.amendments.fabric.AmendmentsFabric"
     ]
   },
   "mixins": [

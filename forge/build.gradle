@@ -15,8 +15,8 @@ loom {
         convertAccessWideners = true
         extraAccessWideners.add loom.accessWidenerPath.get().asFile.name
 
-        mixinConfig  "betterjukebox.mixins.json"
-        mixinConfig  "betterjukebox-forge.mixins.json"
+        mixinConfig  "amendments.mixins.json"
+        mixinConfig  "amendments-forge.mixins.json"
 
     }
 }

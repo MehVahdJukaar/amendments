@@ -1,0 +1,17 @@
+{
+  "loader": "forge:composite",
+  "children": {
+    "translucent_model": {
+      "parent": "amendments:block/cauldron_full",
+      "textures": {
+        "content": "minecraft:block/lava_still"
+      }
+    },
+    "cutout_model":{
+      "parent": "amendments:block/cauldron"
+    }
+  },
+  "textures": {
+    "particle": "block/cauldron_side"
+  }
+}

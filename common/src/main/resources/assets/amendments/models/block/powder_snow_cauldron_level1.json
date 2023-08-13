@@ -1,0 +1,17 @@
+{
+  "loader": "forge:composite",
+  "children": {
+    "translucent_model": {
+      "parent": "amendments:block/cauldron_level1",
+      "textures": {
+        "content": "minecraft:block/powder_snow"
+      }
+    },
+    "cutout_model":{
+      "parent": "amendments:block/cauldron"
+    }
+  },
+  "textures": {
+    "particle": "block/cauldron_side"
+  }
+}

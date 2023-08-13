@@ -1,0 +1,22 @@
+{
+  "minVersion": "0.8",
+  "required": true,
+  "compatibilityLevel": "JAVA_17",
+  "package": "net.mehvahdjukaar.amendments.mixins",
+  "mixins": [
+    "BellTileEntityMixin",
+    "BrewingStandMixin",
+    "HangingSignBlockEntityMixin",
+    "JukeboxBlockEntityMixin",
+    "JukeboxBlockMixin",
+    "VineMixin",
+    "WallHangingSignBlockMixin",
+    "WaterLilyMixin"
+  ],
+  "client": [
+    "BellRendererMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

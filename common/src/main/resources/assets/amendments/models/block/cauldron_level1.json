@@ -1,0 +1,14 @@
+{
+	"credit": "Made with Blockbench",
+	"ambientocclusion": false,
+	"elements": [
+		{
+			"from": [2, 9, 2],
+			"to": [14, 9, 14],
+			"shade": false,
+			"faces": {
+				"up": {"uv": [2, 2, 14, 14], "texture": "#content", "tintindex": 1}
+			}
+		}
+	]
+}
