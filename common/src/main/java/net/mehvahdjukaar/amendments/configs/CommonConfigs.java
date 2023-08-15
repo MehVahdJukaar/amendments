@@ -16,7 +16,7 @@ public class CommonConfigs {
 
     public static final Map<String, Supplier<Boolean>> FEATURE_TOGGLES = new HashMap<>();
 
-    public static final Supplier<Boolean> DOUBLE_CAKE_PLACEMENT;
+    public static final Supplier<Boolean> DOUBLE_CAKES;
     public static final Supplier<Boolean> DIRECTIONAL_CAKE;
 
     public static final Supplier<Boolean> SKULL_PILES;
@@ -35,6 +35,8 @@ public class CommonConfigs {
     public static final Supplier<Boolean> BELL_CHAIN_RINGING;
     public static final Supplier<Integer> BELL_CHAIN_LENGTH;
 
+    public static final Supplier<Boolean> SCARE_VILLAGERS;
+
     public static final ConfigSpec CONFIG;
 
     static {
@@ -44,7 +46,7 @@ public class CommonConfigs {
 
         //double cake
         builder.push("cake");
-        DOUBLE_CAKE_PLACEMENT = builder.comment("Allows you to place a cake on top of another")
+        DOUBLE_CAKES = builder.comment("Allows you to place a cake on top of another")
                 .define("double_cake", true);
         DIRECTIONAL_CAKE = builder.comment("Allows eating a cake from every side")
                 .define("directional_cake", true);

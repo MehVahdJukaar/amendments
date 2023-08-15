@@ -1,0 +1,8 @@
+{
+  "replace": false,
+  "values": [
+    {"id":"minecraft:decorated_pot","required":false},
+    {"id":"supplementaries:jar","required":false},
+    {"id":"supplementaries:urn","required":false}
+  ]
+}

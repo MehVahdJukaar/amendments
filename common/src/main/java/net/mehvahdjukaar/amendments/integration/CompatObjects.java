@@ -23,8 +23,8 @@ public class CompatObjects {
 
     public static final Supplier<Block> SPECTACLE_CANDLE = makeCompatObject("cave_enhancements:spectacle_candle", BuiltInRegistries.BLOCK);
 
+    public static final Supplier<ParticleType<?>> SMALL_SOUL_FLAME = makeCompatObject("buzzier_bees:small_soul_fire_flame", BuiltInRegistries.PARTICLE_TYPE);
 
-    //public static final RegistryObject<Block> ENDER_CHANDELIER2 = getCompatObject()
 
     private static <T> Supplier<@Nullable T> makeCompatObject(String name, Registry<T> registry) {
         return Suppliers.memoize(() -> registry.getOptional(new ResourceLocation(name)).orElse(null));

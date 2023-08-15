@@ -4,6 +4,7 @@ import net.mehvahdjukaar.amendments.common.CakeRegistry;
 import net.mehvahdjukaar.amendments.configs.CommonConfigs;
 import net.mehvahdjukaar.amendments.integration.CompatHandler;
 import net.mehvahdjukaar.amendments.integration.FarmersDelightCompat;
+import net.mehvahdjukaar.amendments.integration.SuppCompat;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.moonlight.api.util.Utils;
 import net.minecraft.core.BlockPos;
@@ -194,13 +195,7 @@ public class DirectionalCakeBlock extends CakeBlock implements SimpleWaterlogged
 
     @Override
     public void animateTick(BlockState stateIn, Level level, BlockPos pos, RandomSource rand) {
-        if (MiscUtils.FESTIVITY.isStValentine()) {
-            if (rand.nextFloat() > 0.8) {
-                double d0 = (pos.getX() + 0.5 + (rand.nextFloat() - 0.5));
-                double d1 = (pos.getY() + 0.25 + (rand.nextFloat() - 0.25));
-                double d2 = (pos.getZ() + 0.5 + (rand.nextFloat() - 0.5));
-                level.addParticle(ParticleTypes.HEART, d0, d1, d2, 0, 0, 0);
-            }
-        }
+        if(CompatHandler.SUPPLEMENTARIES) SuppCompat.spawnCakeParticles(level, pos, rand);
+
     }
 }

@@ -1,6 +1,8 @@
 package net.mehvahdjukaar.amendments.mixins;
 
 import net.mehvahdjukaar.amendments.common.IBellConnections;
+import net.mehvahdjukaar.amendments.integration.CompatHandler;
+import net.mehvahdjukaar.amendments.integration.SuppCompat;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.LivingEntity;
@@ -33,7 +35,7 @@ public abstract class BellMixin extends Block {
             IBellConnections.BellConnection connection = IBellConnections.BellConnection.NONE;
             if (facingState.getBlock() instanceof ChainBlock && facingState.getValue(RotatedPillarBlock.AXIS) == Direction.Axis.Y)
                 connection = IBellConnections.BellConnection.CHAIN;
-            else if (facingState.getBlock() instanceof RopeBlock)
+            else if (CompatHandler.SUPPLEMENTARIES && SuppCompat.isRope(facingState.getBlock()))
                 connection = IBellConnections.BellConnection.ROPE;
             ((IBellConnections) te).amendments$setConnected(connection);
             te.setChanged();

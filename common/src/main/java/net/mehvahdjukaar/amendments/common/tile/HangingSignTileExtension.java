@@ -1,5 +1,6 @@
 package net.mehvahdjukaar.amendments.common.tile;
 
+import net.mehvahdjukaar.amendments.Amendments;
 import net.mehvahdjukaar.amendments.common.PendulumAnimation;
 import net.mehvahdjukaar.amendments.common.SwingAnimation;
 import net.mehvahdjukaar.amendments.configs.ClientConfigs;
@@ -37,7 +38,7 @@ public class HangingSignTileExtension {
         super();
         //cheaty. will create on dedicated client on both server and client this as configs are loaded there
         if (PlatHelper.getPhysicalSide().isClient()) {
-            animation = new PendulumAnimation(ClientConfigs.Blocks.HANGING_SIGN_CONFIG, this::getRotationAxis);
+            animation = new PendulumAnimation(ClientConfigs.HANGING_SIGN_CONFIG, this::getRotationAxis);
         } else {
             animation = null;
         }
@@ -115,7 +116,7 @@ public class HangingSignTileExtension {
             }
         }
         if (direction == Direction.DOWN) {
-            canSwing = (isCeiling && state.getValue(CeilingHangingSignBlock.ATTACHED)) || !IRopeConnection.canConnectDown(neighborState);
+            canSwing = (isCeiling && state.getValue(CeilingHangingSignBlock.ATTACHED)) || !Amendments.canConnectDown(neighborState);
         }
     }
 
@@ -127,7 +128,7 @@ public class HangingSignTileExtension {
             leftAttachment = ModBlockProperties.PostType.get(level.getBlockState(pos.relative(selfFacing.getCounterClockWise())), true);
         }
         BlockState below = level.getBlockState(pos.below());
-        canSwing = (isCeiling && state.getValue(CeilingHangingSignBlock.ATTACHED)) || !IRopeConnection.canConnectDown(below);
+        canSwing = (isCeiling && state.getValue(CeilingHangingSignBlock.ATTACHED)) || !Amendments.canConnectDown(below);
 
     }
 

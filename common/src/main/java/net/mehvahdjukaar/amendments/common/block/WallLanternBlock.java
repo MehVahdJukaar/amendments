@@ -2,8 +2,11 @@ package net.mehvahdjukaar.amendments.common.block;
 
 import net.mehvahdjukaar.amendments.common.tile.SwayingBlockTile;
 import net.mehvahdjukaar.amendments.common.tile.WallLanternBlockTile;
+import net.mehvahdjukaar.amendments.configs.ClientConfigs;
+import net.mehvahdjukaar.amendments.configs.CommonConfigs;
 import net.mehvahdjukaar.amendments.integration.CompatHandler;
 import net.mehvahdjukaar.amendments.integration.SuppCompat;
+import net.mehvahdjukaar.amendments.integration.SuppSquaredCompat;
 import net.mehvahdjukaar.amendments.reg.ModBlockProperties;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.amendments.reg.ModTags;
@@ -67,14 +70,13 @@ public class WallLanternBlock extends WaterBlock implements EntityBlock {
     public InteractionResult use(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand, BlockHitResult pHit) {
         if (pLevel.getBlockEntity(pPos) instanceof WallLanternBlockTile te && te.isAccessibleBy(pPlayer)) {
             BlockState lantern = te.getHeldBlock();
-            if(CompatHandler.SUPPLEMENTARIES) {
-                InteractionResult res = SuppCompat.lightUpLantern(pLevel, pPos, pPlayer, pHand, te, lantern);
+            if (CompatHandler.SUPPSQUARED) {
+                InteractionResult res = SuppSquaredCompat.lightUpLantern(pLevel, pPos, pPlayer, pHand, te, lantern);
                 if (res != null) return res;
             }
         }
         return InteractionResult.PASS;
     }
-
 
 
     @Nullable
@@ -99,8 +101,9 @@ public class WallLanternBlock extends WaterBlock implements EntityBlock {
         if (te instanceof WallLanternBlockTile blockHolder && i instanceof BlockItem blockItem) {
             blockHolder.setHeldBlock(blockItem.getBlock().defaultBlockState());
         }
-        BlockUtil.addOptionalOwnership(entity, world, pos);
+        if (CompatHandler.SUPPLEMENTARIES) SuppCompat.addOptionalOwnership(world, pos, entity);
     }
+
 
     @Override
     public BlockState updateShape(BlockState stateIn, Direction facing, BlockState facingState, LevelAccessor worldIn, BlockPos currentPos,
@@ -223,7 +226,7 @@ public class WallLanternBlock extends WaterBlock implements EntityBlock {
     @Override
     public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
         super.entityInside(state, level, pos, entity);
-        if (level.isClientSide && !ClientConfigs.Blocks.FAST_LANTERNS.get() && level.getBlockEntity(pos) instanceof WallLanternBlockTile tile) {
+        if (level.isClientSide && !ClientConfigs.FAST_LANTERNS.get() && level.getBlockEntity(pos) instanceof WallLanternBlockTile tile) {
             tile.animation.hitByEntity(entity, state, pos);
         }
     }
@@ -257,11 +260,11 @@ public class WallLanternBlock extends WaterBlock implements EntityBlock {
         if (b.builtInRegistryHolder().is(ModTags.WALL_LANTERNS_WHITELIST)) return true;
         ResourceLocation id = Utils.getID(b);
         String namespace = id.getNamespace();
-        if (CommonConfigs.Tweaks.WALL_LANTERN_BLACKLIST.get().contains(namespace)) return false;
+        if (CommonConfigs.WALL_LANTERN_BLACKLIST.get().contains(namespace)) return false;
         if (namespace.equals("skinnedlanterns") || (namespace.equals("twigs") && id.getPath().contains("paper_lantern")))
             return true;
-        if (b instanceof LanternBlock) { //!CommonConfigs.Tweaks.WALL_LANTERN_BLACKLIST.get().contains(namespace)
-            return !b.defaultBlockState().hasBlockEntity() || b instanceof LightableLanternBlock;
+        if (b instanceof LanternBlock) {
+            return !b.defaultBlockState().hasBlockEntity() || (CompatHandler.SUPPSQUARED && SuppSquaredCompat.isLightableLantern(b));
         }
         return false;
     }

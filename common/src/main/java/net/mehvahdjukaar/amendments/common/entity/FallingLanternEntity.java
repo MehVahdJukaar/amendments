@@ -1,18 +1,22 @@
 package net.mehvahdjukaar.amendments.common.entity;
 
+import net.mehvahdjukaar.amendments.Amendments;
 import net.mehvahdjukaar.amendments.configs.CommonConfigs;
+import net.mehvahdjukaar.amendments.integration.CompatHandler;
+import net.mehvahdjukaar.amendments.integration.SuppCompat;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.moonlight.api.entity.ImprovedFallingBlockEntity;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.item.FallingBlockEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.FallingBlock;
-import net.minecraft.world.level.block.LanternBlock;
-import net.minecraft.world.level.block.LevelEvent;
+import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
 
 public class FallingLanternEntity extends ImprovedFallingBlockEntity {
@@ -45,10 +49,17 @@ public class FallingLanternEntity extends ImprovedFallingBlockEntity {
 
             BlockPos pos = BlockPos.containing(this.getX(), this.getY() + 0.25, this.getZ());
             //break event
-            level().levelEvent(null, LevelEvent.PARTICLES_DESTROY_BLOCK, pos, Block.getId(state));
+            Level level = level();
+            level.levelEvent(null, LevelEvent.PARTICLES_DESTROY_BLOCK, pos, Block.getId(state));
             if (state.getLightEmission() != 0) {
 
-                GunpowderBlock.createMiniExplosion(level(), pos, true);
+                if(CompatHandler.SUPPLEMENTARIES){
+                    SuppCompat.createMiniExplosion(level, pos, true);
+                }else if(level.getBlockState(pos).isAir()){
+                    if (BaseFireBlock.canBePlacedAt(level, pos, Direction.DOWN)) {
+                        level.setBlockAndUpdate(pos, BaseFireBlock.getState(level, pos));
+                    }
+                }
             } else {
                 this.spawnAtLocation(state.getBlock());
             }
@@ -62,7 +73,7 @@ public class FallingLanternEntity extends ImprovedFallingBlockEntity {
     //TODO: hitting sounds
     //called by mixin
     public static boolean canSurviveCeilingAndMaybeFall(BlockState state, BlockPos pos, LevelReader worldIn) {
-        if (!IRopeConnection.isSupportingCeiling(pos.above(), worldIn) && worldIn instanceof Level l) {
+        if (!Amendments.isSupportingCeiling(pos.above(), worldIn) && worldIn instanceof Level l) {
             if (CommonConfigs.FALLING_LANTERNS.get().isOn() && l.getBlockState(pos).is(state.getBlock())) {
                 return createFallingLantern(state, pos, l);
             }

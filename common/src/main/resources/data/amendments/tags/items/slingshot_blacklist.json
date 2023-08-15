@@ -1,0 +1,9 @@
+{
+  "replace": false,
+  "values": [
+    {"id":"create:belt","required":false},
+    {"id":"create:belt_connector","required":false},
+    {"id":"create:track","required":false}
+  ]
+}
+

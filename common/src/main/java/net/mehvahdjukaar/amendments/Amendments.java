@@ -2,10 +2,17 @@ package net.mehvahdjukaar.amendments;
 
 import net.mehvahdjukaar.amendments.common.FlowerPotHandler;
 import net.mehvahdjukaar.amendments.configs.ClientConfigs;
+import net.mehvahdjukaar.amendments.integration.CompatHandler;
+import net.mehvahdjukaar.amendments.integration.SuppCompat;
 import net.mehvahdjukaar.amendments.reg.ModEvents;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -28,6 +35,12 @@ public class Amendments {
         }
         PlatHelper.addCommonSetupAsync(Amendments::setupA);
         PlatHelper.addCommonSetup(Amendments::setup);
+
+
+        //here we go. ideas part 2
+
+        //cobwebs animation string thngies
+        //shiny particles on emeralds
     }
 
     private static void setup() {
@@ -38,4 +51,17 @@ public class Amendments {
         FlowerPotHandler.setup();
     }
 
+    public static boolean isSupportingCeiling(BlockPos pos, LevelReader world) {
+        return isSupportingCeiling(world.getBlockState(pos), pos, world);
+    }
+
+    public static boolean isSupportingCeiling(BlockState upState, BlockPos pos, LevelReader world) {
+        if(CompatHandler.SUPPLEMENTARIES)return SuppCompat.isSupportingCeiling(upState, pos, world);
+        return Block.canSupportCenter(world, pos, Direction.DOWN);
+    }
+
+    public static boolean canConnectDown(BlockState neighborState) {
+        if(CompatHandler.SUPPLEMENTARIES)return SuppCompat.canConnectDown(neighborState);
+        return neighborState.isSolid();
+    }
 }

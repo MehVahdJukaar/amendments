@@ -16,6 +16,7 @@
   "client": [
     "BellRendererMixin"
   ],
+  "plugin": "net.mehvahdjukaar.amendments.mixins.MixinPlugin",
   "injectors": {
     "defaultRequire": 1
   }

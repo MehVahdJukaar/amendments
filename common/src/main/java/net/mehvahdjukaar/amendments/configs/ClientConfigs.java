@@ -1,6 +1,7 @@
 package net.mehvahdjukaar.amendments.configs;
 
 import net.mehvahdjukaar.amendments.Amendments;
+import net.mehvahdjukaar.amendments.client.ModMaterials;
 import net.mehvahdjukaar.amendments.common.PendulumAnimation;
 import net.mehvahdjukaar.moonlight.api.platform.configs.ConfigBuilder;
 import net.mehvahdjukaar.moonlight.api.platform.configs.ConfigType;
@@ -8,8 +9,11 @@ import net.mehvahdjukaar.moonlight.api.platform.configs.ConfigType;
 import java.util.function.Supplier;
 
 public class ClientConfigs {
+
     public static void init() {
     }
+
+    public static final Supplier<Boolean> PLACEABLE_TOOLTIP;
 
     public static final Supplier<Double> LILY_OFFSET;
     public static final Supplier<Boolean> BELL_CONNECTION;
@@ -22,8 +26,16 @@ public class ClientConfigs {
     public static final Supplier<PendulumAnimation.Config> WALL_LANTERN_CONFIG;
 
 
+    private static final Supplier<Boolean> COLORED_ARROWS;
+
     static {
         ConfigBuilder builder = ConfigBuilder.create(Amendments.MOD_ID, ConfigType.CLIENT);
+
+        builder.push("general");
+
+        PLACEABLE_TOOLTIP = builder.define("tooltips", true);
+        builder.pop();
+
         builder.push("lily_pad");
         LILY_OFFSET = builder.comment("set to 0 tho have lilypads at the same exact position as vanilla." +
                         "negative numbers will place them in their own blockspace right below avoiding any clipping." +
@@ -37,8 +49,15 @@ public class ClientConfigs {
         builder.pop();
 
         builder.push("brewing_stand");
-        COLORED_BREWING_STAND = builder.comment("Colors brewing stand potions according to their content")
-                        .define("colored_potions", true);
+        COLORED_BREWING_STAND = builder.comment("Colors the brewing stand potion texture depending on the potions it's brewing.\n" +
+                        "If using a resource pack add tint index from 0 to 3 to the 3 potion layers")
+                .define("brewing_stand_colors", true);
+        builder.pop();
+
+        builder.push("arrows");
+        //Keep?
+        COLORED_ARROWS = builder.comment("Makes tipped arrows show their colors when loaded with a crossbow")
+                .define("crossbows_colors", true);
         builder.pop();
 
         builder.push("hanging_sign");

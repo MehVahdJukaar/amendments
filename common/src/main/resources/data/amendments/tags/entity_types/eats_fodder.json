@@ -1,0 +1,19 @@
+{
+  "replace": false,
+  "values": [
+    {"id":"minecraft:pig","required":false},
+    {"id":"minecraft:cow","required":false},
+    {"id":"minecraft:sheep","required":false},
+    {"id":"minecraft:chicken","required":false},
+    {"id":"minecraft:goat","required":false},
+    {"id":"minecraft:mooshroom","required":false},
+    {"id":"autumnity:snail","required":false},
+    {"id":"alexsmobs:raccoon","required":false},
+    {"id":"alexsmobs:elephant","required":false},
+    {"id":"naturalist:zebra","required":false},
+	{"id":"lovely_snails:snail","required":false},
+    {"id":"creatures_from_the_snow:reindeer","required":false},
+    {"id":"creatures_from_the_snow:giraffe","required":false}
+  ]
+}
+

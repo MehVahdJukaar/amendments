@@ -1,0 +1,19 @@
+{
+  "replace": false,
+  "values": [
+    {"id":"#minecraft:leaves","required":false},
+    {"id":"#minecraft:ceiling_hanging_signs","required":false},
+    {"id":"#minecraft:lanterns","required":false},
+    {"id":"supplementaries:rope","required":false},
+    {"id":"supplementaries:sack","required":false},
+    {"id":"supplementaries:hanging_flower_pot","required":false},
+    {"id":"supplementaries:rope_chandelier","required":false},
+    {"id":"supplementaries:rope_soul_chandelier","required":false},
+    {"id":"farmersdelight:rope","required":false},
+    {"id":"farmersdelight:tomatoes","required":false},
+    {"id":"inspirations:rope","required":false},
+    {"id":"inspirations:vine","required":false},
+    {"id":"druidcraft:rope","required":false},
+    {"id":"xercamod:rope","required":false}
+  ]
+}

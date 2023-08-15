@@ -1,0 +1,17 @@
+{
+  "replace": false,
+  "values": [
+    {
+      "id": "dummmmmmy:target_dummy",
+      "required": false
+    },
+    {
+      "id": "minecraft:armor_stand",
+      "required": true
+    },
+	{
+      "id": "xercapaint:easel",
+      "required": false
+    }
+  ]
+}

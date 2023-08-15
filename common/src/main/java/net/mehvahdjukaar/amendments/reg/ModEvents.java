@@ -1,20 +1,19 @@
 package net.mehvahdjukaar.amendments.reg;
 
 import net.mehvahdjukaar.amendments.common.block.WallLanternBlock;
+import net.mehvahdjukaar.amendments.common.item.WallLanternPlacement;
 import net.mehvahdjukaar.amendments.common.tile.CarpetedBlockTile;
 import net.mehvahdjukaar.amendments.configs.CommonConfigs;
 import net.mehvahdjukaar.moonlight.api.item.additional_placements.AdditionalItemPlacementsAPI;
 import net.mehvahdjukaar.moonlight.api.misc.EventCalled;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.*;
@@ -28,19 +27,24 @@ import org.jetbrains.annotations.Nullable;
 public class ModEvents {
 
     public static void init() {
-    }
+        if (CommonConfigs.WALL_LANTERN.get()) {
+            AdditionalItemPlacementsAPI.register((i) -> new WallLanternPlacement(((BlockItem) i).getBlock()),
+                    i -> i instanceof BlockItem bi && WallLanternBlock.isValidBlock(bi.getBlock()));
+        }
 
-    public static void setup(){
-        for (Item i : BuiltInRegistries.ITEM) {
-
-            if (CommonConfigs.WALL_LANTERN.get()) {
-                if (i instanceof BlockItem bi && WallLanternBlock.isValidBlock(bi.getBlock())) {
-                    AdditionalItemPlacementsAPI.register(() -> new WallLanternPlacement(bi.getBlock()),
-                            () -> bi);
+        //block items don't work here
+            /*
+            if (ServerConfigs.cached.SKULL_CANDLES) {
+                if (i.builtInRegistryHolder().is(ItemTags.CANDLES) &&
+                        i.getRegistryName().getNamespace().equals("minecraft")) {
+                    ((IExtendedItem) i).addAdditionalBehavior(new SkullCandlesPlacement());
                     continue;
                 }
-            }
-        }
+            }*/
+    }
+
+    public static void setup() {
+
     }
 
     @EventCalled

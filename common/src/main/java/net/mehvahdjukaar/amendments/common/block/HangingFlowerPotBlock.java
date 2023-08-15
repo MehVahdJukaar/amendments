@@ -1,7 +1,10 @@
 package net.mehvahdjukaar.amendments.common.block;
 
+import net.mehvahdjukaar.amendments.Amendments;
 import net.mehvahdjukaar.amendments.common.FlowerPotHandler;
 import net.mehvahdjukaar.amendments.common.tile.HangingFlowerPotBlockTile;
+import net.mehvahdjukaar.amendments.integration.CompatHandler;
+import net.mehvahdjukaar.amendments.integration.SuppCompat;
 import net.mehvahdjukaar.amendments.reg.ModBlockProperties;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -48,7 +51,7 @@ public class HangingFlowerPotBlock extends Block implements EntityBlock {
 
     public HangingFlowerPotBlock(Properties properties) {
         super(properties.lightLevel(state -> state.getValue(LIGHT_LEVEL)));
-        this.registerDefaultState(this.stateDefinition.any().setValue(LIGHT_LEVEL,0));
+        this.registerDefaultState(this.stateDefinition.any().setValue(LIGHT_LEVEL, 0));
     }
 
     @Override
@@ -65,7 +68,8 @@ public class HangingFlowerPotBlock extends Block implements EntityBlock {
                 BlockState mimic = blockItem.getBlock().defaultBlockState();
                 tile.setHeldBlock(mimic);
             }
-            BlockUtil.addOptionalOwnership(entity, tile);
+            if (CompatHandler.SUPPLEMENTARIES)
+                SuppCompat.addOptionalOwnership(tile.getLevel(), tile.getBlockPos(), entity);
         }
     }
 
@@ -155,7 +159,7 @@ public class HangingFlowerPotBlock extends Block implements EntityBlock {
 
     @Override
     public List<ItemStack> getDrops(BlockState state, LootParams.Builder builder) {
-    if (builder.getOptionalParameter(LootContextParams.BLOCK_ENTITY) instanceof HangingFlowerPotBlockTile tile) {
+        if (builder.getOptionalParameter(LootContextParams.BLOCK_ENTITY) instanceof HangingFlowerPotBlockTile tile) {
             if (tile.getHeldBlock().getBlock() instanceof FlowerPotBlock flowerPotBlock)
                 return Arrays.asList(new ItemStack(flowerPotBlock.getContent()), new ItemStack(Items.FLOWER_POT));
         }
@@ -179,6 +183,6 @@ public class HangingFlowerPotBlock extends Block implements EntityBlock {
 
     @Override
     public boolean canSurvive(BlockState state, LevelReader worldIn, BlockPos pos) {
-        return IRopeConnection.isSupportingCeiling(pos.relative(Direction.UP), worldIn);
+        return Amendments.isSupportingCeiling(pos.relative(Direction.UP), worldIn);
     }
 }

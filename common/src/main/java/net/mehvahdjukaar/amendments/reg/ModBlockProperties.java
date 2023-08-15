@@ -1,5 +1,7 @@
 package net.mehvahdjukaar.amendments.reg;
 
+import net.mehvahdjukaar.amendments.integration.CompatHandler;
+import net.mehvahdjukaar.amendments.integration.SuppCompat;
 import net.mehvahdjukaar.moonlight.api.block.MimicBlockTile;
 import net.mehvahdjukaar.moonlight.api.client.model.ModelDataKey;
 import net.minecraft.core.BlockPos;
@@ -17,12 +19,12 @@ import java.util.Locale;
 public class ModBlockProperties {
 
     public static final ModelDataKey<BlockState> MIMIC = MimicBlockTile.MIMIC_KEY;
-    public static final ModelDataKey<Boolean> FANCY = new ModelDataKey(Boolean.class);
+    public static final ModelDataKey<Boolean> FANCY = new ModelDataKey<>(Boolean.class);
     public static final EnumProperty<SignAttachment> SIGN_ATTACHMENT = EnumProperty.create("sign_attachment", SignAttachment.class);
     public static final EnumProperty<BlockAttachment> BLOCK_ATTACHMENT = EnumProperty.create("attachment", BlockAttachment.class);
     public static final IntegerProperty LIGHT_LEVEL = IntegerProperty.create("light_level", 0, 15);
     public static final BooleanProperty SOLID = BooleanProperty.create("solid");
-        //for wall lanterns
+    //for wall lanterns
 
     public enum PostType implements StringRepresentable {
         POST("post", 4),
@@ -37,7 +39,7 @@ public class ModBlockProperties {
         PostType(String name, int width) {
             this.name = name;
             this.width = width;
-            this.offset = (8 - width / 2) / 16f;
+            this.offset = (8 - width / 2f) / 16f;
         }
 
         public int getWidth() {
@@ -99,7 +101,6 @@ public class ModBlockProperties {
     }
 
 
-
     public enum BlockAttachment implements StringRepresentable {
         BLOCK("block"),
         BEAM("beam"),
@@ -134,12 +135,10 @@ public class ModBlockProperties {
             PostType postType = PostType.get(state, true);
             if (postType == null) {
                 //case for sticks
-                if ((state.getBlock() instanceof StickBlock &&
-                        (facing.getAxis() == Direction.Axis.X ?
-                                !state.getValue(StickBlock.AXIS_X) :
-                                !state.getValue(StickBlock.AXIS_Z))) ||
+                if ((CompatHandler.SUPPLEMENTARIES && SuppCompat.isVerticalStick(state, facing)) ||
                         (state.getBlock() instanceof EndRodBlock &&
                                 state.getValue(EndRodBlock.FACING).getAxis() == Direction.Axis.Y)) return STICK;
+                return null;
             }
             return switch (postType) {
                 case BEAM -> BEAM;

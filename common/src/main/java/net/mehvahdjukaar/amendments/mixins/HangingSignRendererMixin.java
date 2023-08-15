@@ -5,6 +5,8 @@ import net.mehvahdjukaar.amendments.AmendmentsClient;
 import net.mehvahdjukaar.amendments.client.ModMaterials;
 import net.mehvahdjukaar.amendments.client.renderers.HangingSignRendererExtension;
 import net.mehvahdjukaar.amendments.configs.ClientConfigs;
+import net.mehvahdjukaar.amendments.integration.CompatHandler;
+import net.mehvahdjukaar.amendments.integration.SuppCompat;
 import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -61,7 +63,7 @@ public abstract class HangingSignRendererMixin extends SignRenderer {
 
                     this.getSignMaterial(woodType),
                     ModMaterials.HANGING_SIGN_EXTENSIONS.get().get(woodType),
-                    this, ClientConfigs.getSignColorMult());
+                    this, CompatHandler.SUPPLEMENTARIES ? SuppCompat.getSignColorMult() : 1);
 
             ci.cancel();
         }
