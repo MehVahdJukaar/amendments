@@ -6,42 +6,31 @@ import net.mehvahdjukaar.amendments.client.WallLanternModelsManager;
 import net.mehvahdjukaar.amendments.client.colors.BrewingStandColor;
 import net.mehvahdjukaar.amendments.client.colors.LilyBlockColor;
 import net.mehvahdjukaar.amendments.client.colors.MimicBlockColor;
-import net.mehvahdjukaar.amendments.client.model.CarpetStairsModel;
-import net.mehvahdjukaar.amendments.client.model.SkullCandleOverlayModel;
-import net.mehvahdjukaar.amendments.client.model.WallLanternBakedModel;
+import net.mehvahdjukaar.amendments.client.colors.SoftFluidColor;
+import net.mehvahdjukaar.amendments.client.model.*;
 import net.mehvahdjukaar.amendments.client.renderers.*;
-import net.mehvahdjukaar.amendments.common.FlowerPotHandler;
-import net.mehvahdjukaar.amendments.common.block.WallLanternBlock;
-import net.mehvahdjukaar.amendments.common.tile.WaterloggedLilyBlockTile;
-import net.mehvahdjukaar.amendments.client.model.WaterloggedLilyModel;
 import net.mehvahdjukaar.amendments.integration.CompatObjects;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
-import net.mehvahdjukaar.moonlight.api.block.IBlockHolder;
 import net.mehvahdjukaar.moonlight.api.client.model.NestedModelLoader;
 import net.mehvahdjukaar.moonlight.api.misc.EventCalled;
 import net.mehvahdjukaar.moonlight.api.platform.ClientHelper;
 import net.mehvahdjukaar.moonlight.api.set.BlocksColorAPI;
 import net.mehvahdjukaar.moonlight.api.util.Utils;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.color.block.BlockColor;
+import net.mehvahdjukaar.supplementaries.client.renderers.color.FluidColor;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.renderer.BiomeColors;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.FallingBlockRenderer;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.resources.model.Material;
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.RecordItem;
-import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraft.world.level.block.state.BlockState;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -83,6 +72,7 @@ public class AmendmentsClient {
         ClientHelper.registerRenderType(ModRegistry.CARPET_STAIRS.get(), RenderType.translucent());
         ClientHelper.registerRenderType(ModRegistry.WATERLILY_BLOCK.get(), RenderType.cutout());
         ClientHelper.registerRenderType(Blocks.WATER_CAULDRON,RenderType.cutout(),RenderType.translucent());
+        ClientHelper.registerRenderType(ModRegistry.LIQUID_CAULDRON.get(),RenderType.cutout(),RenderType.translucent());
         ClientHelper.registerRenderType(ModRegistry.HANGING_FLOWER_POT.get(), RenderType.cutout());
         ClientHelper.registerRenderType(ModRegistry.WALL_LANTERN.get(), RenderType.cutout());
 
@@ -112,9 +102,10 @@ public class AmendmentsClient {
 
     @EventCalled
     private static void registerModelLoaders(ClientHelper.ModelLoaderEvent event) {
-        event.register(Amendments.res("carpet_overlay"), new NestedModelLoader("carpet", CarpetStairsModel::new));
+        event.register(Amendments.res("carpet_overlay"), new NestedModelLoader("carpet", CarpetedBlockModel::new));
         event.register(Amendments.res("waterlogged_lily"), WaterloggedLilyModel::new);
         event.register(Amendments.res("wall_lantern"), new NestedModelLoader("support", WallLanternBakedModel::new));
+        event.register(Amendments.res("cauldron"), new CauldronModelLoader());
 
     }
 
@@ -132,6 +123,7 @@ public class AmendmentsClient {
         event.register((blockState, level, pos, i) -> i==1 && level != null && pos != null ? BiomeColors.getAverageWaterColor(level, pos) : -1,
                 Blocks.WATER_CAULDRON);
         event.register(new BrewingStandColor(), Blocks.BREWING_STAND);
+        event.register(new SoftFluidColor(), ModRegistry.LIQUID_CAULDRON.get());
     }
 
 

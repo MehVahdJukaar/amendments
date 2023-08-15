@@ -9,7 +9,10 @@ import net.mehvahdjukaar.moonlight.api.resources.ResType;
 import net.mehvahdjukaar.moonlight.api.resources.StaticResource;
 import net.mehvahdjukaar.moonlight.api.resources.pack.DynClientResourcesGenerator;
 import net.mehvahdjukaar.moonlight.api.resources.pack.DynamicTexturePack;
-import net.mehvahdjukaar.moonlight.api.resources.textures.*;
+import net.mehvahdjukaar.moonlight.api.resources.textures.ImageTransformer;
+import net.mehvahdjukaar.moonlight.api.resources.textures.Palette;
+import net.mehvahdjukaar.moonlight.api.resources.textures.Respriter;
+import net.mehvahdjukaar.moonlight.api.resources.textures.TextureImage;
 import net.mehvahdjukaar.moonlight.api.set.wood.WoodType;
 import net.mehvahdjukaar.moonlight.api.set.wood.WoodTypeRegistry;
 import net.mehvahdjukaar.moonlight.api.util.Utils;
@@ -112,14 +115,13 @@ public class ClientResourceGenerator extends DynClientResourcesGenerator {
                         RPUtils.findFirstItemTextureLocation(manager, e.getKey()))) {
 
                     var p = Palette.fromImage(vanillaTexture, mask);
-                    if (p.getAverageLuminanceStep() > 0.06) {
-                        var newDark = p.increaseInner();
-                        PaletteColor darkest = p.getDarkest();
-                        p.remove(darkest);
-                        p.add(new PaletteColor(newDark.lab().mixWith(darkest.lab())));
-                    }
+                    amendPalette(p);
                     TextureImage newImage = respriter.recolor(p);
                     transformer.apply(vanillaTexture, newImage);
+                    if(newImage.getImage().getPixelRGBA(6,6) == p.get(p.size()-2).rgb().toInt()){
+                        newImage.setFramePixel(0,6,6,p.getLightest().rgb().toInt());
+                        newImage.setFramePixel(0,9,9,p.getLightest().rgb().toInt());
+                    }
                     this.dynamicPack.addAndCloseTexture(Amendments.res(e.getValue().texture().getPath()), newImage);
                 } catch (Exception ex) {
                     getLogger().warn("Failed to generate record item texture for {}", e.getKey(), ex);
@@ -129,10 +131,24 @@ public class ClientResourceGenerator extends DynClientResourcesGenerator {
         }
     }
 
+    public static void amendPalette(Palette p) {
+        float averLum = p.getAverageLuminanceStep();
+        if (averLum > 0.06) {
+            p.increaseInner();
+        }
+        var darkest = p.getDarkest();
+        var beforeDarkest = p.get(1);
+        if (beforeDarkest.luminance() - darkest.luminance() > averLum - 0.005) {
+            p.remove(darkest);
+            p.increaseDown();
+        }
+    }
+
+
     private void generateDoubleCakesAssets(ResourceManager manager) {
-        StaticResource[] cakeModels = Stream.of("full","slice1","slice2", "slice3", "slice4", "slice5", "slice6")
-                .map(s-> StaticResource.getOrLog(manager,
-                        ResType.BLOCK_MODELS.getPath(Amendments.res("double_cake/vanilla_"+s)))).toArray(StaticResource[]::new);
+        StaticResource[] cakeModels = Stream.of("full", "slice1", "slice2", "slice3", "slice4", "slice5", "slice6")
+                .map(s -> StaticResource.getOrLog(manager,
+                        ResType.BLOCK_MODELS.getPath(Amendments.res("double_cake/vanilla_" + s)))).toArray(StaticResource[]::new);
 
         StaticResource doubleCakeModelState = StaticResource.getOrLog(manager,
                 ResType.BLOCKSTATES.getPath(Amendments.res("double_cake")));
@@ -145,7 +161,7 @@ public class ClientResourceGenerator extends DynClientResourcesGenerator {
                     ResourceLocation bottom = RPUtils.findFirstBlockTextureLocation(manager, t.cake, s -> s.contains("bottom"));
                     ResourceLocation inner = RPUtils.findFirstBlockTextureLocation(manager, t.cake, s -> s.contains("inner"));
 
-                    for(var m  : cakeModels) {
+                    for (var m : cakeModels) {
                         addSimilarJsonResource(manager, m, s -> s
                                         .replace("supplementaries:block/double_cake", "")
                                         .replace("supplementaries:block/cake", "")

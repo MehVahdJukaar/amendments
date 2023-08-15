@@ -8,10 +8,10 @@ import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.moonlight.api.util.Utils;
 import net.mehvahdjukaar.supplementaries.common.events.overrides.InteractEventOverrideHandler;
 import net.minecraft.core.BlockPos;
-import net.minecraft.tags.ItemTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -20,7 +20,7 @@ import net.minecraft.world.level.block.entity.SkullBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 
-class SkullCandlesBehavior implements ItemUseOnBlockOverride {
+public class SkullCandleConversion implements ItemUseOnBlockOverride {
 
     @Override
     public boolean altersWorld() {
@@ -39,7 +39,11 @@ class SkullCandlesBehavior implements ItemUseOnBlockOverride {
 
     @Override
     public boolean appliesToItem(Item item) {
-        if (item.builtInRegistryHolder().is(ItemTags.CANDLES)) {
+        return isCorrectCandle(item);
+    }
+
+    public static boolean isCorrectCandle(Item item) {
+        if (item instanceof BlockItem bi && bi.getBlock() instanceof CandleBlock) {
             var n = Utils.getID(item).getNamespace();
             return (n.equals("minecraft") || n.equals("tinted") ||
                     item == CompatObjects.SOUL_CANDLE_ITEM.get() ||
@@ -83,5 +87,6 @@ class SkullCandlesBehavior implements ItemUseOnBlockOverride {
         }
         return InteractionResult.PASS;
     }
+
 }
 

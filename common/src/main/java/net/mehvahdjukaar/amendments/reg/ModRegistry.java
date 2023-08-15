@@ -45,6 +45,7 @@ import static net.mehvahdjukaar.amendments.reg.ModConstants.*;
 public class ModRegistry {
 
     public static void init() {
+        BlockSetAPI.registerBlockSetDefinition(CakeRegistry.INSTANCE);
         BlockSetAPI.addDynamicBlockRegistration(ModRegistry::registerDoubleCakes, CakeRegistry.CakeType.class);
 
     }

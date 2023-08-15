@@ -2,11 +2,13 @@ package net.mehvahdjukaar.amendments;
 
 import net.mehvahdjukaar.amendments.common.FlowerPotHandler;
 import net.mehvahdjukaar.amendments.configs.ClientConfigs;
+import net.mehvahdjukaar.amendments.configs.CommonConfigs;
 import net.mehvahdjukaar.amendments.integration.CompatHandler;
 import net.mehvahdjukaar.amendments.integration.SuppCompat;
 import net.mehvahdjukaar.amendments.reg.ModEvents;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
+import net.mehvahdjukaar.moonlight.api.resources.textures.Palette;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
@@ -25,11 +27,12 @@ public class Amendments {
         return new ResourceLocation(MOD_ID, name);
     }
 
-    public static void init(){
+    public static void init() {
+        CommonConfigs.init();
         ModRegistry.init();
         ModEvents.init();
 
-        if(PlatHelper.getPhysicalSide().isClient()) {
+        if (PlatHelper.getPhysicalSide().isClient()) {
             ClientConfigs.init();
             AmendmentsClient.init();
         }
@@ -56,12 +59,13 @@ public class Amendments {
     }
 
     public static boolean isSupportingCeiling(BlockState upState, BlockPos pos, LevelReader world) {
-        if(CompatHandler.SUPPLEMENTARIES)return SuppCompat.isSupportingCeiling(upState, pos, world);
+        if (CompatHandler.SUPPLEMENTARIES) return SuppCompat.isSupportingCeiling(upState, pos, world);
         return Block.canSupportCenter(world, pos, Direction.DOWN);
     }
 
     public static boolean canConnectDown(BlockState neighborState) {
-        if(CompatHandler.SUPPLEMENTARIES)return SuppCompat.canConnectDown(neighborState);
+        if (CompatHandler.SUPPLEMENTARIES) return SuppCompat.canConnectDown(neighborState);
         return neighborState.isSolid();
     }
+
 }

@@ -40,7 +40,7 @@ public class CommonConfigs {
     public static final ConfigSpec CONFIG;
 
     static {
-        ConfigBuilder builder = ConfigBuilder.create(Amendments.MOD_ID, ConfigType.CLIENT);
+        ConfigBuilder builder = ConfigBuilder.create(Amendments.MOD_ID, ConfigType.COMMON);
 
         builder.push("features");
 
@@ -109,6 +109,7 @@ public class CommonConfigs {
 
 
         CONFIG = builder.buildAndRegister();
+        CONFIG.loadFromFile();
     }
 
 
@@ -125,5 +126,9 @@ public class CommonConfigs {
         var config = builder.gameRestart().define(name, value);
         FEATURE_TOGGLES.put(key, config);
         return config;
+    }
+
+    public static void init(){
+
     }
 }

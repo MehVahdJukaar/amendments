@@ -7,7 +7,7 @@ import java.util.List;
 
 public class AmendmentsPlatformStuff {
     @ExpectPlatform
-    public static void removeAmbientOcclusion(List<BakedQuad> supportQuads) {
+    public static List<BakedQuad> removeAmbientOcclusion(List<BakedQuad> supportQuads) {
         throw new AssertionError();
     }
 }

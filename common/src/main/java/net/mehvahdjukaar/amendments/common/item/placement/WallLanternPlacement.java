@@ -1,5 +1,6 @@
-package net.mehvahdjukaar.amendments.common.item;
+package net.mehvahdjukaar.amendments.common.item.placement;
 
+import net.mehvahdjukaar.amendments.common.block.WallLanternBlock;
 import net.mehvahdjukaar.amendments.configs.ClientConfigs;
 import net.mehvahdjukaar.amendments.integration.CompatHandler;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;

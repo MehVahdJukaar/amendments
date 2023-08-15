@@ -22,7 +22,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.Nullable;
 
-class SkullPileBehavior implements ItemUseOnBlockOverride {
+class SkullPileConversion implements ItemUseOnBlockOverride {
 
     @Override
     public boolean altersWorld() {

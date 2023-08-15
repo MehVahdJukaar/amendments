@@ -1,18 +1,11 @@
 {
-  "loader": "forge:composite",
-  "children": {
-    "translucent_model": {
-      "parent": "amendments:block/cauldron_level1",
-      "textures": {
-        "content": "minecraft:block/water_still"
-      },
-      "render_type": "translucent"
-    },
-    "cutout_model":{
-      "parent": "amendments:block/cauldron"
+  "loader": "amendments:cauldron",
+  "cauldron": "amendments:block/cauldron",
+  "fluid": {
+    "parent": "amendments:block/cauldron_level_9",
+    "textures": {
+      "content": "minecraft:block/water_still"
     }
   },
-  "textures": {
-    "particle": "block/cauldron_side"
-  }
+  "translucent": true
 }

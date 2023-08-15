@@ -1,19 +1,10 @@
 {
-  "loader": "forge:composite",
-  "children": {
-    "translucent_model": {
-      "parent": "amendments:block/cauldron_full",
-      "textures": {
-        "content": "minecraft:block/powder_snow"
-      },
-      "ambientocclusion": false
-    },
-    "cutout_model":{
-      "parent": "amendments:block/cauldron"
+  "loader": "amendments:cauldron",
+  "cauldron": "amendments:block/cauldron",
+  "fluid": {
+    "parent": "amendments:block/cauldron_level_15",
+    "textures": {
+      "content": "minecraft:block/powder_snow"
     }
-  },
-  "textures": {
-    "particle": "block/cauldron_side"
-  },
-  "ambientocclusion": false
+  }
 }

@@ -25,7 +25,7 @@ import java.util.Set;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-class DoubleCakeBehavior implements ItemUseOnBlockOverride {
+class DoubleCakeConversion implements ItemUseOnBlockOverride {
 
     private static final Supplier<Set<Block>> CAKES = Suppliers.memoize(() -> CakeRegistry.INSTANCE.getValues().stream()
             .map(v -> v.cake).collect(Collectors.toUnmodifiableSet()));

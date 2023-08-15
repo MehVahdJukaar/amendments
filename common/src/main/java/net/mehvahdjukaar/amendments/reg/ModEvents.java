@@ -1,9 +1,11 @@
 package net.mehvahdjukaar.amendments.reg;
 
 import net.mehvahdjukaar.amendments.common.block.WallLanternBlock;
-import net.mehvahdjukaar.amendments.common.item.WallLanternPlacement;
+import net.mehvahdjukaar.amendments.common.item.SkullCandleConversion;
+import net.mehvahdjukaar.amendments.common.item.placement.WallLanternPlacement;
 import net.mehvahdjukaar.amendments.common.tile.CarpetedBlockTile;
 import net.mehvahdjukaar.amendments.configs.CommonConfigs;
+import net.mehvahdjukaar.moonlight.api.item.additional_placements.AdditionalItemPlacement;
 import net.mehvahdjukaar.moonlight.api.item.additional_placements.AdditionalItemPlacementsAPI;
 import net.mehvahdjukaar.moonlight.api.misc.EventCalled;
 import net.minecraft.advancements.CriteriaTriggers;
@@ -31,6 +33,8 @@ public class ModEvents {
             AdditionalItemPlacementsAPI.register((i) -> new WallLanternPlacement(((BlockItem) i).getBlock()),
                     i -> i instanceof BlockItem bi && WallLanternBlock.isValidBlock(bi.getBlock()));
         }
+        AdditionalItemPlacementsAPI.register((i) -> new AdditionalItemPlacement(ModRegistry.SKULL_CANDLE.get()),
+                SkullCandleConversion::isCorrectCandle);
 
         //block items don't work here
             /*

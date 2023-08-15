@@ -106,10 +106,10 @@ dependencies {
     shadowCommon(project(path: ":common", configuration: "transformProductionForge")) { transitive = false }
 
     modImplementation ("net.mehvahdjukaar:moonlight-forge:${rootProject.moonlight_version}")
-    modImplementation ("net.mehvahdjukaar:supplementaries-forge:${rootProject.supplementaries_version}")
-    modImplementation ("net.mehvahdjukaar:suppsquared-forge:${rootProject.suppsquared_version}")
+    modCompileOnly ("net.mehvahdjukaar:supplementaries-forge:${rootProject.supplementaries_version}")
+    modCompileOnly ("net.mehvahdjukaar:suppsquared-forge:${rootProject.suppsquared_version}")
 
-    modImplementation("vectorwing.farmersdelight:FarmersDelight:1.20.1-1.2.1-beta")
+    modCompileOnly("curse.maven:farmers-delight-398521:4679319")
     modCompileOnly("curse.maven:autoreglib-250363:4100299")
     modCompileOnly("curse.maven:quark-oddities-301051:3575623")
     modCompileOnly("curse.maven:quark-243121:4551115")

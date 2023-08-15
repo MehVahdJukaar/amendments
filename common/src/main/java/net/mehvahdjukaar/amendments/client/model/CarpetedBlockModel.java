@@ -1,7 +1,7 @@
 package net.mehvahdjukaar.amendments.client.model;
 
-import net.mehvahdjukaar.amendments.common.tile.CarpetedBlockTile;
 import net.mehvahdjukaar.amendments.AmendmentsPlatformStuff;
+import net.mehvahdjukaar.amendments.common.tile.CarpetedBlockTile;
 import net.mehvahdjukaar.moonlight.api.client.model.CustomBakedModel;
 import net.mehvahdjukaar.moonlight.api.client.model.ExtraModelData;
 import net.mehvahdjukaar.moonlight.api.client.util.VertexUtil;
@@ -21,11 +21,11 @@ import net.minecraft.world.level.block.state.BlockState;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CarpetStairsModel implements CustomBakedModel {
+public class CarpetedBlockModel implements CustomBakedModel {
     private final BakedModel carpet;
     private final BlockModelShaper blockModelShaper;
 
-    public CarpetStairsModel(BakedModel carpet, ModelState state) {
+    public CarpetedBlockModel(BakedModel carpet, ModelState state) {
         this.carpet = carpet;
         this.blockModelShaper = Minecraft.getInstance().getBlockRenderer().getBlockModelShaper();
     }
@@ -40,7 +40,7 @@ public class CarpetStairsModel implements CustomBakedModel {
 
                 if (mimic != null) {
                     BakedModel model = blockModelShaper.getBlockModel(mimic);
-                        quads.addAll(model.getQuads(mimic, side, rand));
+                    quads.addAll(model.getQuads(mimic, side, rand));
                 }
             } catch (Exception ignored) {
             }
@@ -54,7 +54,7 @@ public class CarpetStairsModel implements CustomBakedModel {
                         TextureAtlasSprite sprite = getCarpetSprite(carpetBlock);
                         if (sprite != null) {
                             supportQuads = VertexUtil.swapSprite(supportQuads, sprite);
-                            AmendmentsPlatformStuff.removeAmbientOcclusion(supportQuads);
+                            supportQuads = AmendmentsPlatformStuff.removeAmbientOcclusion(supportQuads);
                         }
                     }
                     quads.addAll(supportQuads);
@@ -76,7 +76,7 @@ public class CarpetStairsModel implements CustomBakedModel {
 
     @Override
     public boolean isGui3d() {
-        return false;
+        return true;
     }
 
     @Override
