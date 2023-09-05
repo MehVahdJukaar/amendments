@@ -81,18 +81,11 @@ public class WallLanternBakedModel implements CustomBakedModel {
                     BakedModel model = WallLanternModelsManager.getModel(blockModelShaper, mimic);
 
                     List<BakedQuad> mimicQuads = model.getQuads(mimic, side, rand);
+                    Matrix4f mat = new Matrix4f();
+                    mat.translate(0,2/16f,0);
+                    mat.translate(dir.step().mul(-2/16f));
 
-                    for (BakedQuad q : mimicQuads) {
-                        int[] v = Arrays.copyOf(q.getVertices(), q.getVertices().length);
-                        Matrix4f mat = new Matrix4f();
-                        mat.translate(0,2/16f,0);
-                        mat.translate(dir.step().mul(-2/16f));
-
-                        VertexUtil.transformVertices(v, mat);
-
-                        quads.add(new BakedQuad(v, q.getTintIndex(),
-                               Direction.rotate(mat, q.getDirection()), q.getSprite(), q.isShade()));
-                    }
+                    mimicQuads = VertexUtil.transformQuads(mimicQuads, mat);
                 }
             }
         } catch (Exception ignored) {

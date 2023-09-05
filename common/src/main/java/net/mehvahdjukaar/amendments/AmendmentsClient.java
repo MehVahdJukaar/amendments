@@ -49,6 +49,7 @@ public class AmendmentsClient {
 
     public static final ResourceLocation BELL_ROPE = Amendments.res("block/bell_rope");
     public static final ResourceLocation BELL_CHAIN = Amendments.res("block/bell_chain");
+    public static final ResourceLocation LECTERN_GUI = Amendments.res("textures/gui/lectern.png");
 
     private static ModelLayerLocation loc(String name) {
         return new ModelLayerLocation(Amendments.res(name), name);

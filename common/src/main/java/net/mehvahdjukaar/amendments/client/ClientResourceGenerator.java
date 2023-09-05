@@ -19,6 +19,7 @@ import net.mehvahdjukaar.moonlight.api.util.Utils;
 import net.minecraft.client.renderer.Sheets;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.world.entity.monster.Spider;
 import net.minecraft.world.level.block.Rotation;
 import org.apache.logging.log4j.Logger;
 
@@ -95,6 +96,7 @@ public class ClientResourceGenerator extends DynClientResourcesGenerator {
     }
 
     private void generateJukeboxAssets(ResourceManager manager) {
+
         ImageTransformer transformer = ImageTransformer.builder(16, 16, 16, 16)
                 .copyRect(5, 6, 3, 2, 6, 6)
                 .copyRect(8, 6, 1, 1, 9, 7)
@@ -110,6 +112,8 @@ public class ClientResourceGenerator extends DynClientResourcesGenerator {
             Respriter respriter = Respriter.of(template);
 
             for (var e : AmendmentsClient.getAllRecords().entrySet()) {
+                ResourceLocation res = Amendments.res(e.getValue().texture().getPath());
+                if (alreadyHasTextureAtLocation(manager, res)) continue;
                 //hanging sign extension textures
                 try (TextureImage vanillaTexture = TextureImage.open(manager,
                         RPUtils.findFirstItemTextureLocation(manager, e.getKey()))) {
@@ -122,7 +126,7 @@ public class ClientResourceGenerator extends DynClientResourcesGenerator {
                         newImage.setFramePixel(0,6,6,p.getLightest().rgb().toInt());
                         newImage.setFramePixel(0,9,9,p.getLightest().rgb().toInt());
                     }
-                    this.dynamicPack.addAndCloseTexture(Amendments.res(e.getValue().texture().getPath()), newImage);
+                    this.dynamicPack.addAndCloseTexture(res, newImage);
                 } catch (Exception ex) {
                     getLogger().warn("Failed to generate record item texture for {}", e.getKey(), ex);
                 }

@@ -8,6 +8,7 @@ import net.mehvahdjukaar.moonlight.api.block.MimicBlockTile;
 import net.mehvahdjukaar.moonlight.api.client.model.ExtraModelData;
 import net.mehvahdjukaar.moonlight.api.client.model.IExtraModelDataProvider;
 import net.mehvahdjukaar.moonlight.api.client.model.ModelDataKey;
+import net.mehvahdjukaar.moonlight.api.platform.ForgeHelper;
 import net.mehvahdjukaar.moonlight.api.util.Utils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -83,7 +84,7 @@ public class WallLanternBlockTile extends SwayingBlockTile implements IBlockHold
         this.mimic = state;
 
 
-        int light = state.getLightEmission();
+        int light = ForgeHelper.getLightEmission(state, level, worldPosition);
         boolean lit = true;
         var res = Utils.getID(this.mimic.getBlock());
         if (res.toString().equals("charm:redstone_lantern")) {

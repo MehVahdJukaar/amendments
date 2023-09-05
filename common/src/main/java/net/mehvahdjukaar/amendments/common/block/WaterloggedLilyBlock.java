@@ -200,4 +200,9 @@ public class WaterloggedLilyBlock extends WaterlilyBlock implements LiquidBlockC
         return super.getCloneItemStack(level, pos, state);
     }
 
+
+    @Override
+    public String getDescriptionId() {
+        return Blocks.LILY_PAD.getDescriptionId();
+    }
 }

@@ -10,6 +10,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Mth;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
@@ -33,6 +34,10 @@ public class HangingSignTileExtension {
     private boolean canSwing = true;
 
     public final SwingAnimation animation;
+
+    //no item handler here. we dont want hoppers and such anyways
+    public ItemStack frontItem = ItemStack.EMPTY;
+    public ItemStack backItem = ItemStack.EMPTY;
 
     public HangingSignTileExtension(BlockState state) {
         super();
@@ -82,6 +87,12 @@ public class HangingSignTileExtension {
         if (!canSwing) {
             tag.putBoolean("can_swing", false);
         }
+        if(!frontItem.isEmpty()){
+            tag.put("front_item", frontItem.save(new CompoundTag()));
+        }
+        if(!backItem.isEmpty()){
+            tag.put("back_item", backItem.save(new CompoundTag()));
+        }
     }
 
     public void load(CompoundTag tag) {
@@ -95,6 +106,12 @@ public class HangingSignTileExtension {
         }
         if (tag.contains("can_swing")) {
             canSwing = tag.getBoolean("can_swing");
+        }
+        if(tag.contains("front_item")){
+            this.frontItem = ItemStack.of(tag.getCompound("front_item"));
+        }
+        if(tag.contains("back_item")){
+            this.backItem = ItemStack.of(tag.getCompound("back_item"));
         }
     }
 
@@ -134,5 +151,21 @@ public class HangingSignTileExtension {
 
     public boolean canSwing() {
         return canSwing;
+    }
+
+    public void setFrontItem(ItemStack frontItem) {
+        this.frontItem = frontItem;
+    }
+
+    public ItemStack getFrontItem() {
+        return frontItem;
+    }
+
+    public void setBackItem(ItemStack backItem) {
+        this.backItem = backItem;
+    }
+
+    public ItemStack getBackItem() {
+        return backItem;
     }
 }

@@ -268,5 +268,4 @@ public class WallLanternBlock extends WaterBlock implements EntityBlock {
         }
         return false;
     }
-
 }

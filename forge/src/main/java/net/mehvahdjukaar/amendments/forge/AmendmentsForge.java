@@ -2,6 +2,7 @@ package net.mehvahdjukaar.amendments.forge;
 
 import net.mehvahdjukaar.amendments.Amendments;
 import net.mehvahdjukaar.amendments.reg.ModEvents;
+import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
 import net.minecraft.world.InteractionResult;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -20,6 +21,9 @@ public class AmendmentsForge {
     public AmendmentsForge() {
         Amendments.init();
         MinecraftForge.EVENT_BUS.register(this);
+        if (PlatHelper.getPhysicalSide().isClient()) {
+            MinecraftForge.EVENT_BUS.register(ClientEvents.class);
+        }
     }
 
     @SubscribeEvent(priority = EventPriority.HIGH)

@@ -1,0 +1,14 @@
+{
+	"parent": "supplementaries:block/double_cake/slice3_template",
+	"credit": "Made with Blockbench",
+	"textures": {
+		"side_up": "supplementaries:block/double_cake_side",
+		"top_up": "supplementaries:block/double_cake_top",
+		"inner": "supplementaries:block/double_cake_inner",
+		"bottom": "supplementaries:block/cake_bottom",
+		"top": "supplementaries:block/cake_top",
+		"particle": "supplementaries:block/cake_side",
+		"side": "supplementaries:block/cake_side"
+	}
+
+}

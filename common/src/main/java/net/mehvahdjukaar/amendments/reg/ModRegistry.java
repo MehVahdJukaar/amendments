@@ -8,7 +8,10 @@ import net.mehvahdjukaar.amendments.common.tile.*;
 import net.mehvahdjukaar.amendments.configs.CommonConfigs;
 import net.mehvahdjukaar.amendments.integration.CompatHandler;
 import net.mehvahdjukaar.amendments.integration.CompatObjects;
+import net.mehvahdjukaar.moonlight.api.fluids.SoftFluid;
+import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidRegistry;
 import net.mehvahdjukaar.moonlight.api.item.additional_placements.AdditionalItemPlacementsAPI;
+import net.mehvahdjukaar.moonlight.api.misc.DataObjectReference;
 import net.mehvahdjukaar.moonlight.api.misc.RegSupplier;
 import net.mehvahdjukaar.moonlight.api.misc.Registrator;
 import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
@@ -44,11 +47,15 @@ import static net.mehvahdjukaar.amendments.reg.ModConstants.*;
 
 public class ModRegistry {
 
+
     public static void init() {
         BlockSetAPI.registerBlockSetDefinition(CakeRegistry.INSTANCE);
         BlockSetAPI.addDynamicBlockRegistration(ModRegistry::registerDoubleCakes, CakeRegistry.CakeType.class);
 
     }
+
+    public static final DataObjectReference<SoftFluid> DYE_SOFT_FLUID = new DataObjectReference<>(res("dye"),
+            SoftFluidRegistry.KEY);
 
 
     //lilypad

@@ -1,4 +1,9 @@
 {
-  "block.carpeted.carpet_stairs": "Carpet Stairs",
-  "block.carpeted.carpet_slab": "Carpet Slab"
+  "block.amendments.carpet_stairs": "Carpet Stairs",
+  "block.amendments.carpet_slab": "Carpet Slab",
+  "block.amendments.liquid_cauldron": "Liquid Cauldron",
+  "block.amendments.wall_lantern": "Wall Lantern",
+  "item.minecraft.lingering_potion.effect.empty": "Lingering Mixed Potion",
+  "item.minecraft.splash_potion.effect.empty": "Splash Mixed Potion",
+  "item.minecraft.potion.effect.empty": "Mixed Potion"
 }

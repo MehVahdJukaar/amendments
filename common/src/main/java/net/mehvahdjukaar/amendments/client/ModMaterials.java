@@ -44,18 +44,4 @@ public class ModMaterials {
                     IdentityHashMap::new)));
 
 
-    private static final Cache<ResourceLocation, Material> CACHED_MATERIALS = CacheBuilder.newBuilder()
-            .expireAfterAccess(2, TimeUnit.MINUTES)
-            .build();
-
-    //cached materials
-    @Deprecated(forRemoval = true)
-    public static Material get(ResourceLocation bockTexture) {
-        try {
-            return CACHED_MATERIALS.get(bockTexture, () -> new Material(TextureAtlas.LOCATION_BLOCKS, bockTexture));
-        } catch (ExecutionException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
 }

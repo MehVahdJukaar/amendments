@@ -8,6 +8,7 @@ import net.mehvahdjukaar.moonlight.api.client.model.CustomBakedModel;
 import net.mehvahdjukaar.moonlight.api.client.model.ExtraModelData;
 import net.mehvahdjukaar.moonlight.api.client.util.VertexUtil;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluid;
+import net.mehvahdjukaar.moonlight.api.platform.ClientHelper;
 import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.BakedQuad;
@@ -50,9 +51,10 @@ public class CauldronBakedModel implements CustomBakedModel {
 
             SoftFluid fluid = extraModelData.get(LiquidCauldronBlockTile.FLUID);
             if (fluid != null && !fluid.isEmpty()) {
-                TextureAtlasSprite sprite = ModMaterials.get(fluid.getStillTexture()).sprite();
+                TextureAtlasSprite sprite = ClientHelper.getBlockMaterial(fluid.getStillTexture()).sprite();
                 var b = BakedQuadBuilder.create(sprite);
-                for (var q : VertexUtil.swapSprite(liquidQuads, sprite)) {
+                //TODO: change
+                for (var q : VertexUtil.wswapSprite(liquidQuads, sprite)) {
                     b.fromVanilla(q);
                     b.setDirection(q.getDirection());
                     b.lightEmission(fluid.getLuminosity());
