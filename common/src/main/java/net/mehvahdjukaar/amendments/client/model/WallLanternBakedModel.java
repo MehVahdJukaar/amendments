@@ -7,6 +7,7 @@ import net.mehvahdjukaar.moonlight.api.block.MimicBlock;
 import net.mehvahdjukaar.moonlight.api.client.model.CustomBakedModel;
 import net.mehvahdjukaar.moonlight.api.client.model.ExtraModelData;
 import net.mehvahdjukaar.moonlight.api.client.util.VertexUtil;
+import net.mehvahdjukaar.supplementaries.client.renderers.VertexUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.BlockModelShaper;
@@ -84,8 +85,8 @@ public class WallLanternBakedModel implements CustomBakedModel {
                     Matrix4f mat = new Matrix4f();
                     mat.translate(0,2/16f,0);
                     mat.translate(dir.step().mul(-2/16f));
-
-                    mimicQuads = VertexUtil.transformQuads(mimicQuads, mat);
+//TODO: fix
+                    //mimicQuads = VertexUtils.transformQuads(mimicQuads, mat);
                 }
             }
         } catch (Exception ignored) {

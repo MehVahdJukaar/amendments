@@ -1,6 +1,7 @@
 package net.mehvahdjukaar.amendments.common.block;
 
 import dev.architectury.injectables.annotations.PlatformOnly;
+import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMaps;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
@@ -58,7 +59,7 @@ import java.util.function.Supplier;
 public abstract class AbstractCandleSkullBlock extends AbstractCandleBlock implements EntityBlock, ILightable, IWashable {
 
     protected static final Int2ObjectMap<List<Vec3>> PARTICLE_OFFSETS = Util.make(() -> {
-        Int2ObjectMap<List<Vec3>> map = new Int2ObjectOpenHashMap<>();
+        Int2ObjectMap<List<Vec3>> map = new Int2ObjectArrayMap<>();
         map.defaultReturnValue(List.of());
         map.put(1, List.of(new Vec3(0.5D, 0.5 + 0.5D, 0.5D)));
         map.put(2, List.of(new Vec3(0.375D, 0.5 + 0.44D, 0.5D), new Vec3(0.625D, 0.5 + 0.5D, 0.44D)));

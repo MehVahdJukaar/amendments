@@ -4,6 +4,7 @@ import net.mehvahdjukaar.amendments.Amendments;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 
 public class ModTags {
@@ -25,7 +26,7 @@ public class ModTags {
     public static final TagKey<Item> BRICKS = itemTag("throwable_bricks");
     public static final TagKey<Item> ROPES = itemTag("ropes");
     public static final TagKey<Item> CHAINS = itemTag("chains");
-
+    public static final TagKey<Item> GOES_IN_LECTERN = itemTag("goes_in_lecterns");
 
     private static TagKey<Item> itemTag(String name) {
         return TagKey.create(Registries.ITEM, Amendments.res(name));

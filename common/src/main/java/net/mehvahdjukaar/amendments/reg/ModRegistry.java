@@ -2,6 +2,7 @@ package net.mehvahdjukaar.amendments.reg;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap;
 import net.mehvahdjukaar.amendments.common.CakeRegistry;
+import net.mehvahdjukaar.amendments.common.LecternEditMenu;
 import net.mehvahdjukaar.amendments.common.block.*;
 import net.mehvahdjukaar.amendments.common.entity.FallingLanternEntity;
 import net.mehvahdjukaar.amendments.common.tile.*;
@@ -25,6 +26,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
+import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
@@ -54,9 +56,15 @@ public class ModRegistry {
 
     }
 
+
+
     public static final DataObjectReference<SoftFluid> DYE_SOFT_FLUID = new DataObjectReference<>(res("dye"),
             SoftFluidRegistry.KEY);
 
+
+    public static final Supplier<MenuType<LecternEditMenu>> LECTERN_EDIT_MENU = RegHelper.registerMenuType(
+            res("lectern_edit"), LecternEditMenu::new
+    );
 
     //lilypad
     public static final Supplier<Block> WATERLILY_BLOCK = regBlock(WATER_LILY_NAME,

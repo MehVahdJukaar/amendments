@@ -12,6 +12,8 @@ import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -57,7 +59,7 @@ public class ModEvents {
         if (player.isSecondaryUseActive()) return InteractionResult.PASS;
         ItemStack stack = player.getItemInHand(hand);
         if (player.getAbilities().mayBuild && stack.getItem() instanceof BlockItem bi &&
-                bi.getBlock() instanceof CarpetBlock) {
+                (bi.getBlock() instanceof CarpetBlock || bi.getBlock().defaultBlockState().is(BlockTags.WOOL_CARPETS))) {
             BlockPos pos = hitResult.getBlockPos();
             BlockState state = level.getBlockState(pos);
             BlockState replacingBlock = getReplacingBlock(state);

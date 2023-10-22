@@ -54,7 +54,7 @@ public class CauldronBakedModel implements CustomBakedModel {
                 TextureAtlasSprite sprite = ClientHelper.getBlockMaterial(fluid.getStillTexture()).sprite();
                 var b = BakedQuadBuilder.create(sprite);
                 //TODO: change
-                for (var q : VertexUtil.wswapSprite(liquidQuads, sprite)) {
+                for (var q : VertexUtil.swapSprite(liquidQuads, sprite)) {
                     b.fromVanilla(q);
                     b.setDirection(q.getDirection());
                     b.lightEmission(fluid.getLuminosity());

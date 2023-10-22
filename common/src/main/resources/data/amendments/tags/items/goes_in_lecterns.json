@@ -1,0 +1,9 @@
+{
+  "replace": false,
+  "values": [
+    {"id":"mapatlases:map_atlas","required":false},
+    {"id":"minecraft:written_book","required":false},
+    {"id":"minecraft:writable_book","required":false}
+  ]
+}
+

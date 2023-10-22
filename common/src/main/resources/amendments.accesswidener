@@ -4,4 +4,31 @@ accessWidener   v2  named
 accessible method net/minecraft/client/renderer/blockentity/SignRenderer translateSignText (Lcom/mojang/blaze3d/vertex/PoseStack;ZLnet/minecraft/world/phys/Vec3;)V
 accessible method net/minecraft/client/renderer/blockentity/SignRenderer getTextOffset ()Lnet/minecraft/world/phys/Vec3;
 
+#book edit
+extendable method net/minecraft/client/gui/screens/inventory/BookEditScreen saveChanges (Z)V
+accessible field net/minecraft/client/gui/screens/inventory/BookEditScreen isModified Z
+extendable method net/minecraft/client/gui/screens/inventory/BookEditScreen updateLocalCopy (Z)V
+extendable method net/minecraft/client/gui/screens/inventory/BookEditScreen eraseEmptyTrailingPages ()V
+extendable method net/minecraft/client/gui/screens/inventory/BookEditScreen pageBack ()V
+extendable method net/minecraft/client/gui/screens/inventory/BookEditScreen pageForward ()V
+accessible field net/minecraft/client/gui/screens/inventory/BookEditScreen doneButton Lnet/minecraft/client/gui/components/Button;
+accessible field net/minecraft/client/gui/screens/inventory/BookEditScreen signButton Lnet/minecraft/client/gui/components/Button;
+accessible field net/minecraft/client/gui/screens/inventory/BookEditScreen finalizeButton Lnet/minecraft/client/gui/components/Button;
+extendable method net/minecraft/client/gui/screens/inventory/BookEditScreen updateButtonVisibility ()V
+extendable method net/minecraft/client/gui/screens/inventory/BookEditScreen titleKeyPressed (III)Z
+accessible field net/minecraft/client/gui/screens/inventory/BookEditScreen title Ljava/lang/String;
+accessible field net/minecraft/client/gui/screens/inventory/BookEditScreen isSigning Z
+extendable method net/minecraft/client/gui/screens/inventory/BookEditScreen clearDisplayCache ()V
+accessible method net/minecraft/client/gui/screens/inventory/BookEditScreen getCurrentPageText ()Ljava/lang/String;
+mutable field net/minecraft/client/gui/screens/inventory/BookEditScreen pageEdit Lnet/minecraft/client/gui/font/TextFieldHelper;
+accessible field net/minecraft/client/gui/screens/inventory/BookEditScreen pageEdit Lnet/minecraft/client/gui/font/TextFieldHelper;
+mutable field net/minecraft/client/gui/screens/inventory/BookEditScreen book Lnet/minecraft/world/item/ItemStack;
+accessible field net/minecraft/client/gui/screens/inventory/BookEditScreen book Lnet/minecraft/world/item/ItemStack;
+accessible field net/minecraft/client/gui/screens/inventory/BookEditScreen pages Ljava/util/List;
+accessible method net/minecraft/client/gui/screens/inventory/BookEditScreen setCurrentPageText (Ljava/lang/String;)V
+accessible method net/minecraft/client/gui/screens/inventory/BookEditScreen setClipboard (Ljava/lang/String;)V
+accessible method net/minecraft/client/gui/screens/inventory/BookEditScreen getClipboard ()Ljava/lang/String;
+# pot fabric
+
+accessible field net/minecraft/world/level/block/FlowerPotBlock POTTED_BY_CONTENT Ljava/util/Map;
 

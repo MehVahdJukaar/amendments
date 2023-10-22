@@ -7,6 +7,7 @@ import net.mehvahdjukaar.amendments.client.colors.BrewingStandColor;
 import net.mehvahdjukaar.amendments.client.colors.LilyBlockColor;
 import net.mehvahdjukaar.amendments.client.colors.MimicBlockColor;
 import net.mehvahdjukaar.amendments.client.colors.SoftFluidColor;
+import net.mehvahdjukaar.amendments.client.gui.LecternBookEditScreen;
 import net.mehvahdjukaar.amendments.client.model.*;
 import net.mehvahdjukaar.amendments.client.renderers.*;
 import net.mehvahdjukaar.amendments.integration.CompatObjects;
@@ -17,6 +18,9 @@ import net.mehvahdjukaar.moonlight.api.platform.ClientHelper;
 import net.mehvahdjukaar.moonlight.api.set.BlocksColorAPI;
 import net.mehvahdjukaar.moonlight.api.util.Utils;
 import net.mehvahdjukaar.supplementaries.client.renderers.color.FluidColor;
+import net.mehvahdjukaar.supplementaries.client.screens.PulleyBlockScreen;
+import net.mehvahdjukaar.supplementaries.reg.ModMenuTypes;
+import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.renderer.BiomeColors;
 import net.minecraft.client.renderer.RenderType;
@@ -76,7 +80,7 @@ public class AmendmentsClient {
         ClientHelper.registerRenderType(ModRegistry.LIQUID_CAULDRON.get(),RenderType.cutout(),RenderType.translucent());
         ClientHelper.registerRenderType(ModRegistry.HANGING_FLOWER_POT.get(), RenderType.cutout());
         ClientHelper.registerRenderType(ModRegistry.WALL_LANTERN.get(), RenderType.cutout());
-
+        MenuScreens.register(ModRegistry.LECTERN_EDIT_MENU.get(), LecternBookEditScreen::new);
 
     }
 

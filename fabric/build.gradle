@@ -36,10 +36,10 @@ dependencies {
         exclude module: "fabric-api"
     }
     modImplementation ("net.mehvahdjukaar:moonlight-fabric:${rootProject.moonlight_version}")
-    modImplementation ("net.mehvahdjukaar:supplementaries-fabric:${rootProject.supplementaries_version}")
-    modImplementation ("net.mehvahdjukaar:suppsquared-fabric:${rootProject.suppsquared_version}")
+    modCompileOnly ("net.mehvahdjukaar:supplementaries-fabric:${rootProject.supplementaries_version}")
+    modCompileOnly ("net.mehvahdjukaar:suppsquared-fabric:${rootProject.suppsquared_version}")
+    modCompileOnly("curse.maven:farmers-delight-fabric-482834:4111426")
 
-    modImplementation("curse.maven:farmers-delight-fabric-482834:4640640")
 
 }
 

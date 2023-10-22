@@ -1,6 +1,7 @@
 package net.mehvahdjukaar.amendments;
 
 import net.mehvahdjukaar.amendments.common.FlowerPotHandler;
+import net.mehvahdjukaar.amendments.common.network.ModNetwork;
 import net.mehvahdjukaar.amendments.configs.ClientConfigs;
 import net.mehvahdjukaar.amendments.configs.CommonConfigs;
 import net.mehvahdjukaar.amendments.integration.CompatHandler;
@@ -8,7 +9,6 @@ import net.mehvahdjukaar.amendments.integration.SuppCompat;
 import net.mehvahdjukaar.amendments.reg.ModEvents;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
-import net.mehvahdjukaar.moonlight.api.resources.textures.Palette;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
@@ -31,6 +31,7 @@ public class Amendments {
         CommonConfigs.init();
         ModRegistry.init();
         ModEvents.init();
+        ModNetwork.init();
 
         if (PlatHelper.getPhysicalSide().isClient()) {
             ClientConfigs.init();

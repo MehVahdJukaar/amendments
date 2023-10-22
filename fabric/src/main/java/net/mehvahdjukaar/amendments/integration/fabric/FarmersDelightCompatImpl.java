@@ -1,5 +1,7 @@
 package net.mehvahdjukaar.amendments.integration.fabric;
 
+import com.nhoryzon.mc.farmersdelight.registry.ItemsRegistry;
+import com.nhoryzon.mc.farmersdelight.registry.TagsRegistry;
 import net.mehvahdjukaar.amendments.common.CakeRegistry;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.minecraft.core.BlockPos;

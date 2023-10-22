@@ -1,7 +1,7 @@
 package net.mehvahdjukaar.amendments.common.block;
 
+import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.mehvahdjukaar.moonlight.api.util.math.MthUtils;
 import net.minecraft.Util;
@@ -22,7 +22,10 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Supplier;
 
 public class WallCandleSkullBlock extends AbstractCandleSkullBlock {
@@ -43,16 +46,16 @@ public class WallCandleSkullBlock extends AbstractCandleSkullBlock {
         return m;
     });
 
-    protected static final Map<Direction,Int2ObjectMap<List<Vec3>>> H_PARTICLE_OFFSETS = Util.make(()->{
-        Map<Direction,Int2ObjectMap<List<Vec3>>> temp = new Object2ObjectOpenHashMap<>(4);
-        for(Direction dir : Direction.Plane.HORIZONTAL){
-            temp.put(dir, new Int2ObjectOpenHashMap<>(4));
+    protected static final Map<Direction, Int2ObjectMap<List<Vec3>>> H_PARTICLE_OFFSETS = Util.make(() -> {
+        Map<Direction, Int2ObjectMap<List<Vec3>>> temp = new Object2ObjectOpenHashMap<>(4);
+        for (Direction dir : Direction.Plane.HORIZONTAL) {
+            temp.put(dir, new Int2ObjectArrayMap<>(4));
             PARTICLE_OFFSETS.forEach((key, value) -> {
                 List<Vec3> transformedList = new ArrayList<>();
                 for (Vec3 v : value) {
                     transformedList.add(MthUtils.rotateVec3(
-                                    new Vec3(v.x - 0.5, v.y,v.z+0.25 - 0.5), dir)
-                            .add(0.5,0,0.5));
+                                    new Vec3(v.x - 0.5, v.y, v.z + 0.25 - 0.5), dir)
+                            .add(0.5, 0, 0.5));
                 }
                 temp.get(dir).put(key, transformedList);
             });

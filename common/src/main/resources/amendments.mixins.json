@@ -9,6 +9,8 @@
     "HangingSignBlockEntityMixin",
     "JukeboxBlockEntityMixin",
     "JukeboxBlockMixin",
+    "LecternBlockEntityMixin",
+    "LecternBlockMixin",
     "VineMixin",
     "WallHangingSignBlockMixin",
     "WaterLilyMixin"
