@@ -5,53 +5,67 @@ import net.mehvahdjukaar.moonlight.api.set.BlocksColorAPI;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.inventory.tooltip.BelowOrAboveWidgetTooltipPositioner;
+import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipPositioner;
+import net.minecraft.client.gui.screens.inventory.tooltip.DefaultTooltipPositioner;
+import net.minecraft.client.gui.screens.inventory.tooltip.MenuTooltipPositioner;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.DyeColor;
 
+import java.util.Arrays;
 import java.util.Locale;
 
 public class InkButton extends AbstractWidget {
 
-    protected static final ResourceLocation[] textures = BlocksColorAPI.SORTED_COLORS.stream()
+    protected static final ResourceLocation[] textures = Arrays.stream(Ink.values())
             .map(t -> Amendments.res("textures/gui/ink_well/" +
                     t.name().toLowerCase(Locale.ROOT) + ".png")).toArray(ResourceLocation[]::new);
 
-    private int type = 3;
+    private int type = 0;
 
     public InkButton(Screen screen) {
         super(screen.width / 2 - 130, screen.height / 2 - 20, 52, 50, Component.empty());
+        this.setTooltip(Tooltip.create(Component.literal(getType().name().toLowerCase(Locale.ROOT))));
     }
     //TODO: custom sounds
 
-    public DyeColor getType() {
-        return BlocksColorAPI.SORTED_COLORS.get(type);
+    public Ink getType() {
+        return Ink.values()[type];
     }
 
     @Override
     public void onClick(double mouseX, double mouseY) {
-        this.type = ++type % DyeColor.values().length;
+        this.type = ++type % Ink.values().length;
+        this.setTooltip(Tooltip.create(Component.literal(getType().name().toLowerCase(Locale.ROOT))));
+    }
+
+    @Override
+    protected ClientTooltipPositioner createTooltipPositioner() {
+        return  DefaultTooltipPositioner.INSTANCE;
+
     }
 
     public ChatFormatting getChatFormatting() {
         return switch (this.getType()) {
-            case MAGENTA -> ChatFormatting.LIGHT_PURPLE;
-            case PURPLE -> ChatFormatting.DARK_PURPLE;
+            case LIGHT_PURPLE -> ChatFormatting.LIGHT_PURPLE;
+            case DARK_PURPLE -> ChatFormatting.DARK_PURPLE;
             case BLUE -> ChatFormatting.BLUE;
-            case CYAN -> ChatFormatting.DARK_AQUA;
-            case LIGHT_BLUE -> ChatFormatting.AQUA;
-            case LIGHT_GRAY -> ChatFormatting.GRAY;
-            case GRAY -> ChatFormatting.DARK_GRAY;
+            case DARK_AQUA -> ChatFormatting.DARK_AQUA;
+            case AQUA -> ChatFormatting.AQUA;
+            case GRAY -> ChatFormatting.GRAY;
+            case DARK_GRAY -> ChatFormatting.DARK_GRAY;
             case BLACK -> ChatFormatting.BLACK;
-            case LIME -> ChatFormatting.GREEN;
-            case GREEN -> ChatFormatting.DARK_GREEN;
+            case GREEN -> ChatFormatting.GREEN;
+            case DARK_GREEN -> ChatFormatting.DARK_GREEN;
             case YELLOW -> ChatFormatting.YELLOW;
-            case ORANGE -> ChatFormatting.GOLD;
-            case BROWN -> ChatFormatting.DARK_BLUE;
-            case RED -> ChatFormatting.DARK_RED;
-            case PINK -> ChatFormatting.RED;
+            case GOLD -> ChatFormatting.GOLD;
+            case DARK_BLUE -> ChatFormatting.DARK_BLUE;
+            case DARK_RED -> ChatFormatting.DARK_RED;
+            case RED -> ChatFormatting.RED;
             case WHITE -> ChatFormatting.WHITE;
         };
     }
@@ -65,5 +79,24 @@ public class InkButton extends AbstractWidget {
     @Override
     protected void updateWidgetNarration(NarrationElementOutput narrationElementOutput) {
 
+    }
+
+    public enum Ink{
+        BLACK,
+        DARK_RED,
+        RED,
+        LIGHT_PURPLE,
+        DARK_PURPLE,
+        DARK_BLUE,
+        BLUE,
+        DARK_AQUA,
+        AQUA,
+        DARK_GREEN,
+        GREEN,
+        YELLOW,
+        GOLD,
+        WHITE,
+        GRAY,
+        DARK_GRAY
     }
 }

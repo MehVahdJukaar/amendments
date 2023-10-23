@@ -18,14 +18,18 @@ public class StyledTextFieldHelper extends TextFieldHelper {
     public void removeFromCursor(int i, CursorStep cursorStep) {
         super.removeFromCursor(i, cursorStep);
         String msg = this.getMessageFn.get();
-        if(i<0){
+        if (i < 0) {
             int inc = -2;
             int p = getCursorPos() + inc;
             if (p > 0 && msg.charAt(p) == '§') {
                 removeFromCursor(inc, CursorStep.CHARACTER);
             }
-        }else{
-
+        } else {
+            int inc = 2;
+            int p = getCursorPos()-1 + inc - 1;
+            if (p < msg.length() - 1 && msg.charAt(p) == '§') {
+                removeFromCursor(inc, CursorStep.CHARACTER);
+            }
         }
     }
 
@@ -33,10 +37,18 @@ public class StyledTextFieldHelper extends TextFieldHelper {
     public void moveBy(int direction, boolean keepSelection, CursorStep cursorStep) {
         super.moveBy(direction, keepSelection, cursorStep);
         String msg = this.getMessageFn.get();
-        int inc = direction > 0 ? 2 : -2;
-        int p = getCursorPos() + inc;
-        if (p > 0 && p < msg.length() && msg.charAt(p) == '§') {
-            moveBy(inc, keepSelection, CursorStep.CHARACTER);
+        if (direction < 0) {
+            int inc = -2;
+            int p = getCursorPos() + inc;
+            if (p > 0 && msg.charAt(p) == '§') {
+                moveBy(inc, keepSelection, CursorStep.CHARACTER);
+            }
+        } else {
+            int inc = 2;
+            int p = getCursorPos()-1 + inc - 1;
+            if (p < msg.length() - 1 && msg.charAt(p) == '§') {
+                moveBy(inc, keepSelection, CursorStep.CHARACTER);
+            }
         }
     }
 
