@@ -16,7 +16,8 @@
     "WaterLilyMixin"
   ],
   "client": [
-    "BellRendererMixin"
+    "BellRendererMixin",
+    "DisplayCacheMixin"
   ],
   "plugin": "net.mehvahdjukaar.amendments.mixins.MixinPlugin",
   "injectors": {

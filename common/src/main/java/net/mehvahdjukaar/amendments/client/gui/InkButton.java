@@ -1,20 +1,17 @@
 package net.mehvahdjukaar.amendments.client.gui;
 
+import dev.architectury.injectables.annotations.PlatformOnly;
 import net.mehvahdjukaar.amendments.Amendments;
-import net.mehvahdjukaar.moonlight.api.set.BlocksColorAPI;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.gui.screens.inventory.tooltip.BelowOrAboveWidgetTooltipPositioner;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipPositioner;
 import net.minecraft.client.gui.screens.inventory.tooltip.DefaultTooltipPositioner;
-import net.minecraft.client.gui.screens.inventory.tooltip.MenuTooltipPositioner;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.DyeColor;
 
 import java.util.Arrays;
 import java.util.Locale;
@@ -33,7 +30,7 @@ public class InkButton extends AbstractWidget {
     }
 
     private void refreshTooltip() {
-        this.setTooltip(Tooltip.create(Component.translatable("gui.amendments.ink."+ getType().name().toLowerCase(Locale.ROOT))));
+        this.setTooltip(Tooltip.create(Component.translatable("gui.amendments.ink." + getType().name().toLowerCase(Locale.ROOT))));
     }
     //TODO: custom sounds
 
@@ -47,9 +44,21 @@ public class InkButton extends AbstractWidget {
         this.refreshTooltip();
     }
 
+    @PlatformOnly(PlatformOnly.FORGE)
+    public void onClick(double mouseX, double mouseY, int button) {
+        type += button == 0 ? 1 : -1;
+        this.type = type % QuillButton.QuillType.values().length;
+        this.refreshTooltip();
+    }
+
+    @Override
+    protected boolean isValidClickButton(int button) {
+        return super.isValidClickButton(button) || button == 1;
+    }
+
     @Override
     protected ClientTooltipPositioner createTooltipPositioner() {
-        return  DefaultTooltipPositioner.INSTANCE;
+        return DefaultTooltipPositioner.INSTANCE;
 
     }
 
@@ -85,7 +94,7 @@ public class InkButton extends AbstractWidget {
 
     }
 
-    public enum Ink{
+    public enum Ink {
         BLACK,
         DARK_RED,
         RED,

@@ -43,12 +43,15 @@ public class Amendments {
 
         //here we go. ideas part 2
 
+        //tripwire hook and lead
+        // spyglass zoom
         //banners as capes when in trinket
         //fix normal flower pot model
         //hanging signs banner pattersn and items
         //cobwebs animation string thngies
         //shiny particles on emeralds
 
+        //waterlogged hollow logs have bubbles wit magma quark
         //particle mod snow rain enderman teleport, smoke wind lightning
     }
 

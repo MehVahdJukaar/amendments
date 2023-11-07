@@ -1,5 +1,6 @@
 package net.mehvahdjukaar.amendments.client.gui;
 
+import dev.architectury.injectables.annotations.PlatformOnly;
 import net.mehvahdjukaar.amendments.Amendments;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
@@ -40,6 +41,18 @@ public class QuillButton extends AbstractWidget {
     public void onClick(double mouseX, double mouseY) {
         this.type = ++type % QuillType.values().length;
         this.refreshTooltip();
+    }
+
+    @PlatformOnly(PlatformOnly.FORGE)
+    public void onClick(double mouseX, double mouseY, int button) {
+        type += button==0 ? 1 : -1;
+        this.type = type % QuillType.values().length;
+        this.refreshTooltip();
+    }
+
+    @Override
+    protected boolean isValidClickButton(int button) {
+        return super.isValidClickButton(button) || button == 1;
     }
 
     @Override

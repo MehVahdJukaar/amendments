@@ -1,11 +1,12 @@
 package net.mehvahdjukaar.amendments.mixins;
 
-import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.amendments.common.tile.WaterloggedLilyBlockTile;
+import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.BoneMealItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.PlaceOnWaterBlockItem;
@@ -23,19 +24,20 @@ public abstract class WaterLilyMixin extends Block {
         super(properties);
     }
 
+    //TODO: use event?
     @Override
     public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
-        if(!player.mayBuild())return InteractionResult.PASS;
+        if (!player.mayBuild()) return InteractionResult.PASS;
         ItemStack stack = player.getItemInHand(hand);
         Item item = stack.getItem();
-        if(!stack.isEmpty() && !(item instanceof PlaceOnWaterBlockItem)){
+        if (!stack.isEmpty() && !(item instanceof PlaceOnWaterBlockItem) && !(stack.getItem() instanceof BoneMealItem)) {
             BlockPos below = pos.below();
-            if(level.getBlockState(below).is(Blocks.WATER)){
+            if (level.getBlockState(below).is(Blocks.WATER)) {
 
                 level.setBlock(pos, Blocks.AIR.defaultBlockState(), 2);
                 level.setBlock(below, ModRegistry.WATERLILY_BLOCK.get().defaultBlockState(), 2);
-                level.scheduleTick(below, ModRegistry.WATERLILY_BLOCK.get(),1);
-                if(level.getBlockEntity(below) instanceof WaterloggedLilyBlockTile te){
+                level.scheduleTick(below, ModRegistry.WATERLILY_BLOCK.get(), 1);
+                if (level.getBlockEntity(below) instanceof WaterloggedLilyBlockTile te) {
                     te.setHeldBlock(state);
                 }
             }

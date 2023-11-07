@@ -22,9 +22,10 @@ public class StyledTextFieldHelper extends TextFieldHelper {
     public void removeFromCursor(int i, CursorStep cursorStep) {
         String msg = this.getMessageFn.get();
         int cursorPos = getCursorPos();
+        boolean hasTokenAtCursor = cursorPos < msg.length() && msg.charAt(cursorPos) == TOKEN;
         if (i < 0) {
             int k = getIndexBeforeToken(i, msg, cursorPos);
-            if (cursorPos == msg.length() || msg.charAt(cursorPos) == TOKEN) {
+            if (cursorPos == msg.length() || hasTokenAtCursor) {
                 i = k;
             }
             super.removeFromCursor(i, cursorStep);
@@ -32,10 +33,11 @@ public class StyledTextFieldHelper extends TextFieldHelper {
                 moveBy(k + 1, false, cursorStep);
             }
         } else {
-            if (cursorPos < msg.length() && msg.charAt(cursorPos) == TOKEN) {
+            if (hasTokenAtCursor) {
                 moveBy(i, false, CursorStep.CHARACTER);
+                this.removeFromCursor(-1, cursorStep);
             }
-            this.removeFromCursor(-1, cursorStep);
+            else super.removeFromCursor(i,cursorStep);
         }
     }
 
@@ -73,11 +75,11 @@ public class StyledTextFieldHelper extends TextFieldHelper {
     public void insertStyledText(String text, ChatFormatting color, ChatFormatting style) {
         String currentMod = getModifier(color, style);
         String lastMod = getPreviousModifier();
-        if (!Objects.equals(currentMod, lastMod) && lastMod != null) {
+        if (!Objects.equals(currentMod, lastMod) ) {
             String s = currentMod + text;
             this.insertText(s);
             int j = this.getCursorPos();
-            if (this.getCursorPos() != this.getMessageFn.get().length()) {
+            if (this.getCursorPos() != this.getMessageFn.get().length() && lastMod != null) {
                 this.insertText(lastMod);
                 super.setCursorPos(j, false);
             }
@@ -111,7 +113,7 @@ public class StyledTextFieldHelper extends TextFieldHelper {
             if (text.charAt(i) == TOKEN) {
                 int start = i;
                 int end = i + 2;
-                if (i > 2 && text.charAt(i - 2) == TOKEN) {
+                if (i >= 2 && text.charAt(i - 2) == TOKEN) {
                     start -= 2;
                 }
                 if (end <= text.length()) return text.substring(start, end);
