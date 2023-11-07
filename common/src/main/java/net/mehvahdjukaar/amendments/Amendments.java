@@ -48,6 +48,8 @@ public class Amendments {
         //hanging signs banner pattersn and items
         //cobwebs animation string thngies
         //shiny particles on emeralds
+
+        //particle mod snow rain enderman teleport, smoke wind lightning
     }
 
     private static void setup() {

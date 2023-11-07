@@ -26,7 +26,10 @@ public class QuillButton extends AbstractWidget {
 
     public QuillButton(Screen screen) {
         super(screen.width / 2 + 70, screen.height / 2 - 100, 48, 144, Component.empty());
-        this.setTooltip(Tooltip.create(Component.literal(getType().name().toLowerCase(Locale.ROOT))));
+        this.refreshTooltip();
+    }
+    private void refreshTooltip() {
+        this.setTooltip(Tooltip.create(Component.translatable("gui.amendments.quill."+getType().name().toLowerCase(Locale.ROOT))));
     }
 
     public QuillType getType() {
@@ -36,7 +39,7 @@ public class QuillButton extends AbstractWidget {
     @Override
     public void onClick(double mouseX, double mouseY) {
         this.type = ++type % QuillType.values().length;
-        this.setTooltip(Tooltip.create(Component.literal(getType().name().toLowerCase(Locale.ROOT))));
+        this.refreshTooltip();
     }
 
     @Override

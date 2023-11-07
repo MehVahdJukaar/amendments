@@ -3,10 +3,10 @@ package net.mehvahdjukaar.amendments.client.gui;
 import net.mehvahdjukaar.amendments.common.LecternEditMenu;
 import net.mehvahdjukaar.amendments.common.network.ModNetwork;
 import net.mehvahdjukaar.amendments.common.network.SyncLecternBookMessage;
-import net.minecraft.ChatFormatting;
 import net.minecraft.SharedConstants;
+import net.minecraft.Util;
 import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.gui.font.TextFieldHelper;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.BookEditScreen;
 import net.minecraft.client.gui.screens.inventory.BookViewScreen;
 import net.minecraft.client.gui.screens.inventory.MenuAccess;
@@ -19,7 +19,6 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerListener;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -54,6 +53,7 @@ public class LecternBookEditScreen extends BookEditScreen implements MenuAccess<
     private Button takeBookButton;
     private QuillButton quill;
     private InkButton ink;
+    private StyledTextFieldHelper page;
 
     public LecternBookEditScreen(LecternEditMenu lecternMenu, Inventory inventory, Component component) {
         super(inventory.player, Items.WRITABLE_BOOK.getDefaultInstance(), InteractionHand.MAIN_HAND);
@@ -81,10 +81,10 @@ public class LecternBookEditScreen extends BookEditScreen implements MenuAccess<
 
     @Override
     protected void init() {
-        pageEdit = new StyledTextFieldHelper(this::getCurrentPageText,
+        this.page = new StyledTextFieldHelper(this::getCurrentPageText,
                 this::setCurrentPageText, this::getClipboard, this::setClipboard,
                 (string) -> string.length() < 1024 && this.font.wordWrapHeight(string, 114) <= 128);
-
+        this.pageEdit = page;
         this.menu.addSlotListener(this.listener);
         this.quill = this.addRenderableWidget(new QuillButton(this));
         this.ink = this.addRenderableWidget(new InkButton(this));
@@ -191,12 +191,7 @@ public class LecternBookEditScreen extends BookEditScreen implements MenuAccess<
     @Override
     public boolean charTyped(char codePoint, int modifiers) {
         if (!isSigning && SharedConstants.isAllowedChatCharacter(codePoint)) {
-            String currentMod = getCurrentMod();
-            String lastMod = getLasMod();
-            if (!Objects.equals(currentMod, lastMod)) {
-                this.pageEdit.insertText(currentMod);
-            }
-            this.pageEdit.insertText(Character.toString(codePoint));
+            this.page.insertStyledText(Character.toString(codePoint), ink.getChatFormatting(), quill.getChatFormatting());
             this.clearDisplayCache();
             return true;
         } else {
@@ -204,31 +199,5 @@ public class LecternBookEditScreen extends BookEditScreen implements MenuAccess<
         }
     }
 
-    @Nullable
-    private String getLasMod() {
-        String text = this.getCurrentPageText();
-        int cursorPos = this.pageEdit.getCursorPos() - 1;
-        for (int i = cursorPos; i >= 0 && i < text.length(); i--) {
-            if (text.charAt(i) == '§') {
-                int start = i;
-                int end = i + 2;
-                if (i > 2 && text.charAt(i - 2) == '§') {
-                    start -= 2;
-                }
-                return text.substring(start, end);
-            }
-        }
-        return null; // Special character not found in the specified range
-    }
 
-    @Nullable
-    public String getCurrentMod() {
-        String s = "§" + ink.getChatFormatting().getChar();
-        var v = quill.getChatFormatting();
-        if (v != ChatFormatting.RESET) {
-            s += "§" + v.getChar();
-        }
-        return s;
-
-    }
 }

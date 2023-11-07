@@ -29,7 +29,11 @@ public class InkButton extends AbstractWidget {
 
     public InkButton(Screen screen) {
         super(screen.width / 2 - 130, screen.height / 2 - 20, 52, 50, Component.empty());
-        this.setTooltip(Tooltip.create(Component.literal(getType().name().toLowerCase(Locale.ROOT))));
+        refreshTooltip();
+    }
+
+    private void refreshTooltip() {
+        this.setTooltip(Tooltip.create(Component.translatable("gui.amendments.ink."+ getType().name().toLowerCase(Locale.ROOT))));
     }
     //TODO: custom sounds
 
@@ -40,7 +44,7 @@ public class InkButton extends AbstractWidget {
     @Override
     public void onClick(double mouseX, double mouseY) {
         this.type = ++type % Ink.values().length;
-        this.setTooltip(Tooltip.create(Component.literal(getType().name().toLowerCase(Locale.ROOT))));
+        this.refreshTooltip();
     }
 
     @Override
