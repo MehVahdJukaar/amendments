@@ -56,7 +56,6 @@ public class Amendments {
     }
 
     private static void setup() {
-        ModEvents.setup();
     }
 
     private static void setupA() {

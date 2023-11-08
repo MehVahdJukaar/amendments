@@ -6,6 +6,7 @@
   "mixins": [
     "BellTileEntityMixin",
     "BrewingStandMixin",
+    "CauldronBlockMixin",
     "HangingSignBlockEntityMixin",
     "JukeboxBlockEntityMixin",
     "JukeboxBlockMixin",

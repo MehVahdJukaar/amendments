@@ -45,7 +45,7 @@ class DoubleCakeConversion implements ItemUseOnBlockOverride {
     @Nullable
     @Override
     public MutableComponent getTooltip() {
-        return Component.translatable("message.supplementaries.double_cake");
+        return Component.translatable("message.amendments.double_cake");
     }
 
     @Override

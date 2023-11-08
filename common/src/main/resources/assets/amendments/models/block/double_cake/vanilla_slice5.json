@@ -1,14 +1,14 @@
 {
-	"parent": "supplementaries:block/double_cake/slice5_template",
+	"parent": "amendments:block/double_cake/slice5_template",
 	"credit": "Made with Blockbench",
 	"textures": {
-		"side_up": "supplementaries:block/double_cake_side",
-		"top_up": "supplementaries:block/double_cake_top",
-		"inner": "supplementaries:block/double_cake_inner",
-		"bottom": "supplementaries:block/cake_bottom",
-		"top": "supplementaries:block/cake_top",
-		"particle": "supplementaries:block/cake_side",
-		"side": "supplementaries:block/cake_side"
+		"side_up": "amendments:block/double_cake_side",
+		"top_up": "amendments:block/double_cake_top",
+		"inner": "amendments:block/double_cake_inner",
+		"bottom": "amendments:block/cake_bottom",
+		"top": "amendments:block/cake_top",
+		"particle": "amendments:block/cake_side",
+		"side": "amendments:block/cake_side"
 	}
 
 }

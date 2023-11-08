@@ -3,6 +3,7 @@ package net.mehvahdjukaar.amendments.common.block;
 import net.mehvahdjukaar.amendments.common.tile.LiquidCauldronBlockTile;
 import net.mehvahdjukaar.amendments.reg.ModBlockProperties;
 import net.minecraft.core.BlockPos;
+import net.minecraft.tags.FluidTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -18,6 +19,7 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.Nullable;
 
@@ -51,7 +53,12 @@ public class LiquidCauldronBlock extends AbstractCauldronBlock implements Entity
 
     @Override
     protected boolean canReceiveStalactiteDrip(Fluid fluid) {
-        return false;
+        return fluid != Fluids.WATER && fluid != Fluids.LAVA;
+    }
+
+    @Override
+    protected void receiveStalactiteDrip(BlockState state, Level level, BlockPos pos, Fluid fluid) {
+        super.receiveStalactiteDrip(state, level, pos, fluid);
     }
 
     @Override

@@ -1,8 +1,0 @@
-{
-  "replace": false,
-  "values": [
-    {"id":"supplementaries:planter","required":false},
-    {"id":"betterlily:water_lily_pad","required":false}
-
-  ]
-}

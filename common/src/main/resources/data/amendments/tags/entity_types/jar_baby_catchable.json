@@ -1,8 +1,0 @@
-{
-  "replace": false,
-  "values": [
-    "minecraft:rabbit",
-    {"id":"bewitchment:toad","required":false}
-  ]
-}
-

@@ -1,4 +1,4 @@
 {
-	"loader": "supplementaries:wall_lantern",
-	"support": "supplementaries:block/wall_lantern_template"
+	"loader": "amendments:wall_lantern",
+	"support": "amendments:block/wall_lantern_template"
 }

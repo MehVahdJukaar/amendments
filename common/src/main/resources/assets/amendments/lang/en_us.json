@@ -27,5 +27,12 @@
   "gui.amendments.ink.green": "Green",
   "gui.amendments.ink.dark_green": "Dark Green",
   "gui.amendments.ink.dark_blue": "Dark Blue",
-  "gui.amendments.ink.blue": "Blue"
+  "gui.amendments.ink.blue": "Blue",
+  "message.supplementaries.double_cake": "Stackable in block form",
+  "block.supplementaries.double_cake": "Double Cake",
+  "message.supplementaries.hanging_pot": "Can be hung",
+  "block.supplementaries.wall_lantern": "Wall Lantern",
+  "message.supplementaries.wall_lantern": "Placeable on walls",
+  "block.supplementaries.hanging_flower_pot": "Hanging Flower Pot",
+  "block.supplementaries.directional_cake": "Directional Cake"
 }

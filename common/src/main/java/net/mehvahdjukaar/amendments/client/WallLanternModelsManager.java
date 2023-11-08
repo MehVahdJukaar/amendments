@@ -48,9 +48,9 @@ public class WallLanternModelsManager {
         for (Block l : POSSIBLE_LANTERNS) {
 
             ResourceLocation reg = Utils.getID(l);
-            String namespace = (reg.getNamespace().equals("minecraft") || reg.getNamespace().equals("supplementaries")) ? "" : reg.getNamespace() + "/";
-            String s = "block/custom_wall_lanterns/" + namespace + reg.getPath() ;
-            ResourceLocation fullPath = Amendments.res("models/"+s+ ".json");
+            String namespace = (reg.getNamespace().equals("minecraft") || reg.getNamespace().equals(Amendments.MOD_ID)) ? "" : reg.getNamespace() + "/";
+            String s = "block/custom_wall_lanterns/" + namespace + reg.getPath();
+            ResourceLocation fullPath = Amendments.res("models/" + s + ".json");
             var resource = manager.getResource(fullPath);
             if (resource.isPresent()) {
                 SPECIAL_LANTERN_MODELS.put(l, Amendments.res(s));
@@ -67,7 +67,7 @@ public class WallLanternModelsManager {
         for (Block l : POSSIBLE_LANTERNS) {
 
             ResourceLocation reg = Utils.getID(l);
-            String namespace = (reg.getNamespace().equals("minecraft") || reg.getNamespace().equals("amendments")) ? "" : reg.getNamespace() + "/";
+            String namespace = (reg.getNamespace().equals("minecraft") || reg.getNamespace().equals(Amendments.MOD_ID)) ? "" : reg.getNamespace() + "/";
             String s = "textures/block/wall_lanterns/" + namespace + reg.getPath() + ".json";
             ResourceLocation fullPath = Amendments.res(s);
             var resource = manager.getResource(fullPath);

@@ -1,9 +1,0 @@
-{
-  "replace": false,
-  "values": [
-    {"id":"minecraft:iron_golem","required":false},
-    {"id":"minecraft:slime","required":false},
-    {"id":"minecraft:magma_cube","required":false}
-  ]
-}
-
