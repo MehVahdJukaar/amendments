@@ -167,9 +167,9 @@ public class ClientResourceGenerator extends DynClientResourcesGenerator {
 
                     for (var m : cakeModels) {
                         addSimilarJsonResource(manager, m, s -> s
-                                        .replace("supplementaries:block/double_cake", "")
-                                        .replace("supplementaries:block/cake", "")
-                                        .replace("\"/", "\"supplementaries:block/double_cake/")
+                                        .replace("amendments:block/double_cake", "")
+                                        .replace("amendments:block/cake", "")
+                                        .replace("\"/", "\"amendments:block/double_cake/")
                                         .replace("_top", top.toString())
                                         .replace("_side", side.toString())
                                         .replace("_inner", inner.toString())

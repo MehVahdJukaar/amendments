@@ -27,8 +27,8 @@ public class AmendmentsPlatformStuffImpl {
         return newList;
     }
 
-    public static SoftFluidTank createTank(int capacity) {
-        return new SoftFluidTankImpl(capacity){
+    public static SoftFluidTank createCauldronLiquidTank() {
+        return new SoftFluidTankImpl(4){
 
             @Override
             public boolean canAddSoftFluid(SoftFluid s, int count, @Nullable CompoundTag nbt) {
@@ -50,5 +50,27 @@ public class AmendmentsPlatformStuffImpl {
         };
     }
 
+    public static SoftFluidTank createCauldronDyeTank() {
+        return new SoftFluidTankImpl(3){
+
+            @Override
+            public boolean canAddSoftFluid(SoftFluid s, int count, @Nullable CompoundTag nbt) {
+                if(s == BuiltInSoftFluids.POTION.get() || s == ModRegistry.DYE_SOFT_FLUID.get()) {
+                    return this.canAdd(count) && this.getFluid().equals(s); //discard nbt
+                }
+                else return super.canAddSoftFluid(s,count, nbt);
+            }
+
+            @Override
+            protected void addFluidOntoExisting(SoftFluid incoming, int amount, @Nullable CompoundTag tag) {
+                if(incoming == BuiltInSoftFluids.POTION.get() && !areNbtEquals(tag, this.nbt)) {
+                    LiquidCauldronBlockTile.mixPotions(this, incoming, amount, tag);
+                }else if(incoming == ModRegistry.DYE_SOFT_FLUID.get()){
+                    LiquidCauldronBlockTile.mixDye(this, incoming, amount, tag);
+                }
+                super.addFluidOntoExisting(incoming, amount, tag);
+            }
+        };
+    }
 
 }

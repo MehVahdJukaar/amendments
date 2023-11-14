@@ -1,4 +1,4 @@
-package net.mehvahdjukaar.amendments.common.item;
+package net.mehvahdjukaar.amendments.common.item.behaviors;
 
 import net.mehvahdjukaar.amendments.common.tile.CandleSkullBlockTile;
 import net.mehvahdjukaar.amendments.configs.CommonConfigs;

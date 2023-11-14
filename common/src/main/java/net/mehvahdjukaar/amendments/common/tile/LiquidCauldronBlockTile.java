@@ -1,7 +1,9 @@
 package net.mehvahdjukaar.amendments.common.tile;
 
 import net.mehvahdjukaar.amendments.AmendmentsPlatformStuff;
+import net.mehvahdjukaar.amendments.common.block.DyeCauldronBlock;
 import net.mehvahdjukaar.amendments.common.block.LiquidCauldronBlock;
+import net.mehvahdjukaar.amendments.common.item.DyeBottleItem;
 import net.mehvahdjukaar.amendments.reg.ModBlockProperties;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.moonlight.api.block.ISoftFluidTankProvider;
@@ -10,7 +12,7 @@ import net.mehvahdjukaar.moonlight.api.client.model.IExtraModelDataProvider;
 import net.mehvahdjukaar.moonlight.api.client.model.ModelDataKey;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluid;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidTank;
-import net.mehvahdjukaar.moonlight.api.util.PotionNBTHelper;
+import net.mehvahdjukaar.moonlight.api.set.BlocksColorAPI;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -19,6 +21,8 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.alchemy.PotionUtils;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -26,9 +30,10 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 
-import java.awt.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class LiquidCauldronBlockTile extends BlockEntity implements IExtraModelDataProvider, ISoftFluidTankProvider {
@@ -37,8 +42,14 @@ public class LiquidCauldronBlockTile extends BlockEntity implements IExtraModelD
     private final SoftFluidTank fluidHolder;
 
     public LiquidCauldronBlockTile(BlockPos blockPos, BlockState blockState) {
+        this(blockPos, blockState, blockState.getBlock() instanceof DyeCauldronBlock ?
+                AmendmentsPlatformStuff.createCauldronDyeTank() :
+                AmendmentsPlatformStuff.createCauldronLiquidTank());
+    }
+
+    public LiquidCauldronBlockTile(BlockPos blockPos, BlockState blockState, SoftFluidTank tank) {
         super(ModRegistry.LIQUID_CAULDRON_TILE.get(), blockPos, blockState);
-        this.fluidHolder = AmendmentsPlatformStuff.createTank(4);
+        this.fluidHolder = tank;
         //this.fluidHolder.setFluid(ModRegistry.DYE_SOFT_FLUID.get());
     }
 
@@ -167,6 +178,16 @@ public class LiquidCauldronBlockTile extends BlockEntity implements IExtraModelD
         if (this.fluidHolder.interactWithPlayer(player, hand, level, worldPosition)) {
             if (!level.isClientSide()) this.setChanged();
             return true;
+        }
+        SoftFluid fluid = this.fluidHolder.getFluid();
+        if (fluid == ModRegistry.DYE_SOFT_FLUID.get()) {
+            DyeColor dye = DyeBottleItem.getClosestDye(fluidHolder.getNbt().getInt(DyeBottleItem.COLOR_TAG));
+            ItemStack stack = player.getItemInHand(hand);
+            var recolored=BlocksColorAPI.changeColor(stack.getItem(), dye);
+
+            player.setItemInHand(hand,recolored.getDefaultInstance());
+            // try dye
+
         }
         return false;
     }

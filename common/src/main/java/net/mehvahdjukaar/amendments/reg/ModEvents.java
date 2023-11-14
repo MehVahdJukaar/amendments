@@ -1,8 +1,8 @@
 package net.mehvahdjukaar.amendments.reg;
 
-import net.mehvahdjukaar.amendments.common.block.LiquidCauldronBlock;
 import net.mehvahdjukaar.amendments.common.block.WallLanternBlock;
-import net.mehvahdjukaar.amendments.common.item.SkullCandleConversion;
+import net.mehvahdjukaar.amendments.common.item.DyeBottleItem;
+import net.mehvahdjukaar.amendments.common.item.behaviors.SkullCandleConversion;
 import net.mehvahdjukaar.amendments.common.item.placement.WallLanternPlacement;
 import net.mehvahdjukaar.amendments.common.tile.CarpetedBlockTile;
 import net.mehvahdjukaar.amendments.common.tile.LiquidCauldronBlockTile;
@@ -11,18 +11,18 @@ import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidRegistry;
 import net.mehvahdjukaar.moonlight.api.item.additional_placements.AdditionalItemPlacement;
 import net.mehvahdjukaar.moonlight.api.item.additional_placements.AdditionalItemPlacementsAPI;
 import net.mehvahdjukaar.moonlight.api.misc.EventCalled;
+import net.mehvahdjukaar.moonlight.api.util.Utils;
+import net.mehvahdjukaar.moonlight.core.Moonlight;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.tags.ItemTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.*;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
@@ -31,8 +31,6 @@ import net.minecraft.world.level.block.state.properties.SlabType;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Map;
 
 public class ModEvents {
 
@@ -58,23 +56,40 @@ public class ModEvents {
     @EventCalled
     public static InteractionResult onRightClickBlock(Player player, Level level, InteractionHand hand,
                                                       BlockHitResult hitResult) {
+        //TODO: move to interactions
         ItemStack stack = player.getItemInHand(hand);
         BlockPos pos = hitResult.getBlockPos();
         BlockState state = level.getBlockState(pos);
+        Item item = stack.getItem();
         if(state.is(Blocks.CAULDRON)){
-            var fluid = SoftFluidRegistry.fromItem(stack.getItem());
-            if(!fluid.isEmpty()){
+            var fluid = SoftFluidRegistry.fromItem(item);
+            if(!fluid.isEmpty() && !Utils.getID(fluid).getNamespace().equals(Moonlight.MOD_ID)){
                 level.setBlockAndUpdate(pos, ModRegistry.LIQUID_CAULDRON.get().defaultBlockState());
                 if(level.getBlockEntity(pos) instanceof LiquidCauldronBlockTile te){
                     te.handleInteraction(player, hand);
                     return InteractionResult.sidedSuccess(level.isClientSide);
                 }
             }
+
+
+            return InteractionResult.PASS;
+        }
+        if(state.is(Blocks.WATER_CAULDRON)){
+            if(item instanceof DyeItem dye){
+                level.setBlockAndUpdate(pos, ModRegistry.DYE_CAULDRON.get().defaultBlockState());
+                if(level.getBlockEntity(pos) instanceof LiquidCauldronBlockTile te){
+                    DyeBottleItem.fillCauldron(te.getSoftFluidTank(), dye.getDyeColor(),state.getValue(LayeredCauldronBlock.LEVEL));
+                }
+                stack.shrink(1);
+                //TODO: advancements and stats
+                return InteractionResult.sidedSuccess(level.isClientSide);
+
+            }
             return InteractionResult.PASS;
         }
 
         if (player.isSecondaryUseActive()) return InteractionResult.PASS;
-        if (player.getAbilities().mayBuild && stack.getItem() instanceof BlockItem bi &&
+        if (player.getAbilities().mayBuild && item instanceof BlockItem bi &&
                 (bi.getBlock() instanceof CarpetBlock || bi.getBlock().defaultBlockState().is(BlockTags.WOOL_CARPETS))) {
 
             BlockState replacingBlock = getReplacingBlock(state);

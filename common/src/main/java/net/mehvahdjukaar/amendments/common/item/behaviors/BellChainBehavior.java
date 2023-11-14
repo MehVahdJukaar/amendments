@@ -1,4 +1,4 @@
-package net.mehvahdjukaar.amendments.common.item;
+package net.mehvahdjukaar.amendments.common.item.behaviors;
 
 import net.mehvahdjukaar.amendments.configs.CommonConfigs;
 import net.mehvahdjukaar.amendments.integration.CompatHandler;

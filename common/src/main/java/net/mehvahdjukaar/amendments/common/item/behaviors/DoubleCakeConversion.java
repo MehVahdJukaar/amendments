@@ -1,4 +1,4 @@
-package net.mehvahdjukaar.amendments.common.item;
+package net.mehvahdjukaar.amendments.common.item.behaviors;
 
 import com.google.common.base.Suppliers;
 import net.mehvahdjukaar.amendments.common.CakeRegistry;

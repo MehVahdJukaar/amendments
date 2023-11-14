@@ -43,6 +43,8 @@ public class Amendments {
 
         //here we go. ideas part 2
 
+        //campfire hoppers
+        //make directional cake reg override
         //tripwire hook and lead
         // spyglass zoom
         //banners as capes when in trinket
@@ -56,6 +58,7 @@ public class Amendments {
     }
 
     private static void setup() {
+
     }
 
     private static void setupA() {

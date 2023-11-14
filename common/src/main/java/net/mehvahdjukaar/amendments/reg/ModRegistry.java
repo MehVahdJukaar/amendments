@@ -5,6 +5,7 @@ import net.mehvahdjukaar.amendments.common.CakeRegistry;
 import net.mehvahdjukaar.amendments.common.LecternEditMenu;
 import net.mehvahdjukaar.amendments.common.block.*;
 import net.mehvahdjukaar.amendments.common.entity.FallingLanternEntity;
+import net.mehvahdjukaar.amendments.common.item.DyeBottleItem;
 import net.mehvahdjukaar.amendments.common.tile.*;
 import net.mehvahdjukaar.amendments.configs.CommonConfigs;
 import net.mehvahdjukaar.amendments.integration.CompatHandler;
@@ -66,6 +67,10 @@ public class ModRegistry {
             res("lectern_edit"), LecternEditMenu::new
     );
 
+
+    public static final Supplier<Item> DYE_BOTTLE_ITEM = regItem(DYE_BOTTLE_NAME,
+            () -> new DyeBottleItem(new Item.Properties()));
+
     //lilypad
     public static final Supplier<Block> WATERLILY_BLOCK = regBlock(WATER_LILY_NAME,
             () -> new WaterloggedLilyBlock(BlockBehaviour.Properties.copy(Blocks.LILY_PAD).instabreak()
@@ -80,9 +85,12 @@ public class ModRegistry {
     public static final Supplier<Block> LIQUID_CAULDRON = regBlock(LIQUID_CAULDRON_NAME,
             () -> new LiquidCauldronBlock(BlockBehaviour.Properties.copy(Blocks.CAULDRON))
     );
+    public static final Supplier<Block> DYE_CAULDRON = regBlock(DYE_CAULDRON_NAME,
+            () -> new DyeCauldronBlock(BlockBehaviour.Properties.copy(Blocks.CAULDRON))
+    );
 
     public static final Supplier<BlockEntityType<LiquidCauldronBlockTile>> LIQUID_CAULDRON_TILE = regTile(LIQUID_CAULDRON_NAME,
-            () -> PlatHelper.newBlockEntityType(LiquidCauldronBlockTile::new, LIQUID_CAULDRON.get())
+            () -> PlatHelper.newBlockEntityType(LiquidCauldronBlockTile::new, LIQUID_CAULDRON.get(), DYE_CAULDRON.get())
     );
 
     //hanging flower pot
@@ -230,6 +238,10 @@ public class ModRegistry {
 
     public static <T extends Block> RegSupplier<T> regBlock(String name, Supplier<T> sup) {
         return RegHelper.registerBlock(res(name), sup);
+    }
+
+    public static <T extends Item> RegSupplier<T> regItem(String name, Supplier<T> sup) {
+        return RegHelper.registerItem(res(name), sup);
     }
 
     public static <T extends Entity> Supplier<EntityType<T>> regEntity(String name, Supplier<EntityType.Builder<T>> builder) {

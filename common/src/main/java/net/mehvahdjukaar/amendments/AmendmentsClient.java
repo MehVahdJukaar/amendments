@@ -10,6 +10,7 @@ import net.mehvahdjukaar.amendments.client.colors.SoftFluidColor;
 import net.mehvahdjukaar.amendments.client.gui.LecternBookEditScreen;
 import net.mehvahdjukaar.amendments.client.model.*;
 import net.mehvahdjukaar.amendments.client.renderers.*;
+import net.mehvahdjukaar.amendments.common.item.DyeBottleItem;
 import net.mehvahdjukaar.amendments.integration.CompatObjects;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.moonlight.api.client.model.NestedModelLoader;
@@ -25,20 +26,21 @@ import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.renderer.BiomeColors;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.FallingBlockRenderer;
+import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.resources.model.Material;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.datafix.fixes.CauldronRenameFix;
-import net.minecraft.world.item.DyeColor;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.RecordItem;
+import net.minecraft.world.item.*;
+import net.minecraft.world.item.alchemy.PotionUtils;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.CauldronBlock;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Supplier;
@@ -71,6 +73,7 @@ public class AmendmentsClient {
         ClientHelper.addModelLayerRegistration(AmendmentsClient::registerModelLayers);
         ClientHelper.addSpecialModelRegistration(AmendmentsClient::registerSpecialModels);
         ClientHelper.addEntityRenderersRegistration(AmendmentsClient::registerEntityRenderers);
+        ClientHelper.addItemColorsRegistration(AmendmentsClient::registerItemColors);
     }
 
 
@@ -85,6 +88,15 @@ public class AmendmentsClient {
         MenuScreens.register(ModRegistry.LECTERN_EDIT_MENU.get(), LecternBookEditScreen::new);
 
     }
+
+
+    @EventCalled
+    private static void registerItemColors(ClientHelper.ItemColorEvent event) {
+        event.register((itemStack, i) -> i > 0 ? -1 :
+                DyeBottleItem.getColor(itemStack), ModRegistry.DYE_BOTTLE_ITEM.get());
+
+    }
+
 
     @EventCalled
     private static void registerTileRenderers(ClientHelper.BlockEntityRendererEvent event) {

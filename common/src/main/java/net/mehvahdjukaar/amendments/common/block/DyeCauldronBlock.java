@@ -23,15 +23,14 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 
-public class LiquidCauldronBlock extends AbstractCauldronBlock implements EntityBlock {
-    public static final IntegerProperty LEVEL = ModBlockProperties.LEVEL_1_4;
+public class DyeCauldronBlock extends AbstractCauldronBlock implements EntityBlock {
+    public static final IntegerProperty LEVEL = ModBlockProperties.LEVEL_1_3;
     public static final IntegerProperty LIGHT_LEVEL = ModBlockProperties.LIGHT_LEVEL;
 
-    public LiquidCauldronBlock(Properties properties) {
+    public DyeCauldronBlock(Properties properties) {
         super(properties, Map.of());
         this.registerDefaultState(this.getStateDefinition().any()
                 .setValue(LEVEL, 1).setValue(LIGHT_LEVEL, 0));
-        //lingering pots can be consumed
     }
 
     @Override
