@@ -1,7 +1,9 @@
 package net.mehvahdjukaar.amendments.common.item;
 
+import com.google.common.collect.HashBiMap;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidTank;
+import net.mehvahdjukaar.moonlight.api.util.math.ColorUtils;
 import net.mehvahdjukaar.moonlight.api.util.math.colors.HSLColor;
 import net.mehvahdjukaar.moonlight.api.util.math.colors.RGBColor;
 import net.minecraft.ChatFormatting;
@@ -12,13 +14,22 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class DyeBottleItem extends Item {
 
     public static final String COLOR_TAG = "color";
+
+    protected static final HashBiMap<DyeColor,Integer> COLOR_TO_DIFFUSE = Arrays.stream(DyeColor.values())
+            .collect(Collectors.toMap(Function.identity(), color ->
+                    ColorUtils.pack(color.getTextureDiffuseColors()),
+                    (color, color2) -> color2, HashBiMap::create));
 
     public DyeBottleItem(Properties properties) {
         super(properties);
@@ -34,8 +45,14 @@ public class DyeBottleItem extends Item {
 
     public static void fillCauldron(SoftFluidTank tank, DyeColor color, int amount) {
         CompoundTag tag = new CompoundTag();
-        tag.putInt(COLOR_TAG, color.getFireworkColor());
+        tag.putInt(COLOR_TAG, getDyeInt(color));
         tank.tryAddingFluid(ModRegistry.DYE_SOFT_FLUID.get(), amount, tag);
+    }
+
+    @SuppressWarnings("ConstantConditions")
+    @NotNull
+    private static Integer getDyeInt(DyeColor color) {
+        return COLOR_TO_DIFFUSE.get(color);
     }
 
     public static DyeColor getClosestDye(int tintColor) {
@@ -43,7 +60,7 @@ public class DyeBottleItem extends Item {
         double minDist = Double.MAX_VALUE;
         DyeColor minColor = null;
         for (DyeColor dyeColor : DyeColor.values()) {
-            HSLColor c2 = new RGBColor(dyeColor.getFireworkColor()).asHSL();
+            HSLColor c2 = new RGBColor(getDyeInt(dyeColor)).asHSL();
             double dist = c2.distTo(color);
             if (dist < minDist) {
                 minDist = dist;
@@ -56,16 +73,15 @@ public class DyeBottleItem extends Item {
     @Override
     public ItemStack getDefaultInstance() {
         ItemStack stack = super.getDefaultInstance();
-        stack.getOrCreateTag().putInt(COLOR_TAG, DyeColor.RED.getFireworkColor());
+        stack.getOrCreateTag().putInt(COLOR_TAG, getDyeInt(DyeColor.RED));
         return stack;
     }
 
     @Override
     public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag isAdvanced) {
         CompoundTag tag = stack.getOrCreateTag();
-        tag.putInt(COLOR_TAG, DyeColor.RED.getFireworkColor());
         int col = tag.getInt(COLOR_TAG);
-        DyeColor color = DyeColor.byFireworkColor(col);
+        DyeColor color = COLOR_TO_DIFFUSE.inverse().get(col);
         if (color != null) {
             tooltipComponents.add(Component.translatable("item.amendments.dye_bottle." + color.getName()).withStyle(ChatFormatting.GRAY));
         } else {

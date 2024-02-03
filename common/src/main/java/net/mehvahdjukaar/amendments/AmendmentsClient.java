@@ -18,29 +18,25 @@ import net.mehvahdjukaar.moonlight.api.misc.EventCalled;
 import net.mehvahdjukaar.moonlight.api.platform.ClientHelper;
 import net.mehvahdjukaar.moonlight.api.set.BlocksColorAPI;
 import net.mehvahdjukaar.moonlight.api.util.Utils;
-import net.mehvahdjukaar.supplementaries.client.renderers.color.FluidColor;
-import net.mehvahdjukaar.supplementaries.client.screens.PulleyBlockScreen;
-import net.mehvahdjukaar.supplementaries.reg.ModMenuTypes;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.renderer.BiomeColors;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.FallingBlockRenderer;
-import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.resources.model.Material;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.datafix.fixes.CauldronRenameFix;
-import net.minecraft.world.item.*;
-import net.minecraft.world.item.alchemy.PotionUtils;
+import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.RecordItem;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.CauldronBlock;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Supplier;
@@ -81,8 +77,9 @@ public class AmendmentsClient {
     public static void setup() {
         ClientHelper.registerRenderType(ModRegistry.CARPET_STAIRS.get(), RenderType.translucent());
         ClientHelper.registerRenderType(ModRegistry.WATERLILY_BLOCK.get(), RenderType.cutout());
-        ClientHelper.registerRenderType(Blocks.WATER_CAULDRON,RenderType.cutout(),RenderType.translucent());
-        ClientHelper.registerRenderType(ModRegistry.LIQUID_CAULDRON.get(),RenderType.cutout(),RenderType.translucent());
+        ClientHelper.registerRenderType(Blocks.WATER_CAULDRON, RenderType.cutout(), RenderType.translucent());
+        ClientHelper.registerRenderType(ModRegistry.LIQUID_CAULDRON.get(), RenderType.cutout(), RenderType.translucent());
+        ClientHelper.registerRenderType(ModRegistry.DYE_CAULDRON.get(), RenderType.cutout(), RenderType.translucent());
         ClientHelper.registerRenderType(ModRegistry.HANGING_FLOWER_POT.get(), RenderType.cutout());
         ClientHelper.registerRenderType(ModRegistry.WALL_LANTERN.get(), RenderType.cutout());
         MenuScreens.register(ModRegistry.LECTERN_EDIT_MENU.get(), LecternBookEditScreen::new);
@@ -108,7 +105,7 @@ public class AmendmentsClient {
 
     }
 
-    private static void registerEntityRenderers(ClientHelper.EntityRendererEvent event){
+    private static void registerEntityRenderers(ClientHelper.EntityRendererEvent event) {
         event.register(ModRegistry.FALLING_LANTERN.get(), FallingBlockRenderer::new);
     }
 
@@ -139,10 +136,10 @@ public class AmendmentsClient {
     private static void registerBlockColors(ClientHelper.BlockColorEvent event) {
         event.register(new MimicBlockColor(), ModRegistry.CARPET_STAIRS.get(), ModRegistry.WALL_LANTERN.get());
         event.register(new LilyBlockColor(), ModRegistry.WATERLILY_BLOCK.get());
-        event.register((blockState, level, pos, i) -> i==1 && level != null && pos != null ? BiomeColors.getAverageWaterColor(level, pos) : -1,
+        event.register((blockState, level, pos, i) -> i == 1 && level != null && pos != null ? BiomeColors.getAverageWaterColor(level, pos) : -1,
                 Blocks.WATER_CAULDRON);
         event.register(new BrewingStandColor(), Blocks.BREWING_STAND);
-        event.register(new SoftFluidColor(), ModRegistry.LIQUID_CAULDRON.get());
+        event.register(new SoftFluidColor(), ModRegistry.DYE_CAULDRON.get(), ModRegistry.LIQUID_CAULDRON.get());
     }
 
 
@@ -184,4 +181,7 @@ public class AmendmentsClient {
     });
 
 
+    public static Level getClientLevel() {
+        return Minecraft.getInstance().level;
+    }
 }

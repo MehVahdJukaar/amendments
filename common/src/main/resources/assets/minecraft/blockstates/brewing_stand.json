@@ -2,12 +2,12 @@
   "multipart": [
     {
       "apply": {
-        "model": "amendments:block/brewing_stand"
+        "model": "minecraft:block/brewing_stand"
       }
     },
     {
       "apply": {
-        "model": "amendments:block/brewing_stand_bottle0"
+        "model": "minecraft:block/brewing_stand_bottle0"
       },
       "when": {
         "has_bottle_0": "true"
@@ -15,7 +15,7 @@
     },
     {
       "apply": {
-        "model": "amendments:block/brewing_stand_bottle1"
+        "model": "minecraft:block/brewing_stand_bottle1"
       },
       "when": {
         "has_bottle_1": "true"
@@ -23,7 +23,7 @@
     },
     {
       "apply": {
-        "model": "amendments:block/brewing_stand_bottle2"
+        "model": "minecraft:block/brewing_stand_bottle2"
       },
       "when": {
         "has_bottle_2": "true"
@@ -31,7 +31,7 @@
     },
     {
       "apply": {
-        "model": "amendments:block/brewing_stand_empty0"
+        "model": "minecraft:block/brewing_stand_empty0"
       },
       "when": {
         "has_bottle_0": "false"
@@ -39,7 +39,7 @@
     },
     {
       "apply": {
-        "model": "amendments:block/brewing_stand_empty1"
+        "model": "minecraft:block/brewing_stand_empty1"
       },
       "when": {
         "has_bottle_1": "false"
@@ -47,7 +47,7 @@
     },
     {
       "apply": {
-        "model": "amendments:block/brewing_stand_empty2"
+        "model": "minecraft:block/brewing_stand_empty2"
       },
       "when": {
         "has_bottle_2": "false"

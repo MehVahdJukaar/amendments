@@ -6,6 +6,8 @@ import net.mehvahdjukaar.moonlight.api.fluids.BuiltInSoftFluids;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluid;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidTank;
 import net.mehvahdjukaar.moonlight.api.fluids.forge.SoftFluidTankImpl;
+import net.mehvahdjukaar.moonlight.api.item.IThirdPersonAnimationProvider;
+import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.nbt.CompoundTag;
 import org.jetbrains.annotations.Nullable;
@@ -32,7 +34,7 @@ public class AmendmentsPlatformStuffImpl {
 
             @Override
             public boolean canAddSoftFluid(SoftFluid s, int count, @Nullable CompoundTag nbt) {
-                if(s == BuiltInSoftFluids.POTION.get() || s == ModRegistry.DYE_SOFT_FLUID.get()) {
+                if(s == BuiltInSoftFluids.POTION.get()) {
                     return this.canAdd(count) && this.getFluid().equals(s); //discard nbt
                 }
                 else return super.canAddSoftFluid(s,count, nbt);
@@ -42,8 +44,6 @@ public class AmendmentsPlatformStuffImpl {
             protected void addFluidOntoExisting(SoftFluid incoming, int amount, @Nullable CompoundTag tag) {
                 if(incoming == BuiltInSoftFluids.POTION.get() && !areNbtEquals(tag, this.nbt)) {
                     LiquidCauldronBlockTile.mixPotions(this, incoming, amount, tag);
-                }else if(incoming == ModRegistry.DYE_SOFT_FLUID.get()){
-                    LiquidCauldronBlockTile.mixDye(this, incoming, amount, tag);
                 }
                 super.addFluidOntoExisting(incoming, amount, tag);
             }
@@ -55,7 +55,7 @@ public class AmendmentsPlatformStuffImpl {
 
             @Override
             public boolean canAddSoftFluid(SoftFluid s, int count, @Nullable CompoundTag nbt) {
-                if(s == BuiltInSoftFluids.POTION.get() || s == ModRegistry.DYE_SOFT_FLUID.get()) {
+                if( s == ModRegistry.DYE_SOFT_FLUID.get()) {
                     return this.canAdd(count) && this.getFluid().equals(s); //discard nbt
                 }
                 else return super.canAddSoftFluid(s,count, nbt);
@@ -63,9 +63,7 @@ public class AmendmentsPlatformStuffImpl {
 
             @Override
             protected void addFluidOntoExisting(SoftFluid incoming, int amount, @Nullable CompoundTag tag) {
-                if(incoming == BuiltInSoftFluids.POTION.get() && !areNbtEquals(tag, this.nbt)) {
-                    LiquidCauldronBlockTile.mixPotions(this, incoming, amount, tag);
-                }else if(incoming == ModRegistry.DYE_SOFT_FLUID.get()){
+                if(incoming == ModRegistry.DYE_SOFT_FLUID.get()){
                     LiquidCauldronBlockTile.mixDye(this, incoming, amount, tag);
                 }
                 super.addFluidOntoExisting(incoming, amount, tag);

@@ -19,8 +19,8 @@ public class BrewingStandColor implements BlockColor {
         if (tint < 1 || tint > 3) return -1;
         if (world != null && pos != null) {
             BlockEntity te = world.getBlockEntity(pos);
-            if (te instanceof BrewingStandBlockEntity) {
-                ItemStack item = ((Container) te).getItem(tint-1);
+            if (te instanceof BrewingStandBlockEntity br) {
+                ItemStack item = br.getItem(tint-1);
                 if (!item.isEmpty()) {
                     //TODO: use dynamic pack
                     if (!ClientConfigs.COLORED_BREWING_STAND.get()) return 0xff3434;

@@ -43,10 +43,12 @@ public class Amendments {
 
         //here we go. ideas part 2
 
-        //campfire hoppers
+        //flower pot broken color and grass
+        //lantern holding animation
+        //campfire interact hoppers
         //make directional cake reg override
         //tripwire hook and lead
-        // spyglass zoom
+        // spyglass zoom hotkey
         //banners as capes when in trinket
         //fix normal flower pot model
         //hanging signs banner pattersn and items

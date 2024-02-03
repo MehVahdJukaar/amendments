@@ -1,5 +1,6 @@
 package net.mehvahdjukaar.amendments.common.tile;
 
+import net.mehvahdjukaar.amendments.AmendmentsClient;
 import net.mehvahdjukaar.amendments.AmendmentsPlatformStuff;
 import net.mehvahdjukaar.amendments.common.block.DyeCauldronBlock;
 import net.mehvahdjukaar.amendments.common.block.LiquidCauldronBlock;
@@ -12,28 +13,34 @@ import net.mehvahdjukaar.moonlight.api.client.model.IExtraModelDataProvider;
 import net.mehvahdjukaar.moonlight.api.client.model.ModelDataKey;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluid;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidTank;
+import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
 import net.mehvahdjukaar.moonlight.api.set.BlocksColorAPI;
+import net.mehvahdjukaar.moonlight.api.util.math.colors.RGBColor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.player.StackedContents;
+import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.item.DyeItem;
+import net.minecraft.world.item.DyeableArmorItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.alchemy.PotionUtils;
+import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class LiquidCauldronBlockTile extends BlockEntity implements IExtraModelDataProvider, ISoftFluidTankProvider {
@@ -107,7 +114,103 @@ public class LiquidCauldronBlockTile extends BlockEntity implements IExtraModelD
         }
     }
 
-    public static void mixDye(SoftFluidTank softFluidTank, SoftFluid incoming, int amount, CompoundTag tag) {
+    public static Level getMeALevel() {
+        MinecraftServer currentServer = PlatHelper.getCurrentServer();
+        if (currentServer == null) {
+            return AmendmentsClient.getClientLevel();
+        }
+        return currentServer.overworld();
+    }
+
+    public static void mixDye(SoftFluidTank softFluidTank, SoftFluid fluid, int amount, CompoundTag tag) {
+        CompoundTag nbt = softFluidTank.getNbt();
+        if (nbt == null) return;
+        //TODO: attempt mix with recipe first
+        DyeColor dye1 = DyeColor.RED;
+        Level level = getMeALevel();
+        var recipes = level.getRecipeManager().getRecipesFor(RecipeType.CRAFTING, new ColorContainer(dye1), level);
+        for (var r : recipes) {
+            ItemStack newDye = r.getResultItem(level.registryAccess());
+        }
+        int oldColor = nbt.getInt(DyeBottleItem.COLOR_TAG);
+        int newColor = tag.getInt(DyeBottleItem.COLOR_TAG);
+        int oldAmount = softFluidTank.getCount();
+        CompoundTag nt = new CompoundTag();
+        nt.putInt(DyeBottleItem.COLOR_TAG, new RGBColor(oldColor).asHCL()
+                .mixWith(new RGBColor(newColor).asHCL(), (float) amount / (oldAmount + amount))
+                .asRGB().toInt());
+        softFluidTank.setNbt(nt);
+    }
+
+    private static class ColorContainer implements CraftingContainer {
+
+        private final List<ItemStack> items = new ArrayList<>();
+
+        public ColorContainer(DyeColor... it) {
+            Arrays.stream(it).forEach(color -> items.add(DyeItem.byColor(color).getDefaultInstance()));
+        }
+
+        @Override
+        public int getContainerSize() {
+            return 4;
+        }
+
+        @Override
+        public boolean isEmpty() {
+            return false;
+        }
+
+        @Override
+        public ItemStack getItem(int slot) {
+            return items.get(slot);
+        }
+
+        @Override
+        public ItemStack removeItem(int slot, int amount) {
+            return null;
+        }
+
+        @Override
+        public ItemStack removeItemNoUpdate(int slot) {
+            return null;
+        }
+
+        @Override
+        public void setItem(int slot, ItemStack stack) {
+        }
+
+        @Override
+        public void setChanged() {
+        }
+
+        @Override
+        public boolean stillValid(Player player) {
+            return true;
+        }
+
+        @Override
+        public void clearContent() {
+        }
+
+        @Override
+        public int getWidth() {
+            return 2;
+        }
+
+        @Override
+        public int getHeight() {
+            return 2;
+        }
+
+        @Override
+        public List<ItemStack> getItems() {
+            return items;
+        }
+
+        @Override
+        public void fillStackedContents(StackedContents helper) {
+
+        }
     }
 
 
@@ -183,9 +286,9 @@ public class LiquidCauldronBlockTile extends BlockEntity implements IExtraModelD
         if (fluid == ModRegistry.DYE_SOFT_FLUID.get()) {
             DyeColor dye = DyeBottleItem.getClosestDye(fluidHolder.getNbt().getInt(DyeBottleItem.COLOR_TAG));
             ItemStack stack = player.getItemInHand(hand);
-            var recolored=BlocksColorAPI.changeColor(stack.getItem(), dye);
+            var recolored = BlocksColorAPI.changeColor(stack.getItem(), dye);
 
-            player.setItemInHand(hand,recolored.getDefaultInstance());
+            if (recolored != null) player.setItemInHand(hand, recolored.getDefaultInstance());
             // try dye
 
         }

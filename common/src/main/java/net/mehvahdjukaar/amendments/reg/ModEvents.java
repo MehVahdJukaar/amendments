@@ -1,5 +1,6 @@
 package net.mehvahdjukaar.amendments.reg;
 
+import net.mehvahdjukaar.amendments.common.block.DyeCauldronBlock;
 import net.mehvahdjukaar.amendments.common.block.WallLanternBlock;
 import net.mehvahdjukaar.amendments.common.item.DyeBottleItem;
 import net.mehvahdjukaar.amendments.common.item.behaviors.SkullCandleConversion;
@@ -64,7 +65,9 @@ public class ModEvents {
         if(state.is(Blocks.CAULDRON)){
             var fluid = SoftFluidRegistry.fromItem(item);
             if(!fluid.isEmpty() && !Utils.getID(fluid).getNamespace().equals(Moonlight.MOD_ID)){
-                level.setBlockAndUpdate(pos, ModRegistry.LIQUID_CAULDRON.get().defaultBlockState());
+                Block b = item == ModRegistry.DYE_BOTTLE_ITEM.get() ? ModRegistry.DYE_CAULDRON.get() :
+                        ModRegistry.LIQUID_CAULDRON.get();
+                level.setBlockAndUpdate(pos, b.defaultBlockState());
                 if(level.getBlockEntity(pos) instanceof LiquidCauldronBlockTile te){
                     te.handleInteraction(player, hand);
                     return InteractionResult.sidedSuccess(level.isClientSide);
@@ -76,9 +79,10 @@ public class ModEvents {
         }
         if(state.is(Blocks.WATER_CAULDRON)){
             if(item instanceof DyeItem dye){
-                level.setBlockAndUpdate(pos, ModRegistry.DYE_CAULDRON.get().defaultBlockState());
+                Integer l = state.getValue(LayeredCauldronBlock.LEVEL);
+                level.setBlockAndUpdate(pos, ModRegistry.DYE_CAULDRON.get().defaultBlockState().setValue(DyeCauldronBlock.LEVEL,l));
                 if(level.getBlockEntity(pos) instanceof LiquidCauldronBlockTile te){
-                    DyeBottleItem.fillCauldron(te.getSoftFluidTank(), dye.getDyeColor(),state.getValue(LayeredCauldronBlock.LEVEL));
+                    DyeBottleItem.fillCauldron(te.getSoftFluidTank(), dye.getDyeColor(), l);
                 }
                 stack.shrink(1);
                 //TODO: advancements and stats
