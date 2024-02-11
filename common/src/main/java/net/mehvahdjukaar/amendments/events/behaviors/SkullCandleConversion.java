@@ -1,4 +1,4 @@
-package net.mehvahdjukaar.amendments.common.item.behaviors;
+package net.mehvahdjukaar.amendments.events.behaviors;
 
 import net.mehvahdjukaar.amendments.common.tile.CandleSkullBlockTile;
 import net.mehvahdjukaar.amendments.configs.CommonConfigs;
@@ -74,7 +74,7 @@ public class SkullCandleConversion implements ItemUseOnBlockOverride {
                     } else b = ModRegistry.SKULL_CANDLE.get();
                 }
 
-                InteractionResult result = InteractEventOverrideHandler.replaceSimilarBlock(b,
+                InteractionResult result = InteractEvents.replaceSimilarBlock(b,
                         player, stack, pos, world, state, SoundType.CANDLE, SkullBlock.ROTATION, WallSkullBlock.FACING);
 
                 if (result.consumesAction()) {

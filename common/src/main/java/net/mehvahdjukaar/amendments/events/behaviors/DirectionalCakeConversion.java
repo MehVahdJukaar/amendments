@@ -1,4 +1,4 @@
-package net.mehvahdjukaar.amendments.common.item.behaviors;
+package net.mehvahdjukaar.amendments.events.behaviors;
 
 import net.mehvahdjukaar.amendments.configs.CommonConfigs;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;

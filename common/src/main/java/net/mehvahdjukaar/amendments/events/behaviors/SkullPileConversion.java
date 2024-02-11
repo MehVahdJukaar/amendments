@@ -1,4 +1,4 @@
-package net.mehvahdjukaar.amendments.common.item.behaviors;
+package net.mehvahdjukaar.amendments.events.behaviors;
 
 import net.mehvahdjukaar.amendments.common.tile.DoubleSkullBlockTile;
 import net.mehvahdjukaar.amendments.configs.CommonConfigs;
@@ -62,7 +62,7 @@ class SkullPileConversion implements ItemUseOnBlockOverride {
 
                 ItemStack copy = stack.copy();
 
-                InteractionResult result = InteractEventOverrideHandler.replaceSimilarBlock(ModRegistry.SKULL_PILE.get(),
+                InteractionResult result = InteractEvents.replaceSimilarBlock(ModRegistry.SKULL_PILE.get(),
                         player, stack, pos, world, state, null, SkullBlock.ROTATION);
 
                 if (result.consumesAction()) {

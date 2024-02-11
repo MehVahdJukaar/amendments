@@ -4,9 +4,10 @@ import net.mehvahdjukaar.amendments.common.FlowerPotHandler;
 import net.mehvahdjukaar.amendments.common.network.ModNetwork;
 import net.mehvahdjukaar.amendments.configs.ClientConfigs;
 import net.mehvahdjukaar.amendments.configs.CommonConfigs;
+import net.mehvahdjukaar.amendments.events.behaviors.InteractEvents;
 import net.mehvahdjukaar.amendments.integration.CompatHandler;
 import net.mehvahdjukaar.amendments.integration.SuppCompat;
-import net.mehvahdjukaar.amendments.reg.ModEvents;
+import net.mehvahdjukaar.amendments.events.behaviors.PlaceEventsHandler;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
 import net.minecraft.core.BlockPos;
@@ -30,16 +31,18 @@ public class Amendments {
     public static void init() {
         CommonConfigs.init();
         ModRegistry.init();
-        ModEvents.init();
+        PlaceEventsHandler.init();
         ModNetwork.init();
 
         if (PlatHelper.getPhysicalSide().isClient()) {
             ClientConfigs.init();
             AmendmentsClient.init();
         }
-        PlatHelper.addCommonSetupAsync(Amendments::setupA);
+        PlatHelper.addCommonSetupAsync(Amendments::setupAsync);
         PlatHelper.addCommonSetup(Amendments::setup);
 
+
+        //TODO: mixin for skull sound
 
         //here we go. ideas part 2
 
@@ -63,8 +66,9 @@ public class Amendments {
 
     }
 
-    private static void setupA() {
+    private static void setupAsync() {
         FlowerPotHandler.setup();
+        InteractEvents.registerOverrides();
     }
 
     public static boolean isSupportingCeiling(BlockPos pos, LevelReader world) {

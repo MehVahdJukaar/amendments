@@ -1,4 +1,4 @@
-package net.mehvahdjukaar.amendments.common.item.behaviors;
+package net.mehvahdjukaar.amendments.events.behaviors;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;

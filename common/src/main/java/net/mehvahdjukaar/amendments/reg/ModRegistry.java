@@ -6,6 +6,7 @@ import net.mehvahdjukaar.amendments.common.LecternEditMenu;
 import net.mehvahdjukaar.amendments.common.block.*;
 import net.mehvahdjukaar.amendments.common.entity.FallingLanternEntity;
 import net.mehvahdjukaar.amendments.common.item.DyeBottleItem;
+import net.mehvahdjukaar.amendments.common.item.placement.WallLanternPlacement;
 import net.mehvahdjukaar.amendments.common.tile.*;
 import net.mehvahdjukaar.amendments.configs.CommonConfigs;
 import net.mehvahdjukaar.amendments.integration.CompatHandler;
@@ -28,9 +29,11 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.BannerBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SoundType;
@@ -54,9 +57,31 @@ public class ModRegistry {
     public static void init() {
         BlockSetAPI.registerBlockSetDefinition(CakeRegistry.INSTANCE);
         BlockSetAPI.addDynamicBlockRegistration(ModRegistry::registerDoubleCakes, CakeRegistry.CakeType.class);
-
+        AdditionalItemPlacementsAPI.addRegistration(ModRegistry::registerAdditionalPlacements);
     }
 
+    public static void registerAdditionalPlacements(AdditionalItemPlacementsAPI.Event event) {
+        // this is specifically for things that place a new block in air. Stuff that modifiers blocks is in events.
+        // reason is more complicated than this
+        var wallLanternPlacement = new WallLanternPlacement();
+        for (var i : BuiltInRegistries.ITEM) {
+            if (i instanceof BlockItem bi) {
+                Block block = bi.getBlock();
+                if (CommonConfigs.WALL_LANTERN.get() && WallLanternBlock.isValidBlock(block)) {
+                    event.register(i, wallLanternPlacement);
+                }
+            }
+        }
+        if (CommonConfigs.HANGING_POT.get()) {
+            event.registerSimple(Items.FLOWER_POT, HANGING_FLOWER_POT.get());
+        }
+        if (CommonConfigs.CEILING_BANNERS.get()) {
+            for (var e : CEILING_BANNERS.entrySet()) {
+                event.registerSimple(BannerBlock.byColor(e.getKey()).asItem(), e.getValue().get());
+            }
+        }
+
+    }
 
 
     public static final DataObjectReference<SoftFluid> DYE_SOFT_FLUID = new DataObjectReference<>(res("dye"),
@@ -94,9 +119,8 @@ public class ModRegistry {
     );
 
     //hanging flower pot
-    public static final Supplier<Block> HANGING_FLOWER_POT = regPlaceableItem(HANGING_FLOWER_POT_NAME,
-            () -> new HangingFlowerPotBlock(BlockBehaviour.Properties.copy(Blocks.FLOWER_POT)),
-            () -> Items.FLOWER_POT, CommonConfigs.HANGING_POT);
+    public static final Supplier<Block> HANGING_FLOWER_POT = regBlock(HANGING_FLOWER_POT_NAME,
+            () -> new HangingFlowerPotBlock(BlockBehaviour.Properties.copy(Blocks.FLOWER_POT)));
 
     public static final Supplier<BlockEntityType<HangingFlowerPotBlockTile>> HANGING_FLOWER_POT_TILE = regTile(
             HANGING_FLOWER_POT_NAME, () -> PlatHelper.newBlockEntityType(
@@ -108,7 +132,7 @@ public class ModRegistry {
         Map<DyeColor, Supplier<Block>> map = new Object2ObjectLinkedOpenHashMap<>();
         for (DyeColor color : BlocksColorAPI.SORTED_COLORS) {
             String name = "ceiling_banner" + "_" + color.getName();
-            map.put(color, regPlaceableItem(name, () -> new CeilingBannerBlock(color,
+            map.put(color, regBlock(name, () -> new CeilingBannerBlock(color,
                             BlockBehaviour.Properties.of()
                                     .ignitedByLava()
                                     .forceSolidOn()
@@ -116,7 +140,7 @@ public class ModRegistry {
                                     .strength(1.0F)
                                     .noCollission()
                                     .sound(SoundType.WOOD)
-                    ), color.getName() + "_banner", CommonConfigs.CEILING_BANNERS
+                    )
             ));
         }
         return Collections.unmodifiableMap(map);
@@ -202,7 +226,8 @@ public class ModRegistry {
 
     public static final Map<CakeRegistry.CakeType, DoubleCakeBlock> DOUBLE_CAKES = new LinkedHashMap<>();
 
-    private static void registerDoubleCakes(Registrator<Block> event, Collection<CakeRegistry.CakeType> cakeTypes) {
+    private static void registerDoubleCakes
+            (Registrator<Block> event, Collection<CakeRegistry.CakeType> cakeTypes) {
         for (CakeRegistry.CakeType type : cakeTypes) {
 
             ResourceLocation id = res(type.getVariantId("double"));
@@ -213,26 +238,8 @@ public class ModRegistry {
         }
     }
 
-
-    public static <T extends Block> RegSupplier<T> regPlaceableItem(
-            String name, Supplier<T> sup,
-            String itemLocation, Supplier<Boolean> config) {
-        Supplier<Item> itemSupp = () -> BuiltInRegistries.ITEM.get(new ResourceLocation(itemLocation));
-        return regPlaceableItem(name, sup, itemSupp, config);
-    }
-
-    public static <T extends Block> RegSupplier<T> regPlaceableItem(
-            String name, Supplier<T> blockFactory,
-            Supplier<? extends Item> itemSupplier, Supplier<Boolean> config) {
-        var block = regBlock(name, blockFactory);
-        if(config.get()) {
-            AdditionalItemPlacementsAPI.registerSimple(block, itemSupplier);
-        }
-        return block;
-    }
-
-
-    public static <T extends BlockEntityType<E>, E extends BlockEntity> Supplier<T> regTile(String name, Supplier<T> sup) {
+    public static <T extends BlockEntityType<E>, E extends
+            BlockEntity> Supplier<T> regTile(String name, Supplier<T> sup) {
         return RegHelper.registerBlockEntityType(res(name), sup);
     }
 
@@ -244,7 +251,8 @@ public class ModRegistry {
         return RegHelper.registerItem(res(name), sup);
     }
 
-    public static <T extends Entity> Supplier<EntityType<T>> regEntity(String name, Supplier<EntityType.Builder<T>> builder) {
+    public static <T extends
+            Entity> Supplier<EntityType<T>> regEntity(String name, Supplier<EntityType.Builder<T>> builder) {
         return RegHelper.registerEntityType(res(name), () -> builder.get().build(name));
     }
 

@@ -14,7 +14,7 @@ import java.util.function.Supplier;
 
 public class CommonConfigs {
 
-    public static final Map<String, Supplier<Boolean>> FEATURE_TOGGLES = new HashMap<>();
+    private static final Map<String, Supplier<Boolean>> FEATURE_TOGGLES = new HashMap<>();
 
     public static final Supplier<Boolean> DOUBLE_CAKES;
     public static final Supplier<Boolean> DIRECTIONAL_CAKE;

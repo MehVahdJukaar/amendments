@@ -104,9 +104,11 @@ public abstract class LecternBlockEntityMixin extends BlockEntity implements Con
         return saveWithoutMetadata();
     }
 
+    //TODO: add back
+    /*
     @Nullable
     @Override
     public Packet<ClientGamePacketListener> getUpdatePacket() {
         return ClientboundBlockEntityDataPacket.create(this);
-    }
+    }*/
 }

@@ -1,8 +1,10 @@
 package net.mehvahdjukaar.amendments.forge;
 
 import net.mehvahdjukaar.amendments.Amendments;
-import net.mehvahdjukaar.amendments.reg.ModEvents;
+import net.mehvahdjukaar.amendments.events.ModEvents;
+import net.mehvahdjukaar.amendments.events.behaviors.PlaceEventsHandler;
 import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
+import net.mehvahdjukaar.supplementaries.common.events.ServerEvents;
 import net.minecraft.world.InteractionResult;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -26,14 +28,35 @@ public class AmendmentsForge {
         }
     }
 
-    @SubscribeEvent(priority = EventPriority.HIGH)
+    @SubscribeEvent(priority = EventPriority.LOW)
     public void onUseBlock(PlayerInteractEvent.RightClickBlock event) {
         if (!event.isCanceled()) {
             var ret = ModEvents.onRightClickBlock(event.getEntity(), event.getLevel(), event.getHand(), event.getHitVec());
             if (ret != InteractionResult.PASS) {
                 event.setCanceled(true);
                 event.setCancellationResult(ret);
+            }
+        }
+    }
 
+    @SubscribeEvent(priority = EventPriority.HIGH)
+    public void onUseBlockHP(PlayerInteractEvent.RightClickBlock event) {
+        if (!event.isCanceled()) {
+            var ret = ModEvents.onRightClickBlockHP(event.getEntity(), event.getLevel(), event.getHand(), event.getHitVec());
+            if (ret != InteractionResult.PASS) {
+                event.setCanceled(true);
+                event.setCancellationResult(ret);
+            }
+        }
+    }
+
+    @SubscribeEvent(priority = EventPriority.LOW)
+    public void onUseItem(PlayerInteractEvent.RightClickItem event) {
+        if (!event.isCanceled()) {
+            var ret = ModEvents.onUseItem(event.getEntity(), event.getLevel(), event.getHand());
+            if (ret.getResult() != InteractionResult.PASS) {
+                event.setCanceled(true);
+                event.setCancellationResult(ret.getResult());
             }
         }
     }

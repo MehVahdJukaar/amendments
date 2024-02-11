@@ -1,11 +1,10 @@
-package net.mehvahdjukaar.amendments.common.item.behaviors;
+package net.mehvahdjukaar.amendments.events.behaviors;
 
 import com.google.common.base.Suppliers;
 import net.mehvahdjukaar.amendments.common.CakeRegistry;
 import net.mehvahdjukaar.amendments.common.block.DirectionalCakeBlock;
 import net.mehvahdjukaar.amendments.common.block.DoubleCakeBlock;
 import net.mehvahdjukaar.amendments.configs.CommonConfigs;
-import net.mehvahdjukaar.supplementaries.common.events.overrides.InteractEventOverrideHandler;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -78,8 +77,10 @@ class DoubleCakeConversion implements ItemUseOnBlockOverride {
             }
 
             Block doubleCake = t.getBlockOfThis("double_cake");
-            return InteractEventOverrideHandler.replaceSimilarBlock(doubleCake,
-                    player, stack, pos, level, state, null, DoubleCakeBlock.FACING);
+            if (doubleCake != null) {
+                return InteractEvents.replaceSimilarBlock(doubleCake,
+                        player, stack, pos, level, state, null, DoubleCakeBlock.FACING);
+            }
         }
         return InteractionResult.PASS;
     }

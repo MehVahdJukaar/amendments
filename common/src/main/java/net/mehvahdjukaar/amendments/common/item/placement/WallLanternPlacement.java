@@ -7,9 +7,12 @@ import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.moonlight.api.item.additional_placements.AdditionalItemPlacement;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -19,19 +22,19 @@ import java.util.function.Supplier;
 
 public class WallLanternPlacement extends AdditionalItemPlacement {
 
-    public WallLanternPlacement(Block placeable) {
-        super(placeable);
+    public WallLanternPlacement() {
+        super(ModRegistry.WALL_LANTERN.get());
     }
 
     @Override
-    public BlockState overrideGetPlacementState(BlockPlaceContext pContext) {
+    public InteractionResult overridePlace(BlockPlaceContext pContext) {
         if (CompatHandler.TORCHSLAB) {
             double y = pContext.getClickLocation().y() % 1;
             if (y < 0.5) return null;
         }
-        BlockState state = ModRegistry.WALL_LANTERN.get().getStateForPlacement(pContext);
-        return (state != null && getBlockPlacer().canPlace(pContext,state)) ? state : null;
+        return super.overridePlace(pContext);
     }
+
 
     @Override
     public void appendHoverText(ItemStack pStack, Level pLevel, List<Component> pTooltipComponents, TooltipFlag pIsAdvanced) {

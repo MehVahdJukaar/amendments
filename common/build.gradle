@@ -15,6 +15,7 @@ dependencies {
     implementation("io.github.llamalad7:mixinextras-forge:${mixin_extras_version}")
     implementation(annotationProcessor("com.github.bawnorton.mixinsquared:mixinsquared-common:${mixin_squared_version}"))
     implementation("com.github.bawnorton.mixinsquared:mixinsquared-forge:${mixin_squared_version}")
+    modCompileOnly("curse.maven:flan-forge-493246:3902633")
 
     annotationProcessor 'net.fabricmc:sponge-mixin:0.12.5+mixin.0.8.5'
 
