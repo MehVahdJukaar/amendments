@@ -2,7 +2,6 @@ package net.mehvahdjukaar.amendments.events.behaviors;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
-import net.mehvahdjukaar.amendments.common.block.CarpetSlabBlock;
 import net.mehvahdjukaar.amendments.integration.CompatHandler;
 import net.mehvahdjukaar.amendments.integration.FlanCompat;
 import net.mehvahdjukaar.moonlight.api.util.Utils;
@@ -67,6 +66,8 @@ public class InteractEvents {
 
         blockUse.add(new DirectionalCakeConversion());
         blockUse.add(new BellChainBehavior());
+        blockUse.add(new CauldronConversion());
+        blockUse.add(new CauldronDyeWaterBehavior());
 
         itemUseOnBlockHP.add(new SkullCandleConversion());
 

@@ -7,11 +7,9 @@ import net.mehvahdjukaar.amendments.configs.CommonConfigs;
 import net.mehvahdjukaar.amendments.events.behaviors.InteractEvents;
 import net.mehvahdjukaar.amendments.integration.CompatHandler;
 import net.mehvahdjukaar.amendments.integration.SuppCompat;
-import net.mehvahdjukaar.amendments.events.behaviors.PlaceEventsHandler;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.moonlight.api.misc.EventCalled;
 import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
-import net.mehvahdjukaar.supplementaries.reg.ModSetup;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.RegistryAccess;
@@ -34,7 +32,6 @@ public class Amendments {
     public static void init() {
         CommonConfigs.init();
         ModRegistry.init();
-        PlaceEventsHandler.init();
         ModNetwork.init();
 
         if (PlatHelper.getPhysicalSide().isClient()) {

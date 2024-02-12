@@ -7,12 +7,14 @@ import net.mehvahdjukaar.moonlight.api.platform.configs.ConfigSpec;
 import net.mehvahdjukaar.moonlight.api.platform.configs.ConfigType;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Supplier;
 
 public class CommonConfigs {
+
+    public static final Supplier<Boolean> ENHANCED_CAULDRON;
+    public static final Supplier<Boolean> DYE_WATER;
+    //TODO: more cauldron configs
 
     public static final Supplier<Boolean> CARPETED_STAIRS;
     public static final Supplier<Boolean> CARPETED_SLABS;
@@ -44,6 +46,14 @@ public class CommonConfigs {
         ConfigBuilder builder = ConfigBuilder.create(Amendments.MOD_ID, ConfigType.COMMON);
 
         builder.push("features");
+
+        builder.push("enhanced_cauldron");
+        ENHANCED_CAULDRON = builder.comment("Enables enhanced cauldron")
+                .define("enabled", true);
+        DYE_WATER = builder.comment("Allows dying cauldron water bedrock style")
+                .define("water_dye", true);
+
+        builder.pop();
 
         builder.push("carpeted_blocks");
         CARPETED_STAIRS = builder.comment("Allows you to place carpets on stairs")
@@ -121,7 +131,7 @@ public class CommonConfigs {
     }
 
 
-    public static void init(){
+    public static void init() {
 
     }
 }
