@@ -49,13 +49,7 @@ public class CarpetStairBlock extends ModStairBlock implements EntityBlock {
     public CarpetStairBlock(Block block) {
         super(() -> block, Properties.copy(block)
                 .lightLevel(state -> Math.max(0, state.getValue(LIGHT_LEVEL))));
-        this.registerDefaultState(this.defaultBlockState().setValue(SOLID,true).setValue(LIGHT_LEVEL, 0));
-        BlockState s = this.defaultBlockState();
-        for(Direction d : Direction.Plane.HORIZONTAL){
-            if(Direction.from2DDataValue(getShapeIndex(s.setValue(FACING,d))%4) != d){
-                int aa = 1;
-            }
-        }
+        this.registerDefaultState(this.defaultBlockState().setValue(SOLID, true).setValue(LIGHT_LEVEL, 0));
     }
 
     protected static final VoxelShape BOTTOM_AABB = Block.box(0.0, 0.0, -1.0, 16.0, 9.0, 16.0);
@@ -73,11 +67,11 @@ public class CarpetStairBlock extends ModStairBlock implements EntityBlock {
     }
 
     private static VoxelShape makeStairShape(int bitfield) {
-        Direction dir = switch (bitfield%4){
-            default ->  Direction.NORTH;
-            case 1->Direction.EAST;
-            case 2->Direction.WEST;
-            case 3->Direction.SOUTH;
+        Direction dir = switch (bitfield % 4) {
+            default -> Direction.NORTH;
+            case 1 -> Direction.EAST;
+            case 2 -> Direction.WEST;
+            case 3 -> Direction.SOUTH;
         };
 
         VoxelShape voxelShape = MthUtils.rotateVoxelShape(BOTTOM_AABB, dir);
@@ -104,7 +98,7 @@ public class CarpetStairBlock extends ModStairBlock implements EntityBlock {
 
     @Override
     public VoxelShape getOcclusionShape(BlockState state, BlockGetter level, BlockPos pos) {
-        return state.getValue(SOLID) ? super.getOcclusionShape(state, level, pos) :Shapes.empty();
+        return state.getValue(SOLID) ? super.getOcclusionShape(state, level, pos) : Shapes.empty();
     }
 
     private static int getShapeIndex(BlockState state) {
@@ -114,7 +108,7 @@ public class CarpetStairBlock extends ModStairBlock implements EntityBlock {
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         super.createBlockStateDefinition(builder);
-        builder.add(LIGHT_LEVEL,SOLID);
+        builder.add(LIGHT_LEVEL, SOLID);
     }
 
     @Override
@@ -132,9 +126,9 @@ public class CarpetStairBlock extends ModStairBlock implements EntityBlock {
     //@Override
     @PlatformOnly(PlatformOnly.FORGE)
     public SoundType getSoundType(BlockState state, LevelReader world, BlockPos pos, Entity entity) {
-        if (world.getBlockEntity(pos) instanceof IBlockHolder tile) {
-            BlockState mimicState = tile.getHeldBlock();
-            if (!mimicState.isAir()) return mimicState.getSoundType();
+        if (world.getBlockEntity(pos) instanceof CarpetedBlockTile tile) {
+            SoundType mixed = tile.getSoundType();
+            if (mixed != null) return mixed;
         }
         return super.getSoundType(state);
     }
@@ -152,7 +146,7 @@ public class CarpetStairBlock extends ModStairBlock implements EntityBlock {
             BlockState mimicState = tile.getHeldBlock(1);
             if (!mimicState.isAir()) {
                 var sound = mimicState.getSoundType();
-                level.playSound(null,pos, sound.getBreakSound(), SoundSource.BLOCKS,
+                level.playSound(null, pos, sound.getBreakSound(), SoundSource.BLOCKS,
                         (sound.getVolume() + 1.0F) / 2.0F, soundType.getPitch() * 0.8F);
 
             }
@@ -180,7 +174,7 @@ public class CarpetStairBlock extends ModStairBlock implements EntityBlock {
     //@Override
     public ItemStack getCloneItemStack(BlockState state, HitResult target, BlockGetter level, BlockPos pos, Player player) {
         if (level.getBlockEntity(pos) instanceof CarpetedBlockTile tile) {
-            if(target instanceof BlockHitResult hs && hs.getDirection() == Direction.UP){
+            if (target instanceof BlockHitResult hs && hs.getDirection() == Direction.UP) {
                 return tile.getHeldBlock(1).getBlock().getCloneItemStack(level, pos, state);
             }
             BlockState mimic = tile.getHeldBlock();
@@ -241,5 +235,6 @@ public class CarpetStairBlock extends ModStairBlock implements EntityBlock {
 
         return newState;
     }
+
 
 }

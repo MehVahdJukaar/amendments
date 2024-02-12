@@ -75,7 +75,8 @@ public class AmendmentsClient {
 
     @EventCalled
     public static void setup() {
-        ClientHelper.registerRenderType(ModRegistry.CARPET_STAIRS.get(), RenderType.translucent());
+        ClientHelper.registerRenderType(ModRegistry.CARPET_STAIRS.get(), RenderType.cutout(), RenderType.solid(), RenderType.translucent());
+        ClientHelper.registerRenderType(ModRegistry.CARPET_SLAB.get(), RenderType.cutout(), RenderType.solid(), RenderType.translucent());
         ClientHelper.registerRenderType(ModRegistry.WATERLILY_BLOCK.get(), RenderType.cutout());
         ClientHelper.registerRenderType(Blocks.WATER_CAULDRON, RenderType.cutout(), RenderType.translucent());
         ClientHelper.registerRenderType(ModRegistry.LIQUID_CAULDRON.get(), RenderType.cutout(), RenderType.translucent());
@@ -134,8 +135,9 @@ public class AmendmentsClient {
 
     @EventCalled
     private static void registerBlockColors(ClientHelper.BlockColorEvent event) {
-        event.register(new MimicBlockColor(), ModRegistry.CARPET_STAIRS.get(), ModRegistry.WALL_LANTERN.get());
-        event.register(new LilyBlockColor(), ModRegistry.WATERLILY_BLOCK.get());
+        event.register(new MimicBlockColor(), ModRegistry.CARPET_STAIRS.get(),ModRegistry.CARPET_SLAB.get(),
+                ModRegistry.WALL_LANTERN.get(), ModRegistry.HANGING_FLOWER_POT.get(), ModRegistry.WATERLILY_BLOCK.get());
+        //event.register(new LilyBlockColor(), ModRegistry.WATERLILY_BLOCK.get());
         event.register((blockState, level, pos, i) -> i == 1 && level != null && pos != null ? BiomeColors.getAverageWaterColor(level, pos) : -1,
                 Blocks.WATER_CAULDRON);
         event.register(new BrewingStandColor(), Blocks.BREWING_STAND);

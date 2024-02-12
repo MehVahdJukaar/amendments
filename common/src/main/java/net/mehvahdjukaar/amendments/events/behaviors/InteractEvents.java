@@ -1,5 +1,8 @@
 package net.mehvahdjukaar.amendments.events.behaviors;
 
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
+import net.mehvahdjukaar.amendments.common.block.CarpetSlabBlock;
 import net.mehvahdjukaar.amendments.integration.CompatHandler;
 import net.mehvahdjukaar.amendments.integration.FlanCompat;
 import net.mehvahdjukaar.moonlight.api.util.Utils;
@@ -38,7 +41,7 @@ public class InteractEvents {
     //equivalent to Item.useOnBlock to the item itself (called before that though)
     //high priority
     private static final Map<Item, ItemUseOnBlockOverride> ITEM_USE_ON_BLOCK_HP = new IdentityHashMap<>();
-    private static final Map<Item, ItemUseOnBlockOverride> ITEM_USE_ON_BLOCK = new IdentityHashMap<>();
+    private static final Multimap<Item, ItemUseOnBlockOverride> ITEM_USE_ON_BLOCK = HashMultimap.create();
     //equivalent to Item.use
     private static final Map<Item, ItemUseOverride> ITEM_USE = new IdentityHashMap<>();
     //equivalent to Block.use
@@ -46,11 +49,16 @@ public class InteractEvents {
 
     //TODO: this was tied to the slingshot
     public static boolean hasBlockPlacementAssociated(Item item) {
-        var v = ITEM_USE_ON_BLOCK.getOrDefault(item, ITEM_USE_ON_BLOCK_HP.get(item));
-        return v != null && v.placesBlock();
+        return false;
     }
 
-    public static void registerOverrides() {
+    // call after tag so we can use tags
+    public static void setupOverrides() {
+        ITEM_USE.clear();
+        ITEM_USE_ON_BLOCK_HP.clear();
+        ITEM_USE_ON_BLOCK.clear();
+        BLOCK_USE.clear();
+
         //registers event stuff
         List<ItemUseOnBlockOverride> itemUseOnBlockHP = new ArrayList<>();
         List<ItemUseOnBlockOverride> itemUseOnBlock = new ArrayList<>();
@@ -64,6 +72,8 @@ public class InteractEvents {
 
         itemUseOnBlock.add(new SkullPileConversion());
         itemUseOnBlock.add(new DoubleCakeConversion());
+        itemUseOnBlock.add(new CarpetStairsConversion());
+        itemUseOnBlock.add(new CarpetSlabConversion());
 
 
         outer:
@@ -72,7 +82,6 @@ public class InteractEvents {
             for (ItemUseOnBlockOverride b : itemUseOnBlock) {
                 if (b.appliesToItem(i)) {
                     ITEM_USE_ON_BLOCK.put(i, b);
-                    continue outer;
                 }
             }
             for (ItemUseOverride b : itemUse) {
@@ -121,18 +130,19 @@ public class InteractEvents {
                                                       InteractionHand hand, BlockHitResult hit) {
         Item item = stack.getItem();
 
-        ItemUseOnBlockOverride override = ITEM_USE_ON_BLOCK.get(item);
-        if (override != null && override.isEnabled()) {
-            if (CompatHandler.FLAN && override.altersWorld() && !FlanCompat.canPlace(player, hit.getBlockPos())) {
-                return InteractionResult.PASS;
-            }
-            //TODO: merge
-            if (override.altersWorld() && !Utils.mayBuild(player, hit.getBlockPos())) {
-                return InteractionResult.PASS;
-            }
-            InteractionResult result = override.tryPerformingAction(level, player, hand, stack, hit);
-            if (result != InteractionResult.PASS) {
-                return result;
+        for(var override  : ITEM_USE_ON_BLOCK.get(item)) {
+            if (override != null && override.isEnabled()) {
+                if (CompatHandler.FLAN && override.altersWorld() && !FlanCompat.canPlace(player, hit.getBlockPos())) {
+                    return InteractionResult.PASS;
+                }
+                //TODO: merge
+                if (override.altersWorld() && !Utils.mayBuild(player, hit.getBlockPos())) {
+                    return InteractionResult.PASS;
+                }
+                InteractionResult result = override.tryPerformingAction(level, player, hand, stack, hit);
+                if (result != InteractionResult.PASS) {
+                    return result;
+                }
             }
         }
         //block overrides behaviors (work for any item)
@@ -171,18 +181,21 @@ public class InteractEvents {
         return InteractionResultHolder.pass(stack);
     }
 
+    //TODO: what is this for?
     public static void addOverrideTooltips(ItemStack itemStack, TooltipFlag tooltipFlag, List<Component> components) {
         Item item = itemStack.getItem();
 
-        ItemUseOnBlockOverride override = ITEM_USE_ON_BLOCK.get(item);
-        if (override != null && override.isEnabled()) {
-            MutableComponent t = override.getTooltip();
-            if (t != null) components.add(t.withStyle(ChatFormatting.DARK_GRAY).withStyle(ChatFormatting.ITALIC));
-        } else {
-            ItemUseOverride o = ITEM_USE.get(item);
-            if (o != null && o.isEnabled()) {
-                MutableComponent t = o.getTooltip();
+        for(var override : ITEM_USE_ON_BLOCK.get(item)) {
+            if (override != null && override.isEnabled()) {
+                MutableComponent t = override.getTooltip();
                 if (t != null) components.add(t.withStyle(ChatFormatting.DARK_GRAY).withStyle(ChatFormatting.ITALIC));
+            } else {
+                ItemUseOverride o = ITEM_USE.get(item);
+                if (o != null && o.isEnabled()) {
+                    MutableComponent t = o.getTooltip();
+                    if (t != null)
+                        components.add(t.withStyle(ChatFormatting.DARK_GRAY).withStyle(ChatFormatting.ITALIC));
+                }
             }
         }
     }
@@ -212,9 +225,7 @@ public class InteractEvents {
         if (player == null || !player.getAbilities().instabuild) {
             stack.shrink(1);
         }
-        // if (player instanceof ServerPlayer serverPlayer && !isRanged) {
-        //     CriteriaTriggers.ITEM_USED_ON_BLOCK.trigger(serverPlayer, pos, stack);
-        // }
+
         return InteractionResult.sidedSuccess(level.isClientSide);
     }
 

@@ -123,4 +123,9 @@ public class StyledTextFieldHelper extends TextFieldHelper {
     }
 
 
+    public void formatSelected(@Nullable ChatFormatting ink,@Nullable ChatFormatting quill) {
+        // get selected text
+        // remove all formatting
+        // place new formatting at the beginning
+    }
 }

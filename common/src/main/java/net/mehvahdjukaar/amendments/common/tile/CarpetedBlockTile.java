@@ -1,8 +1,9 @@
 package net.mehvahdjukaar.amendments.common.tile;
 
-import net.mehvahdjukaar.amendments.reg.ModRegistry;
+import com.mojang.datafixers.util.Pair;
 import net.mehvahdjukaar.amendments.common.block.CarpetSlabBlock;
 import net.mehvahdjukaar.amendments.common.block.CarpetStairBlock;
+import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.moonlight.api.block.MimicBlockTile;
 import net.mehvahdjukaar.moonlight.api.client.model.ExtraModelData;
 import net.mehvahdjukaar.moonlight.api.client.model.ModelDataKey;
@@ -15,13 +16,22 @@ import net.minecraft.nbt.NbtUtils;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class CarpetedBlockTile extends MimicBlockTile {
+
+    private static final Map<Pair<SoundType, SoundType>, SoundType> MIXED_SOUND_MAP = new HashMap<>();
 
     public static final ModelDataKey<BlockState> CARPET_KEY = new ModelDataKey<>(BlockState.class);
 
     private BlockState carpet = Blocks.WHITE_CARPET.defaultBlockState();
+    private SoundType soundType = null;
 
     public CarpetedBlockTile(BlockPos pos, BlockState state) {
         super(ModRegistry.CARPET_STAIRS_TILE.get(), pos, state);
@@ -39,7 +49,15 @@ public class CarpetedBlockTile extends MimicBlockTile {
     public void load(CompoundTag compound) {
         super.load(compound);
         HolderGetter<Block> holderGetter = this.level != null ? this.level.holderLookup(Registries.BLOCK) : BuiltInRegistries.BLOCK.asLookup();
-        this.carpet = NbtUtils.readBlockState(holderGetter, compound.getCompound("Carpet"));
+        this.setCarpet(NbtUtils.readBlockState(holderGetter, compound.getCompound("Carpet")));
+    }
+
+    public void setCarpet(BlockState carpet) {
+        setHeldBlock(carpet, 1);
+    }
+
+    public BlockState getCarpet() {
+        return getHeldBlock(1);
     }
 
     @Override
@@ -72,6 +90,7 @@ public class CarpetedBlockTile extends MimicBlockTile {
             this.carpet = state;
             return true;
         }
+        this.soundType = null;
         return false;
     }
 
@@ -82,6 +101,26 @@ public class CarpetedBlockTile extends MimicBlockTile {
 
     public int getLightValue() {
         return this.getHeldBlock().getLightEmission();
+    }
+
+
+    @Nullable
+    public SoundType getSoundType() {
+        if (soundType == null) {
+            BlockState stairs = this.getHeldBlock();
+            BlockState carpet = this.getHeldBlock(1);
+            if (!stairs.isAir() && !carpet.isAir()) {
+                SoundType stairsSound = stairs.getSoundType();
+                SoundType carpetSound = carpet.getSoundType();
+                soundType = MIXED_SOUND_MAP.computeIfAbsent(Pair.of(stairsSound, carpetSound), p -> new SoundType(
+                        1, 1, stairsSound.getBreakSound(), carpetSound.getStepSound(),
+                        stairsSound.getPlaceSound(), stairsSound.getHitSound(), carpetSound.getFallSound()));
+            }
+            // block is invalid. return default and try again
+            else return null;
+        }
+
+        return soundType;
     }
 }
 

@@ -14,7 +14,8 @@ import java.util.function.Supplier;
 
 public class CommonConfigs {
 
-    private static final Map<String, Supplier<Boolean>> FEATURE_TOGGLES = new HashMap<>();
+    public static final Supplier<Boolean> CARPETED_STAIRS;
+    public static final Supplier<Boolean> CARPETED_SLABS;
 
     public static final Supplier<Boolean> DOUBLE_CAKES;
     public static final Supplier<Boolean> DIRECTIONAL_CAKE;
@@ -43,6 +44,13 @@ public class CommonConfigs {
         ConfigBuilder builder = ConfigBuilder.create(Amendments.MOD_ID, ConfigType.COMMON);
 
         builder.push("features");
+
+        builder.push("carpeted_blocks");
+        CARPETED_STAIRS = builder.comment("Allows you to place carpets on stairs")
+                .define("carpeted_stairs", true);
+        CARPETED_SLABS = builder.comment("Allows you to place carpets on slabs")
+                .define("carpeted_slabs", true);
+        builder.pop();
 
         //double cake
         builder.push("cake");
@@ -112,21 +120,6 @@ public class CommonConfigs {
         CONFIG.loadFromFile();
     }
 
-
-
-    private static Supplier<Boolean> feature(ConfigBuilder builder) {
-        return feature(builder, "enabled", builder.currentCategory(), true);
-    }
-
-    private static Supplier<Boolean> feature(ConfigBuilder builder, String name) {
-        return feature(builder, name, name, true);
-    }
-
-    private static Supplier<Boolean> feature(ConfigBuilder builder, String name, String key, boolean value) {
-        var config = builder.gameRestart().define(name, value);
-        FEATURE_TOGGLES.put(key, config);
-        return config;
-    }
 
     public static void init(){
 

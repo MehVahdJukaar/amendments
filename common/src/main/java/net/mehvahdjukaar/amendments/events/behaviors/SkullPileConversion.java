@@ -48,7 +48,7 @@ class SkullPileConversion implements ItemUseOnBlockOverride {
     @Override
     public boolean appliesToItem(Item item) {
         return item instanceof BlockItem bi && bi.getBlock() instanceof SkullBlock skull &&
-                skull.getType() != SkullBlock.Types.DRAGON && (CompatHandler.SUPPLEMENTARIES && !SuppCompat.isEndermanHead(skull));
+                skull.getType() != SkullBlock.Types.DRAGON && !(CompatHandler.SUPPLEMENTARIES && SuppCompat.isEndermanHead(skull));
     }
 
     @Override

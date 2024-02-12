@@ -4,7 +4,6 @@ import net.mehvahdjukaar.amendments.Amendments;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 
 public class ModTags {
@@ -14,6 +13,8 @@ public class ModTags {
     public static final TagKey<Block> PALISADES = blockTag("palisades");
     public static final TagKey<Block> BEAMS = blockTag("beams");
     public static final TagKey<Block> WALLS = blockTag("walls");
+
+    public static final TagKey<Block> STAIRS_CARPETS = blockTag("stairs_carpets");
 
     public static final TagKey<Block> VINE_SUPPORT = blockTag("vine_support");
 

@@ -7,7 +7,6 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipPositioner;
 import net.minecraft.client.gui.screens.inventory.tooltip.DefaultTooltipPositioner;
 import net.minecraft.network.chat.Component;
@@ -22,11 +21,13 @@ public class InkButton extends AbstractWidget {
             .map(t -> Amendments.res("textures/gui/ink_well/" +
                     t.name().toLowerCase(Locale.ROOT) + ".png")).toArray(ResourceLocation[]::new);
 
+    private final Runnable clickCallback;
     private int type = 0;
 
-    public InkButton(Screen screen) {
+    public InkButton(LecternBookEditScreen screen) {
         super(screen.width / 2 - 130, screen.height / 2 - 20, 52, 50, Component.empty());
         refreshTooltip();
+        clickCallback = screen::onInkClicked;
     }
 
     private void refreshTooltip() {
@@ -42,13 +43,12 @@ public class InkButton extends AbstractWidget {
     public void onClick(double mouseX, double mouseY) {
         this.type = ++type % Ink.values().length;
         this.refreshTooltip();
+        this.clickCallback.run();
     }
 
     @PlatformOnly(PlatformOnly.FORGE)
     public void onClick(double mouseX, double mouseY, int button) {
-        type += button == 0 ? 1 : -1;
-        this.type = type % QuillButton.QuillType.values().length;
-        this.refreshTooltip();
+        this.onClick(mouseX, mouseY);
     }
 
     @Override

@@ -9,9 +9,12 @@ import net.mehvahdjukaar.amendments.integration.CompatHandler;
 import net.mehvahdjukaar.amendments.integration.SuppCompat;
 import net.mehvahdjukaar.amendments.events.behaviors.PlaceEventsHandler;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
+import net.mehvahdjukaar.moonlight.api.misc.EventCalled;
 import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
+import net.mehvahdjukaar.supplementaries.reg.ModSetup;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
@@ -45,7 +48,7 @@ public class Amendments {
         //TODO: mixin for skull sound
 
         //here we go. ideas part 2
-
+        //carpeted trapdoor
         //flower pot broken color and grass
         //lantern holding animation
         //campfire interact hoppers
@@ -68,7 +71,11 @@ public class Amendments {
 
     private static void setupAsync() {
         FlowerPotHandler.setup();
-        InteractEvents.registerOverrides();
+    }
+
+    @EventCalled
+    public static void onCommonTagUpdate(RegistryAccess registryAccess, boolean client) {
+        InteractEvents.setupOverrides();
     }
 
     public static boolean isSupportingCeiling(BlockPos pos, LevelReader world) {

@@ -6,6 +6,7 @@ import net.mehvahdjukaar.moonlight.api.client.model.CustomBakedModel;
 import net.mehvahdjukaar.moonlight.api.client.model.ExtraModelData;
 import net.mehvahdjukaar.moonlight.api.client.util.VertexUtil;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.BlockModelShaper;
 import net.minecraft.client.renderer.block.model.BakedQuad;
@@ -17,6 +18,7 @@ import net.minecraft.client.resources.model.ModelState;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,37 +33,45 @@ public class CarpetedBlockModel implements CustomBakedModel {
     }
 
     @Override
-    public List<BakedQuad> getBlockQuads(BlockState state, Direction side, RandomSource rand, RenderType renderType, ExtraModelData data) {
+    public List<BakedQuad> getBlockQuads(BlockState state, Direction side, RandomSource rand, @Nullable RenderType renderType, ExtraModelData data) {
         List<BakedQuad> quads = new ArrayList<>();
 
-        if (state != null) {
-            try {
-                BlockState mimic = data.get(CarpetedBlockTile.MIMIC_KEY);
+        if (state ==  null) return quads;
+        try {
+            BlockState mimic = data.get(CarpetedBlockTile.MIMIC_KEY);
 
-                if (mimic != null) {
+            if (mimic != null) {
+                RenderType originalRenderType = ItemBlockRenderTypes.getChunkRenderType(mimic);
+                // only when on its original render layer or when we do block breaking anim (null render type)
+                if(originalRenderType == renderType || renderType == null) {
                     BakedModel model = blockModelShaper.getBlockModel(mimic);
                     quads.addAll(model.getQuads(mimic, side, rand));
                 }
-            } catch (Exception ignored) {
             }
+        } catch (Exception ignored) {
+        }
 
+
+        if(renderType == RenderType.solid() || renderType == null) {
+            //only outputs carpet on the solid layer
             try {
                 BlockState carpetBlock = data.get(CarpetedBlockTile.CARPET_KEY);
-                var supportQuads = carpet.getQuads(state, side, rand);
+                List<BakedQuad> carpetQuads = carpet.getQuads(state, side, rand);
 
-                if (!supportQuads.isEmpty()) {
+                if (!carpetQuads.isEmpty()) {
                     if (carpetBlock != null) {
                         TextureAtlasSprite sprite = getCarpetSprite(carpetBlock);
                         if (sprite != null) {
-                            supportQuads = VertexUtil.swapSprite(supportQuads, sprite);
-                            supportQuads = AmendmentsPlatformStuff.removeAmbientOcclusion(supportQuads);
+                            carpetQuads = VertexUtil.swapSprite(carpetQuads, sprite);
+                            carpetQuads = AmendmentsPlatformStuff.removeAmbientOcclusion(carpetQuads);
                         }
                     }
-                    quads.addAll(supportQuads);
+                    quads.addAll(carpetQuads);
                 }
             } catch (Exception ignored) {
             }
         }
+
         return quads;
     }
 

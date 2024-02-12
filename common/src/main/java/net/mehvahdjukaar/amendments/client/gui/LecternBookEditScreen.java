@@ -4,9 +4,7 @@ import net.mehvahdjukaar.amendments.common.LecternEditMenu;
 import net.mehvahdjukaar.amendments.common.network.ModNetwork;
 import net.mehvahdjukaar.amendments.common.network.SyncLecternBookMessage;
 import net.minecraft.SharedConstants;
-import net.minecraft.Util;
 import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.BookEditScreen;
 import net.minecraft.client.gui.screens.inventory.BookViewScreen;
 import net.minecraft.client.gui.screens.inventory.MenuAccess;
@@ -200,4 +198,15 @@ public class LecternBookEditScreen extends BookEditScreen implements MenuAccess<
     }
 
 
+    public void onInkClicked() {
+        if (this.page.isSelecting()) {
+            this.page.formatSelected(ink.getChatFormatting(), null);
+        }
+    }
+
+    public void onQuillClicked() {
+        if (this.page.isSelecting()) {
+            this.page.formatSelected(null, quill.getChatFormatting());
+        }
+    }
 }

@@ -47,7 +47,7 @@ public class CarpetSlabBlock extends SlabBlock implements EntityBlock {
     public CarpetSlabBlock(Block block) {
         super(Properties.copy(block)
                 .lightLevel(state -> Math.max(0, state.getValue(LIGHT_LEVEL))));
-        this.registerDefaultState(this.defaultBlockState().setValue(SOLID,true).setValue(LIGHT_LEVEL, 0));
+        this.registerDefaultState(this.defaultBlockState().setValue(SOLID, true).setValue(LIGHT_LEVEL, 0));
     }
 
 
@@ -68,7 +68,7 @@ public class CarpetSlabBlock extends SlabBlock implements EntityBlock {
             BlockState mimicState = tile.getHeldBlock(1);
             if (!mimicState.isAir()) {
                 var sound = mimicState.getSoundType();
-                level.playSound(null,pos, sound.getBreakSound(), SoundSource.BLOCKS,
+                level.playSound(null, pos, sound.getBreakSound(), SoundSource.BLOCKS,
                         (sound.getVolume() + 1.0F) / 2.0F, soundType.getPitch() * 0.8F);
 
             }
@@ -79,7 +79,7 @@ public class CarpetSlabBlock extends SlabBlock implements EntityBlock {
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         super.createBlockStateDefinition(builder);
-        builder.add(LIGHT_LEVEL,SOLID);
+        builder.add(LIGHT_LEVEL, SOLID);
     }
 
     @Override
@@ -97,9 +97,9 @@ public class CarpetSlabBlock extends SlabBlock implements EntityBlock {
     //@Override
     @PlatformOnly(PlatformOnly.FORGE)
     public SoundType getSoundType(BlockState state, LevelReader world, BlockPos pos, Entity entity) {
-        if (world.getBlockEntity(pos) instanceof IBlockHolder tile) {
-            BlockState mimicState = tile.getHeldBlock();
-            if (!mimicState.isAir()) return mimicState.getSoundType();
+        if (world.getBlockEntity(pos) instanceof CarpetedBlockTile tile) {
+            SoundType mixed = tile.getSoundType();
+            if (mixed != null) return mixed;
         }
         return super.getSoundType(state);
     }
@@ -126,7 +126,7 @@ public class CarpetSlabBlock extends SlabBlock implements EntityBlock {
     //@Override
     public ItemStack getCloneItemStack(BlockState state, HitResult target, BlockGetter level, BlockPos pos, Player player) {
         if (level.getBlockEntity(pos) instanceof CarpetedBlockTile tile) {
-            if(target instanceof BlockHitResult hs && hs.getDirection() == Direction.UP){
+            if (target instanceof BlockHitResult hs && hs.getDirection() == Direction.UP) {
                 return tile.getHeldBlock(1).getBlock().getCloneItemStack(level, pos, state);
             }
             BlockState mimic = tile.getHeldBlock();

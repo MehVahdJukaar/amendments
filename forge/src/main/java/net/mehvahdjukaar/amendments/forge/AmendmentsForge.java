@@ -3,10 +3,14 @@ package net.mehvahdjukaar.amendments.forge;
 import net.mehvahdjukaar.amendments.Amendments;
 import net.mehvahdjukaar.amendments.events.ModEvents;
 import net.mehvahdjukaar.amendments.events.behaviors.PlaceEventsHandler;
+import net.mehvahdjukaar.moonlight.api.misc.EventCalled;
 import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
 import net.mehvahdjukaar.supplementaries.common.events.ServerEvents;
+import net.mehvahdjukaar.supplementaries.reg.ModSetup;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.world.InteractionResult;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.TagsUpdatedEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -59,5 +63,11 @@ public class AmendmentsForge {
                 event.setCancellationResult(ret.getResult());
             }
         }
+    }
+
+    @SubscribeEvent
+    public void onTagUpdate(TagsUpdatedEvent event) {
+        Amendments.onCommonTagUpdate(event.getRegistryAccess(),
+                event.getUpdateCause() == TagsUpdatedEvent.UpdateCause.CLIENT_PACKET_RECEIVED);
     }
 }
