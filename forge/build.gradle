@@ -112,7 +112,8 @@ dependencies {
     annotationProcessor 'net.fabricmc:sponge-mixin:0.12.5+mixin.0.8.5'
 
     modImplementation ("net.mehvahdjukaar:moonlight-forge:${rootProject.moonlight_version}")
-    modCompileOnly ("net.mehvahdjukaar:supplementaries-forge:${rootProject.supplementaries_version}")
+    //modImplementation ("net.mehvahdjukaar:supplementaries-forge:${rootProject.supplementaries_version}")
+    modImplementation("curse.maven:supplementaries-412082:5097848")
     modCompileOnly ("net.mehvahdjukaar:suppsquared-forge:${rootProject.suppsquared_version}")
 
     modCompileOnly("curse.maven:farmers-delight-398521:4679319")

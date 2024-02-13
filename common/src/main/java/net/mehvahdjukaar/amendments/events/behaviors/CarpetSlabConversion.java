@@ -16,7 +16,7 @@ import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 
-public class CarpetSlabConversion implements ItemUseOnBlockOverride {
+public class CarpetSlabConversion implements ItemUseOnBlock {
 
     @Override
     public boolean altersWorld() {

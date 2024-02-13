@@ -1,7 +1,6 @@
 package net.mehvahdjukaar.amendments.mixins;
 
 import net.mehvahdjukaar.amendments.common.IBellConnections;
-import net.mehvahdjukaar.amendments.configs.CommonConfigs;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
@@ -17,7 +16,7 @@ import org.spongepowered.asm.mixin.Unique;
 public abstract class BellTileEntityMixin extends BlockEntity implements IBellConnections {
 
     @Unique
-    public BellConnection connection = BellConnection.NONE;
+    public BellConnection amendments$connection = BellConnection.NONE;
 
     protected BellTileEntityMixin(BlockEntityType<?> pType, BlockPos pWorldPosition, BlockState pBlockState) {
         super(pType, pWorldPosition, pBlockState);
@@ -25,19 +24,19 @@ public abstract class BellTileEntityMixin extends BlockEntity implements IBellCo
 
     @Override
     public BellConnection amendments$getConnected() {
-        return connection;
+        return amendments$connection;
     }
 
     @Override
     public void amendments$setConnected(BellConnection con) {
-        this.connection = con;
+        this.amendments$connection = con;
     }
 
     @Override
     public void saveAdditional(CompoundTag compound) {
         super.saveAdditional(compound);
-        if (this.connection != null) {
-            compound.putInt("Connection", this.connection.ordinal());
+        if (this.amendments$connection != null) {
+            compound.putInt("Connection", this.amendments$connection.ordinal());
         }
     }
 
@@ -45,8 +44,8 @@ public abstract class BellTileEntityMixin extends BlockEntity implements IBellCo
     public void load(CompoundTag compound) {
         super.load(compound);
         if (compound.contains("Connection")) {
-            this.connection = IBellConnections.BellConnection.values()[compound.getInt("Connection")];
-        }else this.connection = BellConnection.NONE;
+            this.amendments$connection = IBellConnections.BellConnection.values()[compound.getInt("Connection")];
+        }else this.amendments$connection = BellConnection.NONE;
     }
 
     @Override

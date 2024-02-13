@@ -20,7 +20,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 
-class DirectionalCakeConversion implements BlockUseOverride {
+class DirectionalCakeConversion implements BlockUse {
 
     @Override
     public boolean altersWorld() {

@@ -1,6 +1,9 @@
 package net.mehvahdjukaar.amendments.integration;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.mehvahdjukaar.amendments.common.block.CeilingBannerBlock;
+import net.mehvahdjukaar.supplementaries.client.ModMaterials;
 import net.mehvahdjukaar.supplementaries.common.block.IRopeConnection;
 import net.mehvahdjukaar.supplementaries.common.block.blocks.EndermanSkullBlock;
 import net.mehvahdjukaar.supplementaries.common.block.blocks.GunpowderBlock;
@@ -9,16 +12,19 @@ import net.mehvahdjukaar.supplementaries.common.block.blocks.StickBlock;
 import net.mehvahdjukaar.supplementaries.common.utils.BlockUtil;
 import net.mehvahdjukaar.supplementaries.common.utils.MiscUtils;
 import net.mehvahdjukaar.supplementaries.configs.ClientConfigs;
+import net.minecraft.client.resources.model.Material;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.BannerPatternItem;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SkullBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import org.apache.commons.compress.archivers.sevenz.CLI;
 import org.jetbrains.annotations.Nullable;
 
 public class SuppCompat {
@@ -73,10 +79,17 @@ public class SuppCompat {
     }
 
     public static boolean canConnectDown(BlockState neighborState) {
-        return true;
+        return IRopeConnection.canConnectDown(neighborState);
     }
 
     public static boolean isEndermanHead(SkullBlock skull) {
         return skull.getType() == EndermanSkullBlock.TYPE;
+    }
+
+
+    @Environment(EnvType.CLIENT)
+    @Nullable
+    public static Material getFlagMaterial(BannerPatternItem bannerPatternItem){
+        return ModMaterials.getFlagMaterialForPatternItem(bannerPatternItem);
     }
 }

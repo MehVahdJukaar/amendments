@@ -20,7 +20,7 @@ public class CauldronBlockMixin {
     protected void handleModdedFluid(BlockState state, Level level, BlockPos pos, Fluid fluid, CallbackInfo ci) {
         level.setBlockAndUpdate(pos, ModRegistry.LIQUID_CAULDRON.get().defaultBlockState());
         if(level.getBlockEntity(pos) instanceof LiquidCauldronBlockTile te){
-            te.getSoftFluidTank().tryAddingFluid(SoftFluidRegistry.fromForgeFluid(fluid), 1);
+            te.getSoftFluidTank().tryAddingFluid(SoftFluidRegistry.fromVanillaFluid(fluid), 1);
         }
     }
 }

@@ -12,6 +12,8 @@ import java.util.function.Supplier;
 
 public class CommonConfigs {
 
+    public static final Supplier<Boolean> HANGING_SIGN_ITEM;
+
     public static final Supplier<Boolean> ENHANCED_CAULDRON;
     public static final Supplier<Boolean> DYE_WATER;
     //TODO: more cauldron configs
@@ -47,7 +49,12 @@ public class CommonConfigs {
 
         builder.push("features");
 
-        builder.push("enhanced_cauldron");
+        builder.push("hanging_signs");
+        HANGING_SIGN_ITEM = builder.comment("Allows placing items on hanging signs")
+                        .define("items_on_signs", true);
+        builder.pop();
+
+        builder.push("cauldron");
         ENHANCED_CAULDRON = builder.comment("Enables enhanced cauldron")
                 .define("enabled", true);
         DYE_WATER = builder.comment("Allows dying cauldron water bedrock style")

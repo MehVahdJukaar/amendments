@@ -18,7 +18,7 @@ import net.minecraft.world.level.block.LayeredCauldronBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 
-public class CauldronDyeWaterBehavior implements BlockUseOverride{
+public class CauldronDyeWater implements BlockUse {
 
     //block use as it has way too many items that could trigger
 

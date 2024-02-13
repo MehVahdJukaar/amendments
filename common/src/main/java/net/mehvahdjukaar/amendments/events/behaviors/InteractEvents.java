@@ -39,12 +39,12 @@ public class InteractEvents {
 
     //equivalent to Item.useOnBlock to the item itself (called before that though)
     //high priority
-    private static final Map<Item, ItemUseOnBlockOverride> ITEM_USE_ON_BLOCK_HP = new IdentityHashMap<>();
-    private static final Multimap<Item, ItemUseOnBlockOverride> ITEM_USE_ON_BLOCK = HashMultimap.create();
+    private static final Map<Item, ItemUseOnBlock> ITEM_USE_ON_BLOCK_HP = new IdentityHashMap<>();
+    private static final Multimap<Item, ItemUseOnBlock> ITEM_USE_ON_BLOCK = HashMultimap.create();
     //equivalent to Item.use
-    private static final Map<Item, ItemUseOverride> ITEM_USE = new IdentityHashMap<>();
+    private static final Map<Item, ItemUse> ITEM_USE = new IdentityHashMap<>();
     //equivalent to Block.use
-    private static final Map<Block, BlockUseOverride> BLOCK_USE = new IdentityHashMap<>();
+    private static final Map<Block, BlockUse> BLOCK_USE = new IdentityHashMap<>();
 
     //TODO: this was tied to the slingshot
     public static boolean hasBlockPlacementAssociated(Item item) {
@@ -59,15 +59,16 @@ public class InteractEvents {
         BLOCK_USE.clear();
 
         //registers event stuff
-        List<ItemUseOnBlockOverride> itemUseOnBlockHP = new ArrayList<>();
-        List<ItemUseOnBlockOverride> itemUseOnBlock = new ArrayList<>();
-        List<ItemUseOverride> itemUse = new ArrayList<>();
-        List<BlockUseOverride> blockUse = new ArrayList<>();
+        List<ItemUseOnBlock> itemUseOnBlockHP = new ArrayList<>();
+        List<ItemUseOnBlock> itemUseOnBlock = new ArrayList<>();
+        List<ItemUse> itemUse = new ArrayList<>();
+        List<BlockUse> blockUse = new ArrayList<>();
 
         blockUse.add(new DirectionalCakeConversion());
-        blockUse.add(new BellChainBehavior());
+        blockUse.add(new BellChainRing());
         blockUse.add(new CauldronConversion());
-        blockUse.add(new CauldronDyeWaterBehavior());
+        blockUse.add(new CauldronDyeWater());
+        blockUse.add(new HangingSignDisplayItem());
 
         itemUseOnBlockHP.add(new SkullCandleConversion());
 
@@ -80,18 +81,18 @@ public class InteractEvents {
         outer:
         for (Item i : BuiltInRegistries.ITEM) {
 
-            for (ItemUseOnBlockOverride b : itemUseOnBlock) {
+            for (ItemUseOnBlock b : itemUseOnBlock) {
                 if (b.appliesToItem(i)) {
                     ITEM_USE_ON_BLOCK.put(i, b);
                 }
             }
-            for (ItemUseOverride b : itemUse) {
+            for (ItemUse b : itemUse) {
                 if (b.appliesToItem(i)) {
                     ITEM_USE.put(i, b);
                     continue outer;
                 }
             }
-            for (ItemUseOnBlockOverride b : itemUseOnBlockHP) {
+            for (ItemUseOnBlock b : itemUseOnBlockHP) {
                 if (b.appliesToItem(i)) {
                     ITEM_USE_ON_BLOCK_HP.put(i, b);
                     continue outer;
@@ -99,7 +100,7 @@ public class InteractEvents {
             }
         }
         for (Block block : BuiltInRegistries.BLOCK) {
-            for (BlockUseOverride b : blockUse) {
+            for (BlockUse b : blockUse) {
                 if (b.appliesToBlock(block)) {
                     BLOCK_USE.put(block, b);
                     break;
@@ -112,7 +113,7 @@ public class InteractEvents {
                                                         InteractionHand hand, BlockHitResult hit) {
         Item item = stack.getItem();
 
-        ItemUseOnBlockOverride override = ITEM_USE_ON_BLOCK_HP.get(item);
+        ItemUseOnBlock override = ITEM_USE_ON_BLOCK_HP.get(item);
         if (override != null && override.isEnabled()) {
             if (CompatHandler.FLAN && override.altersWorld() && !FlanCompat.canPlace(player, hit.getBlockPos())) {
                 return InteractionResult.PASS;
@@ -151,7 +152,7 @@ public class InteractEvents {
             BlockPos pos = hit.getBlockPos();
             BlockState state = level.getBlockState(pos);
 
-            BlockUseOverride o = BLOCK_USE.get(state.getBlock());
+            BlockUse o = BLOCK_USE.get(state.getBlock());
             if (o != null && o.isEnabled()) {
                 if (CompatHandler.FLAN && o.altersWorld() && !FlanCompat.canPlace(player, hit.getBlockPos())) {
                     return InteractionResult.PASS;
@@ -169,7 +170,7 @@ public class InteractEvents {
             Player player, Level level, InteractionHand hand, ItemStack stack) {
         Item item = stack.getItem();
 
-        ItemUseOverride override = ITEM_USE.get(item);
+        ItemUse override = ITEM_USE.get(item);
         if (override != null && override.isEnabled()) {
             var ret = override.tryPerformingAction(level, player, hand, stack, null);
             return switch (ret) {
@@ -191,7 +192,7 @@ public class InteractEvents {
                 MutableComponent t = override.getTooltip();
                 if (t != null) components.add(t.withStyle(ChatFormatting.DARK_GRAY).withStyle(ChatFormatting.ITALIC));
             } else {
-                ItemUseOverride o = ITEM_USE.get(item);
+                ItemUse o = ITEM_USE.get(item);
                 if (o != null && o.isEnabled()) {
                     MutableComponent t = o.getTooltip();
                     if (t != null)

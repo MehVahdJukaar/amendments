@@ -19,7 +19,7 @@ import net.minecraft.world.level.block.StairBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 
-public class CarpetStairsConversion implements ItemUseOnBlockOverride {
+public class CarpetStairsConversion implements ItemUseOnBlock {
 
     @Override
     public boolean altersWorld() {

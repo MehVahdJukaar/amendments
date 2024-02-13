@@ -1,11 +1,14 @@
 package net.mehvahdjukaar.amendments.integration;
 
 import net.mehvahdjukaar.amendments.common.tile.WallLanternBlockTile;
+import net.mehvahdjukaar.supplementaries.client.ModMaterials;
 import net.mehvahdjukaar.suppsquared.common.LightableLanternBlock;
+import net.minecraft.client.resources.model.Material;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.BannerPatternItem;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -27,4 +30,6 @@ public class SuppSquaredCompat {
         }
         return null;
     }
+
+
 }

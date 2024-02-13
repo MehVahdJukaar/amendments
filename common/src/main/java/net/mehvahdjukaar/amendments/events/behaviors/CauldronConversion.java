@@ -18,7 +18,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 
-public class CauldronConversion implements BlockUseOverride{
+public class CauldronConversion implements BlockUse {
 
     //block use as it has way too many items that could trigger
 

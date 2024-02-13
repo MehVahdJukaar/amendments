@@ -1,6 +1,6 @@
 package net.mehvahdjukaar.amendments.mixins;
 
-import net.mehvahdjukaar.amendments.common.IExtendedHangingSign;
+import net.mehvahdjukaar.amendments.common.ExtendedHangingSign;
 import net.mehvahdjukaar.amendments.configs.ClientConfigs;
 import net.mehvahdjukaar.amendments.reg.ModBlockProperties;
 import net.minecraft.core.BlockPos;
@@ -34,7 +34,7 @@ public abstract class WallHangingSignBlockMixin extends Block implements EntityB
 
     @Inject(method = "updateShape", at = @At("HEAD"))
     public void updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor level, BlockPos currentPos, BlockPos neighborPos, CallbackInfoReturnable<BlockState> cir) {
-        if (level.getBlockEntity(currentPos) instanceof IExtendedHangingSign tile) {
+        if (level.getBlockEntity(currentPos) instanceof ExtendedHangingSign tile) {
             tile.getExtension().updateShape(state, direction, neighborState, level, currentPos, neighborPos);
         }
     }
@@ -55,7 +55,7 @@ public abstract class WallHangingSignBlockMixin extends Block implements EntityB
     @Override
     public void setPlacedBy(Level level, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
         super.setPlacedBy(level, pos, state, placer, stack);
-        if (level.getBlockEntity(pos) instanceof IExtendedHangingSign tile) {
+        if (level.getBlockEntity(pos) instanceof ExtendedHangingSign tile) {
             tile.getExtension().updateAttachments(level, pos, state);
         }
     }
@@ -64,7 +64,7 @@ public abstract class WallHangingSignBlockMixin extends Block implements EntityB
     public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
         super.entityInside(state, level, pos, entity);
         if (level.isClientSide && ClientConfigs.SWINGING_SIGNS.get() &&
-                level.getBlockEntity(pos) instanceof IExtendedHangingSign tile && tile.getExtension().canSwing()) {
+                level.getBlockEntity(pos) instanceof ExtendedHangingSign tile && tile.getExtension().canSwing()) {
             tile.getExtension().animation.hitByEntity(entity, state, pos);
         }
     }
@@ -73,7 +73,7 @@ public abstract class WallHangingSignBlockMixin extends Block implements EntityB
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level pLevel, BlockState pState, BlockEntityType<T> pBlockEntityType) {
         return !pLevel.isClientSide ? null : (level, blockPos, blockState, blockEntity) -> {
-            if (ClientConfigs.SWINGING_SIGNS.get() && blockEntity instanceof IExtendedHangingSign te) {
+            if (ClientConfigs.SWINGING_SIGNS.get() && blockEntity instanceof ExtendedHangingSign te) {
                 te.getExtension().clientTick(level, blockPos, blockState);
             }
         };

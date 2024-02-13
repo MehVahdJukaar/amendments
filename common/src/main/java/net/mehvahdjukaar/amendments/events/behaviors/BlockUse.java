@@ -10,7 +10,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 
-interface BlockUseOverride {
+interface BlockUse {
 
     /**
      * Used for permission checks on flan compat
@@ -23,7 +23,7 @@ interface BlockUseOverride {
 
     boolean appliesToBlock(Block block);
 
-    InteractionResult tryPerformingAction(BlockState state, BlockPos pos, Level world, Player player, InteractionHand hand,
+    InteractionResult tryPerformingAction(BlockState state, BlockPos pos, Level level, Player player, InteractionHand hand,
                                           ItemStack stack, BlockHitResult hit);
 }
 

@@ -8,6 +8,7 @@ import net.minecraft.world.level.block.Block;
 
 public class ModTags {
 
+    //TODO:fix these tags
     //block tags
     public static final TagKey<Block> POSTS = blockTag("posts");
     public static final TagKey<Block> PALISADES = blockTag("palisades");

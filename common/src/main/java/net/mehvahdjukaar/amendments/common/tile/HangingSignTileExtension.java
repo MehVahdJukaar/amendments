@@ -6,6 +6,7 @@ import net.mehvahdjukaar.amendments.common.SwingAnimation;
 import net.mehvahdjukaar.amendments.configs.ClientConfigs;
 import net.mehvahdjukaar.amendments.reg.ModBlockProperties;
 import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
+import net.minecraft.client.resources.model.Material;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -35,9 +36,9 @@ public class HangingSignTileExtension {
 
     public final SwingAnimation animation;
 
-    //no item handler here. we dont want hoppers and such anyways
-    public ItemStack frontItem = ItemStack.EMPTY;
-    public ItemStack backItem = ItemStack.EMPTY;
+    //no item handler here. we don't want hoppers and such anyway
+    private ItemStack frontItem = ItemStack.EMPTY;
+    private ItemStack backItem = ItemStack.EMPTY;
 
     public HangingSignTileExtension(BlockState state) {
         super();
@@ -63,7 +64,7 @@ public class HangingSignTileExtension {
         return state.hasProperty(WallHangingSignBlock.FACING) ?
                 state.getValue(WallHangingSignBlock.FACING).getClockWise().step() :
                 new Vector3f(0, 0, 1).rotateY(Mth.DEG_TO_RAD *
-                        (90+RotationSegment.convertToDegrees(state.getValue(CeilingHangingSignBlock.ROTATION))));
+                        (90 + RotationSegment.convertToDegrees(state.getValue(CeilingHangingSignBlock.ROTATION))));
     }
 
 
@@ -76,7 +77,7 @@ public class HangingSignTileExtension {
     }
 
     public void saveAdditional(CompoundTag tag) {
-        if(!isCeiling) {
+        if (!isCeiling) {
             if (leftAttachment != null) {
                 tag.putByte("left_attachment", (byte) leftAttachment.ordinal());
             }
@@ -87,16 +88,16 @@ public class HangingSignTileExtension {
         if (!canSwing) {
             tag.putBoolean("can_swing", false);
         }
-        if(!frontItem.isEmpty()){
+        if (!frontItem.isEmpty()) {
             tag.put("front_item", frontItem.save(new CompoundTag()));
         }
-        if(!backItem.isEmpty()){
+        if (!backItem.isEmpty()) {
             tag.put("back_item", backItem.save(new CompoundTag()));
         }
     }
 
     public void load(CompoundTag tag) {
-        if(!isCeiling) {
+        if (!isCeiling) {
             if (tag.contains("left_attachment")) {
                 leftAttachment = ModBlockProperties.PostType.values()[tag.getByte("left_attachment")];
             }
@@ -107,11 +108,11 @@ public class HangingSignTileExtension {
         if (tag.contains("can_swing")) {
             canSwing = tag.getBoolean("can_swing");
         }
-        if(tag.contains("front_item")){
-            this.frontItem = ItemStack.of(tag.getCompound("front_item"));
+        if (tag.contains("front_item")) {
+            this.setFrontItem(ItemStack.of(tag.getCompound("front_item")));
         }
-        if(tag.contains("back_item")){
-            this.backItem = ItemStack.of(tag.getCompound("back_item"));
+        if (tag.contains("back_item")) {
+            this.setBackItem(ItemStack.of(tag.getCompound("back_item")));
         }
     }
 
@@ -120,32 +121,36 @@ public class HangingSignTileExtension {
     public void updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor level,
                             BlockPos pos, BlockPos neighborPos) {
 
-        if(!isCeiling && ClientConfigs.SIGN_ATTACHMENT.get()) {
+        if (!isCeiling && ClientConfigs.SIGN_ATTACHMENT.get()) {
             Direction selfFacing = state.getValue(WallHangingSignBlock.FACING);
             if (direction == selfFacing.getClockWise()) {
                 rightAttachment = ModBlockProperties.PostType.get(neighborState, true);
-                if(level instanceof Level l)
-                   l.sendBlockUpdated(pos, state, state, Block.UPDATE_CLIENTS);
+                if (level instanceof Level l)
+                    l.sendBlockUpdated(pos, state, state, Block.UPDATE_CLIENTS);
             } else if (direction == selfFacing.getCounterClockWise()) {
                 leftAttachment = ModBlockProperties.PostType.get(neighborState, true);
-                if(level instanceof Level l)
-                  l.sendBlockUpdated(pos, state, state, Block.UPDATE_CLIENTS);
+                if (level instanceof Level l)
+                    l.sendBlockUpdated(pos, state, state, Block.UPDATE_CLIENTS);
             }
         }
         if (direction == Direction.DOWN) {
-            canSwing = (isCeiling && state.getValue(CeilingHangingSignBlock.ATTACHED)) || !Amendments.canConnectDown(neighborState);
+            updateCanSwing(state, neighborState);
         }
     }
 
+    private void updateCanSwing(BlockState state, BlockState neighborState) {
+        canSwing = isCeiling ? !state.getValue(CeilingHangingSignBlock.ATTACHED) : !Amendments.canConnectDown(neighborState);
+    }
+
     public void updateAttachments(Level level, BlockPos pos, BlockState state) {
-        if(!isCeiling && ClientConfigs.SIGN_ATTACHMENT.get()) {
+        if (!isCeiling && ClientConfigs.SIGN_ATTACHMENT.get()) {
             Direction selfFacing = state.getValue(WallHangingSignBlock.FACING);
 
             rightAttachment = ModBlockProperties.PostType.get(level.getBlockState(pos.relative(selfFacing.getClockWise())), true);
             leftAttachment = ModBlockProperties.PostType.get(level.getBlockState(pos.relative(selfFacing.getCounterClockWise())), true);
         }
         BlockState below = level.getBlockState(pos.below());
-        canSwing = (isCeiling && state.getValue(CeilingHangingSignBlock.ATTACHED)) || !Amendments.canConnectDown(below);
+        updateCanSwing(state, below);
 
     }
 
@@ -168,4 +173,5 @@ public class HangingSignTileExtension {
     public ItemStack getBackItem() {
         return backItem;
     }
+
 }

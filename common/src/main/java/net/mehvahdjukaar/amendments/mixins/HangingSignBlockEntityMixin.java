@@ -1,7 +1,7 @@
 package net.mehvahdjukaar.amendments.mixins;
 
 import dev.architectury.injectables.annotations.PlatformOnly;
-import net.mehvahdjukaar.amendments.common.IExtendedHangingSign;
+import net.mehvahdjukaar.amendments.common.ExtendedHangingSign;
 import net.mehvahdjukaar.amendments.common.tile.HangingSignTileExtension;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -14,10 +14,10 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 
 @Mixin(HangingSignBlockEntity.class)
-public abstract class HangingSignBlockEntityMixin extends BlockEntity implements IExtendedHangingSign {
+public abstract class HangingSignBlockEntityMixin extends BlockEntity implements ExtendedHangingSign {
 
     @Unique
-    private final HangingSignTileExtension supplementaries$extension = new HangingSignTileExtension(this.getBlockState());;
+    private final HangingSignTileExtension supplementaries$extension = new HangingSignTileExtension(this.getBlockState());
 
     protected HangingSignBlockEntityMixin(BlockEntityType<?> blockEntityType, BlockPos blockPos, BlockState blockState) {
         super(blockEntityType, blockPos, blockState);

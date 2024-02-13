@@ -3,11 +3,15 @@ package net.mehvahdjukaar.amendments.client.renderers;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
-import net.mehvahdjukaar.amendments.common.IExtendedHangingSign;
+import net.mehvahdjukaar.amendments.common.ExtendedHangingSign;
+import net.mehvahdjukaar.amendments.common.tile.HangingSignTileExtension;
+import net.mehvahdjukaar.amendments.integration.CompatHandler;
+import net.mehvahdjukaar.amendments.integration.SuppCompat;
 import net.mehvahdjukaar.amendments.reg.ModBlockProperties;
 import net.mehvahdjukaar.moonlight.api.client.util.LOD;
 import net.mehvahdjukaar.moonlight.api.client.util.RotHlpr;
 import net.mehvahdjukaar.moonlight.api.client.util.TextUtil;
+import net.mehvahdjukaar.moonlight.api.client.util.VertexUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.model.geom.ModelPart;
@@ -16,13 +20,22 @@ import net.minecraft.client.model.geom.builders.CubeListBuilder;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
+import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.HangingSignRenderer;
 import net.minecraft.client.renderer.blockentity.SignRenderer;
+import net.minecraft.client.renderer.entity.ItemRenderer;
+import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.Material;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Style;
 import net.minecraft.util.FormattedCharSequence;
+import net.minecraft.world.item.BannerPatternItem;
+import net.minecraft.world.item.ItemDisplayContext;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.CeilingHangingSignBlock;
 import net.minecraft.world.level.block.WallSignBlock;
 import net.minecraft.world.level.block.entity.SignBlockEntity;
@@ -38,7 +51,7 @@ import java.util.List;
 public class HangingSignRendererExtension {
 
     public static void render(SignBlockEntity tile, float partialTicks, PoseStack poseStack, MultiBufferSource bufferSource,
-                              int packedLight, int packedOverlay, BlockState state,
+                              int light, int overlay, BlockState state,
                               HangingSignRenderer.HangingSignModel model, List<ModelPart> barModel, ModelPart chains,
                               Material material, Material extensionMaterial, SignRenderer renderer,
                               float colorMult) { //color mult for FD
@@ -59,7 +72,7 @@ public class HangingSignRendererExtension {
 
         model.evaluateVisibleParts(state);
         VertexConsumer vertexConsumer = material.buffer(bufferSource, model::renderType);
-        var sign = ((IExtendedHangingSign) tile).getExtension();
+        HangingSignTileExtension extension = ((ExtendedHangingSign) tile).getExtension();
 
         poseStack.scale(1, -1, -1);
         //TODO: ceiling banner rot
@@ -74,23 +87,22 @@ public class HangingSignRendererExtension {
         poseStack.pushPose();
 
         Quaternionf pitch = new Quaternionf();
-        if (((IExtendedHangingSign) tile).getExtension().canSwing()) {
-            float rot = sign.animation.getAngle(partialTicks);
+        if (((ExtendedHangingSign) tile).getExtension().canSwing()) {
+            float rot = extension.animation.getAngle(partialTicks);
 
-            if(!wallSign && attached){
+            if (!wallSign && attached) {
                 //y swing
                 pitch = Axis.YP.rotationDegrees(rot);
-            }else{
+            } else {
                 pitch = Axis.XP.rotationDegrees(rot);
-
             }
 
-            if(!wallSign){
-                poseStack.translate(0,-0.125,0);
+            if (!wallSign) {
+                poseStack.translate(0, -0.125, 0);
             }
             poseStack.mulPose(pitch);
-            if(!wallSign){
-                poseStack.translate(0,0.125,0);
+            if (!wallSign) {
+                poseStack.translate(0, 0.125, 0);
             }
         }
 
@@ -104,9 +116,9 @@ public class HangingSignRendererExtension {
         poseStack.translate(0, 0.25, 0);
 
 
-        model.root.render(poseStack, vertexConsumer, packedLight, packedOverlay);
+        model.root.render(poseStack, vertexConsumer, light, overlay);
         if (wallSign) {
-            chains.render(poseStack, vertexConsumer, packedLight, packedOverlay); //shorter chains
+            chains.render(poseStack, vertexConsumer, light, overlay); //shorter chains
             model.normalChains.visible = visibleC;
         }
         model.plank.visible = visible;
@@ -123,26 +135,18 @@ public class HangingSignRendererExtension {
 
         LOD lod = new LOD(camera, tile.getBlockPos());
 
-        var off = renderer.getTextOffset();
-
 
         poseStack.pushPose();
-        renderer.translateSignText(poseStack, true, off);
-        renderSignText(tile.getFrontText(), font, poseStack, bufferSource, packedLight,
-                norm, lod, filtered, tile.getTextLineHeight(), tile.getMaxTextLineWidth(),
-                colorMult);
+        renderFront(tile, extension, poseStack, bufferSource, light, overlay, renderer, colorMult, norm, font, filtered, lod);
         poseStack.popPose();
 
         poseStack.pushPose();
-        renderer.translateSignText(poseStack, false, off);
-        renderSignText(tile.getBackText(), font, poseStack, bufferSource, packedLight,
-                norm.mul(-1), lod, filtered, tile.getTextLineHeight(), tile.getMaxTextLineWidth(),
-                colorMult);
+        renderBack(tile, extension, poseStack, bufferSource, light, overlay, renderer, colorMult, norm, font, filtered, lod);
         poseStack.popPose();
 
 
         //Item item = Items.SKULL_BANNER_PATTERN;
-        //renderBannerPattern(tile, poseStack, bufferSource, packedLight, item);
+        //renderBannerPattern(tile, poseStack, bufferSource, light, item);
 
         poseStack.popPose();
 
@@ -153,11 +157,11 @@ public class HangingSignRendererExtension {
 
 
         if (visible) {
-            model.plank.render(poseStack, vertexConsumer, packedLight, packedOverlay);
+            model.plank.render(poseStack, vertexConsumer, light, overlay);
         }
 
-        ModBlockProperties.PostType right = sign.getRightAttachment();
-        ModBlockProperties.PostType left = sign.getLeftAttachment();
+        ModBlockProperties.PostType right = extension.getRightAttachment();
+        ModBlockProperties.PostType left = extension.getLeftAttachment();
 
         VertexConsumer vc2 = null;
         if (right != null || left != null) {
@@ -166,77 +170,55 @@ public class HangingSignRendererExtension {
         if (left != null) {
             poseStack.pushPose();
             poseStack.translate(1, 0, 0);
-            barModel.get(left.ordinal()).render(poseStack, vc2, packedLight, packedOverlay);
+            barModel.get(left.ordinal()).render(poseStack, vc2, light, overlay);
             poseStack.popPose();
         }
         if (right != null) {
             poseStack.pushPose();
             poseStack.mulPose(RotHlpr.Y180);
             poseStack.translate(1, 0, 0);
-            barModel.get(right.ordinal()).render(poseStack, vc2, packedLight, packedOverlay);
+            barModel.get(right.ordinal()).render(poseStack, vc2, light, overlay);
             poseStack.popPose();
         }
 
 
         poseStack.popPose();
     }
-/*
-    private static void renderBannerPattern(SignBlockEntity tile, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, Item item) {
-        if (item instanceof BannerPatternItem bannerPatternItem) {
-            poseStack.translate(0, 5/16f, 0);
 
-            float scale =0.75f;
-            poseStack.scale(scale, -scale, -1);
-
-
-            Material renderMaterial = ModMaterials.getFlagMaterialForPatternItem(bannerPatternItem);
-            if (renderMaterial != null) {
-
-                VertexConsumer builder = renderMaterial.buffer(bufferSource, RenderType::itemEntityTranslucentCull);
-
-
-                float[] color = tile.getColor().getTextureDiffuseColors();
-                float b = color[2];
-                float g = color[1];
-                float r = color[0];
-                int light = packedLight;
-                if (tile.hasGlowingText()) {
-                    light = LightTexture.FULL_BRIGHT;
-                }
-
-                int lu = light & '\uffff';
-                int lv = light >> 16 & '\uffff';
-                for (int v = 0; v < 2; v++) {
-                    VertexUtils.addQuadSide(builder, poseStack, -0.4375F, -0.4375F, 0.07f,
-                            0.4375F, 0.4375F, 0.07f,
-                            0.15625f, 0.0625f, 0.5f + 0.09375f, 1 - 0.0625f, r, g, b, 1, lu, lv, 0, 0, 1, renderMaterial.sprite());
-
-                    poseStack.mulPose(RotHlpr.Y180);
-                }
-            }
+    private static void renderFront(SignBlockEntity tile, HangingSignTileExtension extension, PoseStack poseStack, MultiBufferSource buffer,
+                                    int light, int overlay, SignRenderer renderer, float colorMult,
+                                    Vector3f norm, Font font, boolean filtered, LOD lod) {
+        ItemStack item = extension.getFrontItem();
+        if (item.isEmpty()) {
+            renderer.translateSignText(poseStack, true, renderer.getTextOffset());
+            renderSignText(tile.getFrontText(), font, poseStack, buffer, light,
+                    norm, lod, filtered, tile.getTextLineHeight(), tile.getMaxTextLineWidth(),
+                    colorMult);
+        } else if (CompatHandler.SUPPLEMENTARIES && item.getItem() instanceof BannerPatternItem banner) {
+            renderBannerPattern(tile.getFrontText(), poseStack, buffer, light, banner);
+        }
+        else {
+            renderItem(item, poseStack, buffer, light, overlay, tile.getLevel());
         }
     }
 
+    private static void renderBack(SignBlockEntity tile, HangingSignTileExtension extension, PoseStack poseStack, MultiBufferSource buffer,
+                                   int light, int overlay, SignRenderer renderer, float colorMult,
+                                   Vector3f norm, Font font, boolean filtered, LOD lod) {
+        ItemStack item = extension.getBackItem();
 
+        if (item.isEmpty()) {
+            renderer.translateSignText(poseStack, false, renderer.getTextOffset());
+            renderSignText(tile.getBackText(), font, poseStack, buffer, light,
+                    norm.mul(-1), lod, filtered, tile.getTextLineHeight(), tile.getMaxTextLineWidth(),
+                    colorMult);
+        } else if (CompatHandler.SUPPLEMENTARIES && item.getItem() instanceof BannerPatternItem banner) {
+            renderBannerPattern(tile.getBackText(), poseStack, buffer, light, banner);
+        } else {
+            renderItem(item, poseStack, buffer, light, overlay, tile.getLevel());
+        }
+    }
 
-    public static void renderItem(){
-                        BakedModel model = itemRenderer.getModel(stack, tile.getLevel(), null, 0);
-                    for (int v = 0; v < 2; v++) {
-                        poseStack.pushPose();
-                        poseStack.scale(0.75f, 0.75f, 0.75f);
-                        poseStack.translate(0, 0, -0.1);
-                        //poseStack.mulPose(Const.Y180);
-                        itemRenderer.render(stack, ItemDisplayContext.FIXED, true, poseStack, bufferIn, combinedLightIn,
-                                combinedOverlayIn, model);
-                        poseStack.popPose();
-
-                        poseStack.mulPose(RotHlpr.Y180);
-                        poseStack.scale(0.9995f, 0.9995f, 0.9995f);
-                    }
-                    }
-
-
-    */
 
     private static float getSignAngle(BlockState state, boolean attachedToWall) {
         return attachedToWall ? -(state.getValue(WallSignBlock.FACING)).toYRot() : -((state.getValue(CeilingHangingSignBlock.ROTATION) * 360) / 16.0F);
@@ -281,7 +263,7 @@ public class HangingSignRendererExtension {
                                       MultiBufferSource buffer,
                                       int light, Vector3f normal, LOD lod, boolean filtered,
                                       int lineHeight, int lineWidth,
-                                      float colorMult){
+                                      float colorMult) {
         TextUtil.RenderProperties properties = TextUtil.renderProperties(signText.getColor(),
                 signText.hasGlowingText(), colorMult, light, Style.EMPTY, normal, lod::isVeryNear);
 
@@ -290,8 +272,54 @@ public class HangingSignRendererExtension {
             return list.isEmpty() ? FormattedCharSequence.EMPTY : list.get(0);
         });
         for (int i = 0; i < formattedCharSequences.length; i++) {
-            TextUtil.renderLine(formattedCharSequences[i], font,  lineHeight * i, poseStack, buffer, properties);
+            TextUtil.renderLine(formattedCharSequences[i], font, lineHeight * i, poseStack, buffer, properties);
         }
 
     }
+
+
+    private static void renderBannerPattern(SignText sign, PoseStack poseStack, MultiBufferSource bufferSource,
+                                            int packedLight, BannerPatternItem banner) {
+
+        Material renderMaterial = SuppCompat.getFlagMaterial(banner);
+        if (renderMaterial != null) {
+            poseStack.pushPose();
+            poseStack.translate(0, -9 / 16f, 1 / 16f + 0.001);
+
+            float scale = 10f / 14;
+            poseStack.scale(scale, -scale, -1);
+            VertexConsumer consumer = renderMaterial.buffer(bufferSource, RenderType::entityNoOutline);
+
+            float[] color = sign.getColor().getTextureDiffuseColors();
+            int b = (int) (color[2] * 255);
+            int g = (int) (color[1] * 255);
+            int r = (int) (color[0] * 255);
+            int light = packedLight;
+            if (sign.hasGlowingText()) {
+                light = LightTexture.FULL_BRIGHT;
+            }
+
+            int lu = light & '\uffff';
+            int lv = light >> 16 & '\uffff';
+
+            VertexUtil.addQuad(consumer, poseStack, -0.4375F, -0.4375F, 0.4375F, 0.4375F,
+                     0.5f + 0.09375f, 1 - 0.0625f,0.15625f, 0.0625f, r, g, b, 255, lu, lv);
+
+            poseStack.popPose();
+        }
+    }
+
+    public static void renderItem(ItemStack stack, PoseStack poseStack, MultiBufferSource buffer, int light, int overlay, Level level) {
+        ItemRenderer itemRenderer = Minecraft.getInstance().getItemRenderer();
+        BakedModel model = itemRenderer.getModel(stack, level, null, 0);
+        poseStack.pushPose();
+        poseStack.translate(0, -9 / 16f, +5 / 64f);
+
+        float scale = 10 / 16f;
+        poseStack.scale(scale, scale, scale);
+        //poseStack.mulPose(Const.Y180);
+        itemRenderer.render(stack, ItemDisplayContext.FIXED, true, poseStack, buffer, light, overlay, model);
+        poseStack.popPose();
+    }
+
 }

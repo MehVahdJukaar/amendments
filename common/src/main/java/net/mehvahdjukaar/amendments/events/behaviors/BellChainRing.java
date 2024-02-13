@@ -21,7 +21,7 @@ import net.minecraft.world.phys.Vec3;
 
 import java.util.function.Predicate;
 
-class BellChainBehavior implements BlockUseOverride {
+class BellChainRing implements BlockUse {
 
     @Override
     public boolean isEnabled() {
