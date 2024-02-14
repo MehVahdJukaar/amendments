@@ -27,8 +27,10 @@ public class ClientConfigs {
     public static final Supplier<Double> LANTERN_HOLDING_SIZE;
     public static final Supplier<PendulumAnimation.Config> WALL_LANTERN_CONFIG;
 
+    public static final Supplier<Boolean> COLORED_ARROWS;
 
-    private static final Supplier<Boolean> COLORED_ARROWS;
+    public static final Supplier<Double> BRIGHTEN_SIGN_TEXT_COLOR;
+
 
     static {
         ConfigBuilder builder = ConfigBuilder.create(Amendments.MOD_ID, ConfigType.CLIENT);
@@ -86,8 +88,24 @@ public class ClientConfigs {
                         .define("lantern_item_holding", true);
         builder.pop();
 
+        builder.push("misc");
+
+        BRIGHTEN_SIGN_TEXT_COLOR = builder.comment("A scalar multiplier that will be applied to sign text making it brighter, supposedly more legible")
+                .define("sign_text_color_multiplier", 1.2f, 0, 5);
+
+        builder.pop();
+
+        builder.onChange(ClientConfigs::onChange);
         builder.buildAndRegister();
     }
 
+    private static void onChange() {
+        signColorMult = (float) (double) net.mehvahdjukaar.supplementaries.configs.ClientConfigs.Tweaks.BRIGHTEN_SIGN_TEXT_COLOR.get();
+    }
 
+    private static float signColorMult = 1;
+
+    public static float getSignColorMult() {
+        return signColorMult;
+    }
 }

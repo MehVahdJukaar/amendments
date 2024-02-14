@@ -28,8 +28,6 @@ public class AmendmentsForge {
         if (PlatHelper.getPhysicalSide().isClient()) {
             MinecraftForge.EVENT_BUS.register(ClientEvents.class);
         }
-        BlockState state;
-
     }
 
     @SubscribeEvent(priority = EventPriority.LOW)

@@ -10,6 +10,7 @@
     "BrewingStandMixin",
     "CauldronBlockMixin",
     "CeilingHangingSignBlockMixin",
+    "CompatQuarkSelfCandleSkullMixin",
     "HangingSignBlockEntityMixin",
     "JukeboxBlockEntityMixin",
     "JukeboxBlockMixin",
@@ -23,7 +24,8 @@
   "client": [
     "BellRendererMixin",
     "DisplayCacheMixin",
-    "HangingSignRendererMixin"
+    "HangingSignRendererMixin",
+    "SignRendererMixin"
   ],
   "plugin": "net.mehvahdjukaar.amendments.mixins.MixinPlugin",
   "injectors": {

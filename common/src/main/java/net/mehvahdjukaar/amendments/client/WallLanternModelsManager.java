@@ -3,7 +3,9 @@ package net.mehvahdjukaar.amendments.client;
 import com.google.common.collect.ImmutableSet;
 import com.google.gson.JsonElement;
 import net.mehvahdjukaar.amendments.Amendments;
+import net.mehvahdjukaar.amendments.client.renderers.LanternRendererExtension;
 import net.mehvahdjukaar.amendments.common.block.WallLanternBlock;
+import net.mehvahdjukaar.moonlight.api.item.IThirdPersonAnimationProvider;
 import net.mehvahdjukaar.moonlight.api.platform.ClientHelper;
 import net.mehvahdjukaar.moonlight.api.resources.RPUtils;
 import net.mehvahdjukaar.moonlight.api.util.Utils;
@@ -15,6 +17,8 @@ import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
@@ -23,6 +27,7 @@ import java.util.HashSet;
 import java.util.IdentityHashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 //handles wall lanterns and jar special models stuff. reloaded by dynamic pack early
 public class WallLanternModelsManager {
@@ -111,5 +116,9 @@ public class WallLanternModelsManager {
             return ClientHelper.getModel(Minecraft.getInstance().getModelManager(), special);
         }
         return blockModelShaper.getBlockModel(lantern);
+    }
+
+    public static Set<Item> getValidLanternItems() {
+        return POSSIBLE_LANTERNS.stream().map(Block::asItem).collect(Collectors.toSet());
     }
 }

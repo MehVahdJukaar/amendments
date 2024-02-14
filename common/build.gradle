@@ -25,6 +25,8 @@ dependencies {
     modImplementation("curse.maven:cave-enhancements-597562:4388535")
     modImplementation("com.lowdragmc.shimmer:Shimmer-common:1.19.2-0.1.14")
 
+    modImplementation("curse.maven:quark-243121:5093415")
+    modImplementation("curse.maven:zeta-968868:5078215")
 }
 
 publishing {

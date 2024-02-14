@@ -24,7 +24,11 @@ import net.mehvahdjukaar.moonlight.api.platform.ClientHelper;
 import net.mehvahdjukaar.moonlight.api.set.BlocksColorAPI;
 import net.mehvahdjukaar.moonlight.api.util.Utils;
 import net.mehvahdjukaar.moonlight.api.util.math.MthUtils;
+import net.mehvahdjukaar.supplementaries.client.renderers.color.CrossbowColor;
+import net.mehvahdjukaar.supplementaries.common.events.overrides.InteractEventOverrideHandler;
+import net.mehvahdjukaar.supplementaries.configs.ClientConfigs;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.color.item.ItemColor;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.model.ArmedModel;
 import net.minecraft.client.model.EntityModel;
@@ -39,6 +43,10 @@ import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.resources.model.Material;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
@@ -46,6 +54,7 @@ import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
+import net.minecraft.world.item.alchemy.PotionUtils;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -53,9 +62,7 @@ import net.minecraft.world.level.block.WeatheringCopperFullBlock;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Supplier;
 
 
@@ -103,7 +110,10 @@ public class AmendmentsClient {
         ClientHelper.registerRenderType(ModRegistry.WALL_LANTERN.get(), RenderType.cutout());
         MenuScreens.register(ModRegistry.LECTERN_EDIT_MENU.get(), LecternBookEditScreen::new);
 
-        IThirdPersonAnimationProvider.attachToItem(Items.LANTERN, new LanternRendererExtension());
+        var anim = new LanternRendererExtension();
+        WallLanternModelsManager.getValidLanternItems().forEach(
+                item -> IThirdPersonSpecialItemRenderer.attachToItem(item, anim)
+        );
     }
 
 
@@ -112,6 +122,7 @@ public class AmendmentsClient {
         event.register((itemStack, i) -> i > 0 ? -1 :
                 DyeBottleItem.getColor(itemStack), ModRegistry.DYE_BOTTLE_ITEM.get());
 
+        event.register(new CrossbowColor(), Items.CROSSBOW);
     }
 
 
@@ -205,4 +216,22 @@ public class AmendmentsClient {
     public static Level getClientLevel() {
         return Minecraft.getInstance().level;
     }
+
+
+    @EventCalled
+    public static void onItemTooltip(ItemStack itemStack, TooltipFlag tooltipFlag, List<Component> components) {
+        if (ClientConfigs.General.TOOLTIP_HINTS.get()) {
+            InteractEventOverrideHandler.addOverrideTooltips(itemStack, tooltipFlag, components);
+        }
+
+        Item item = itemStack.getItem();
+        if (item == net.mehvahdjukaar.supplementaries.reg.ModRegistry.ROPE_ARROW_ITEM.get() || item == net.mehvahdjukaar.supplementaries.reg.ModRegistry.BUBBLE_BLOWER.get()) {
+
+            Optional<Component> r = components.stream().filter(t -> (t.getContents() instanceof TranslatableContents tc) &&
+                    tc.getKey().equals("item.durability")).findFirst();
+            r.ifPresent(components::remove);
+        }
+    }
+
+
 }

@@ -41,9 +41,9 @@ public class Amendments {
         PlatHelper.addCommonSetupAsync(Amendments::setupAsync);
         PlatHelper.addCommonSetup(Amendments::setup);
 
+        // make bell connections
 
-        //TODO: mixin for skull sound
-
+        //TODO: check bell ringing with rope
         //here we go. ideas part 2
         //carpeted trapdoor
         //flower pot broken color and grass

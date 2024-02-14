@@ -1,8 +1,10 @@
 package net.mehvahdjukaar.amendments.client;
 
+import com.google.gson.JsonParser;
 import net.mehvahdjukaar.amendments.Amendments;
 import net.mehvahdjukaar.amendments.AmendmentsClient;
 import net.mehvahdjukaar.amendments.common.CakeRegistry;
+import net.mehvahdjukaar.amendments.configs.ClientConfigs;
 import net.mehvahdjukaar.amendments.integration.CompatHandler;
 import net.mehvahdjukaar.moonlight.api.resources.RPUtils;
 import net.mehvahdjukaar.moonlight.api.resources.ResType;
@@ -19,7 +21,6 @@ import net.mehvahdjukaar.moonlight.api.util.Utils;
 import net.minecraft.client.renderer.Sheets;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
-import net.minecraft.world.entity.monster.Spider;
 import net.minecraft.world.level.block.Rotation;
 import org.apache.logging.log4j.Logger;
 
@@ -50,6 +51,19 @@ public class ClientResourceGenerator extends DynClientResourcesGenerator {
         generateDoubleCakesAssets(manager);
 
         generateHangingSignAssets(manager);
+
+        if (ClientConfigs.COLORED_ARROWS.get()) {
+            this.dynamicPack.addItemModel(new ResourceLocation("crossbow_arrow"), JsonParser.parseString(
+                    """ 
+                            {
+                                "parent": "item/crossbow",
+                                "textures": {
+                                    "layer0": "item/crossbow_arrow_base",
+                                    "layer1": "item/crossbow_arrow_tip"
+                                }
+                            }
+                            """));
+        }
     }
 
     private void generateHangingSignAssets(ResourceManager manager) {
@@ -122,9 +136,9 @@ public class ClientResourceGenerator extends DynClientResourcesGenerator {
                     amendPalette(p);
                     TextureImage newImage = respriter.recolor(p);
                     transformer.apply(vanillaTexture, newImage);
-                    if(newImage.getImage().getPixelRGBA(6,6) == p.get(p.size()-2).rgb().toInt()){
-                        newImage.setFramePixel(0,6,6,p.getLightest().rgb().toInt());
-                        newImage.setFramePixel(0,9,9,p.getLightest().rgb().toInt());
+                    if (newImage.getImage().getPixelRGBA(6, 6) == p.get(p.size() - 2).rgb().toInt()) {
+                        newImage.setFramePixel(0, 6, 6, p.getLightest().rgb().toInt());
+                        newImage.setFramePixel(0, 9, 9, p.getLightest().rgb().toInt());
                     }
                     this.dynamicPack.addAndCloseTexture(res, newImage);
                 } catch (Exception ex) {

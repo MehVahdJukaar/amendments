@@ -5,8 +5,6 @@ import net.mehvahdjukaar.amendments.AmendmentsClient;
 import net.mehvahdjukaar.amendments.client.ModMaterials;
 import net.mehvahdjukaar.amendments.client.renderers.HangingSignRendererExtension;
 import net.mehvahdjukaar.amendments.configs.ClientConfigs;
-import net.mehvahdjukaar.amendments.integration.CompatHandler;
-import net.mehvahdjukaar.amendments.integration.SuppCompat;
 import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -37,9 +35,9 @@ import java.util.List;
 public abstract class CompatFarmersDelightCanvasMixin extends SignRenderer {
 
     @Unique
-    private List<ModelPart> supplementaries$barModel;
+    private List<ModelPart> amendments$barModel;
     @Unique
-    private ModelPart supplementaries$chains;
+    private ModelPart amendments$chains;
 
     protected CompatFarmersDelightCanvasMixin(BlockEntityRendererProvider.Context arg) {
         super(arg);
@@ -63,11 +61,11 @@ public abstract class CompatFarmersDelightCanvasMixin extends SignRenderer {
 
             HangingSignRendererExtension.render(tile, partialTick,
                     poseStack, bufferSource, packedLight, packedOverlay,
-                    blockState, model, supplementaries$barModel, supplementaries$chains,
+                    blockState, model, amendments$barModel, amendments$chains,
 
                     this.getCanvasSignMaterial(dye),
                     ModMaterials.CANVAS_SIGH_MATERIAL,
-                    this, 0.6f/0.4f* (CompatHandler.SUPPLEMENTARIES ? SuppCompat.getSignColorMult() : 1));
+                    this, 0.6f / 0.4f * ClientConfigs.getSignColorMult());
             ci.cancel();
         }
     }
@@ -76,11 +74,11 @@ public abstract class CompatFarmersDelightCanvasMixin extends SignRenderer {
     public void initEnhancedSign(BlockEntityRendererProvider.Context context, CallbackInfo ci) {
         if (PlatHelper.isModLoadingValid()) {
             ModelPart model = context.bakeLayer(AmendmentsClient.HANGING_SIGN_EXTENSION);
-            this.supplementaries$barModel = List.of(model.getChild("extension_6"),
+            this.amendments$barModel = List.of(model.getChild("extension_6"),
                     model.getChild("extension_5"),
                     model.getChild("extension_4"),
                     model.getChild("extension_3"));
-            this.supplementaries$chains = context.bakeLayer(AmendmentsClient.HANGING_SIGN_EXTENSION_CHAINS);
+            this.amendments$chains = context.bakeLayer(AmendmentsClient.HANGING_SIGN_EXTENSION_CHAINS);
         }
     }
 }

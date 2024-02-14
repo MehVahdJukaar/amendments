@@ -24,8 +24,7 @@ public class ModTags {
 
     //item tags
 
-    public static final TagKey<Item> COOKIES = itemTag("cookies");
-    public static final TagKey<Item> BRICKS = itemTag("throwable_bricks");
+    //TODO: check these 2
     public static final TagKey<Item> ROPES = itemTag("ropes");
     public static final TagKey<Item> CHAINS = itemTag("chains");
     public static final TagKey<Item> GOES_IN_LECTERN = itemTag("goes_in_lecterns");
