@@ -6,7 +6,6 @@ import net.mehvahdjukaar.amendments.common.SwingAnimation;
 import net.mehvahdjukaar.amendments.configs.ClientConfigs;
 import net.mehvahdjukaar.amendments.reg.ModBlockProperties;
 import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
-import net.minecraft.client.resources.model.Material;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -107,13 +106,13 @@ public class HangingSignTileExtension {
         }
         if (tag.contains("can_swing")) {
             canSwing = tag.getBoolean("can_swing");
-        }
+        } else canSwing = true;
         if (tag.contains("front_item")) {
             this.setFrontItem(ItemStack.of(tag.getCompound("front_item")));
-        }
+        } else setFrontItem(ItemStack.EMPTY);
         if (tag.contains("back_item")) {
             this.setBackItem(ItemStack.of(tag.getCompound("back_item")));
-        }
+        } else setBackItem(ItemStack.EMPTY);
     }
 
 

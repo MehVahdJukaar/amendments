@@ -50,6 +50,43 @@ import java.util.List;
 
 public class HangingSignRendererExtension {
 
+
+    public static LayerDefinition createMesh() {
+        MeshDefinition meshDefinition = new MeshDefinition();
+        PartDefinition partDefinition = meshDefinition.getRoot();
+        partDefinition.addOrReplaceChild("extension_6", CubeListBuilder.create()
+                        .texOffs(0, 0)
+                        .addBox(4.0F, -8.0F, -2.0F, 2.0F, 6.0F, 4.0F),
+                PartPose.rotation(0.0F, 0.0F, -1.5708F));
+        partDefinition.addOrReplaceChild("extension_5", CubeListBuilder.create()
+                        .texOffs(0, 0)
+                        .addBox(4.0F, -8.0F, -2.0F, 2.0F, 5.0F, 4.0F),
+                PartPose.rotation(0.0F, 0.0F, -1.5708F));
+        partDefinition.addOrReplaceChild("extension_4", CubeListBuilder.create()
+                        .texOffs(0, 0)
+                        .addBox(4.0F, -8.0F, -2.0F, 2.0F, 4.0F, 4.0F),
+                PartPose.rotation(0.0F, 0.0F, -1.5708F));
+        partDefinition.addOrReplaceChild("extension_3", CubeListBuilder.create()
+                        .texOffs(0, 0)
+                        .addBox(4.0F, -8.0F, -2.0F, 2.0F, 3.0F, 4.0F),
+                PartPose.rotation(0.0F, 0.0F, -1.5708F));
+
+        return LayerDefinition.create(meshDefinition, 16, 16);
+    }
+
+    public static LayerDefinition createChainMesh() {
+        MeshDefinition meshDefinition = new MeshDefinition();
+        PartDefinition root = meshDefinition.getRoot();
+
+        root.addOrReplaceChild("chainL1", CubeListBuilder.create().texOffs(0, 7).addBox(-1.5F, 1.0F, 0.0F, 3.0F, 5.0F, 0.0F), PartPose.offsetAndRotation(-5.0F, -6.0F, 0.0F, 0.0F, -0.7853982F, 0.0F));
+        root.addOrReplaceChild("chainL2", CubeListBuilder.create().texOffs(6, 7).addBox(-1.5F, 1.0F, 0.0F, 3.0F, 5.0F, 0.0F), PartPose.offsetAndRotation(-5.0F, -6.0F, 0.0F, 0.0F, 0.7853982F, 0.0F));
+        root.addOrReplaceChild("chainR1", CubeListBuilder.create().texOffs(0, 7).addBox(-1.5F, 1.0F, 0.0F, 3.0F, 5.0F, 0.0F), PartPose.offsetAndRotation(5.0F, -6.0F, 0.0F, 0.0F, -0.7853982F, 0.0F));
+        root.addOrReplaceChild("chainR2", CubeListBuilder.create().texOffs(6, 7).addBox(-1.5F, 1.0F, 0.0F, 3.0F, 5.0F, 0.0F), PartPose.offsetAndRotation(5.0F, -6.0F, 0.0F, 0.0F, 0.7853982F, 0.0F));
+        return LayerDefinition.create(meshDefinition, 64, 32);
+    }
+
+
+
     public static void render(SignBlockEntity tile, float partialTicks, PoseStack poseStack, MultiBufferSource bufferSource,
                               int light, int overlay, BlockState state,
                               HangingSignRenderer.HangingSignModel model, List<ModelPart> barModel, ModelPart chains,
@@ -144,17 +181,12 @@ public class HangingSignRendererExtension {
         renderBack(tile, extension, poseStack, bufferSource, light, overlay, renderer, colorMult, norm, font, filtered, lod);
         poseStack.popPose();
 
-
-        //Item item = Items.SKULL_BANNER_PATTERN;
-        //renderBannerPattern(tile, poseStack, bufferSource, light, item);
-
         poseStack.popPose();
 
         poseStack.translate(0, 0.25, 0);
 
 
         //Straight stuff
-
 
         if (visible) {
             model.plank.render(poseStack, vertexConsumer, light, overlay);
@@ -181,7 +213,6 @@ public class HangingSignRendererExtension {
             poseStack.popPose();
         }
 
-
         poseStack.popPose();
     }
 
@@ -189,6 +220,7 @@ public class HangingSignRendererExtension {
                                     int light, int overlay, SignRenderer renderer, float colorMult,
                                     Vector3f norm, Font font, boolean filtered, LOD lod) {
         ItemStack item = extension.getFrontItem();
+
         if (item.isEmpty()) {
             renderer.translateSignText(poseStack, true, renderer.getTextOffset());
             renderSignText(tile.getFrontText(), font, poseStack, buffer, light,
@@ -213,8 +245,10 @@ public class HangingSignRendererExtension {
                     norm.mul(-1), lod, filtered, tile.getTextLineHeight(), tile.getMaxTextLineWidth(),
                     colorMult);
         } else if (CompatHandler.SUPPLEMENTARIES && item.getItem() instanceof BannerPatternItem banner) {
+            poseStack.mulPose(RotHlpr.Y180);
             renderBannerPattern(tile.getBackText(), poseStack, buffer, light, banner);
         } else {
+            poseStack.mulPose(RotHlpr.Y180);
             renderItem(item, poseStack, buffer, light, overlay, tile.getLevel());
         }
     }
@@ -223,41 +257,6 @@ public class HangingSignRendererExtension {
     private static float getSignAngle(BlockState state, boolean attachedToWall) {
         return attachedToWall ? -(state.getValue(WallSignBlock.FACING)).toYRot() : -((state.getValue(CeilingHangingSignBlock.ROTATION) * 360) / 16.0F);
     }
-
-    public static LayerDefinition createMesh() {
-        MeshDefinition meshDefinition = new MeshDefinition();
-        PartDefinition partDefinition = meshDefinition.getRoot();
-        partDefinition.addOrReplaceChild("extension_6", CubeListBuilder.create()
-                        .texOffs(0, 0)
-                        .addBox(4.0F, -8.0F, -2.0F, 2.0F, 6.0F, 4.0F),
-                PartPose.rotation(0.0F, 0.0F, -1.5708F));
-        partDefinition.addOrReplaceChild("extension_5", CubeListBuilder.create()
-                        .texOffs(0, 0)
-                        .addBox(4.0F, -8.0F, -2.0F, 2.0F, 5.0F, 4.0F),
-                PartPose.rotation(0.0F, 0.0F, -1.5708F));
-        partDefinition.addOrReplaceChild("extension_4", CubeListBuilder.create()
-                        .texOffs(0, 0)
-                        .addBox(4.0F, -8.0F, -2.0F, 2.0F, 4.0F, 4.0F),
-                PartPose.rotation(0.0F, 0.0F, -1.5708F));
-        partDefinition.addOrReplaceChild("extension_3", CubeListBuilder.create()
-                        .texOffs(0, 0)
-                        .addBox(4.0F, -8.0F, -2.0F, 2.0F, 3.0F, 4.0F),
-                PartPose.rotation(0.0F, 0.0F, -1.5708F));
-
-        return LayerDefinition.create(meshDefinition, 16, 16);
-    }
-
-    public static LayerDefinition createChainMesh() {
-        MeshDefinition meshDefinition = new MeshDefinition();
-        PartDefinition root = meshDefinition.getRoot();
-
-        root.addOrReplaceChild("chainL1", CubeListBuilder.create().texOffs(0, 7).addBox(-1.5F, 1.0F, 0.0F, 3.0F, 5.0F, 0.0F), PartPose.offsetAndRotation(-5.0F, -6.0F, 0.0F, 0.0F, -0.7853982F, 0.0F));
-        root.addOrReplaceChild("chainL2", CubeListBuilder.create().texOffs(6, 7).addBox(-1.5F, 1.0F, 0.0F, 3.0F, 5.0F, 0.0F), PartPose.offsetAndRotation(-5.0F, -6.0F, 0.0F, 0.0F, 0.7853982F, 0.0F));
-        root.addOrReplaceChild("chainR1", CubeListBuilder.create().texOffs(0, 7).addBox(-1.5F, 1.0F, 0.0F, 3.0F, 5.0F, 0.0F), PartPose.offsetAndRotation(5.0F, -6.0F, 0.0F, 0.0F, -0.7853982F, 0.0F));
-        root.addOrReplaceChild("chainR2", CubeListBuilder.create().texOffs(6, 7).addBox(-1.5F, 1.0F, 0.0F, 3.0F, 5.0F, 0.0F), PartPose.offsetAndRotation(5.0F, -6.0F, 0.0F, 0.0F, 0.7853982F, 0.0F));
-        return LayerDefinition.create(meshDefinition, 64, 32);
-    }
-
 
     public static void renderSignText(SignText signText, Font font, PoseStack poseStack,
                                       MultiBufferSource buffer,
@@ -274,9 +273,7 @@ public class HangingSignRendererExtension {
         for (int i = 0; i < formattedCharSequences.length; i++) {
             TextUtil.renderLine(formattedCharSequences[i], font, lineHeight * i, poseStack, buffer, properties);
         }
-
     }
-
 
     private static void renderBannerPattern(SignText sign, PoseStack poseStack, MultiBufferSource bufferSource,
                                             int packedLight, BannerPatternItem banner) {
@@ -313,11 +310,12 @@ public class HangingSignRendererExtension {
         ItemRenderer itemRenderer = Minecraft.getInstance().getItemRenderer();
         BakedModel model = itemRenderer.getModel(stack, level, null, 0);
         poseStack.pushPose();
-        poseStack.translate(0, -9 / 16f, +5 / 64f);
+        float z = model.isGui3d() ? 7/64f : 5/64f;
+        poseStack.translate(0, -9 / 16f, z);
 
         float scale = 10 / 16f;
         poseStack.scale(scale, scale, scale);
-        //poseStack.mulPose(Const.Y180);
+
         itemRenderer.render(stack, ItemDisplayContext.FIXED, true, poseStack, buffer, light, overlay, model);
         poseStack.popPose();
     }

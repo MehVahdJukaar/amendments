@@ -4,12 +4,15 @@ import net.mehvahdjukaar.amendments.Amendments;
 import net.mehvahdjukaar.amendments.events.ModEvents;
 import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.item.AxeItem;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TagsUpdatedEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import vazkii.quark.base.handler.ToolInteractionHandler;
 
 import static net.mehvahdjukaar.amendments.Amendments.MOD_ID;
 
@@ -25,6 +28,8 @@ public class AmendmentsForge {
         if (PlatHelper.getPhysicalSide().isClient()) {
             MinecraftForge.EVENT_BUS.register(ClientEvents.class);
         }
+        BlockState state;
+
     }
 
     @SubscribeEvent(priority = EventPriority.LOW)

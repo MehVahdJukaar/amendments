@@ -23,6 +23,8 @@ public class ClientConfigs {
     public static final Supplier<PendulumAnimation.Config> HANGING_SIGN_CONFIG;
 
     public static final Supplier<Boolean> FAST_LANTERNS;
+    public static final Supplier<Boolean> LANTERN_HOLDING;
+    public static final Supplier<Double> LANTERN_HOLDING_SIZE;
     public static final Supplier<PendulumAnimation.Config> WALL_LANTERN_CONFIG;
 
 
@@ -78,6 +80,10 @@ public class ClientConfigs {
         WALL_LANTERN_CONFIG = builder.defineObject("swing_physics",
                 PendulumAnimation.Config::new,
                 PendulumAnimation.Config.CODEC);
+        LANTERN_HOLDING_SIZE = builder.comment("Size lanterns when held in hand")
+                        .define("lantern_item_size", 10/16f, 0, 1);
+        LANTERN_HOLDING = builder.comment("Gives a special animation to lanterns when held in hand")
+                        .define("lantern_item_holding", true);
         builder.pop();
 
         builder.buildAndRegister();

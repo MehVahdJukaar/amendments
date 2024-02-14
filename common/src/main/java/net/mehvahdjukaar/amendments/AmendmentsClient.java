@@ -1,10 +1,11 @@
 package net.mehvahdjukaar.amendments;
 
 import com.google.common.base.Suppliers;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Axis;
 import net.mehvahdjukaar.amendments.client.ClientResourceGenerator;
 import net.mehvahdjukaar.amendments.client.WallLanternModelsManager;
 import net.mehvahdjukaar.amendments.client.colors.BrewingStandColor;
-import net.mehvahdjukaar.amendments.client.colors.LilyBlockColor;
 import net.mehvahdjukaar.amendments.client.colors.MimicBlockColor;
 import net.mehvahdjukaar.amendments.client.colors.SoftFluidColor;
 import net.mehvahdjukaar.amendments.client.gui.LecternBookEditScreen;
@@ -14,27 +15,43 @@ import net.mehvahdjukaar.amendments.common.item.DyeBottleItem;
 import net.mehvahdjukaar.amendments.integration.CompatObjects;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.moonlight.api.client.model.NestedModelLoader;
+import net.mehvahdjukaar.moonlight.api.client.util.RenderUtil;
+import net.mehvahdjukaar.moonlight.api.item.IFirstPersonAnimationProvider;
+import net.mehvahdjukaar.moonlight.api.item.IThirdPersonAnimationProvider;
+import net.mehvahdjukaar.moonlight.api.item.IThirdPersonSpecialItemRenderer;
 import net.mehvahdjukaar.moonlight.api.misc.EventCalled;
 import net.mehvahdjukaar.moonlight.api.platform.ClientHelper;
 import net.mehvahdjukaar.moonlight.api.set.BlocksColorAPI;
 import net.mehvahdjukaar.moonlight.api.util.Utils;
+import net.mehvahdjukaar.moonlight.api.util.math.MthUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
+import net.minecraft.client.model.ArmedModel;
+import net.minecraft.client.model.EntityModel;
+import net.minecraft.client.model.HeadedModel;
+import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.renderer.BiomeColors;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.FallingBlockRenderer;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.resources.model.Material;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.DyeColor;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.RecordItem;
+import net.minecraft.util.Mth;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.HumanoidArm;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.*;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.WeatheringCopperFullBlock;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -70,6 +87,7 @@ public class AmendmentsClient {
         ClientHelper.addSpecialModelRegistration(AmendmentsClient::registerSpecialModels);
         ClientHelper.addEntityRenderersRegistration(AmendmentsClient::registerEntityRenderers);
         ClientHelper.addItemColorsRegistration(AmendmentsClient::registerItemColors);
+
     }
 
 
@@ -85,6 +103,7 @@ public class AmendmentsClient {
         ClientHelper.registerRenderType(ModRegistry.WALL_LANTERN.get(), RenderType.cutout());
         MenuScreens.register(ModRegistry.LECTERN_EDIT_MENU.get(), LecternBookEditScreen::new);
 
+        IThirdPersonAnimationProvider.attachToItem(Items.LANTERN, new LanternRendererExtension());
     }
 
 
@@ -135,7 +154,7 @@ public class AmendmentsClient {
 
     @EventCalled
     private static void registerBlockColors(ClientHelper.BlockColorEvent event) {
-        event.register(new MimicBlockColor(), ModRegistry.CARPET_STAIRS.get(),ModRegistry.CARPET_SLAB.get(),
+        event.register(new MimicBlockColor(), ModRegistry.CARPET_STAIRS.get(), ModRegistry.CARPET_SLAB.get(),
                 ModRegistry.WALL_LANTERN.get(), ModRegistry.HANGING_FLOWER_POT.get(), ModRegistry.WATERLILY_BLOCK.get());
         //event.register(new LilyBlockColor(), ModRegistry.WATERLILY_BLOCK.get());
         event.register((blockState, level, pos, i) -> i == 1 && level != null && pos != null ? BiomeColors.getAverageWaterColor(level, pos) : -1,
