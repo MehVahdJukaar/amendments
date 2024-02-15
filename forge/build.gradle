@@ -112,14 +112,13 @@ dependencies {
     annotationProcessor 'net.fabricmc:sponge-mixin:0.12.5+mixin.0.8.5'
 
     modImplementation ("net.mehvahdjukaar:moonlight-forge:${rootProject.moonlight_version}")
-    //modImplementation ("net.mehvahdjukaar:supplementaries-forge:${rootProject.supplementaries_version}")
-    modCompileOnly("curse.maven:supplementaries-412082:5097848")
+    modCompileOnly ("net.mehvahdjukaar:supplementaries-forge:${rootProject.supplementaries_version}")
+    //modCompileOnly("curse.maven:supplementaries-412082:5097848")
     modCompileOnly ("net.mehvahdjukaar:suppsquared-forge:${rootProject.suppsquared_version}")
 
     modCompileOnly("curse.maven:farmers-delight-398521:4679319")
-    modCompileOnly("curse.maven:autoreglib-250363:4100299")
-    modCompileOnly("curse.maven:quark-oddities-301051:3575623")
-    modCompileOnly("curse.maven:quark-243121:4551115")
+    modCompileOnly("curse.maven:quark-243121:5093415")
+    modCompileOnly("curse.maven:zeta-968868:5078215")
 
     implementation 'org.jetbrains:annotations:22.0.0'
 }

@@ -134,7 +134,7 @@ public class AmendmentsClient {
         event.register(Amendments.res("waterlogged_lily"), WaterloggedLilyModel::new);
         event.register(Amendments.res("wall_lantern"), new NestedModelLoader("support", WallLanternBakedModel::new));
         event.register(Amendments.res("cauldron"), new CauldronModelLoader());
-        event.register(Supplementaries.res("hanging_pot"), new NestedModelLoader("rope", HangingPotBakedModel::new));
+        event.register(Amendments.res("hanging_pot"), new NestedModelLoader("rope", HangingPotBakedModel::new));
 
     }
 
