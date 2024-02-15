@@ -2,6 +2,7 @@ package net.mehvahdjukaar.amendments.client.renderers;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
+import net.mehvahdjukaar.amendments.AmendmentsClient;
 import net.mehvahdjukaar.amendments.configs.ClientConfigs;
 import net.mehvahdjukaar.moonlight.api.client.util.RotHlpr;
 import net.mehvahdjukaar.moonlight.api.item.IFirstPersonSpecialItemRenderer;
@@ -25,12 +26,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.state.BlockState;
-import org.joml.Matrix4f;
 import org.joml.Quaternionf;
-import org.joml.Vector3f;
-import org.joml.Vector4f;
 
 public class LanternRendererExtension implements IThirdPersonAnimationProvider, IThirdPersonSpecialItemRenderer, IFirstPersonSpecialItemRenderer {
 
@@ -105,13 +102,13 @@ public class LanternRendererExtension implements IThirdPersonAnimationProvider, 
                                          PoseStack poseStack, float partialTicks, float pitch, float attackAnim, float equipAnim,
                                          MultiBufferSource buffer, int light, ItemInHandRenderer renderer) {
 
-
         if (!player.isInvisible()) {
 
-            float lanternScale = 12 / 16f;
+            float lanternScale = 16 / 16f;
             float f = arm == HumanoidArm.RIGHT ? 1.0F : -1.0F;
 
             //Quaternionf oldRotation = poseStack.last().pose().getUnnormalizedRotation(new Quaternionf());
+
 
             poseStack.pushPose();
 
@@ -132,24 +129,33 @@ public class LanternRendererExtension implements IThirdPersonAnimationProvider, 
             // the two translations aren't the same but are darn close.
             // I tried doing math but failed...
             // this is so bad...
+
+            float t = 0 * (player.tickCount / 40f) % 1;
+
+            poseStack.translate(-0.5 - 0.25 * f, 0.15, -0.463);
+            //poseStack.translate(AmendmentsClient.x*f, AmendmentsClient.y, AmendmentsClient.z);
+            poseStack.translate(0.066 * f, -0.033, 0.024);
+
+
             if (arm == HumanoidArm.RIGHT) {
-                poseStack.translate(-0.9, 0.06, -0.32);
+
                 rotationDiff = new Quaternionf(2.077E-1, -6.488E-1, 4.433E-1, 5.825E-1);
+                poseStack.translate(0.5, 0.5, 0.5);
+                poseStack.mulPose(rotationDiff);
+                poseStack.translate(-0.5, -0.5, -0.5);
 
             } else {
-                poseStack.translate(-0.157, -0.0, -0.557);
-                rotationDiff = new Quaternionf(2.077E-1, 6.488E-1, -4.433E-1, 5.825E-1);
-            }
 
-            poseStack.translate(0.5, 0.5, 0.5);
-            poseStack.mulPose(rotationDiff);
-            poseStack.translate(-0.5, -0.5, -0.5);
+                rotationDiff = new Quaternionf(2.077E-1, 6.488E-1, -4.433E-1, 5.825E-1);
+                poseStack.translate(0.5, 0.5, 0.5);
+                poseStack.mulPose(rotationDiff);
+                poseStack.translate(-0.5, -0.5, -0.5);
+            }
 
             poseStack.scale(lanternScale, lanternScale, lanternScale);
             renderLanternModel(itemStack, poseStack, buffer, light);
 
             poseStack.popPose();
-
 
             /*
 
@@ -161,6 +167,7 @@ public class LanternRendererExtension implements IThirdPersonAnimationProvider, 
             // attack anim
 
             {
+
                 float attackSqrt = Mth.sqrt(attackAnim);
 
                 float attackSin = -0.3F * Mth.sin(attackSqrt * Mth.PI);
@@ -175,17 +182,22 @@ public class LanternRendererExtension implements IThirdPersonAnimationProvider, 
             poseStack.scale(lanternScale, lanternScale, lanternScale);
 
             // bs translation
-            poseStack.translate(-0.5F + 0.1 * f, -0.8F, -0.95);
+            poseStack.translate(-0.5F + 0.15 * f, -0.9F, -0.9);
 
             itemStack = Items.SOUL_LANTERN.getDefaultInstance();
+
             renderLanternModel(itemStack, poseStack, buffer, light);
 
             */
+
             return true;
         }
         return false;
     }
 
+    public static void renderDebug(PoseStack poseStack, MultiBufferSource buffer) {
+
+    }
 
     private static void renderLanternModel(ItemStack itemStack, PoseStack poseStack, MultiBufferSource buffer, int light) {
         Minecraft mc = Minecraft.getInstance();

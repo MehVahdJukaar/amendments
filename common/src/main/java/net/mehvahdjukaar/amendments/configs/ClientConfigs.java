@@ -1,7 +1,6 @@
 package net.mehvahdjukaar.amendments.configs;
 
 import net.mehvahdjukaar.amendments.Amendments;
-import net.mehvahdjukaar.amendments.client.ModMaterials;
 import net.mehvahdjukaar.amendments.common.PendulumAnimation;
 import net.mehvahdjukaar.moonlight.api.platform.configs.ConfigBuilder;
 import net.mehvahdjukaar.moonlight.api.platform.configs.ConfigType;
@@ -21,6 +20,7 @@ public class ClientConfigs {
     public static final Supplier<Boolean> SWINGING_SIGNS;
     public static final Supplier<Boolean> SIGN_ATTACHMENT;
     public static final Supplier<PendulumAnimation.Config> HANGING_SIGN_CONFIG;
+    public static final Supplier<Double> ITEM_SCALE;
 
     public static final Supplier<Boolean> FAST_LANTERNS;
     public static final Supplier<Boolean> LANTERN_HOLDING;
@@ -65,7 +65,9 @@ public class ClientConfigs {
         builder.pop();
 
         builder.push("hanging_sign");
-        SWINGING_SIGNS = builder.comment("Makes siwng swing!")
+        ITEM_SCALE = builder.comment("Scale of items on hanging signs (unit is in pixel they would occupy). Set to 8 to better match the pixels on the sign")
+                .define("item_pixel_scale", 10d, 0, 32);
+        SWINGING_SIGNS = builder.comment("Makes signs swing!")
                 .define("swinging_signs", true);
         SIGN_ATTACHMENT = builder.comment("Signs have visual attachment to walls and fences")
                 .define("sign_attachment", true);
@@ -83,9 +85,9 @@ public class ClientConfigs {
                 PendulumAnimation.Config::new,
                 PendulumAnimation.Config.CODEC);
         LANTERN_HOLDING_SIZE = builder.comment("Size lanterns when held in hand")
-                        .define("lantern_item_size", 10/16f, 0, 1);
+                .define("lantern_item_size", 10 / 16f, 0, 1);
         LANTERN_HOLDING = builder.comment("Gives a special animation to lanterns when held in hand")
-                        .define("lantern_item_holding", true);
+                .define("lantern_item_holding", true);
         builder.pop();
 
         builder.push("misc");
@@ -100,12 +102,18 @@ public class ClientConfigs {
     }
 
     private static void onChange() {
-        signColorMult = (float) (double) net.mehvahdjukaar.supplementaries.configs.ClientConfigs.Tweaks.BRIGHTEN_SIGN_TEXT_COLOR.get();
+        signColorMult = (float) (double) BRIGHTEN_SIGN_TEXT_COLOR.get();
+        hsScale = (float) (double) ITEM_SCALE.get();
     }
 
     private static float signColorMult = 1;
+    private static float hsScale = 1;
 
     public static float getSignColorMult() {
         return signColorMult;
+    }
+
+    public static float getItemPixelScale() {
+        return hsScale;
     }
 }

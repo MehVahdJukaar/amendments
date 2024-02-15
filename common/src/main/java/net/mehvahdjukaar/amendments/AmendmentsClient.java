@@ -97,6 +97,9 @@ public class AmendmentsClient {
 
     }
 
+    public static float x;
+    public static float y;
+    public static float z;
 
     @EventCalled
     public static void setup() {

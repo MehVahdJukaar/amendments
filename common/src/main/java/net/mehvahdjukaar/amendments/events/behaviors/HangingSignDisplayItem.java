@@ -6,6 +6,8 @@ import net.mehvahdjukaar.amendments.configs.CommonConfigs;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -55,6 +57,9 @@ public class HangingSignDisplayItem implements BlockUse {
         ItemStack tileItem = front ? ext.getFrontItem() : ext.getBackItem();
         boolean hasItem = !tileItem.isEmpty();
         if (!hasItem && !stack.isEmpty()) {
+            level.playSound(player, pos, SoundEvents.ITEM_FRAME_ADD_ITEM, SoundSource.BLOCKS, 1.0F,
+                    level.random.nextFloat() * 0.1F + 0.95F);
+
             if (level.isClientSide) return InteractionResult.SUCCESS;
 
             //add
@@ -66,7 +71,10 @@ public class HangingSignDisplayItem implements BlockUse {
             if (!player.isCreative()) {
                 stack.shrink(1);
             }
-            //hack so we can set dye
+
+
+
+                //hack so we can set dye
             setMessagesAndUpdate(be, front, "item");
 
             level.gameEvent(GameEvent.BLOCK_CHANGE, pos, GameEvent.Context.of(player, state));

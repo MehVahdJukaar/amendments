@@ -5,9 +5,11 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import net.mehvahdjukaar.amendments.common.ExtendedHangingSign;
 import net.mehvahdjukaar.amendments.common.tile.HangingSignTileExtension;
+import net.mehvahdjukaar.amendments.configs.ClientConfigs;
 import net.mehvahdjukaar.amendments.integration.CompatHandler;
 import net.mehvahdjukaar.amendments.integration.SuppCompat;
 import net.mehvahdjukaar.amendments.reg.ModBlockProperties;
+import net.mehvahdjukaar.moonlight.api.block.ItemDisplayTile;
 import net.mehvahdjukaar.moonlight.api.client.util.LOD;
 import net.mehvahdjukaar.moonlight.api.client.util.RotHlpr;
 import net.mehvahdjukaar.moonlight.api.client.util.TextUtil;
@@ -283,10 +285,10 @@ public class HangingSignRendererExtension {
             poseStack.pushPose();
             poseStack.translate(0, -9 / 16f, 1 / 16f + 0.001);
 
-            float scale = 10f / 14;
+            float scale = ClientConfigs.getItemPixelScale() / 14f;
             poseStack.scale(scale, -scale, -1);
             VertexConsumer consumer = renderMaterial.buffer(bufferSource, RenderType::entityNoOutline);
-
+            ItemDisplayTile
             float[] color = sign.getColor().getTextureDiffuseColors();
             int b = (int) (color[2] * 255);
             int g = (int) (color[1] * 255);
@@ -313,7 +315,7 @@ public class HangingSignRendererExtension {
         float z = model.isGui3d() ? 7/64f : 5/64f;
         poseStack.translate(0, -9 / 16f, z);
 
-        float scale = 10 / 16f;
+        float scale = ClientConfigs.getItemPixelScale() / 16f;
         poseStack.scale(scale, scale, scale);
 
         itemRenderer.render(stack, ItemDisplayContext.FIXED, true, poseStack, buffer, light, overlay, model);
