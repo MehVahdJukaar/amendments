@@ -288,7 +288,7 @@ public class HangingSignRendererExtension {
             float scale = ClientConfigs.getItemPixelScale() / 14f;
             poseStack.scale(scale, -scale, -1);
             VertexConsumer consumer = renderMaterial.buffer(bufferSource, RenderType::entityNoOutline);
-            ItemDisplayTile
+
             float[] color = sign.getColor().getTextureDiffuseColors();
             int b = (int) (color[2] * 255);
             int g = (int) (color[1] * 255);

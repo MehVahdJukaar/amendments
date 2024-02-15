@@ -4,10 +4,10 @@
 	"textures": {
 		"side_up": "amendments:block/double_cake_side",
 		"top_up": "amendments:block/double_cake_top",
-		"bottom": "amendments:block/cake_bottom",
-		"top": "amendments:block/cake_top",
-		"particle": "amendments:block/cake_side",
-		"side": "amendments:block/cake_side"
+		"bottom": "minecraft:block/cake_bottom",
+		"top": "minecraft:block/cake_top",
+		"particle": "minecraft:block/cake_side",
+		"side": "minecraft:block/cake_side"
 	}
 
 }

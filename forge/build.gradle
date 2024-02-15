@@ -45,17 +45,17 @@ shadowJar {
     exclude "architectury.common.json"
 
     configurations = [project.configurations.shadowCommon]
-    classifier "dev-shadow"
+    archiveClassifier = "dev-shadow"
 }
 
 remapJar {
     input.set shadowJar.archiveFile
     dependsOn shadowJar
-    classifier null
+    archiveClassifier = null
 }
 
 jar {
-    classifier "dev"
+    archiveClassifier = "dev"
 }
 
 sourcesJar {
@@ -113,7 +113,7 @@ dependencies {
 
     modImplementation ("net.mehvahdjukaar:moonlight-forge:${rootProject.moonlight_version}")
     //modImplementation ("net.mehvahdjukaar:supplementaries-forge:${rootProject.supplementaries_version}")
-    modImplementation("curse.maven:supplementaries-412082:5097848")
+    modCompileOnly("curse.maven:supplementaries-412082:5097848")
     modCompileOnly ("net.mehvahdjukaar:suppsquared-forge:${rootProject.suppsquared_version}")
 
     modCompileOnly("curse.maven:farmers-delight-398521:4679319")

@@ -40,7 +40,9 @@ dependencies {
     }
 
    // modImplementation ("net.mehvahdjukaar:moonlight-fabric:${rootProject.moonlight_version}")
-    modImplementation("curse.maven:selene-499980:5093408")
+    //modImplementation("curse.maven:selene-499980:5093408")
+
+    modImplementation ("net.mehvahdjukaar:moonlight-fabric:${moonlight_version}")
 
     modCompileOnly ("net.mehvahdjukaar:supplementaries-fabric:${rootProject.supplementaries_version}")
     modCompileOnly ("net.mehvahdjukaar:suppsquared-fabric:${rootProject.suppsquared_version}")
@@ -65,18 +67,18 @@ shadowJar {
     exclude "architectury.common.json"
 
     configurations = [project.configurations.shadowCommon]
-    classifier "dev-shadow"
+    archiveClassifier = "dev-shadow"
 }
 
 remapJar {
     injectAccessWidener = true
     input.set shadowJar.archiveFile
     dependsOn shadowJar
-    classifier "fabric"
+    archiveClassifier = "fabric"
 }
 
 jar {
-    classifier "dev"
+    archiveClassifier = "dev"
 }
 
 sourcesJar {

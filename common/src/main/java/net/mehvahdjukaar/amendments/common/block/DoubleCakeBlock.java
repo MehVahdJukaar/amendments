@@ -7,9 +7,9 @@ import net.mehvahdjukaar.amendments.integration.CompatHandler;
 import net.mehvahdjukaar.amendments.integration.SuppCompat;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.moonlight.api.platform.ForgeHelper;
+import net.mehvahdjukaar.moonlight.api.util.math.MthUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
@@ -26,68 +26,33 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-public class DoubleCakeBlock extends DirectionalCakeBlock {
+import java.util.Arrays;
 
-    protected static final VoxelShape[] SHAPES_WEST = new VoxelShape[]{
-            Shapes.or(box(2, 8, 2, 14, 15, 14),
-                    box(1, 0, 1, 15, 8, 15)),
-            Shapes.or(box(3, 8, 2, 14, 15, 14),
-                    box(1, 0, 1, 15, 8, 15)),
-            Shapes.or(box(5, 8, 2, 14, 15, 14),
-                    box(1, 0, 1, 15, 8, 15)),
-            Shapes.or(box(7, 8, 2, 14, 15, 14),
-                    box(1, 0, 1, 15, 8, 15)),
-            Shapes.or(box(9, 8, 2, 14, 15, 14),
-                    box(1, 0, 1, 15, 8, 15)),
-            Shapes.or(box(11, 8, 2, 14, 15, 14),
-                    box(1, 0, 1, 15, 8, 15)),
-            Shapes.or(box(13, 8, 2, 14, 15, 14),
-                    box(1, 0, 1, 15, 8, 15))};
-    protected static final VoxelShape[] SHAPES_EAST = new VoxelShape[]{
-            Shapes.or(box(2, 8, 2, 14, 15, 14),
-                    box(1, 0, 1, 15, 8, 15)),
-            Shapes.or(box(2, 8, 2, 13, 15, 14),
-                    box(1, 0, 1, 15, 8, 15)),
-            Shapes.or(box(2, 8, 2, 11, 15, 14),
-                    box(1, 0, 1, 15, 8, 15)),
-            Shapes.or(box(2, 8, 2, 9, 15, 14),
-                    box(1, 0, 1, 15, 8, 15)),
-            Shapes.or(box(2, 8, 2, 7, 15, 14),
-                    box(1, 0, 1, 15, 8, 15)),
-            Shapes.or(box(2, 8, 2, 5, 15, 14),
-                    box(1, 0, 1, 15, 8, 15)),
-            Shapes.or(box(2, 8, 2, 3, 15, 14),
-                    box(1, 0, 1, 15, 8, 15))};
-    protected static final VoxelShape[] SHAPES_SOUTH = new VoxelShape[]{
-            Shapes.or(box(2, 8, 2, 14, 15, 14),
-                    box(1, 0, 1, 15, 8, 15)),
-            Shapes.or(box(2, 8, 2, 14, 15, 13),
-                    box(1, 0, 1, 15, 8, 15)),
-            Shapes.or(box(2, 8, 2, 14, 15, 11),
-                    box(1, 0, 1, 15, 8, 15)),
-            Shapes.or(box(2, 8, 2, 14, 15, 9),
-                    box(1, 0, 1, 15, 8, 15)),
-            Shapes.or(box(2, 8, 2, 14, 15, 7),
-                    box(1, 0, 1, 15, 8, 15)),
-            Shapes.or(box(2, 8, 2, 14, 15, 5),
-                    box(1, 0, 1, 15, 8, 15)),
-            Shapes.or(box(2, 8, 2, 14, 15, 3),
-                    box(1, 0, 1, 15, 8, 15))};
+public class DoubleCakeBlock extends DirectionalCakeBlock {
     protected static final VoxelShape[] SHAPES_NORTH = new VoxelShape[]{
-            Shapes.or(box(2, 8, 2, 14, 15, 14),
+            Shapes.or(box(2, 8, 2, 14, 16, 14),
                     box(1, 0, 1, 15, 8, 15)),
-            Shapes.or(box(2, 8, 3, 14, 15, 14),
+            Shapes.or(box(2, 8, 3, 14, 16, 14),
                     box(1, 0, 1, 15, 8, 15)),
-            Shapes.or(box(2, 8, 5, 14, 15, 14),
+            Shapes.or(box(2, 8, 5, 14, 16, 14),
                     box(1, 0, 1, 15, 8, 15)),
-            Shapes.or(box(2, 8, 7, 14, 15, 14),
+            Shapes.or(box(2, 8, 7, 14, 16, 14),
                     box(1, 0, 1, 15, 8, 15)),
-            Shapes.or(box(2, 8, 9, 14, 15, 14),
+            Shapes.or(box(2, 8, 9, 14, 16, 14),
                     box(1, 0, 1, 15, 8, 15)),
-            Shapes.or(box(2, 8, 11, 14, 15, 14),
+            Shapes.or(box(2, 8, 11, 14, 16, 14),
                     box(1, 0, 1, 15, 8, 15)),
-            Shapes.or(box(2, 8, 13, 14, 15, 14),
+            Shapes.or(box(2, 8, 13, 14, 16, 14),
                     box(1, 0, 1, 15, 8, 15))};
+    protected static final VoxelShape[] SHAPES_WEST = Arrays.stream(SHAPES_NORTH).map(
+            s -> MthUtils.rotateVoxelShape(s, Direction.WEST)
+    ).toArray(VoxelShape[]::new);
+    protected static final VoxelShape[] SHAPES_SOUTH = Arrays.stream(SHAPES_NORTH).map(
+            s -> MthUtils.rotateVoxelShape(s, Direction.SOUTH)
+    ).toArray(VoxelShape[]::new);
+    protected static final VoxelShape[] SHAPES_EAST = Arrays.stream(SHAPES_NORTH).map(
+            s -> MthUtils.rotateVoxelShape(s, Direction.EAST)
+    ).toArray(VoxelShape[]::new);
     private final BlockState mimic;
 
     public DoubleCakeBlock(CakeRegistry.CakeType type) {
@@ -123,7 +88,7 @@ public class DoubleCakeBlock extends DirectionalCakeBlock {
 
     @Override
     public void animateTick(BlockState stateIn, Level level, BlockPos pos, RandomSource rand) {
-       if(CompatHandler.SUPPLEMENTARIES) SuppCompat.spawnCakeParticles(level, pos, rand);
+        if (CompatHandler.SUPPLEMENTARIES) SuppCompat.spawnCakeParticles(level, pos, rand);
         super.animateTick(stateIn, level, pos, rand);
         mimic.getBlock().animateTick(mimic, level, pos, rand);
     }
@@ -149,7 +114,7 @@ public class DoubleCakeBlock extends DirectionalCakeBlock {
     //@Override
     @PlatformOnly(PlatformOnly.FORGE)
     public float getExplosionResistance(BlockState state, BlockGetter level, BlockPos pos, Explosion explosion) {
-        return level instanceof Level l ?  Math.max(ForgeHelper.getExplosionResistance(mimic, l, pos, explosion),
+        return level instanceof Level l ? Math.max(ForgeHelper.getExplosionResistance(mimic, l, pos, explosion),
                 state.getBlock().getExplosionResistance()) : super.getExplosionResistance();
     }
 
