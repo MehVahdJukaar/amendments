@@ -11,7 +11,7 @@ import net.mehvahdjukaar.amendments.client.gui.LecternBookEditScreen;
 import net.mehvahdjukaar.amendments.client.model.*;
 import net.mehvahdjukaar.amendments.client.renderers.*;
 import net.mehvahdjukaar.amendments.common.item.DyeBottleItem;
-import net.mehvahdjukaar.amendments.events.behaviors.InteractEvents;
+import net.mehvahdjukaar.amendments.configs.ClientConfigs;
 import net.mehvahdjukaar.amendments.integration.CompatObjects;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.moonlight.api.client.model.NestedModelLoader;
@@ -20,8 +20,6 @@ import net.mehvahdjukaar.moonlight.api.misc.EventCalled;
 import net.mehvahdjukaar.moonlight.api.platform.ClientHelper;
 import net.mehvahdjukaar.moonlight.api.set.BlocksColorAPI;
 import net.mehvahdjukaar.moonlight.api.util.Utils;
-import net.mehvahdjukaar.supplementaries.Supplementaries;
-import net.mehvahdjukaar.supplementaries.configs.ClientConfigs;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.model.geom.ModelLayerLocation;
@@ -32,7 +30,6 @@ import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.resources.model.Material;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.Level;
@@ -203,11 +200,38 @@ public class AmendmentsClient {
     //TODO: add
     @EventCalled
     public static void onItemTooltip(ItemStack itemStack, TooltipFlag tooltipFlag, List<Component> components) {
-        if (ClientConfigs.General.TOOLTIP_HINTS.get()) {
-            InteractEvents.addOverrideTooltips(itemStack, tooltipFlag, components);
+        if (ClientConfigs.TOOLTIP_HINTS.get()) {
+           // InteractEvents.addOverrideTooltips(itemStack, tooltipFlag, components);
         }
 
     }
+/*
+    //TODO: what is this for?
+    public static void addOverrideTooltips(ItemStack itemStack, TooltipFlag tooltipFlag, List<Component> components) {
+        Item item = itemStack.getItem();
+
+        for(var override : ITEM_USE_ON_BLOCK.get(item)) {
+            if (override != null && override.isEnabled()) {
+                MutableComponent t = override.getTooltip();
+                if (t != null) components.add(t.withStyle(ChatFormatting.DARK_GRAY).withStyle(ChatFormatting.ITALIC));
+            } else {
+                ItemUse o = ITEM_USE.get(item);
+                if (o != null && o.isEnabled()) {
+                    MutableComponent t = o.getTooltip();
+                    if (t != null)
+                        components.add(t.withStyle(ChatFormatting.DARK_GRAY).withStyle(ChatFormatting.ITALIC));
+                }
+            }
+        }
+
+
+        @Override
+        public void appendHoverText(ItemStack pStack, Level pLevel, List<Component> pTooltipComponents, TooltipFlag pIsAdvanced) {
+            if (net.mehvahdjukaar.amendments.configs.ClientConfigs.PLACEABLE_TOOLTIP.get()) {
+                pTooltipComponents.add(Component.translatable("message.amendments.wall_lantern").withStyle(ChatFormatting.DARK_GRAY).withStyle(ChatFormatting.ITALIC));
+            }
+        }
+    }*/
 
 
 }

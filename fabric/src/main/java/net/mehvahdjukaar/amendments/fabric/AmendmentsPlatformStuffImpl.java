@@ -13,9 +13,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class AmendmentsPlatformStuffImpl {
-    public static List<BakedQuad> removeAmbientOcclusion(List<BakedQuad> supportQuads) {
-        return supportQuads;
-    }
 
     public static SoftFluidTank createCauldronLiquidTank() {
         return new SoftFluidTankImpl(4){

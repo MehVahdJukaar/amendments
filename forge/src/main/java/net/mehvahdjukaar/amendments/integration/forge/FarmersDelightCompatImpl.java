@@ -2,6 +2,7 @@ package net.mehvahdjukaar.amendments.integration.forge;
 
 import net.mehvahdjukaar.amendments.common.CakeRegistry;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
+import net.mehvahdjukaar.moonlight.api.client.model.forge.BakedQuadsTransformerImpl;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;

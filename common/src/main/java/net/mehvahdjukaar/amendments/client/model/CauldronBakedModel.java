@@ -1,12 +1,10 @@
 package net.mehvahdjukaar.amendments.client.model;
 
 import net.mehvahdjukaar.amendments.AmendmentsPlatformStuff;
-import net.mehvahdjukaar.amendments.client.ModMaterials;
 import net.mehvahdjukaar.amendments.common.tile.LiquidCauldronBlockTile;
-import net.mehvahdjukaar.moonlight.api.client.model.BakedQuadBuilder;
+import net.mehvahdjukaar.moonlight.api.client.model.BakedQuadsTransformer;
 import net.mehvahdjukaar.moonlight.api.client.model.CustomBakedModel;
 import net.mehvahdjukaar.moonlight.api.client.model.ExtraModelData;
-import net.mehvahdjukaar.moonlight.api.client.util.VertexUtil;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluid;
 import net.mehvahdjukaar.moonlight.api.platform.ClientHelper;
 import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
@@ -50,21 +48,17 @@ public class CauldronBakedModel implements CustomBakedModel {
             List<BakedQuad> liquidQuads = fluid.getQuads(state, direction, randomSource);
 
             SoftFluid fluid = extraModelData.get(LiquidCauldronBlockTile.FLUID);
+            BakedQuadsTransformer transformer = BakedQuadsTransformer.create();
+            // has custom fluid
             if (fluid != null && !fluid.isEmpty()) {
                 TextureAtlasSprite sprite = ClientHelper.getBlockMaterial(fluid.getStillTexture()).sprite();
-                var b = BakedQuadBuilder.create(sprite);
-                //TODO: change
-                for (var q : VertexUtil.swapSprite(liquidQuads, sprite)) {
-                    b.fromVanilla(q);
-                    b.setDirection(q.getDirection());
-                    b.lightEmission(fluid.getLuminosity());
-                    b.setAmbientOcclusion(false);
-                    quads.add(b.build());
-                    //add emissivity. not rally needed since these do give off light too
-                }
-            }else {
-                quads.addAll(AmendmentsPlatformStuff.removeAmbientOcclusion(liquidQuads));
+                transformer.applyingAmbientOcclusion(false)
+                        .applyingEmissivity(fluid.getLuminosity())
+                        .applyingSprite(sprite);
+            } else {
+                transformer.applyingAmbientOcclusion(false);
             }
+            quads.addAll(transformer.transformAll(liquidQuads));
         }
         return quads;
     }

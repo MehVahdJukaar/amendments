@@ -2,6 +2,7 @@ package net.mehvahdjukaar.amendments.events.behaviors;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
+import net.mehvahdjukaar.amendments.configs.ClientConfigs;
 import net.mehvahdjukaar.amendments.integration.CompatHandler;
 import net.mehvahdjukaar.amendments.integration.FlanCompat;
 import net.mehvahdjukaar.moonlight.api.util.Utils;
@@ -181,25 +182,6 @@ public class InteractEvents {
             };
         }
         return InteractionResultHolder.pass(stack);
-    }
-
-    //TODO: what is this for?
-    public static void addOverrideTooltips(ItemStack itemStack, TooltipFlag tooltipFlag, List<Component> components) {
-        Item item = itemStack.getItem();
-
-        for(var override : ITEM_USE_ON_BLOCK.get(item)) {
-            if (override != null && override.isEnabled()) {
-                MutableComponent t = override.getTooltip();
-                if (t != null) components.add(t.withStyle(ChatFormatting.DARK_GRAY).withStyle(ChatFormatting.ITALIC));
-            } else {
-                ItemUse o = ITEM_USE.get(item);
-                if (o != null && o.isEnabled()) {
-                    MutableComponent t = o.getTooltip();
-                    if (t != null)
-                        components.add(t.withStyle(ChatFormatting.DARK_GRAY).withStyle(ChatFormatting.ITALIC));
-                }
-            }
-        }
     }
 
     public static InteractionResult replaceSimilarBlock(Block blockOverride, Player player, ItemStack stack,

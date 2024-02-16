@@ -12,7 +12,7 @@ public class ClientConfigs {
     public static void init() {
     }
 
-    public static final Supplier<Boolean> PLACEABLE_TOOLTIP;
+    public static final Supplier<Boolean> TOOLTIP_HINTS;
 
     public static final Supplier<Double> LILY_OFFSET;
     public static final Supplier<Boolean> BELL_CONNECTION;
@@ -37,7 +37,7 @@ public class ClientConfigs {
 
         builder.push("general");
 
-        PLACEABLE_TOOLTIP = builder.define("tooltips", true);
+        TOOLTIP_HINTS = builder.define("tooltip_hints", true);
         builder.pop();
 
         builder.push("lily_pad");

@@ -9,11 +9,6 @@ import java.util.List;
 public class AmendmentsPlatformStuff {
 
     @ExpectPlatform
-    public static List<BakedQuad> removeAmbientOcclusion(List<BakedQuad> supportQuads) {
-        throw new AssertionError();
-    }
-
-    @ExpectPlatform
     public static SoftFluidTank createCauldronLiquidTank(){
         throw new AssertionError();
     }

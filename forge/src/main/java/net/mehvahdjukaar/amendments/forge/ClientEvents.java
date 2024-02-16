@@ -4,13 +4,15 @@ import net.mehvahdjukaar.amendments.AmendmentsClient;
 import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.client.event.ScreenEvent;
+import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.lwjgl.glfw.GLFW;
 
 public class ClientEvents {
 
     @SubscribeEvent
-    public static void screenEvent(ScreenEvent.Render event) {
+    public static void tooltipEvent(ItemTooltipEvent event) {
+        AmendmentsClient.onItemTooltip(event.getItemStack(),event.getFlags(), event.getToolTip());
     }
 
     @SubscribeEvent
