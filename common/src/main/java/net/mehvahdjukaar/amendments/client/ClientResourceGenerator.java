@@ -6,6 +6,7 @@ import net.mehvahdjukaar.amendments.AmendmentsClient;
 import net.mehvahdjukaar.amendments.common.CakeRegistry;
 import net.mehvahdjukaar.amendments.configs.ClientConfigs;
 import net.mehvahdjukaar.amendments.integration.CompatHandler;
+import net.mehvahdjukaar.amendments.mixins.SignRendererAccessor;
 import net.mehvahdjukaar.moonlight.api.resources.RPUtils;
 import net.mehvahdjukaar.moonlight.api.resources.ResType;
 import net.mehvahdjukaar.moonlight.api.resources.StaticResource;
@@ -18,10 +19,18 @@ import net.mehvahdjukaar.moonlight.api.resources.textures.TextureImage;
 import net.mehvahdjukaar.moonlight.api.set.wood.WoodType;
 import net.mehvahdjukaar.moonlight.api.set.wood.WoodTypeRegistry;
 import net.mehvahdjukaar.moonlight.api.util.Utils;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Sheets;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
+import net.minecraft.client.renderer.blockentity.SignRenderer;
+import net.minecraft.client.resources.model.Material;
+import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.Rotation;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import org.apache.logging.log4j.Logger;
 
 import java.util.stream.Stream;
@@ -78,9 +87,34 @@ public class ClientResourceGenerator extends DynClientResourcesGenerator {
                 .build();
 
         for (WoodType w : WoodTypeRegistry.getTypes()) {
+            Block hangingSign = w.getBlockOfThis("hanging_sign");
+            if (hangingSign == null) continue;
             //hanging sign extension textures
+            net.minecraft.world.level.block.state.properties.WoodType vanilla = w.toVanilla();
+            if (vanilla == null) {
+                Amendments.LOGGER.error("Vanilla wood type for wood {} was null. This is a bug", w);
+                continue;
+            }
+            Material hangingSignMaterial = Sheets.getHangingSignMaterial(vanilla);
+            if (hangingSignMaterial == null) {
+                try {
+                    BlockEntity be = ((EntityBlock)hangingSign).newBlockEntity(BlockPos.ZERO, hangingSign.defaultBlockState());
+                    BlockEntityRenderer<?> renderer = Minecraft.getInstance().getBlockEntityRenderDispatcher().getRenderer(be);
+                    if(renderer instanceof SignRendererAccessor sr){
+                        hangingSignMaterial = sr.invokeGetSignMaterial(vanilla);
+                    }
+                } catch (Exception e) {
+                    Amendments.LOGGER.error("Failed to get hanging sign material for wood (from block entity renderer) {}, ", w, e);
+                    continue;
+                }
+            }
+            if (hangingSignMaterial == null) {
+                Amendments.LOGGER.error("Hanging sign material for wood {} was null. " +
+                        "This is likely due to some mod not registering their wood type properly by adding it to the vanilla texture map", w);
+                continue;
+            }
             try (TextureImage vanillaTexture = TextureImage.open(manager,
-                    Sheets.getHangingSignMaterial(w.toVanilla()).texture())) {
+                    hangingSignMaterial.texture())) {
                 TextureImage flipped = vanillaTexture.createRotated(Rotation.CLOCKWISE_90);
                 TextureImage newIm = flipped.createResized(0.5f, 0.25f);
                 newIm.clear();
@@ -89,7 +123,7 @@ public class ClientResourceGenerator extends DynClientResourcesGenerator {
                 flipped.close();
                 this.dynamicPack.addAndCloseTexture(Amendments.res("entity/signs/hanging/" + w.getVariantId("extension")), newIm);
             } catch (Exception e) {
-                Amendments.LOGGER.warn("Failed to generate hanging sign extension texture for {}. Could be that the target mod isnt registering their wood type properly", w, e);
+                Amendments.LOGGER.warn("Failed to generate hanging sign extension texture for {}, ", w, e);
             }
         }
         if (CompatHandler.FARMERS_DELIGHT) {

@@ -44,10 +44,25 @@ dependencies {
 
     modImplementation ("net.mehvahdjukaar:moonlight-fabric:${moonlight_version}")
 
-    modCompileOnly ("net.mehvahdjukaar:supplementaries-fabric:${rootProject.supplementaries_version}")
-    modCompileOnly ("net.mehvahdjukaar:suppsquared-fabric:${rootProject.suppsquared_version}")
+    modCompileOnly ("net.mehvahdjukaar:supplementaries-fabric:${supplementaries_version}")
+    modCompileOnly ("net.mehvahdjukaar:suppsquared-fabric:${suppsquared_version}")
     modCompileOnly("curse.maven:farmers-delight-fabric-482834:4111426")
 
+
+    //modImplementation("curse.maven:spectrum-556967:5080474")
+    //modImplementation("curse.maven:revelationary-656526:5062851")
+    // modImplementation("curse.maven:patchouli-fabric-393236:4966124")
+    //modImplementation("curse.maven:owo-lib-532610:4749199")
+    //modImplementation("curse.maven:minecells-618790:5010215")
+    //modImplementation("curse.maven:better-archeology-835687:5088426")
+    //modImplementation("curse.maven:yungs-api-fabric-421649:5070642")
+    //modImplementation("curse.maven:ad-astra-635042:5097605")
+    //modImplementation("curse.maven:resourceful-lib-570073:5093330")
+    //modImplementation("curse.maven:resourceful-config-714059:5020442")
+    //modImplementation("curse.maven:botarium-704113:5066855")
+    //modImplementation("curse.maven:blockus-312289:5067058")
+    //modImplementation("curse.maven:regions-unexplored-659110:5012053")
+    //modImplementation("curse.maven:terrablender-fabric-565956:5008701")
 
 }
 

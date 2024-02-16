@@ -25,6 +25,7 @@
     "BellRendererMixin",
     "DisplayCacheMixin",
     "HangingSignRendererMixin",
+    "SignRendererAccessor",
     "SignRendererMixin"
   ],
   "plugin": "net.mehvahdjukaar.amendments.mixins.MixinPlugin",

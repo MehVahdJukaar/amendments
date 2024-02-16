@@ -14,6 +14,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.npc.VillagerTrades;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -43,6 +44,7 @@ public class Amendments {
 
         // make bell connections
 
+        // mud slows down mobs
         //TODO: check bell ringing with rope
         //here we go. ideas part 2
         //carpeted trapdoor
