@@ -3,6 +3,7 @@ package net.mehvahdjukaar.amendments.client.model;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.mehvahdjukaar.amendments.common.tile.WaterloggedLilyBlockTile;
 import net.mehvahdjukaar.amendments.configs.ClientConfigs;
+import net.mehvahdjukaar.moonlight.api.client.model.BakedQuadsTransformer;
 import net.mehvahdjukaar.moonlight.api.client.model.CustomBakedModel;
 import net.mehvahdjukaar.moonlight.api.client.model.ExtraModelData;
 import net.mehvahdjukaar.moonlight.api.client.util.VertexUtil;
@@ -44,12 +45,10 @@ public class WaterloggedLilyModel implements CustomBakedModel {
 
             PoseStack pose = new PoseStack();
             pose.translate(0, (float) (1 + ClientConfigs.LILY_OFFSET.get()), 0);
-            for (BakedQuad q : mimicQuads) {
-                int[] v = Arrays.copyOf(q.getVertices(), q.getVertices().length);
-                VertexUtil.transformVertices(v, pose.last().pose());
+            BakedQuadsTransformer transformer = BakedQuadsTransformer.create()
+                    .applyingTransform(pose.last().pose());
+            quads.addAll(transformer.transformAll(mimicQuads));
 
-                quads.add(new BakedQuad(v, q.getTintIndex(), q.getDirection(), q.getSprite(), q.isShade()));
-            }
             return quads;
         }
 

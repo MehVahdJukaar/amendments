@@ -15,6 +15,7 @@
     "JukeboxBlockEntityMixin",
     "JukeboxBlockMixin",
     "LanternBlockPlacementMixin",
+    "LayeredCauldronBlockMixin",
     "LecternBlockEntityMixin",
     "LecternBlockMixin",
     "VineMixin",

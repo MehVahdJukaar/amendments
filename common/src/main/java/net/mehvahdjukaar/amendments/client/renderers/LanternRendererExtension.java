@@ -20,6 +20,7 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.util.Mth;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -35,7 +36,7 @@ public class LanternRendererExtension implements IThirdPersonAnimationProvider, 
     public <T extends LivingEntity> boolean poseRightArm(ItemStack itemStack, HumanoidModel<T> model, T t, HumanoidArm arm) {
         if (!ClientConfigs.LANTERN_HOLDING.get()) return false;
         //model.rightArm.yRot = Mth.clamp(MthUtils.wrapRad(0F + model.head.yRot), -0.5f, 1);
-        model.rightArm.xRot = Mth.clamp(MthUtils.wrapRad(-1.7f + model.head.xRot), -2.4f, -0.5f);
+        model.rightArm.xRot = Mth.clamp(MthUtils.wrapRad(-1.2f + model.head.xRot), -2.4f, -0.5f);
         return true;
     }
 
@@ -98,7 +99,7 @@ public class LanternRendererExtension implements IThirdPersonAnimationProvider, 
     }
 
     @Override
-    public boolean renderFirstPersonItem(AbstractClientPlayer player, ItemStack itemStack, HumanoidArm arm,
+    public boolean renderFirstPersonItem(AbstractClientPlayer player, ItemStack itemStack, InteractionHand hand, HumanoidArm arm,
                                          PoseStack poseStack, float partialTicks, float pitch, float attackAnim, float equipAnim,
                                          MultiBufferSource buffer, int light, ItemInHandRenderer renderer) {
 

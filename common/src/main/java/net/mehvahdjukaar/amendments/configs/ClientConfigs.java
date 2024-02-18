@@ -2,6 +2,7 @@ package net.mehvahdjukaar.amendments.configs;
 
 import net.mehvahdjukaar.amendments.Amendments;
 import net.mehvahdjukaar.amendments.common.PendulumAnimation;
+import net.mehvahdjukaar.moonlight.api.ModSharedVariables;
 import net.mehvahdjukaar.moonlight.api.platform.configs.ConfigBuilder;
 import net.mehvahdjukaar.moonlight.api.platform.configs.ConfigType;
 
@@ -31,6 +32,8 @@ public class ClientConfigs {
 
     public static final Supplier<Double> BRIGHTEN_SIGN_TEXT_COLOR;
 
+    private static float signColorMult = 1.2f;
+    private static float hsScale = 1;
 
     static {
         ConfigBuilder builder = ConfigBuilder.create(Amendments.MOD_ID, ConfigType.CLIENT);
@@ -98,16 +101,15 @@ public class ClientConfigs {
         builder.pop();
 
         builder.onChange(ClientConfigs::onChange);
-        builder.buildAndRegister();
+        builder.buildAndRegister().loadFromFile();
+
+        ModSharedVariables.registerDouble("color_multiplier", () -> (double) signColorMult);
     }
 
     private static void onChange() {
         signColorMult = (float) (double) BRIGHTEN_SIGN_TEXT_COLOR.get();
         hsScale = (float) (double) ITEM_SCALE.get();
     }
-
-    private static float signColorMult = 1;
-    private static float hsScale = 1;
 
     public static float getSignColorMult() {
         return signColorMult;

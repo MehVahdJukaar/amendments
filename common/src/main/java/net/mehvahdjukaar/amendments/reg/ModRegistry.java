@@ -11,6 +11,7 @@ import net.mehvahdjukaar.amendments.common.tile.*;
 import net.mehvahdjukaar.amendments.configs.CommonConfigs;
 import net.mehvahdjukaar.amendments.integration.CompatHandler;
 import net.mehvahdjukaar.amendments.integration.CompatObjects;
+import net.mehvahdjukaar.amendments.recipe.DyeBottleRecipe;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluid;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidRegistry;
 import net.mehvahdjukaar.moonlight.api.item.additional_placements.AdditionalItemPlacementsAPI;
@@ -23,8 +24,11 @@ import net.mehvahdjukaar.moonlight.api.set.BlockSetAPI;
 import net.mehvahdjukaar.moonlight.api.set.BlocksColorAPI;
 import net.minecraft.Util;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
@@ -33,6 +37,7 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.block.BannerBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -80,21 +85,30 @@ public class ModRegistry {
                 event.registerSimple(BannerBlock.byColor(e.getKey()).asItem(), e.getValue().get());
             }
         }
-
     }
+
+    public static final DataObjectReference<DamageType> BOILING_DAMAGE = new DataObjectReference<>(
+            res("boiling"), Registries.DAMAGE_TYPE);
 
 
     public static final DataObjectReference<SoftFluid> DYE_SOFT_FLUID = new DataObjectReference<>(res("dye"),
             SoftFluidRegistry.KEY);
 
+    public static final RegSupplier<RecipeSerializer<DyeBottleRecipe>> DYE_BOTTLE_RECIPE = RegHelper.registerSpecialRecipe(
+            res("dye_bottle"), DyeBottleRecipe::new);
 
     public static final Supplier<MenuType<LecternEditMenu>> LECTERN_EDIT_MENU = RegHelper.registerMenuType(
             res("lectern_edit"), LecternEditMenu::new
     );
 
+    public static final RegSupplier<SimpleParticleType> BOILING_PARTICLE = RegHelper.registerParticle(res("boiling_bubble"));
+    public static final RegSupplier<SimpleParticleType> SPLASH_PARTICLE = RegHelper.registerParticle(res("fluid_splash"));
+
 
     public static final Supplier<Item> DYE_BOTTLE_ITEM = regItem(DYE_BOTTLE_NAME,
-            () -> new DyeBottleItem(new Item.Properties()));
+            () -> new DyeBottleItem(new Item.Properties()
+                    .stacksTo(1)
+                    .craftRemainder(Items.GLASS_BOTTLE)));
 
     //lilypad
     public static final Supplier<Block> WATERLILY_BLOCK = regBlock(WATER_LILY_NAME,
@@ -107,7 +121,7 @@ public class ModRegistry {
     );
 
     //cauldron
-    public static final Supplier<Block> LIQUID_CAULDRON = regBlock(LIQUID_CAULDRON_NAME,
+    public static final Supplier<LiquidCauldronBlock> LIQUID_CAULDRON = regBlock(LIQUID_CAULDRON_NAME,
             () -> new LiquidCauldronBlock(BlockBehaviour.Properties.copy(Blocks.CAULDRON))
     );
     public static final Supplier<Block> DYE_CAULDRON = regBlock(DYE_CAULDRON_NAME,

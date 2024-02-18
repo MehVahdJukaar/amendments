@@ -1,0 +1,13 @@
+{
+  "replace": false,
+  "values": [
+    {
+      "id": "#farmersdelight:heat_sources",
+      "required": false
+    },
+    "minecraft:lava",
+    "minecraft:magma_block",
+    "#minecraft:campfires",
+    "#minecraft:fire"
+  ]
+}

@@ -10,6 +10,7 @@ import net.mehvahdjukaar.amendments.integration.SuppCompat;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.moonlight.api.misc.EventCalled;
 import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
+import net.mehvahdjukaar.moonlight.api.platform.RegHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.RegistryAccess;
@@ -41,6 +42,8 @@ public class Amendments {
         }
         PlatHelper.addCommonSetupAsync(Amendments::setupAsync);
         PlatHelper.addCommonSetup(Amendments::setup);
+
+        RegHelper.registerSimpleRecipeCondition(res("flag"), CommonConfigs::isFlagOn);
 
         // make bell connections
 

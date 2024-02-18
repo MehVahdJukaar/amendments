@@ -2,6 +2,7 @@ package net.mehvahdjukaar.amendments.common.item;
 
 import com.google.common.collect.HashBiMap;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
+import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidStack;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidTank;
 import net.mehvahdjukaar.moonlight.api.util.math.ColorUtils;
 import net.mehvahdjukaar.moonlight.api.util.math.colors.HSLColor;
@@ -9,11 +10,16 @@ import net.mehvahdjukaar.moonlight.api.util.math.colors.RGBColor;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.item.DyeColor;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.animal.Sheep;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.*;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.SignBlockEntity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -43,16 +49,21 @@ public class DyeBottleItem extends Item {
         return 0;
     }
 
+    //TODO: change
     public static void fillCauldron(SoftFluidTank tank, DyeColor color, int amount) {
         CompoundTag tag = new CompoundTag();
         tag.putInt(COLOR_TAG, getDyeInt(color));
-        tank.tryAddingFluid(ModRegistry.DYE_SOFT_FLUID.get(), amount, tag);
+        tank.addFluid(new SoftFluidStack(ModRegistry.DYE_SOFT_FLUID.getHolder(), amount, tag));
     }
 
     @SuppressWarnings("ConstantConditions")
     @NotNull
     private static Integer getDyeInt(DyeColor color) {
         return COLOR_TO_DIFFUSE.get(color);
+    }
+
+    public static DyeColor getClosestDye(ItemStack stack) {
+        return getClosestDye(stack.getOrCreateTag().getInt(COLOR_TAG));
     }
 
     public static DyeColor getClosestDye(int tintColor) {
@@ -89,4 +100,24 @@ public class DyeBottleItem extends Item {
         }
         super.appendHoverText(stack, level, tooltipComponents, isAdvanced);
     }
+
+    @Override
+    public InteractionResult interactLivingEntity(ItemStack stack, Player player, LivingEntity interactionTarget, InteractionHand usedHand) {
+        if (interactionTarget instanceof Sheep sheep) {
+            DyeColor dye = getClosestDye(stack);
+            if (sheep.isAlive() && !sheep.isSheared() && sheep.getColor() != dye) {
+                sheep.level().playSound(player, sheep, SoundEvents.DYE_USE, SoundSource.PLAYERS, 1.0F, 1.0F);
+                if (!player.level().isClientSide) {
+                    sheep.setColor(dye);
+                    stack.shrink(1);
+                }
+                return InteractionResult.sidedSuccess(player.level().isClientSide);
+            }
+        }
+
+        return InteractionResult.PASS;
+    }
+
+
+
 }

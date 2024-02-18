@@ -3,65 +3,53 @@ package net.mehvahdjukaar.amendments.forge;
 import net.mehvahdjukaar.amendments.common.tile.LiquidCauldronBlockTile;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.moonlight.api.fluids.BuiltInSoftFluids;
-import net.mehvahdjukaar.moonlight.api.fluids.SoftFluid;
+import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidStack;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidTank;
 import net.mehvahdjukaar.moonlight.api.fluids.forge.SoftFluidTankImpl;
-import net.mehvahdjukaar.moonlight.api.item.IThirdPersonAnimationProvider;
-import net.minecraft.client.model.HumanoidModel;
-import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.level.LevelReader;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.SoundType;
-import net.minecraft.world.level.block.state.BlockState;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 public class AmendmentsPlatformStuffImpl {
 
     public static SoftFluidTank createCauldronLiquidTank() {
-        return new SoftFluidTankImpl(4){
+        return new SoftFluidTankImpl(4) {
 
             @Override
-            public boolean canAddSoftFluid(SoftFluid s, int count, @Nullable CompoundTag nbt) {
-                if(s == BuiltInSoftFluids.POTION.get()) {
-                    return this.canAdd(count) && this.getFluid().equals(s); //discard nbt
+            public boolean canAddSoftFluid(SoftFluidStack fluidStack) {
+                if (fluidStack.is(BuiltInSoftFluids.POTION.get()) && fluidStack.is(this.getFluidValue())) {
+                    // just compares bottle types
+                    return this.getSpace() >= fluidStack.getCount() && this.fluid.getTag()
+                            .getString(SoftFluidStack.POTION_TYPE_KEY).equals(
+                                    fluidStack.getTag().getString(SoftFluidStack.POTION_TYPE_KEY));
                 }
-                else return super.canAddSoftFluid(s,count, nbt);
+                return super.canAddSoftFluid(fluidStack);
             }
 
             @Override
-            protected void addFluidOntoExisting(SoftFluid incoming, int amount, @Nullable CompoundTag tag) {
-                if(incoming == BuiltInSoftFluids.POTION.get() && !areNbtEquals(tag, this.nbt)) {
-                    LiquidCauldronBlockTile.mixPotions(this, incoming, amount, tag);
+            protected void addFluidOntoExisting(SoftFluidStack incoming) {
+                if (incoming.is(BuiltInSoftFluids.POTION.get())) {
+                    LiquidCauldronBlockTile.mixPotions(this.fluid, incoming);
+                    needsColorRefresh = true;
                 }
-                super.addFluidOntoExisting(incoming, amount, tag);
+                super.addFluidOntoExisting(incoming);
             }
         };
     }
 
     public static SoftFluidTank createCauldronDyeTank() {
-        return new SoftFluidTankImpl(3){
+        return new SoftFluidTankImpl(3) {
 
             @Override
-            public boolean canAddSoftFluid(SoftFluid s, int count, @Nullable CompoundTag nbt) {
-                if( s == ModRegistry.DYE_SOFT_FLUID.get()) {
-                    return this.canAdd(count) && this.getFluid().equals(s); //discard nbt
-                }
-                else return super.canAddSoftFluid(s,count, nbt);
+            public boolean canAddSoftFluid(SoftFluidStack fluidStack) {
+                if (fluidStack.is(ModRegistry.DYE_SOFT_FLUID.get()) && fluidStack.is(this.getFluidValue())) {
+                    return this.getSpace() >= fluidStack.getCount(); //discard nbt
+                } else return super.canAddSoftFluid(fluidStack);
             }
 
             @Override
-            protected void addFluidOntoExisting(SoftFluid incoming, int amount, @Nullable CompoundTag tag) {
-                if(incoming == ModRegistry.DYE_SOFT_FLUID.get()){
-                    LiquidCauldronBlockTile.mixDye(this, incoming, amount, tag);
+            protected void addFluidOntoExisting(SoftFluidStack fluidStack) {
+                if (fluidStack.is(ModRegistry.DYE_SOFT_FLUID.get())) {
+                    LiquidCauldronBlockTile.mixDye(this.fluid, fluidStack);
                 }
-                super.addFluidOntoExisting(incoming, amount, tag);
+                super.addFluidOntoExisting(fluidStack);
             }
         };
     }

@@ -16,7 +16,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(LecternBlock.class)
-public class LecternBlockMixin {
+public abstract class LecternBlockMixin {
 
     @Inject(method = "openScreen", at = @At("HEAD"), cancellable = true)
     public void openCustomMenu(Level level, BlockPos pos, Player player, CallbackInfo ci){

@@ -8,7 +8,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(BookEditScreen.DisplayCache.class)
-public class DisplayCacheMixin {
+public abstract class DisplayCacheMixin {
 
     @Redirect(method = "getIndexAtPosition", at = @At(value = "INVOKE",
             target = "Lnet/minecraft/client/StringSplitter;plainIndexAtWidth(Ljava/lang/String;ILnet/minecraft/network/chat/Style;)I"))

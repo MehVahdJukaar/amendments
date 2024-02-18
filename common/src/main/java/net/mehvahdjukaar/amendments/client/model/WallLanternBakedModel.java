@@ -4,6 +4,7 @@ import net.mehvahdjukaar.amendments.client.WallLanternModelsManager;
 import net.mehvahdjukaar.amendments.common.block.WallLanternBlock;
 import net.mehvahdjukaar.amendments.reg.ModBlockProperties;
 import net.mehvahdjukaar.moonlight.api.block.MimicBlock;
+import net.mehvahdjukaar.moonlight.api.client.model.BakedQuadsTransformer;
 import net.mehvahdjukaar.moonlight.api.client.model.CustomBakedModel;
 import net.mehvahdjukaar.moonlight.api.client.model.ExtraModelData;
 import net.mehvahdjukaar.moonlight.api.client.util.VertexUtil;
@@ -57,7 +58,9 @@ public class WallLanternBakedModel implements CustomBakedModel {
                 if (mimic != null) {
                     var sprite = WallLanternModelsManager.getTexture(mimic.getBlock());
                     if (sprite != null) {
-                        supportQuads = VertexUtil.swapSprite(supportQuads, sprite);
+                        BakedQuadsTransformer transformer = BakedQuadsTransformer.create()
+                                .applyingSprite(sprite);
+                        supportQuads = transformer.transformAll(supportQuads);
                     }
                 }
                 quads.addAll(supportQuads);

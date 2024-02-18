@@ -31,6 +31,10 @@ accessible method net/minecraft/client/gui/screens/inventory/BookEditScreen getC
 
 accessible class net/minecraft/client/gui/screens/inventory/BookEditScreen$DisplayCache
 accessible class net/minecraft/client/gui/screens/inventory/BookEditScreen$Pos2i
+
+accessible method net/minecraft/world/entity/Entity getSwimSplashSound ()Lnet/minecraft/sounds/SoundEvent;
+accessible method net/minecraft/world/entity/Entity getSwimHighSpeedSplashSound ()Lnet/minecraft/sounds/SoundEvent;
+accessible field net/minecraft/world/entity/Entity wasTouchingWater Z
 # pot fabric
 
 accessible field net/minecraft/world/level/block/FlowerPotBlock POTTED_BY_CONTENT Ljava/util/Map;

@@ -15,6 +15,8 @@ public class ModTags {
     public static final TagKey<Block> BEAMS = suppTag("beams");
     public static final TagKey<Block> WALLS = suppTag("walls");
 
+    public static final TagKey<Block> HEAT_SOURCES = blockTag("cauldron_heat_source");
+
     public static final TagKey<Block> STAIRS_CARPETS = blockTag("stairs_carpets");
 
     public static final TagKey<Block> VINE_SUPPORT = blockTag("vine_support");

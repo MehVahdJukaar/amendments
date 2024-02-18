@@ -1,0 +1,9 @@
+{
+  "type": "amendments:dye_bottle",
+  "conditions": [
+    {
+      "type": "amendments:flag",
+      "flag": "dye_water"
+    }
+  ]
+}

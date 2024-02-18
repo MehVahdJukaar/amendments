@@ -51,14 +51,14 @@ public class CommonConfigs {
 
         builder.push("hanging_signs");
         HANGING_SIGN_ITEM = builder.comment("Allows placing items on hanging signs")
-                        .define("items_on_signs", true);
+                .define("items_on_signs", true);
         builder.pop();
 
         builder.push("cauldron");
         ENHANCED_CAULDRON = builder.comment("Enables enhanced cauldron")
                 .define("enabled", true);
         DYE_WATER = builder.comment("Allows dying cauldron water bedrock style")
-                .define("water_dye", true);
+                .define("dye_water", true);
 
         builder.pop();
 
@@ -140,5 +140,12 @@ public class CommonConfigs {
 
     public static void init() {
 
+    }
+
+    public static boolean isFlagOn(String s) {
+        if (s.equals("dye_water")) {
+            return DYE_WATER.get();
+        }
+        return false;
     }
 }

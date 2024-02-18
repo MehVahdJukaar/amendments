@@ -2,6 +2,7 @@
   "replace": false,
   "values": [
     "amendments:wall_lantern",
-    "amendments:liquid_cauldron"
+    "amendments:liquid_cauldron",
+    "amendments:dye_cauldron"
   ]
 }

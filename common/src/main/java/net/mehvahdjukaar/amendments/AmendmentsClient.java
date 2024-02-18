@@ -9,12 +9,15 @@ import net.mehvahdjukaar.amendments.client.colors.MimicBlockColor;
 import net.mehvahdjukaar.amendments.client.colors.SoftFluidColor;
 import net.mehvahdjukaar.amendments.client.gui.LecternBookEditScreen;
 import net.mehvahdjukaar.amendments.client.model.*;
+import net.mehvahdjukaar.amendments.client.particles.BoilingParticle;
+import net.mehvahdjukaar.amendments.client.particles.ColoredSplashParticle;
 import net.mehvahdjukaar.amendments.client.renderers.*;
 import net.mehvahdjukaar.amendments.common.item.DyeBottleItem;
 import net.mehvahdjukaar.amendments.configs.ClientConfigs;
 import net.mehvahdjukaar.amendments.integration.CompatObjects;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.moonlight.api.client.model.NestedModelLoader;
+import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidTank;
 import net.mehvahdjukaar.moonlight.api.item.IThirdPersonSpecialItemRenderer;
 import net.mehvahdjukaar.moonlight.api.misc.EventCalled;
 import net.mehvahdjukaar.moonlight.api.platform.ClientHelper;
@@ -23,6 +26,7 @@ import net.mehvahdjukaar.moonlight.api.util.Utils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.model.geom.ModelLayerLocation;
+import net.minecraft.client.particle.SplashParticle;
 import net.minecraft.client.renderer.BiomeColors;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.FallingBlockRenderer;
@@ -69,8 +73,9 @@ public class AmendmentsClient {
         ClientHelper.addSpecialModelRegistration(AmendmentsClient::registerSpecialModels);
         ClientHelper.addEntityRenderersRegistration(AmendmentsClient::registerEntityRenderers);
         ClientHelper.addItemColorsRegistration(AmendmentsClient::registerItemColors);
-
+        ClientHelper.addParticleRegistration(AmendmentsClient::registerParticles);
     }
+
 
     public static float x;
     public static float y;
@@ -114,6 +119,12 @@ public class AmendmentsClient {
 
     }
 
+    private static void registerParticles(ClientHelper.ParticleEvent event) {
+        event.register(ModRegistry.BOILING_PARTICLE.get(), BoilingParticle.Provider::new);
+        event.register(ModRegistry.SPLASH_PARTICLE.get(), ColoredSplashParticle::new);
+    }
+
+    @EventCalled
     private static void registerEntityRenderers(ClientHelper.EntityRendererEvent event) {
         event.register(ModRegistry.FALLING_LANTERN.get(), FallingBlockRenderer::new);
     }

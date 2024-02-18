@@ -24,8 +24,8 @@ public class ModBlockProperties {
     public static final EnumProperty<BlockAttachment> BLOCK_ATTACHMENT = EnumProperty.create("attachment", BlockAttachment.class);
     public static final IntegerProperty LIGHT_LEVEL = IntegerProperty.create("light_level", 0, 15);
     public static final BooleanProperty SOLID = BooleanProperty.create("solid");
+    public static final BooleanProperty BOILING = BooleanProperty.create("boiling");
     public static final IntegerProperty LEVEL_1_4 = IntegerProperty.create("level", 1, 4);
-    public static final IntegerProperty LEVEL_1_3 = IntegerProperty.create("level", 1, 3);
 
     //for wall lanterns
 
