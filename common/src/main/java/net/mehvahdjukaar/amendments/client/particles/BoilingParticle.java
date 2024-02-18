@@ -22,11 +22,11 @@ public class BoilingParticle extends TextureSheetParticle {
 
     BoilingParticle(ClientLevel level, double x, double y, double z, double waterLevel, SpriteSet sprites) {
         super(level, x, y, z);
-        this.setSize(0.025F, 0.025F);
+        this.setSize(0.0625F, 0.0625F);
         this.quadSize *= this.random.nextFloat() * 0.4F + 0.16F;
-        this.xd = (level.random.nextFloat() * 2.0 - 1.0) * 0.01;
-        this.yd = (level.random.nextFloat() * 2.0 - 1.0) * 0.01;
-        this.zd = (level.random.nextFloat() * 2.0 - 1.0) * 0.01;
+        this.xd = (level.random.nextFloat() * 2.0 - 1.0) * 0.005;
+        this.yd = (level.random.nextFloat() * 2.0 - 1.0) * 0.005;
+        this.zd = (level.random.nextFloat() * 2.0 - 1.0) * 0.005;
         this.lifetime = (int) (10 + MthUtils.nextWeighted(level.random, 20));
         this.sprites = sprites;
         this.setSpriteFromAge(this.sprites);

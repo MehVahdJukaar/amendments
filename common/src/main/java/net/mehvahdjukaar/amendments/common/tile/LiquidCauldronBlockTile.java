@@ -1,10 +1,10 @@
 package net.mehvahdjukaar.amendments.common.tile;
 
-import net.mehvahdjukaar.amendments.AmendmentsClient;
 import net.mehvahdjukaar.amendments.AmendmentsPlatformStuff;
 import net.mehvahdjukaar.amendments.common.block.DyeCauldronBlock;
 import net.mehvahdjukaar.amendments.common.block.LiquidCauldronBlock;
 import net.mehvahdjukaar.amendments.common.item.DyeBottleItem;
+import net.mehvahdjukaar.amendments.configs.CommonConfigs;
 import net.mehvahdjukaar.amendments.reg.ModBlockProperties;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.moonlight.api.block.ISoftFluidTankProvider;
@@ -14,14 +14,12 @@ import net.mehvahdjukaar.moonlight.api.client.model.ModelDataKey;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluid;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidStack;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidTank;
-import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
 import net.mehvahdjukaar.moonlight.api.set.BlocksColorAPI;
 import net.mehvahdjukaar.moonlight.api.util.math.colors.RGBColor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -32,7 +30,6 @@ import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.DyeItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.alchemy.PotionUtils;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -47,15 +44,21 @@ public class LiquidCauldronBlockTile extends BlockEntity implements IExtraModelD
 
     private final SoftFluidTank fluidTank;
 
-    public LiquidCauldronBlockTile(BlockPos blockPos, BlockState blockState) {
-        this(blockPos, blockState, blockState.getBlock() instanceof DyeCauldronBlock ?
+    public SoftFluidTank makeTank(BlockState blockState) {
+        return blockState.getBlock() instanceof DyeCauldronBlock ?
                 AmendmentsPlatformStuff.createCauldronDyeTank() :
-                AmendmentsPlatformStuff.createCauldronLiquidTank());
+                AmendmentsPlatformStuff.createCauldronLiquidTank(this::canMixPotions);
     }
 
-    public LiquidCauldronBlockTile(BlockPos blockPos, BlockState blockState, SoftFluidTank tank) {
+    private boolean canMixPotions() {
+        var config = CommonConfigs.POTION_MIXING.get();
+        return config == CommonConfigs.MixingMode.ON || (config == CommonConfigs.MixingMode.ONLY_BOILING &&
+                this.getBlockState().getValue(LiquidCauldronBlock.BOILING));
+    }
+
+    public LiquidCauldronBlockTile(BlockPos blockPos, BlockState blockState) {
         super(ModRegistry.LIQUID_CAULDRON_TILE.get(), blockPos, blockState);
-        this.fluidTank = tank;
+        this.fluidTank = makeTank(blockState);
         //this.fluidHolder.setFluid(ModRegistry.DYE_SOFT_FLUID.get());
     }
 
@@ -261,7 +264,7 @@ public class LiquidCauldronBlockTile extends BlockEntity implements IExtraModelD
         if (fluidTank.isEmpty()) {
             state = Blocks.CAULDRON.defaultBlockState();
         } else if (state.hasProperty(LiquidCauldronBlock.LEVEL)) {
-                state = state.setValue(LiquidCauldronBlock.LEVEL, height);
+            state = state.setValue(LiquidCauldronBlock.LEVEL, height);
         } else if (state.hasProperty(DyeCauldronBlock.LEVEL)) {
             state = state.setValue(DyeCauldronBlock.LEVEL, height);
         }

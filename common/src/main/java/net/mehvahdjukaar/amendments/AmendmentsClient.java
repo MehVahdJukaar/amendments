@@ -28,6 +28,7 @@ import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.particle.SplashParticle;
 import net.minecraft.client.renderer.BiomeColors;
+import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.FallingBlockRenderer;
 import net.minecraft.client.renderer.texture.TextureAtlas;

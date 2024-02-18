@@ -9,6 +9,7 @@ import net.mehvahdjukaar.moonlight.api.client.util.VertexUtil;
 import net.mehvahdjukaar.moonlight.api.fluids.BuiltInSoftFluids;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidRegistry;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidStack;
+import net.mehvahdjukaar.moonlight.api.util.PotionNBTHelper;
 import net.mehvahdjukaar.moonlight.api.util.math.ColorUtils;
 import net.mehvahdjukaar.moonlight.api.util.math.colors.HSLColor;
 import net.mehvahdjukaar.moonlight.api.util.math.colors.RGBColor;
@@ -234,14 +235,17 @@ public class LiquidCauldronBlock extends AbstractCauldronBlock implements Entity
     }
 
     private boolean isSplashOrLingeringPot(SoftFluidStack stack) {
+        PotionNBTHelper
         return stack.is(BuiltInSoftFluids.POTION.get()) && stack.hasTag() && !stack.getTag()
                 .getString(SoftFluidStack.POTION_TYPE_KEY).equals("REGULAR");
     }
 
+
+
     private void addBubblingParticles(ParticleOptions type, Level level, BlockPos pos, int count,
                                       double surface, RandomSource rand, int color) {
 
-        //color = getBubbleColor(color);
+        color = getBubbleColor(color);
         float col = Float.intBitsToFloat(color);
         for (int i = 0; i < count; i++) {
             double x = pos.getX() + 0.1875D + (rand.nextFloat() * 0.625D);
@@ -325,38 +329,14 @@ public class LiquidCauldronBlock extends AbstractCauldronBlock implements Entity
             z = e.getZ() + (rand.nextDouble() - 0.5) * width * radius;
             if (x >= mx && x <= Mx && z >= mz && z <= Mz) {
                 level.addParticle(particleOptions,
-                        x, surface, z, color, surface, 0);
+                        x, surface, z, Float.intBitsToFloat(color), surface, 0);
             }
         }
     }
 
 
     private static int getBubbleColor(int color) {
-        var hsl = new RGBColor(color).asHSL();
-        float h = hsl.hue();
-        float s = hsl.saturation();
-        float l = hsl.lightness();
-        //map one to one. no effect on its own (false...)
-        //s = s + (float)((1-s)*ClientConfigs.general.TEST3.get());
-        s = Math.min(s, 1 - Math.abs((2 * l) - 1));
-
-        //remove darker colors
-        float minLightness = 0.47f;
-        l = Math.max(l, minLightness);
-
-        //saturate dark colors
-        float j = (1 - l);
-        float ratio = 0.35f;
-        if (s < j) s = (ratio * j + (1 - ratio) * s);
-
-
-        //desaturate blue
-        float scaling = 0.15f;
-        float angle = 90;
-        float n = (float) (scaling * Math.exp(-angle * Math.pow((h - 0.6666f), 2)));
-        s -= n;
-
-        return  new HSLColor(h, s, l, 1).asRGB().toInt();
+        return color;
     }
 
 }

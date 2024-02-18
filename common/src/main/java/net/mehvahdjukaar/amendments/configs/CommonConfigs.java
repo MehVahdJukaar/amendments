@@ -12,9 +12,14 @@ import java.util.function.Supplier;
 
 public class CommonConfigs {
 
+    public enum MixingMode{
+        OFF, ONLY_BOILING, ON
+    }
+
     public static final Supplier<Boolean> HANGING_SIGN_ITEM;
 
     public static final Supplier<Boolean> ENHANCED_CAULDRON;
+    public static final Supplier<MixingMode> POTION_MIXING;
     public static final Supplier<Boolean> DYE_WATER;
     //TODO: more cauldron configs
 
@@ -57,8 +62,10 @@ public class CommonConfigs {
         builder.push("cauldron");
         ENHANCED_CAULDRON = builder.comment("Enables enhanced cauldron")
                 .define("enabled", true);
-        DYE_WATER = builder.comment("Allows dying cauldron water bedrock style")
+        DYE_WATER = builder.comment("Allows dying cauldron water bedrock style and mixing them too")
                 .define("dye_water", true);
+        POTION_MIXING = builder.comment("Allows mixin potions in cauldrons")
+                        .define("potions_mixing", MixingMode.ON);
 
         builder.pop();
 

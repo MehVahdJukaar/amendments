@@ -39,6 +39,5 @@
   "item.amendments.dye_bottle.red": "Red",
   "item.amendments.dye_bottle.green": "Green",
   "item.amendments.dye_bottle.blue": "Blue",
-  "item.amendments.dye_bottle.white": "White",
-  "item.amendments.dye_bottle.custom": "Color: %s"
+  "item.amendments.dye_bottle.white": "White"
 }

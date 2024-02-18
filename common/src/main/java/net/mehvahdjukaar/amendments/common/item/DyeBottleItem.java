@@ -25,6 +25,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -89,16 +90,16 @@ public class DyeBottleItem extends Item {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag isAdvanced) {
+    public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> list, TooltipFlag isAdvanced) {
         CompoundTag tag = stack.getOrCreateTag();
         int col = tag.getInt(COLOR_TAG);
         DyeColor color = COLOR_TO_DIFFUSE.inverse().get(col);
         if (color != null) {
-            tooltipComponents.add(Component.translatable("item.amendments.dye_bottle." + color.getName()).withStyle(ChatFormatting.GRAY));
+            list.add(Component.translatable("item.amendments.dye_bottle." + color.getName()).withStyle(ChatFormatting.GRAY));
         } else {
-            tooltipComponents.add(Component.translatable("item.amendments.dye_bottle.custom", Integer.toHexString(col)).withStyle(ChatFormatting.GRAY));
+            list.add(Component.translatable("item.color", String.format(Locale.ROOT, "#%06X",col)).withStyle(ChatFormatting.GRAY));
         }
-        super.appendHoverText(stack, level, tooltipComponents, isAdvanced);
+        super.appendHoverText(stack, level, list, isAdvanced);
     }
 
     @Override
