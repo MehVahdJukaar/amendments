@@ -14,10 +14,10 @@ import net.mehvahdjukaar.amendments.client.particles.ColoredSplashParticle;
 import net.mehvahdjukaar.amendments.client.renderers.*;
 import net.mehvahdjukaar.amendments.common.item.DyeBottleItem;
 import net.mehvahdjukaar.amendments.configs.ClientConfigs;
+import net.mehvahdjukaar.amendments.integration.CompatHandler;
 import net.mehvahdjukaar.amendments.integration.CompatObjects;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.moonlight.api.client.model.NestedModelLoader;
-import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidTank;
 import net.mehvahdjukaar.moonlight.api.item.IThirdPersonSpecialItemRenderer;
 import net.mehvahdjukaar.moonlight.api.misc.EventCalled;
 import net.mehvahdjukaar.moonlight.api.platform.ClientHelper;
@@ -26,9 +26,7 @@ import net.mehvahdjukaar.moonlight.api.util.Utils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.model.geom.ModelLayerLocation;
-import net.minecraft.client.particle.SplashParticle;
 import net.minecraft.client.renderer.BiomeColors;
-import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.FallingBlockRenderer;
 import net.minecraft.client.renderer.texture.TextureAtlas;
@@ -42,7 +40,10 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Supplier;
 
 
@@ -133,8 +134,8 @@ public class AmendmentsClient {
     @EventCalled
     private static void registerSpecialModels(ClientHelper.SpecialModelEvent event) {
         WallLanternModelsManager.registerSpecialModels(event);
-        event.register(BELL_ROPE);
         event.register(BELL_CHAIN);
+        if (CompatHandler.SUPPLEMENTARIES) event.register(BELL_ROPE);
     }
 
     @EventCalled
@@ -213,7 +214,7 @@ public class AmendmentsClient {
     @EventCalled
     public static void onItemTooltip(ItemStack itemStack, TooltipFlag tooltipFlag, List<Component> components) {
         if (ClientConfigs.TOOLTIP_HINTS.get()) {
-           // InteractEvents.addOverrideTooltips(itemStack, tooltipFlag, components);
+            // InteractEvents.addOverrideTooltips(itemStack, tooltipFlag, components);
         }
 
     }

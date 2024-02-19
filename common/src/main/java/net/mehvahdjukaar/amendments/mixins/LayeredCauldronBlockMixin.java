@@ -1,9 +1,6 @@
 package net.mehvahdjukaar.amendments.mixins;
 
 import net.mehvahdjukaar.amendments.common.block.LiquidCauldronBlock;
-import net.mehvahdjukaar.moonlight.api.util.PotionNBTHelper;
-import net.mehvahdjukaar.supplementaries.client.renderers.color.DefaultWaterColor;
-import net.minecraft.client.renderer.BiomeColors;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.cauldron.CauldronInteraction;
 import net.minecraft.world.entity.Entity;

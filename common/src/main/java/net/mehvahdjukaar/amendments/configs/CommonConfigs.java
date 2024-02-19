@@ -48,7 +48,7 @@ public class CommonConfigs {
     public static final Supplier<Boolean> BELL_CHAIN_RINGING;
     public static final Supplier<Integer> BELL_CHAIN_LENGTH;
 
-    public static final Supplier<Boolean> SCARE_VILLAGERS;
+    public static final Supplier<Boolean> DYE_BLOCKS;
 
     public static final ConfigSpec CONFIG;
 
@@ -119,7 +119,7 @@ public class CommonConfigs {
         WALL_LANTERN_HIGH_PRIORITY = builder.comment("Gives high priority to wall lantern placement. Enable to override other wall lanterns placements, disable if it causes issues with other mods that use lower priority block click events")
                 .define("high_priority", true);
 
-        List<String> modBlacklist = Arrays.asList("extlights", "betterendforge", "tconstruct", "enigmaticlegacy");
+        List<String> modBlacklist = Arrays.asList("extlights", "betterendforge", "tconstruct", "enigmaticlegacy", "beautify");
         WALL_LANTERN_BLACKLIST = builder.comment("Mod ids of mods that have lantern block that extend the base lantern class but don't look like one")
                 .define("mod_blacklist", modBlacklist);
         FALLING_LANTERNS = builder.comment("Allows ceiling lanterns to fall if their support is broken." +
@@ -141,12 +141,13 @@ public class CommonConfigs {
                 .define("ceiling_banners", true);
         builder.pop();
 
-        //keep this??
-        builder.push("noteblocks_scare");
-        SCARE_VILLAGERS = builder.comment("Noteblocks with a zombie head will scare off villagers")
-                .define("enabled", true);
-        builder.pop();
 
+        builder.push("misc");
+
+        DYE_BLOCKS = builder.comment("Allows dying blocks by right clicking them with dye")
+                .define("dye_blocks", true);
+
+        builder.pop();
 
         builder.pop();
 

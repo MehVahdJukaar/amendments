@@ -3,6 +3,7 @@ package net.mehvahdjukaar.amendments.integration;
 import io.github.flemmli97.flan.api.data.IPermissionContainer;
 import io.github.flemmli97.flan.api.permission.PermissionRegistry;
 import io.github.flemmli97.flan.claim.ClaimStorage;
+import net.mehvahdjukaar.amendments.Amendments;
 import net.mehvahdjukaar.supplementaries.Supplementaries;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -20,7 +21,7 @@ public final class FlanCompat  {
             IPermissionContainer claim = storage.getForPermissionCheck(pos);
             return claim.canInteract((ServerPlayer) player, PermissionRegistry.BREAK, pos, true);
         } catch (Exception e) {
-            Supplementaries.LOGGER.error("Failed call break block event: [Player: {}, Pos: {}]", player, pos, e);
+            Amendments.LOGGER.error("Failed call break block event: [Player: {}, Pos: {}]", player, pos, e);
             return true;
         }
     }
@@ -32,7 +33,7 @@ public final class FlanCompat  {
             IPermissionContainer claim = storage.getForPermissionCheck(pos);
             return claim.canInteract((ServerPlayer) player, PermissionRegistry.PLACE, pos);
         } catch (Exception e) {
-            Supplementaries.LOGGER.error("Failed call place block event: [Player: {}, Pos: {}]", player, pos, e);
+            Amendments.LOGGER.error("Failed call place block event: [Player: {}, Pos: {}]", player, pos, e);
             return true;
         }
     }
@@ -44,7 +45,7 @@ public final class FlanCompat  {
             IPermissionContainer claim = storage.getForPermissionCheck(pos);
             return claim.canInteract((ServerPlayer) player, PermissionRegistry.PLACE, pos);
         } catch (Exception e) {
-            Supplementaries.LOGGER.error("Failed call replace block event: [Player: {}, Pos: {}]", player, pos, e);
+            Amendments.LOGGER.error("Failed call replace block event: [Player: {}, Pos: {}]", player, pos, e);
             return true;
         }
     }
@@ -72,7 +73,7 @@ public final class FlanCompat  {
             IPermissionContainer claim = storage.getForPermissionCheck(targetPos);
             return claim.canInteract((ServerPlayer) player, PermissionRegistry.INTERACTBLOCK, targetPos);
         } catch (Exception e) {
-            Supplementaries.LOGGER.error("Failed call interact event: [Player: {}, Pos: {}]", player, targetPos, e);
+            Amendments.LOGGER.error("Failed call interact event: [Player: {}, Pos: {}]", player, targetPos, e);
             return true;
         }
     }

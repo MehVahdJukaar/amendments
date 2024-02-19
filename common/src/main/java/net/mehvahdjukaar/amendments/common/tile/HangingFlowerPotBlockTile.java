@@ -61,4 +61,5 @@ public class HangingFlowerPotBlockTile extends MimicBlockTile implements IOwnerP
     public AABB getRenderBoundingBox() {
         return new AABB(this.worldPosition);
     }
+
 }

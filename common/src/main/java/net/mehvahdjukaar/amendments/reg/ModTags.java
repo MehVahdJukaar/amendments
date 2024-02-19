@@ -26,7 +26,7 @@ public class ModTags {
 
     //item tags
 
-    public static final TagKey<Item> GOES_IN_LECTERN = itemTag("goes_in_lecterns");
+    public static final TagKey<Item> GOES_IN_LECTERN = itemTag("goes_in_lectern");
 
     private static TagKey<Item> itemTag(String name) {
         return TagKey.create(Registries.ITEM, Amendments.res(name));

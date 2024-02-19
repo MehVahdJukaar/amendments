@@ -1,8 +1,8 @@
 package net.mehvahdjukaar.amendments.client.model;
 
+import net.mehvahdjukaar.moonlight.api.block.MimicBlockTile;
 import net.mehvahdjukaar.moonlight.api.client.model.CustomBakedModel;
 import net.mehvahdjukaar.moonlight.api.client.model.ExtraModelData;
-import net.mehvahdjukaar.supplementaries.common.block.ModBlockProperties;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.BlockModelShaper;
@@ -34,7 +34,7 @@ public class HangingPotBakedModel implements CustomBakedModel {
 
         if (state != null) {
             try {
-                BlockState mimic = data.get(ModBlockProperties.MIMIC);
+                BlockState mimic = data.get(MimicBlockTile.MIMIC_KEY);
 
                 if (mimic != null) {
                     BakedModel model = blockModelShaper.getBlockModel(mimic);
@@ -73,7 +73,7 @@ public class HangingPotBakedModel implements CustomBakedModel {
 
     @Override
     public TextureAtlasSprite getBlockParticle(ExtraModelData data) {
-        BlockState mimic = data.get(ModBlockProperties.MIMIC);
+        BlockState mimic = data.get(MimicBlockTile.MIMIC_KEY);
         if (mimic != null && !mimic.isAir()) {
             BakedModel model = blockModelShaper.getBlockModel(mimic);
             try {

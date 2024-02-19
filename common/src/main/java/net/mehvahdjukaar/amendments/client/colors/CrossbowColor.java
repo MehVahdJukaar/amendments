@@ -1,6 +1,6 @@
 package net.mehvahdjukaar.amendments.client.colors;
 
-import net.mehvahdjukaar.supplementaries.configs.ClientConfigs;
+import net.mehvahdjukaar.amendments.configs.ClientConfigs;
 import net.minecraft.client.color.item.ItemColor;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -15,7 +15,7 @@ public class CrossbowColor implements ItemColor {
     @Override
     public int getColor(ItemStack stack, int tint) {
         CompoundTag tag = stack.getTag();
-        if (tint == 1 && ClientConfigs.Tweaks.COLORED_ARROWS.get()) {
+        if (tint == 1 && ClientConfigs.COLORED_ARROWS.get()) {
             if (tag != null && tag.contains("ChargedProjectiles", 9)) {
                 ListTag chargedProjectiles = tag.getList("ChargedProjectiles", 10);
                 if (!chargedProjectiles.isEmpty()) {

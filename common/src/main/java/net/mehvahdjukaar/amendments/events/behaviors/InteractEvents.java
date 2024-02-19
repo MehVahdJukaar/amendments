@@ -72,6 +72,7 @@ public class InteractEvents {
         blockUse.add(new HangingSignDisplayItem());
 
         itemUseOnBlockHP.add(new SkullCandleConversion());
+        itemUseOnBlockHP.add(new DyeBehavior());
 
         itemUseOnBlock.add(new SkullPileConversion());
         itemUseOnBlock.add(new DoubleCakeConversion());

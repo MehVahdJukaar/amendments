@@ -10,6 +10,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -32,6 +34,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
+import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.pathfinder.PathComputationType;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
@@ -104,6 +107,7 @@ public class HangingFlowerPotBlock extends Block implements EntityBlock {
                             level.sendBlockUpdated(pos, state, state, Block.UPDATE_CLIENTS);
                             tile.setChanged();
                         }
+                        playPlantSound(level, pos, player);
 
                         player.awardStat(Stats.POT_FLOWER);
                         if (!player.getAbilities().instabuild) {
@@ -125,6 +129,8 @@ public class HangingFlowerPotBlock extends Block implements EntityBlock {
                             tile.setChanged();
                         }
                     }
+
+                    level.gameEvent(player, GameEvent.BLOCK_CHANGE, pos);
                     return InteractionResult.sidedSuccess(level.isClientSide);
                 } else {
                     return InteractionResult.CONSUME;
@@ -132,6 +138,11 @@ public class HangingFlowerPotBlock extends Block implements EntityBlock {
             }
         }
         return InteractionResult.PASS;
+    }
+
+    public static void playPlantSound(Level level, BlockPos pos, Player player) {
+        level.playSound(player, pos, SoundEvents.CROP_PLANTED, SoundSource.BLOCKS, 1,
+                level.random.nextFloat() * 0.1F + 0.95F);
     }
 
     @Override

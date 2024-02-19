@@ -1,0 +1,11 @@
+{
+  "replace": false,
+  "values": [
+    {
+      "id": "#map_atlases:atlas",
+      "required": false
+    },
+    "minecraft:written_book",
+    "minecraft:writable_book"
+  ]
+}

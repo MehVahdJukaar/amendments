@@ -1,1 +1,5 @@
-fixed crash on servers
+- lecterns interact with hoppers
+- lectern gui
+- cauldrons render transparent water layer and have ambient occlusion
+- flower pots have a place plant sound
+- hanging flower pots

@@ -36,8 +36,8 @@ public class DyeBottleRecipe extends CustomRecipe {
                 if (item == ModRegistry.DYE_BOTTLE_ITEM.get()) {
                     if (hasDye) return false;
                     else hasDye = true;
-                } else if (item instanceof DyeableLeatherItem || BlocksColorAPI.getKey(item) != null
-                &&BlocksColorAPI.getBlockHolderSet()) {
+                } else if (item instanceof DyeableLeatherItem ||
+                        (BlocksColorAPI.getKey(item) != null && BlocksColorAPI.isDefaultColor(item))) {
                     if (hasDyableItem) return false;
                     else hasDyableItem = true;
                 }
