@@ -6,15 +6,15 @@ import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidStack;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
 import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -22,11 +22,14 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.AbstractCauldronBlock;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
+import net.minecraft.world.level.gameevent.GameEvent;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
@@ -60,6 +63,70 @@ public abstract class ModCauldronBlock extends AbstractCauldronBlock implements 
     }
 
     @Override
+    public void fallOn(Level level, BlockState state, BlockPos pos, Entity entity, float fallDistance) {
+        if (isEntityInsideContent(state, pos, entity)) {
+            if (level.getBlockEntity(pos) instanceof LiquidCauldronBlockTile tile) {
+                int color = tile.getSoftFluidTank().getParticleColor(level, pos);
+                playSplashAnimation(level, pos, entity, getContentHeight(state), color);
+            }
+            super.fallOn(level, state, pos, entity, 0);
+        } else super.fallOn(level, state, pos, entity, fallDistance);
+    }
+
+    public static void playSplashAnimation(Level level, BlockPos pos, Entity e, double waterLevel, int color) {
+        Entity feetEntity = e.isVehicle() && e.getControllingPassenger() != null ? e.getControllingPassenger() : e;
+        float offset = feetEntity == e ? 0.2F : 0.9F;
+        Vec3 movement = feetEntity.getDeltaMovement();
+        RandomSource rand = level.random;
+        float speed = Math.min(1.0F, (float) Math.sqrt(movement.x * movement.x * 0.2 + movement.y * movement.y + movement.z * movement.z * 0.2) * offset);
+        if (speed < 0.25F) {
+            e.playSound(e.getSwimSplashSound(), speed, 1.0F + (rand.nextFloat() - rand.nextFloat()) * 0.4F);
+        } else {
+            e.playSound(e.getSwimHighSpeedSplashSound(), speed, 1.0F + (rand.nextFloat() - rand.nextFloat()) * 0.4F);
+        }
+
+        double surface = pos.getY() + waterLevel;
+
+        float radius = 1.5f;
+        float width = e.getBbWidth();
+
+        spawnSplashParticles(level, e, pos, rand, surface, color,
+                ModRegistry.BOILING_PARTICLE.get(), radius, width);
+
+        spawnSplashParticles(level, e, pos, rand, surface, color,
+                ModRegistry.SPLASH_PARTICLE.get(), radius, width);
+
+        e.gameEvent(GameEvent.SPLASH);
+    }
+
+    private static void spawnSplashParticles(Level level, Entity e, BlockPos pos,
+                                             RandomSource rand, double surface, int color,
+                                             ParticleOptions particleOptions,
+                                             float radius, float width) {
+        float mx = pos.getX() + 0.125f;
+        float Mx = pos.getX() + 1 - 0.125f;
+        float mz = pos.getZ() + 0.125f;
+        float Mz = pos.getZ() + 1 - 0.125f;
+
+        double z;
+        double x;
+        for (int i = 0; i < 1.0F + width * 20.0F; ++i) {
+            x = e.getX() + (rand.nextDouble() - 0.5) * width * radius;
+            z = e.getZ() + (rand.nextDouble() - 0.5) * width * radius;
+            if (x >= mx && x <= Mx && z >= mz && z <= Mz) {
+                level.addParticle(particleOptions,
+                        x, surface, z, color, surface, 0);
+            }
+        }
+    }
+
+
+    public static void playExtinguishSound(Level level, BlockPos pos, Entity entity) {
+        level.playSound(null, pos, SoundEvents.GENERIC_EXTINGUISH_FIRE, entity.getSoundSource(),
+                0.7F, 1.6F + (level.random.nextFloat() - level.random.nextFloat()) * 0.4F);
+    }
+
+    @Override
     public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
         if (isEntityInsideContent(state, pos, entity)) {
             entity.wasTouchingWater = true;
@@ -69,11 +136,14 @@ public abstract class ModCauldronBlock extends AbstractCauldronBlock implements 
             boolean hasToLower = false;
             if (entity.isOnFire()) {
                 entity.clearFire();
+                playExtinguishSound(level, pos, entity);
                 if (entity.mayInteract(level, pos)) {
                     hasToLower = true;
                 }
             }
-            hasToLower = handleEntityInside(state, level, pos, entity);
+            if (handleEntityInside(state, level, pos, entity)) {
+                hasToLower = true;
+            }
 
             if (hasToLower) {
                 lowerFillLevel(state, level, pos);
@@ -81,10 +151,19 @@ public abstract class ModCauldronBlock extends AbstractCauldronBlock implements 
         }
     }
 
-    protected abstract boolean handleEntityInside(BlockState state, Level level, BlockPos pos, Entity entity );
+    public void lowerFillLevel(BlockState state, Level level, BlockPos pos) {
+        IntegerProperty lev = getLevelProperty();
+        int i = state.getValue(lev) - 1;
+        BlockState blockState = i == 0 ? Blocks.CAULDRON.defaultBlockState() : state.setValue(lev, i);
+        level.setBlockAndUpdate(pos, blockState);
+        level.gameEvent(GameEvent.BLOCK_CHANGE, pos, GameEvent.Context.of(blockState));
+    }
+
+
+    protected abstract boolean handleEntityInside(BlockState state, Level level, BlockPos pos, Entity entity);
 
     public void doCraftItem(Level level, BlockPos pos, Player player, InteractionHand hand, LiquidCauldronBlockTile te,
-                                   SoftFluidStack fluid, ItemStack stack, ItemStack crafted) {
+                            SoftFluidStack fluid, ItemStack stack, ItemStack crafted) {
 
         if (player instanceof ServerPlayer serverPlayer) {
             player.awardStat(Stats.ITEM_USED.get(stack.getItem()));
@@ -111,4 +190,7 @@ public abstract class ModCauldronBlock extends AbstractCauldronBlock implements 
             }
         }
     }
+
+    public abstract BlockState updateStateOnFluidChange(BlockState state, SoftFluidStack fluid);
+
 }

@@ -2,11 +2,10 @@ package net.mehvahdjukaar.amendments.common.tile;
 
 import net.mehvahdjukaar.amendments.AmendmentsPlatformStuff;
 import net.mehvahdjukaar.amendments.common.block.DyeCauldronBlock;
-import net.mehvahdjukaar.amendments.common.block.HangingFlowerPotBlock;
 import net.mehvahdjukaar.amendments.common.block.LiquidCauldronBlock;
+import net.mehvahdjukaar.amendments.common.block.ModCauldronBlock;
 import net.mehvahdjukaar.amendments.common.item.DyeBottleItem;
 import net.mehvahdjukaar.amendments.configs.CommonConfigs;
-import net.mehvahdjukaar.amendments.reg.ModBlockProperties;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.moonlight.api.block.ISoftFluidTankProvider;
 import net.mehvahdjukaar.moonlight.api.client.model.ExtraModelData;
@@ -15,7 +14,6 @@ import net.mehvahdjukaar.moonlight.api.client.model.ModelDataKey;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluid;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidStack;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidTank;
-import net.mehvahdjukaar.moonlight.api.set.BlocksColorAPI;
 import net.mehvahdjukaar.moonlight.api.util.math.colors.RGBColor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -25,12 +23,8 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.DyeColor;
-import net.minecraft.world.item.DyeItem;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.alchemy.PotionUtils;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
@@ -182,19 +176,13 @@ public class LiquidCauldronBlockTile extends BlockEntity implements IExtraModelD
         this.level.updateNeighborsAt(worldPosition, this.getBlockState().getBlock());
 
         //update state based on fluid
-        int light = this.fluidTank.getFluidValue().getLuminosity();
+
         BlockState state = this.getBlockState();
-        if (light != state.getValue(ModBlockProperties.LIGHT_LEVEL)) {
-            state = state.setValue(ModBlockProperties.LIGHT_LEVEL, light);
+
+        if(state.getBlock() instanceof ModCauldronBlock cb){
+            state = cb.updateStateOnFluidChange(state, fluidTank.getFluid());
         }
-        int height = this.fluidTank.getFluidCount();
-        if (fluidTank.isEmpty()) {
-            state = Blocks.CAULDRON.defaultBlockState();
-        } else if (state.hasProperty(LiquidCauldronBlock.LEVEL)) {
-            state = state.setValue(LiquidCauldronBlock.LEVEL, height);
-        } else if (state.hasProperty(DyeCauldronBlock.LEVEL)) {
-            state = state.setValue(DyeCauldronBlock.LEVEL, height);
-        }
+
         if (state != this.getBlockState()) {
             this.level.setBlockAndUpdate(this.worldPosition, state);
         }

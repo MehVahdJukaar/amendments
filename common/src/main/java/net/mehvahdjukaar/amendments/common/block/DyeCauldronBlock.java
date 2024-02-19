@@ -3,7 +3,7 @@ package net.mehvahdjukaar.amendments.common.block;
 import net.mehvahdjukaar.amendments.common.item.DyeBottleItem;
 import net.mehvahdjukaar.amendments.common.tile.LiquidCauldronBlockTile;
 import net.mehvahdjukaar.amendments.events.behaviors.CauldronDyeWater;
-import net.mehvahdjukaar.amendments.recipe.DyeBottleRecipe;
+import net.mehvahdjukaar.amendments.common.recipe.DyeBottleRecipe;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidStack;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidTank;
@@ -18,6 +18,7 @@ import net.minecraft.world.item.DyeItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -104,5 +105,16 @@ public class DyeCauldronBlock extends ModCauldronBlock {
             }
         }
         return false;
+    }
+
+    @Override
+    public BlockState updateStateOnFluidChange(BlockState state, SoftFluidStack fluid) {
+        int height = fluid.getCount();
+        if (fluid.isEmpty()) {
+            state = Blocks.CAULDRON.defaultBlockState();
+        } else {
+            state = state.setValue(DyeCauldronBlock.LEVEL, height);
+        }
+        return state;
     }
 }
