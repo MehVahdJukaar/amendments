@@ -39,5 +39,17 @@
   "item.amendments.dye_bottle.red": "Red",
   "item.amendments.dye_bottle.green": "Green",
   "item.amendments.dye_bottle.blue": "Blue",
-  "item.amendments.dye_bottle.white": "White"
+  "item.amendments.dye_bottle.white": "White",
+  "item.amendments.dye_bottle.orange": "Orange",
+  "item.amendments.dye_bottle.purple": "Purple",
+  "item.amendments.dye_bottle.black": "Black",
+  "item.amendments.dye_bottle.gray": "Gray",
+  "item.amendments.dye_bottle.light_gray": "Light Gray",
+  "item.amendments.dye_bottle.light_blue": "Light Blue",
+  "item.amendments.dye_bottle.lime": "Lime",
+  "item.amendments.dye_bottle.brown": "Brown",
+  "item.amendments.dye_bottle.yellow": "Yellow",
+  "item.amendments.dye_bottle.magenta": "Magenta",
+  "item.amendments.dye_bottle.pink": "Pink",
+  "item.amendments.dye_bottle.cyan": "Cyan"
 }

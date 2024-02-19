@@ -51,6 +51,8 @@ public class CommonConfigs {
 
     public static final Supplier<Boolean> DYE_BLOCKS;
 
+    public static final Supplier<Boolean> LILY_PADS_ON;
+
     public static final ConfigSpec CONFIG;
 
     static {
@@ -147,8 +149,13 @@ public class CommonConfigs {
         builder.push("misc");
 
         DYE_BLOCKS = builder.comment("Allows dying blocks by right clicking them with dye")
-                .define("dye_blocks", true);
+                .define("dye_blocks", false);
 
+        builder.pop();
+
+        builder.push("lily_pad");
+        LILY_PADS_ON = builder.comment("Allows lilypads to have any block placed ontop")
+                        .define("better_lilypads", true);
         builder.pop();
 
         builder.pop();

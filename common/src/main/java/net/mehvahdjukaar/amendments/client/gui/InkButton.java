@@ -25,7 +25,7 @@ public class InkButton extends AbstractWidget {
     private int type = 0;
 
     public InkButton(LecternBookEditScreen screen) {
-        super(screen.width / 2 - 130, screen.height / 2 - 20, 52, 50, Component.empty());
+        super(screen.width / 2 - 130, 90, 52, 50, Component.empty());
         refreshTooltip();
         clickCallback = screen::onInkClicked;
     }

@@ -56,24 +56,25 @@ class DyeBehavior implements ItemUseOnBlock {
             color = DyeBottleItem.getClosestDye(stack);
         } else color = ForgeHelper.getColor(stack);
 
-        if (recolor(level, pos, state, color))
+        if (recolor(level, pos, state, color)) {
 
             if (isBottle) {
                 level.playSound(player, pos, SoundEvents.BOTTLE_EMPTY, SoundSource.BLOCKS, 1.0F, 1);
             } else level.playSound(player, pos, SoundEvents.DYE_USE, SoundSource.PLAYERS, 1.0F, 1.0F);
 
-        if (player instanceof ServerPlayer serverPlayer) {
-            if (!player.isCreative()) {
-                if (isBottle) {
-                    Utils.swapItem(player, hand, stack, Items.GLASS_BOTTLE.getDefaultInstance());
-                } else stack.shrink(1);
+            if (player instanceof ServerPlayer serverPlayer) {
+                if (!player.isCreative()) {
+                    if (isBottle) {
+                        Utils.swapItem(player, hand, stack, Items.GLASS_BOTTLE.getDefaultInstance());
+                    } else stack.shrink(1);
+                }
+
+                level.gameEvent(player, GameEvent.BLOCK_CHANGE, pos);
+
+
+                CriteriaTriggers.ITEM_USED_ON_BLOCK.trigger(serverPlayer, pos, stack);
+                serverPlayer.awardStat(Stats.ITEM_USED.get(stack.getItem()));
             }
-
-            level.gameEvent(player, GameEvent.BLOCK_CHANGE, pos);
-
-
-            CriteriaTriggers.ITEM_USED_ON_BLOCK.trigger(serverPlayer, pos, stack);
-            serverPlayer.awardStat(Stats.ITEM_USED.get(stack.getItem()));
         }
         return InteractionResult.sidedSuccess(level.isClientSide);
     }

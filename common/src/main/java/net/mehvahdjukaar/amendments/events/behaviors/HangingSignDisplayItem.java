@@ -41,10 +41,18 @@ public class HangingSignDisplayItem implements BlockUse {
             SignBlockEntity be = ((SignBlockEntity) e);
             HangingSignTileExtension ext = e.getExtension();
             if (!be.isWaxed()) {
-                if (stack.getItem() instanceof SignApplicator && !player.isSecondaryUseActive()) {
-                    return InteractionResult.PASS;
-                }
                 boolean front = be.isFacingFrontText(player);
+
+                if (stack.getItem() instanceof SignApplicator){
+                    if(!player.isSecondaryUseActive()) return InteractionResult.PASS;
+                }else{
+                    ItemStack item = front ? ext.getFrontItem() : ext.getBackItem();
+                    if (!stack.isEmpty() && !item.isEmpty()){
+                        //prevent editing text
+                        return InteractionResult.FAIL;
+                    }
+                }
+
                 return interactWithFace(state, pos, level, player, hand, stack, be, ext, front);
             }
         }

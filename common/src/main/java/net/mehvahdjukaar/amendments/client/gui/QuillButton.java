@@ -26,7 +26,7 @@ public class QuillButton extends AbstractWidget {
     private int type = 0;
 
     public QuillButton(Screen screen) {
-        super(screen.width / 2 + 70, screen.height / 2 - 100, 48, 144, Component.empty());
+        super(screen.width / 2 + 70, 20, 48, 144, Component.empty());
         this.refreshTooltip();
     }
     private void refreshTooltip() {

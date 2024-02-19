@@ -38,12 +38,23 @@ class BellChainRing implements BlockUse {
                                                  InteractionHand hand, ItemStack stack, BlockHitResult hit) {
         //bell chains
         if (stack.isEmpty() && hand == InteractionHand.MAIN_HAND) {
-            if (findAndRingBell(world, pos, player, 0, s -> s.getBlock() instanceof ChainBlock && s.getValue(ChainBlock.AXIS) == Direction.Axis.Y)) {
+            Predicate<BlockState> predicate =
+                    state.getBlock() instanceof ChainBlock ? BellChainRing::isVerticalChain : BellChainRing::isRope;
+            if (findAndRingBell(world, pos, player, 0, predicate)) {
                 return InteractionResult.sidedSuccess(world.isClientSide);
             }
             return InteractionResult.sidedSuccess(world.isClientSide);
         }
         return InteractionResult.PASS;
+    }
+
+    private static boolean isRope(BlockState state) {
+        if (CompatHandler.SUPPLEMENTARIES) return SuppCompat.isRope(state.getBlock());
+        return false;
+    }
+
+    private static boolean isVerticalChain(BlockState s) {
+        return s.getBlock() instanceof ChainBlock && s.getValue(ChainBlock.AXIS) == Direction.Axis.Y;
     }
 
     public static boolean findAndRingBell(Level world, BlockPos pos, Player player, int it, Predicate<BlockState> predicate) {

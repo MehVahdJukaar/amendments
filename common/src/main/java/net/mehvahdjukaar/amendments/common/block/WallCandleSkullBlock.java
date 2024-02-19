@@ -3,6 +3,10 @@ package net.mehvahdjukaar.amendments.common.block;
 import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import net.mehvahdjukaar.amendments.common.tile.CandleSkullBlockTile;
+import net.mehvahdjukaar.moonlight.api.block.IRecolorable;
+import net.mehvahdjukaar.moonlight.api.set.BlockSetAPI;
+import net.mehvahdjukaar.moonlight.api.set.BlocksColorAPI;
 import net.mehvahdjukaar.moonlight.api.util.math.MthUtils;
 import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
@@ -10,7 +14,9 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
@@ -21,6 +27,7 @@ import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,7 +35,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
-public class WallCandleSkullBlock extends AbstractCandleSkullBlock {
+public class WallCandleSkullBlock extends AbstractCandleSkullBlock implements IRecolorable {
 
     public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
     private static final Map<Direction, VoxelShape[]> SHAPES = Util.make(() -> {
@@ -96,5 +103,30 @@ public class WallCandleSkullBlock extends AbstractCandleSkullBlock {
     @Override
     protected Iterable<Vec3> getParticleOffsets(BlockState pState) {
         return H_PARTICLE_OFFSETS.get(pState.getValue(FACING)).get(pState.getValue(CANDLES));
+    }
+
+    @Override
+    public boolean tryRecolor(Level level, BlockPos blockPos, BlockState blockState, @Nullable DyeColor dyeColor) {
+        if(level.getBlockEntity(blockPos) instanceof CandleSkullBlockTile tile){
+            var c = tile.getCandle();
+            if(!c.isAir()){
+                Block otherCandle = BlocksColorAPI.changeColor(c.getBlock(), dyeColor);
+                if(otherCandle != null && !c.is(otherCandle)){
+                    tile.setCandle(otherCandle.withPropertiesOf(c));
+                    tile.setChanged();
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public boolean isDefaultColor(Level level, BlockPos blockPos, BlockState blockState) {
+        if(level.getBlockEntity(blockPos) instanceof CandleSkullBlockTile tile) {
+            var c = tile.getCandle();
+            return BlocksColorAPI.isDefaultColor(c.getBlock());
+        }
+        return false;
     }
 }

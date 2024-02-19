@@ -1,6 +1,7 @@
 package net.mehvahdjukaar.amendments.mixins;
 
 import net.mehvahdjukaar.amendments.common.tile.WaterloggedLilyBlockTile;
+import net.mehvahdjukaar.amendments.configs.CommonConfigs;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
@@ -27,7 +28,7 @@ public abstract class WaterLilyMixin extends Block {
     //TODO: use event?
     @Override
     public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
-        if (!player.mayBuild()) return InteractionResult.PASS;
+        if (!player.mayBuild() || !CommonConfigs.LILY_PADS_ON.get()) return InteractionResult.PASS;
         ItemStack stack = player.getItemInHand(hand);
         Item item = stack.getItem();
         if (!stack.isEmpty() && !(item instanceof PlaceOnWaterBlockItem) && !(stack.getItem() instanceof BoneMealItem)) {
