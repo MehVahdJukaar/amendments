@@ -1,6 +1,8 @@
 package net.mehvahdjukaar.amendments.common.block;
 
+import net.mehvahdjukaar.amendments.common.recipe.RecipeUtils;
 import net.mehvahdjukaar.amendments.common.tile.LiquidCauldronBlockTile;
+import net.mehvahdjukaar.amendments.configs.CommonConfigs;
 import net.mehvahdjukaar.amendments.reg.ModBlockProperties;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.amendments.reg.ModTags;
@@ -26,9 +28,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.PotionUtils;
-import net.minecraft.world.item.crafting.TippedArrowRecipe;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
@@ -89,17 +89,18 @@ public class LiquidCauldronBlock extends ModCauldronBlock {
             if (te.handleInteraction(player, hand)) {
                 return InteractionResult.sidedSuccess(level.isClientSide);
             }
+            if (!CommonConfigs.CAULDRON_CRAFTING.get()) return InteractionResult.PASS;
 
             SoftFluidTank tank = te.getSoftFluidTank();
             SoftFluidStack fluid = tank.getFluid();
             ItemStack stack = player.getItemInHand(hand);
 
-            //TODO: add recipe system for these?
-            // craft with any item
-            if (stack.is(Items.ARROW) && fluid.is(ModRegistry.DYE_SOFT_FLUID.get())) {
-                //try tipping arrows
-                ItemStack recolored = PotionUtils.setPotion(stack, PotionUtils.getPotion(fluid.getTag()));
-                this.doCraftItem(level, pos, player, hand, te, fluid, stack, recolored);
+
+            var crafted = RecipeUtils.craftWithFluid(level, tank.getFluid(), stack, true);
+            if (crafted != null) {
+
+                int mult = fluid.is(BuiltInSoftFluids.POTION.get()) ? CommonConfigs.POTION_RECIPES_PER_LAYER.get() : 1;
+                this.doCraftItem(level, pos, player, hand, te, fluid, stack, crafted.getFirst(), crafted.getSecond(), mult);
                 return InteractionResult.sidedSuccess(level.isClientSide);
             }
         }
@@ -133,7 +134,7 @@ public class LiquidCauldronBlock extends ModCauldronBlock {
     }
 
     @Override
-    protected boolean handleEntityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
+    protected void handleEntityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
         if (state.getValue(BOILING)) {
             entity.hurt(new DamageSource(ModRegistry.BOILING_DAMAGE.getHolder()), 1.0F);
         }
@@ -142,10 +143,9 @@ public class LiquidCauldronBlock extends ModCauldronBlock {
 
             SoftFluidStack stack = tile.getSoftFluidTank().getFluid();
             if (getSplashOrLingeringPotType(stack) != null && applyPotionFluidEffects(level, pos, living, stack)) {
-                return true;
+                tile.consumeOneLayer();
             }
         }
-        return false;
     }
 
     private boolean applyPotionFluidEffects(Level level, BlockPos pos, LivingEntity living, SoftFluidStack stack) {

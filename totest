@@ -1,0 +1,9 @@
+- stat award, and skulk event on all of my mods blocks
+- all fluid related interactions (faucets, jars, cauldrons and so on, including all the special ones and their combinations)
+- server side sync. Do animations and sounds work in multiplayer?
+- dispenser interactions with cauldrons and oher blocks
+- faucet interactions (putting this here twice)
+- all sorts of interactions you would expect for cauldrons (yes you can dye sheeps. what else?)
+- double cakes with other mods
+- all possible and imaginable dye interactions with cauldrons
+- all possible fluid recipes with liquid cauldrons. Any item that can give a fluid to a cauldron will be considered IN the cauldron and as such you will be able to craft IT with the item you got in hand on click (for example slimeballs and pistons)

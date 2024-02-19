@@ -1,11 +1,14 @@
 package net.mehvahdjukaar.amendments.common.recipe;
 
-import com.ibm.icu.impl.Pair;
+import com.mojang.datafixers.util.Pair;
+import net.mehvahdjukaar.amendments.common.item.DyeBottleItem;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluid;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidStack;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.player.StackedContents;
 import net.minecraft.world.inventory.CraftingContainer;
+import net.minecraft.world.item.DyeItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -17,15 +20,40 @@ import java.util.List;
 
 public class RecipeUtils {
 
-    public static Pair<ItemStack,Integer> craftWithFluid(Level level, SoftFluidStack fluidStack, ItemStack playerItem) {
+    public static Pair<ItemStack, Float> craftWithFluidAndDye(Level level, SoftFluidStack fluid, ItemStack toRecolor) {
+        CompoundTag tag = fluid.getTag();
+        if (tag == null) return null;
+
+
+        var c = RecipeUtils.craftWithFluid(level, fluid, toRecolor, true);
+        if (c != null) return c;
+
+
+        Item dyeItem = DyeItem.byColor(DyeBottleItem.getClosestDye(fluid));
+        //first we try normal dye recipes then we try dye bottle one
+        ItemStack recolored = RecipeUtils.simulateCrafting(level, toRecolor, dyeItem.getDefaultInstance(), false);
+        if (recolored != null) return Pair.of(recolored, 1f);
+
+        return null;
+    }
+
+    public static Pair<ItemStack, Float> craftWithFluid(Level level, SoftFluidStack fluidStack, ItemStack playerItem,
+                                                        boolean try9x9) {
         SoftFluid sf = fluidStack.getFluid().value();
         for (var category : sf.getContainerList().getCategories()) {
             int capacity = category.getCapacity();
             if (capacity > fluidStack.getCount()) continue;
-            for(Item filled : category.getFilledItems()) {
-                ItemStack crafted = simulateCrafting(level, filled.getDefaultInstance(), playerItem);
-                if (!crafted.equals(playerItem)) {
-                    return Pair.of(crafted, capacity);
+            var p = fluidStack.toItem(category.getEmptyContainer().getDefaultInstance(), true);
+            if (p != null) {
+                ItemStack crafted = simulateCrafting(level, p.getFirst(), playerItem, false);
+                if (crafted != null) {
+                    return Pair.of(crafted, (float) capacity);
+                }
+                if (try9x9) {
+                    ItemStack crafted9 = simulateCrafting(level, p.getFirst(), playerItem, true);
+                    if (crafted9 != null) {
+                        return Pair.of(crafted9, capacity / 8f);
+                    }
                 }
             }
         }
@@ -33,28 +61,45 @@ public class RecipeUtils {
     }
 
 
-    public static ItemStack simulateCrafting(Level level, ItemStack first, ItemStack second) {
-        DummyContainer dyeContainer = new DummyContainer(second.copy(), first.copy());
-        var recipes = level.getRecipeManager().getRecipesFor(RecipeType.CRAFTING, dyeContainer, level);
+    public static ItemStack simulateCrafting(Level level, ItemStack dye, ItemStack playerItem, boolean surround) {
+        DummyContainer container = new DummyContainer(dye.copy(), playerItem.copy(), surround);
+        var recipes = level.getRecipeManager().getRecipesFor(RecipeType.CRAFTING, container, level);
         for (var r : recipes) {
-            ItemStack recolored = r.assemble(dyeContainer, level.registryAccess());
-            if (!recolored.isEmpty()) {
-                var remainingItems = r.getRemainingItems(dyeContainer);
+            ItemStack recolored = r.assemble(container, level.registryAccess());
+            if (!recolored.isEmpty() && !playerItem.equals(recolored)) {
+                var remainingItems = r.getRemainingItems(container);
                 remainingItems.remove(Items.GLASS_BOTTLE.getDefaultInstance());
-                if (remainingItems.size() != 0) {
+                if (remainingItems.stream().noneMatch(i -> !i.isEmpty() && !i.is(Items.GLASS_BOTTLE))) {
                     return recolored;
                 }
             }
         }
-        return ItemStack.EMPTY;
+        return null;
     }
 
     private static class DummyContainer implements CraftingContainer {
 
         private final List<ItemStack> items = new ArrayList<>();
+        private final boolean surround;
 
-        public DummyContainer(ItemStack... it) {
-            items.addAll(List.of(it));
+        public DummyContainer(ItemStack dye, ItemStack toRecolor, boolean surround) {
+            this.surround = surround;
+            if (surround) {
+                items.add(toRecolor);
+                items.add(toRecolor);
+                items.add(toRecolor);
+
+                items.add(toRecolor);
+                items.add(dye);
+                items.add(toRecolor);
+
+                items.add(toRecolor);
+                items.add(toRecolor);
+                items.add(toRecolor);
+            } else {
+                items.add(dye);
+                items.add(toRecolor);
+            }
         }
 
         @Override
@@ -69,6 +114,7 @@ public class RecipeUtils {
 
         @Override
         public ItemStack getItem(int slot) {
+            if (slot >= this.getContainerSize()) return ItemStack.EMPTY;
             return items.get(slot);
         }
 
@@ -101,12 +147,12 @@ public class RecipeUtils {
 
         @Override
         public int getWidth() {
-            return 2;
+            return surround ? 3 : 2;
         }
 
         @Override
         public int getHeight() {
-            return 2;
+            return surround ? 3 : 2;
         }
 
         @Override

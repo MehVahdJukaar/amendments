@@ -1,7 +1,6 @@
 package net.mehvahdjukaar.amendments.common.block;
 
 import net.mehvahdjukaar.amendments.common.tile.LiquidCauldronBlockTile;
-import net.mehvahdjukaar.amendments.configs.CommonConfigs;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidStack;
 import net.minecraft.advancements.CriteriaTriggers;
@@ -138,51 +137,38 @@ public abstract class ModCauldronBlock extends AbstractCauldronBlock implements 
                 entity.clearFire();
                 playExtinguishSound(level, pos, entity);
                 if (entity.mayInteract(level, pos)) {
-                    hasToLower = true;
+                    if(level.getBlockEntity(pos) instanceof LiquidCauldronBlockTile te){
+                        te.consumeOneLayer();
+                    }
                 }
             }
-            if (handleEntityInside(state, level, pos, entity)) {
-                hasToLower = true;
-            }
-
-            if (hasToLower) {
-                lowerFillLevel(state, level, pos);
-            }
+            handleEntityInside(state, level, pos, entity);
         }
     }
 
-    public void lowerFillLevel(BlockState state, Level level, BlockPos pos) {
-        IntegerProperty lev = getLevelProperty();
-        int i = state.getValue(lev) - 1;
-        BlockState blockState = i == 0 ? Blocks.CAULDRON.defaultBlockState() : state.setValue(lev, i);
-        level.setBlockAndUpdate(pos, blockState);
-        level.gameEvent(GameEvent.BLOCK_CHANGE, pos, GameEvent.Context.of(blockState));
-    }
 
-
-    protected abstract boolean handleEntityInside(BlockState state, Level level, BlockPos pos, Entity entity);
+    protected abstract void handleEntityInside(BlockState state, Level level, BlockPos pos, Entity entity);
 
     public void doCraftItem(Level level, BlockPos pos, Player player, InteractionHand hand, LiquidCauldronBlockTile te,
-                            SoftFluidStack fluid, ItemStack stack, ItemStack crafted) {
+                            SoftFluidStack fluid, ItemStack itemStack, ItemStack crafted, float layerPerItem, int itemCountMultiplier) {
 
         if (player instanceof ServerPlayer serverPlayer) {
-            player.awardStat(Stats.ITEM_USED.get(stack.getItem()));
-            CriteriaTriggers.ITEM_USED_ON_BLOCK.trigger(serverPlayer, pos, stack);
+            player.awardStat(Stats.ITEM_USED.get(itemStack.getItem()));
+            CriteriaTriggers.ITEM_USED_ON_BLOCK.trigger(serverPlayer, pos, itemStack);
         }
         level.playSound(player, pos, SoundEvents.BUCKET_EMPTY, SoundSource.BLOCKS, 1.0F, 1.3f);
 
 
-        int recolorBonus = CommonConfigs.DYE_WATER_BONUS.get();
-        int amountToRecolor = recolorBonus * fluid.getCount();
-        amountToRecolor = Math.min(amountToRecolor, stack.getCount());
+        int maxRecolorable = (int) (itemCountMultiplier * fluid.getCount() / (float) layerPerItem);
+        int amountToRecolor = Math.min(maxRecolorable, itemStack.getCount());
         crafted.setCount(amountToRecolor);
 
-        fluid.shrink(Mth.ceil(amountToRecolor / (float) recolorBonus));
+        fluid.shrink(Mth.ceil((layerPerItem * amountToRecolor / (float) itemCountMultiplier)));
         te.setChanged();
 
-        stack.shrink(amountToRecolor);
+        if (!player.isCreative()) itemStack.shrink(amountToRecolor);
 
-        if (stack.isEmpty()) {
+        if (itemStack.isEmpty()) {
             player.setItemInHand(hand, crafted);
         } else {
             if (!player.getInventory().add(crafted)) {

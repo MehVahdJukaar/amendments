@@ -203,4 +203,8 @@ public class LiquidCauldronBlockTile extends BlockEntity implements IExtraModelD
         return false;
     }
 
+    public void consumeOneLayer() {
+        this.fluidTank.getFluid().shrink(1);
+        this.setChanged();
+    }
 }

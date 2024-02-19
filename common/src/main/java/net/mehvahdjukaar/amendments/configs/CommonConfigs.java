@@ -21,7 +21,9 @@ public class CommonConfigs {
     public static final Supplier<Boolean> ENHANCED_CAULDRON;
     public static final Supplier<MixingMode> POTION_MIXING;
     public static final Supplier<Boolean> DYE_WATER;
-    public static final Supplier<Integer> DYE_WATER_BONUS;
+    public static final Supplier<Boolean> CAULDRON_CRAFTING;
+    public static final Supplier<Integer> DYE_RECIPES_PER_LAYER;
+    public static final Supplier<Integer> POTION_RECIPES_PER_LAYER;
     //TODO: more cauldron configs
 
     public static final Supplier<Boolean> CARPETED_STAIRS;
@@ -63,10 +65,16 @@ public class CommonConfigs {
         builder.push("cauldron");
         ENHANCED_CAULDRON = builder.comment("Enables enhanced cauldron")
                 .define("enabled", true);
+        CAULDRON_CRAFTING = builder.comment("Allows crafting items using cauldrons by clicking on them")
+                .define("crafting", true);
         DYE_WATER = builder.comment("Allows dying cauldron water bedrock style and mixing them too")
                 .define("dye_water", true);
-        DYE_WATER_BONUS = builder.comment("Max amount of items that 1 cauldron layer can recolor")
-                .define("recolors_per_layer", 8, 1, 64);
+        DYE_RECIPES_PER_LAYER = builder.comment("Max amount of items that 1 cauldron layer can recolor." +
+                        "This is a multiplier on top of vanilla crafting recipe amount")
+                .define("dye_recipes_per_layer", 8, 1, 64);
+        POTION_RECIPES_PER_LAYER = builder.comment("Max amount of items that 1 cauldron layer can craft with potions." +
+                        "This is a multiplier on top of vanilla crafting recipe amount")
+                .define("potion_recipes_per_layer", 2, 1, 64);
         POTION_MIXING = builder.comment("Allows mixin potions in cauldrons")
                         .define("potions_mixing", MixingMode.ON);
 

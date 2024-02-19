@@ -1,6 +1,7 @@
 package net.mehvahdjukaar.amendments.common.recipe;
 
 
+import com.ibm.icu.impl.Pair;
 import net.mehvahdjukaar.amendments.common.item.DyeBottleItem;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidStack;
@@ -8,19 +9,15 @@ import net.mehvahdjukaar.moonlight.api.set.BlocksColorAPI;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.player.StackedContents;
 import net.minecraft.world.inventory.CraftingContainer;
-import net.minecraft.world.item.*;
+import net.minecraft.world.item.DyeItem;
+import net.minecraft.world.item.DyeableLeatherItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingBookCategory;
 import net.minecraft.world.item.crafting.CustomRecipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
-import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class DyeBottleRecipe extends CustomRecipe {
 
@@ -39,7 +36,8 @@ public class DyeBottleRecipe extends CustomRecipe {
                 if (item == ModRegistry.DYE_BOTTLE_ITEM.get()) {
                     if (hasDye) return false;
                     else hasDye = true;
-                } else if (item instanceof DyeableLeatherItem || BlocksColorAPI.getKey(item) != null) {
+                } else if (item instanceof DyeableLeatherItem || BlocksColorAPI.getKey(item) != null
+                &&BlocksColorAPI.getBlockHolderSet()) {
                     if (hasDyableItem) return false;
                     else hasDyableItem = true;
                 }
@@ -91,20 +89,6 @@ public class DyeBottleRecipe extends CustomRecipe {
     }
 
 
-    public static ItemStack tryRecoloringWithRecipe(Level level, SoftFluidStack fluid, ItemStack toRecolor) {
-        CompoundTag tag = fluid.getTag();
-        if (tag == null) return ItemStack.EMPTY;
-        ItemStack dyeBottle = DyeBottleItem.fromFluidStack(fluid);
-
-        DyeItem.byColor(DyeBottleItem.getClosestDye(second)
-        //first we try normal dye recipes then we try dye bottle one
-        ItemStack recolored = RecipeUtils.simulateCraf(level, toRecolor, dyeBottle);
-        if (recolored != null) return recolored;
-        // try with the dye one. No need to get it when we know we want this one
-        // probably not needed
-
-        return ItemStack.EMPTY;
-    }
 
 
 
