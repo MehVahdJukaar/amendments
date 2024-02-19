@@ -33,7 +33,7 @@ public class CauldronConversion implements BlockUse {
 
     @Override
     public boolean isEnabled() {
-        return CommonConfigs.ENHANCED_CAULDRON.get();
+        return CommonConfigs.LIQUID_CAULDRON.get();
     }
 
     @Override

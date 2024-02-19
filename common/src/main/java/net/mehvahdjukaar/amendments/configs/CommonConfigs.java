@@ -18,7 +18,8 @@ public class CommonConfigs {
 
     public static final Supplier<Boolean> HANGING_SIGN_ITEM;
 
-    public static final Supplier<Boolean> ENHANCED_CAULDRON;
+    public static final Supplier<Boolean> LIQUID_CAULDRON;
+    public static final Supplier<Boolean> CONNECT_TO_FENCES;
     public static final Supplier<MixingMode> POTION_MIXING;
     public static final Supplier<Boolean> DYE_WATER;
     public static final Supplier<Boolean> CAULDRON_CRAFTING;
@@ -63,7 +64,7 @@ public class CommonConfigs {
         builder.pop();
 
         builder.push("cauldron");
-        ENHANCED_CAULDRON = builder.comment("Enables enhanced cauldron")
+        LIQUID_CAULDRON = builder.comment("Enables enhanced cauldron")
                 .define("enabled", true);
         CAULDRON_CRAFTING = builder.comment("Allows crafting items using cauldrons by clicking on them")
                 .define("crafting", true);
@@ -77,7 +78,8 @@ public class CommonConfigs {
                 .define("potion_recipes_per_layer", 2, 1, 64);
         POTION_MIXING = builder.comment("Allows mixin potions in cauldrons")
                         .define("potions_mixing", MixingMode.ON);
-
+        CONNECT_TO_FENCES = builder.comment("Makes cauldrons connect to fences")
+                        .define("connect_to_fences", true);
         builder.pop();
 
         builder.push("carpeted_blocks");
