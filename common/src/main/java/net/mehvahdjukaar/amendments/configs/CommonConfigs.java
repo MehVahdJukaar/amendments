@@ -21,6 +21,7 @@ public class CommonConfigs {
     public static final Supplier<Boolean> ENHANCED_CAULDRON;
     public static final Supplier<MixingMode> POTION_MIXING;
     public static final Supplier<Boolean> DYE_WATER;
+    public static final Supplier<Integer> DYE_WATER_BONUS;
     //TODO: more cauldron configs
 
     public static final Supplier<Boolean> CARPETED_STAIRS;
@@ -64,6 +65,8 @@ public class CommonConfigs {
                 .define("enabled", true);
         DYE_WATER = builder.comment("Allows dying cauldron water bedrock style and mixing them too")
                 .define("dye_water", true);
+        DYE_WATER_BONUS = builder.comment("Max amount of items that 1 cauldron layer can recolor")
+                .define("recolors_per_layer", 8, 1, 64);
         POTION_MIXING = builder.comment("Allows mixin potions in cauldrons")
                         .define("potions_mixing", MixingMode.ON);
 

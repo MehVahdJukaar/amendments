@@ -27,7 +27,7 @@ public class BoilingParticle extends TextureSheetParticle {
         this.xd = (level.random.nextFloat() * 2.0 - 1.0) * 0.005;
         this.yd = (level.random.nextFloat() * 2.0 - 1.0) * 0.005;
         this.zd = (level.random.nextFloat() * 2.0 - 1.0) * 0.005;
-        this.lifetime = (int) (10 + MthUtils.nextWeighted(level.random, 20));
+        this.lifetime = (int) ( MthUtils.nextWeighted(level.random, 25, 1,5));
         this.sprites = sprites;
         this.setSpriteFromAge(this.sprites);
         this.shineSprite = sprites.get(0, 6);
@@ -60,6 +60,7 @@ public class BoilingParticle extends TextureSheetParticle {
             }
         }
 
+        this.yd *= 0.995;
         this.xd *= 0.98;
         this.zd *= 0.98;
 
@@ -109,7 +110,7 @@ public class BoilingParticle extends TextureSheetParticle {
 
         public Particle createParticle(SimpleParticleType type, ClientLevel level, double x, double y, double z,
                                        double color, double surface, double unused) {
-            int intColor = Float.floatToIntBits((float)color);
+            int intColor = (int) color;
             float r = FastColor.ARGB32.red(intColor) / 255f;
             float g = FastColor.ARGB32.green(intColor) / 255f;
             float b = FastColor.ARGB32.blue(intColor) / 255f;

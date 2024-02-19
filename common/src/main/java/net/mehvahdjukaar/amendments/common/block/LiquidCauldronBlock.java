@@ -4,15 +4,10 @@ import net.mehvahdjukaar.amendments.common.tile.LiquidCauldronBlockTile;
 import net.mehvahdjukaar.amendments.reg.ModBlockProperties;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.amendments.reg.ModTags;
-import net.mehvahdjukaar.moonlight.api.client.util.ColorUtil;
-import net.mehvahdjukaar.moonlight.api.client.util.VertexUtil;
 import net.mehvahdjukaar.moonlight.api.fluids.BuiltInSoftFluids;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidRegistry;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidStack;
 import net.mehvahdjukaar.moonlight.api.util.PotionNBTHelper;
-import net.mehvahdjukaar.moonlight.api.util.math.ColorUtils;
-import net.mehvahdjukaar.moonlight.api.util.math.colors.HSLColor;
-import net.mehvahdjukaar.moonlight.api.util.math.colors.RGBColor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleOptions;
@@ -29,17 +24,11 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.PotionUtils;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
-import net.minecraft.world.level.biome.Biome;
-import net.minecraft.world.level.block.AbstractCauldronBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.EntityBlock;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
@@ -52,29 +41,21 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.Map;
 
-public class LiquidCauldronBlock extends AbstractCauldronBlock implements EntityBlock {
+public class LiquidCauldronBlock extends ModCauldronBlock {
     public static final IntegerProperty LEVEL = ModBlockProperties.LEVEL_1_4;
     public static final IntegerProperty LIGHT_LEVEL = ModBlockProperties.LIGHT_LEVEL;
     public static final BooleanProperty BOILING = ModBlockProperties.BOILING;
 
     public LiquidCauldronBlock(Properties properties) {
-        super(properties, Map.of());
+        super(properties);
         this.registerDefaultState(this.getStateDefinition().any()
                 .setValue(LEVEL, 1).setValue(LIGHT_LEVEL, 0).setValue(BOILING, false));
-        //lingering pots can be consumed
-    }
-
-
-    @Override
-    public Item asItem() {
-        return Items.CAULDRON;
     }
 
     @Override
-    public int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos) {
-        return state.getValue(LEVEL);
+    public IntegerProperty getLevelProperty() {
+        return null;
     }
 
     @Override
@@ -100,16 +81,6 @@ public class LiquidCauldronBlock extends AbstractCauldronBlock implements Entity
     }
 
     @Override
-    public void handlePrecipitation(BlockState state, Level level, BlockPos pos, Biome.Precipitation precipitation) {
-    }
-
-    @Nullable
-    @Override
-    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-        return new LiquidCauldronBlockTile(pos, state);
-    }
-
-    @Override
     public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         if (level.getBlockEntity(pos) instanceof LiquidCauldronBlockTile te) {
             if (te.handleInteraction(player, hand)) {
@@ -126,10 +97,8 @@ public class LiquidCauldronBlock extends AbstractCauldronBlock implements Entity
 
     @Override
     protected double getContentHeight(BlockState state) {
-        return (5.0D + state.getValue(LEVEL) * 2.5D) / 16.0D;
+        return 0.4375 + 0.125 * state.getValue(LEVEL);
     }
-
-    //TODO: get other stuff from layered cauldron
 
     @Override
     public BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor level, BlockPos currentPos, BlockPos neighborPos) {
@@ -147,36 +116,20 @@ public class LiquidCauldronBlock extends AbstractCauldronBlock implements Entity
         return belowState.is(ModTags.HEAT_SOURCES) && fluid.is(BuiltInSoftFluids.POTION.get());
     }
 
-
     @Override
-    public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
-        if (isEntityInsideContent(state, pos, entity)) {
-            entity.wasTouchingWater = true;
+    protected boolean handleEntityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
+        if (state.getValue(BOILING)) {
+            entity.hurt(new DamageSource(ModRegistry.BOILING_DAMAGE.getHolder()), 1.0F);
+        }
+        if (entity instanceof LivingEntity living && entity.mayInteract(level, pos) &&
+                level.getBlockEntity(pos) instanceof LiquidCauldronBlockTile tile) {
 
-            if (level.isClientSide) return;
-
-            boolean hasToLower = false;
-            if (entity.isOnFire()) {
-                entity.clearFire();
-                if (entity.mayInteract(level, pos)) {
-                    hasToLower = true;
-                }
-            }
-            if (state.getValue(BOILING)) {
-                entity.hurt(new DamageSource(ModRegistry.BOILING_DAMAGE.getHolder()), 1.0F);
-            }
-            if (entity instanceof LivingEntity living && entity.mayInteract(level, pos) &&
-                    level.getBlockEntity(pos) instanceof LiquidCauldronBlockTile tile) {
-
-                SoftFluidStack stack = tile.getSoftFluidTank().getFluid();
-                if (isSplashOrLingeringPot(stack) && applyPotionFluidEffects(level, pos, living, stack)) {
-                    hasToLower = true;
-                }
-                if (hasToLower) {
-                    lowerFillLevel(state, level, pos);
-                }
+            SoftFluidStack stack = tile.getSoftFluidTank().getFluid();
+            if (getSplashOrLingeringPotType(stack) != null && applyPotionFluidEffects(level, pos, living, stack)) {
+                return true;
             }
         }
+        return false;
     }
 
     private boolean applyPotionFluidEffects(Level level, BlockPos pos, LivingEntity living, SoftFluidStack stack) {
@@ -226,32 +179,39 @@ public class LiquidCauldronBlock extends AbstractCauldronBlock implements Entity
                 }
             }
 
-            if (level.random.nextInt(4) == 0 && isSplashOrLingeringPot(te.getSoftFluidTank().getFluid())) {
-                int color = te.getSoftFluidTank().getParticleColor(level, pos);
-                addPotionParticles(ParticleTypes.AMBIENT_ENTITY_EFFECT, level, pos, 1,
-                        getContentHeight(state), rand, color);
+            if (level.random.nextInt(4) == 0) {
+                PotionNBTHelper.Type type = getSplashOrLingeringPotType(te.getSoftFluidTank().getFluid());
+                if (type != null) {
+                    ParticleOptions particle = type == PotionNBTHelper.Type.SPLASH ?
+                            ParticleTypes.AMBIENT_ENTITY_EFFECT : ParticleTypes.ENTITY_EFFECT;
+
+                    int color = te.getSoftFluidTank().getParticleColor(level, pos);
+                    addPotionParticles(particle, level, pos, 1,
+                            getContentHeight(state), rand, color);
+                }
             }
         }
     }
 
-    private boolean isSplashOrLingeringPot(SoftFluidStack stack) {
-        PotionNBTHelper
-        return stack.is(BuiltInSoftFluids.POTION.get()) && stack.hasTag() && !stack.getTag()
-                .getString(SoftFluidStack.POTION_TYPE_KEY).equals("REGULAR");
+    @Nullable
+    private PotionNBTHelper.Type getSplashOrLingeringPotType(SoftFluidStack stack) {
+        if (stack.is(BuiltInSoftFluids.POTION.get()) && stack.hasTag()) {
+            var type = PotionNBTHelper.getPotionType(stack.getTag());
+            if (type == PotionNBTHelper.Type.REGULAR) return null;
+        }
+        return null;
     }
-
 
 
     private void addBubblingParticles(ParticleOptions type, Level level, BlockPos pos, int count,
                                       double surface, RandomSource rand, int color) {
 
         color = getBubbleColor(color);
-        float col = Float.intBitsToFloat(color);
         for (int i = 0; i < count; i++) {
             double x = pos.getX() + 0.1875D + (rand.nextFloat() * 0.625D);
             double y = pos.getY() + 5 / 16f;
             double z = pos.getZ() + 0.1875D + (rand.nextFloat() * 0.625D);
-            level.addParticle(type, x, y, z, col, pos.getY() + surface, 0);
+            level.addParticle(type, x, y, z, color, pos.getY() + surface, 0);
         }
     }
 
@@ -269,7 +229,6 @@ public class LiquidCauldronBlock extends AbstractCauldronBlock implements Entity
             level.addParticle(type, x, y, z, r, g, b);
         }
     }
-
 
     @Override
     public void fallOn(Level level, BlockState state, BlockPos pos, Entity entity, float fallDistance) {
@@ -329,7 +288,7 @@ public class LiquidCauldronBlock extends AbstractCauldronBlock implements Entity
             z = e.getZ() + (rand.nextDouble() - 0.5) * width * radius;
             if (x >= mx && x <= Mx && z >= mz && z <= Mz) {
                 level.addParticle(particleOptions,
-                        x, surface, z, Float.intBitsToFloat(color), surface, 0);
+                        x, surface, z, color, surface, 0);
             }
         }
     }

@@ -7,6 +7,7 @@ import net.mehvahdjukaar.moonlight.api.fluids.BuiltInSoftFluids;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidStack;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidTank;
 import net.mehvahdjukaar.moonlight.api.fluids.fabric.SoftFluidTankImpl;
+import net.mehvahdjukaar.moonlight.api.util.PotionNBTHelper;
 
 import java.util.function.BooleanSupplier;
 
@@ -20,8 +21,8 @@ public class AmendmentsPlatformStuffImpl {
                 if (canMix.getAsBoolean() && fluidStack.is(BuiltInSoftFluids.POTION.get()) && fluidStack.is(this.getFluidValue())) {
                     // just compares bottle types
                     return this.getSpace() >= fluidStack.getCount() && this.fluid.getTag()
-                            .getString(SoftFluidStack.POTION_TYPE_KEY).equals(
-                                    fluidStack.getTag().getString(SoftFluidStack.POTION_TYPE_KEY));
+                            .getString(PotionNBTHelper.POTION_TYPE_KEY).equals(
+                                    fluidStack.getTag().getString(PotionNBTHelper.POTION_TYPE_KEY));
                 }
                 return super.canAddSoftFluid(fluidStack);
             }

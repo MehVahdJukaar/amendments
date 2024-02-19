@@ -5,6 +5,7 @@ import net.mehvahdjukaar.amendments.AmendmentsClient;
 import net.mehvahdjukaar.amendments.client.ModMaterials;
 import net.mehvahdjukaar.amendments.client.renderers.HangingSignRendererExtension;
 import net.mehvahdjukaar.amendments.configs.ClientConfigs;
+import net.mehvahdjukaar.moonlight.api.fluids.forge.SoftFluidTankImpl;
 import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.MultiBufferSource;

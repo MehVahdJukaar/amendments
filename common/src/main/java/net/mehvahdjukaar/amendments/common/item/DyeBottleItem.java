@@ -17,9 +17,11 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.animal.Sheep;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.*;
+import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.SignBlockEntity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -33,9 +35,9 @@ public class DyeBottleItem extends Item {
 
     public static final String COLOR_TAG = "color";
 
-    protected static final HashBiMap<DyeColor,Integer> COLOR_TO_DIFFUSE = Arrays.stream(DyeColor.values())
+    protected static final HashBiMap<DyeColor, Integer> COLOR_TO_DIFFUSE = Arrays.stream(DyeColor.values())
             .collect(Collectors.toMap(Function.identity(), color ->
-                    ColorUtils.pack(color.getTextureDiffuseColors()),
+                            ColorUtils.pack(color.getTextureDiffuseColors()),
                     (color, color2) -> color2, HashBiMap::create));
 
     public DyeBottleItem(Properties properties) {
@@ -50,17 +52,26 @@ public class DyeBottleItem extends Item {
         return 0;
     }
 
-    //TODO: change
-    public static void fillCauldron(SoftFluidTank tank, DyeColor color, int amount) {
+    public static SoftFluidStack toFluidStack(DyeColor color, int amount) {
         CompoundTag tag = new CompoundTag();
         tag.putInt(COLOR_TAG, getDyeInt(color));
-        tank.addFluid(new SoftFluidStack(ModRegistry.DYE_SOFT_FLUID.getHolder(), amount, tag));
+        return new SoftFluidStack(ModRegistry.DYE_SOFT_FLUID.getHolder(), amount, tag);
+    }
+
+    public static ItemStack fromFluidStack(SoftFluidStack stack) {
+        ItemStack item = new ItemStack(ModRegistry.DYE_BOTTLE_ITEM.get());
+        item.getOrCreateTag().putInt(COLOR_TAG, stack.getTag().getInt(COLOR_TAG));
+        return item;
     }
 
     @SuppressWarnings("ConstantConditions")
     @NotNull
     private static Integer getDyeInt(DyeColor color) {
         return COLOR_TO_DIFFUSE.get(color);
+    }
+
+    public static DyeColor getClosestDye(SoftFluidStack stack) {
+        return getClosestDye(stack.getTag().getInt(COLOR_TAG));
     }
 
     public static DyeColor getClosestDye(ItemStack stack) {
@@ -97,7 +108,7 @@ public class DyeBottleItem extends Item {
         if (color != null) {
             list.add(Component.translatable("item.amendments.dye_bottle." + color.getName()).withStyle(ChatFormatting.GRAY));
         } else {
-            list.add(Component.translatable("item.color", String.format(Locale.ROOT, "#%06X",col)).withStyle(ChatFormatting.GRAY));
+            list.add(Component.translatable("item.color", String.format(Locale.ROOT, "#%06X", col)).withStyle(ChatFormatting.GRAY));
         }
         super.appendHoverText(stack, level, list, isAdvanced);
     }
@@ -118,7 +129,6 @@ public class DyeBottleItem extends Item {
 
         return InteractionResult.PASS;
     }
-
 
 
 }

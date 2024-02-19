@@ -2,6 +2,7 @@ package net.mehvahdjukaar.amendments.common.tile;
 
 import net.mehvahdjukaar.amendments.AmendmentsPlatformStuff;
 import net.mehvahdjukaar.amendments.common.block.DyeCauldronBlock;
+import net.mehvahdjukaar.amendments.common.block.HangingFlowerPotBlock;
 import net.mehvahdjukaar.amendments.common.block.LiquidCauldronBlock;
 import net.mehvahdjukaar.amendments.common.item.DyeBottleItem;
 import net.mehvahdjukaar.amendments.configs.CommonConfigs;
@@ -24,8 +25,6 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.player.StackedContents;
-import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.DyeItem;
 import net.minecraft.world.item.ItemStack;
@@ -121,14 +120,7 @@ public class LiquidCauldronBlockTile extends BlockEntity implements IExtraModelD
         CompoundTag tankTag = tankFluid.getTag();
         CompoundTag newTag = newFluid.getTag();
         if (tankTag == null || newTag == null) return;
-        /*
-        //TODO: attempt mix with recipe first
-        DyeColor dye1 = DyeColor.RED;
-        Level level = getMeALevel();
-        var recipes = level.getRecipeManager().getRecipesFor(RecipeType.CRAFTING, new ColorContainer(dye1), level);
-        for (var r : recipes) {
-            ItemStack newDye = r.getResultItem(level.registryAccess());
-        }*/
+
         int oldColor = tankTag.getInt(DyeBottleItem.COLOR_TAG);
         int newColor = newTag.getInt(DyeBottleItem.COLOR_TAG);
         int oldAmount = tankFluid.getCount();
@@ -141,76 +133,6 @@ public class LiquidCauldronBlockTile extends BlockEntity implements IExtraModelD
         tankFluid.setTag(combinedTag);
     }
 
-    private static class ColorContainer implements CraftingContainer {
-
-        private final List<ItemStack> items = new ArrayList<>();
-
-        public ColorContainer(DyeColor... it) {
-            Arrays.stream(it).forEach(color -> items.add(DyeItem.byColor(color).getDefaultInstance()));
-        }
-
-        @Override
-        public int getContainerSize() {
-            return 4;
-        }
-
-        @Override
-        public boolean isEmpty() {
-            return false;
-        }
-
-        @Override
-        public ItemStack getItem(int slot) {
-            return items.get(slot);
-        }
-
-        @Override
-        public ItemStack removeItem(int slot, int amount) {
-            return null;
-        }
-
-        @Override
-        public ItemStack removeItemNoUpdate(int slot) {
-            return null;
-        }
-
-        @Override
-        public void setItem(int slot, ItemStack stack) {
-        }
-
-        @Override
-        public void setChanged() {
-        }
-
-        @Override
-        public boolean stillValid(Player player) {
-            return true;
-        }
-
-        @Override
-        public void clearContent() {
-        }
-
-        @Override
-        public int getWidth() {
-            return 2;
-        }
-
-        @Override
-        public int getHeight() {
-            return 2;
-        }
-
-        @Override
-        public List<ItemStack> getItems() {
-            return items;
-        }
-
-        @Override
-        public void fillStackedContents(StackedContents helper) {
-
-        }
-    }
 
 
     @Override
@@ -230,7 +152,10 @@ public class LiquidCauldronBlockTile extends BlockEntity implements IExtraModelD
         super.load(compound);
         this.fluidTank.load(compound);
         if (this.level != null) {
-            if (this.level.isClientSide) this.requestModelReload();
+            if (this.level.isClientSide) {
+                fluidTank.refreshTintCache();
+                this.requestModelReload();
+            }
         }
     }
 
@@ -255,6 +180,8 @@ public class LiquidCauldronBlockTile extends BlockEntity implements IExtraModelD
         if (this.level == null) return;
         //TODO: only call after you finished updating your tile so others can react properly (faucets)
         this.level.updateNeighborsAt(worldPosition, this.getBlockState().getBlock());
+
+        //update state based on fluid
         int light = this.fluidTank.getFluidValue().getLuminosity();
         BlockState state = this.getBlockState();
         if (light != state.getValue(ModBlockProperties.LIGHT_LEVEL)) {
@@ -269,9 +196,11 @@ public class LiquidCauldronBlockTile extends BlockEntity implements IExtraModelD
             state = state.setValue(DyeCauldronBlock.LEVEL, height);
         }
         if (state != this.getBlockState()) {
-            this.level.setBlock(this.worldPosition, state, 2);
+            this.level.setBlockAndUpdate(this.worldPosition, state);
         }
-        this.level.sendBlockUpdated(this.worldPosition, this.getBlockState(), this.getBlockState(), Block.UPDATE_CLIENTS);
+
+        this.level.sendBlockUpdated(this.worldPosition, this.getBlockState(), state, Block.UPDATE_CLIENTS);
+
         super.setChanged();
     }
 
@@ -280,29 +209,8 @@ public class LiquidCauldronBlockTile extends BlockEntity implements IExtraModelD
     public boolean handleInteraction(Player player, InteractionHand hand) {
         //interact with fluid holder
         if (this.fluidTank.interactWithPlayer(player, hand, level, worldPosition)) {
-            if (!level.isClientSide()) this.setChanged();
+             this.setChanged();
             return true;
-        }
-        SoftFluidStack fluid = this.fluidTank.getFluid();
-        if (fluid.is(ModRegistry.DYE_SOFT_FLUID.get())) {
-            ItemStack stack = player.getItemInHand(hand);
-            if (stack.getItem() instanceof DyeItem di) {
-                int count = fluid.getCount();
-                if (count == 3) fluid.setCount(2); //hack!!
-                DyeBottleItem.fillCauldron(fluidTank, di.getDyeColor(), 1);
-                fluidTank.getFluid().setCount(count);
-
-                if (!level.isClientSide()) this.setChanged();
-                return true;
-            }
-
-            DyeColor dye = DyeBottleItem.getClosestDye(fluid.getTag().getInt(DyeBottleItem.COLOR_TAG));
-
-            var recolored = BlocksColorAPI.changeColor(stack.getItem(), dye);
-
-            if (recolored != null) player.setItemInHand(hand, recolored.getDefaultInstance());
-            // try dye
-
         }
         return false;
     }

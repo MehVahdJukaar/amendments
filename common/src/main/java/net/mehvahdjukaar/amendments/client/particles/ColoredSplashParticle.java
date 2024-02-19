@@ -20,7 +20,7 @@ public class ColoredSplashParticle implements ParticleProvider<SimpleParticleTyp
 
 
     public Particle createParticle(SimpleParticleType type, ClientLevel level, double x, double y, double z, double color, double aa, double ab) {
-        int intColor = Float.floatToIntBits((float)color);
+        int intColor = (int) color;
         float r = FastColor.ARGB32.red(intColor) / 255f;
         float g = FastColor.ARGB32.green(intColor) / 255f;
         float b = FastColor.ARGB32.blue(intColor) / 255f;
