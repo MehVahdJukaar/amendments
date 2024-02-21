@@ -1,7 +1,6 @@
 package net.mehvahdjukaar.amendments.forge;
 
 import net.mehvahdjukaar.amendments.common.tile.LiquidCauldronBlockTile;
-import net.mehvahdjukaar.amendments.configs.CommonConfigs;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.moonlight.api.fluids.BuiltInSoftFluids;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidStack;
@@ -18,6 +17,7 @@ public class AmendmentsPlatformStuffImpl {
 
             @Override
             public boolean canAddSoftFluid(SoftFluidStack fluidStack) {
+                if (fluidStack.is(BuiltInSoftFluids.WATER.get())) return false;
                 if (canMix.getAsBoolean() && fluidStack.is(BuiltInSoftFluids.POTION.get()) && fluidStack.is(this.getFluidValue())) {
                     // just compares bottle types
                     return this.getSpace() >= fluidStack.getCount() && this.fluid.getTag()

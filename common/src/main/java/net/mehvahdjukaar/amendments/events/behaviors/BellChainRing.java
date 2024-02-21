@@ -36,6 +36,7 @@ class BellChainRing implements BlockUse {
     @Override
     public InteractionResult tryPerformingAction(BlockState state, BlockPos pos, Level world, Player player,
                                                  InteractionHand hand, ItemStack stack, BlockHitResult hit) {
+        if (player.isSecondaryUseActive()) return InteractionResult.PASS;
         //bell chains
         if (stack.isEmpty() && hand == InteractionHand.MAIN_HAND) {
             Predicate<BlockState> predicate =

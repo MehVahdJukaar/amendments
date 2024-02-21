@@ -2,16 +2,12 @@ package net.mehvahdjukaar.amendments.events.behaviors;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
-import net.mehvahdjukaar.amendments.configs.ClientConfigs;
 import net.mehvahdjukaar.amendments.integration.CompatHandler;
 import net.mehvahdjukaar.amendments.integration.FlanCompat;
 import net.mehvahdjukaar.moonlight.api.util.Utils;
-import net.minecraft.ChatFormatting;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.FluidTags;
@@ -19,7 +15,8 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.*;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
@@ -134,7 +131,7 @@ public class InteractEvents {
                                                       InteractionHand hand, BlockHitResult hit) {
         Item item = stack.getItem();
 
-        for(var override  : ITEM_USE_ON_BLOCK.get(item)) {
+        for (var override : ITEM_USE_ON_BLOCK.get(item)) {
             if (override != null && override.isEnabled()) {
                 if (CompatHandler.FLAN && override.altersWorld() && !FlanCompat.canPlace(player, hit.getBlockPos())) {
                     return InteractionResult.PASS;
@@ -150,17 +147,15 @@ public class InteractEvents {
             }
         }
         //block overrides behaviors (work for any item)
-        if (!player.isShiftKeyDown()) {
-            BlockPos pos = hit.getBlockPos();
-            BlockState state = level.getBlockState(pos);
+        BlockPos pos = hit.getBlockPos();
+        BlockState state = level.getBlockState(pos);
 
-            BlockUse o = BLOCK_USE.get(state.getBlock());
-            if (o != null && o.isEnabled()) {
-                if (CompatHandler.FLAN && o.altersWorld() && !FlanCompat.canPlace(player, hit.getBlockPos())) {
-                    return InteractionResult.PASS;
-                }
-                return o.tryPerformingAction(state, pos, level, player, hand, stack, hit);
+        BlockUse o = BLOCK_USE.get(state.getBlock());
+        if (o != null && o.isEnabled()) {
+            if (CompatHandler.FLAN && o.altersWorld() && !FlanCompat.canPlace(player, hit.getBlockPos())) {
+                return InteractionResult.PASS;
             }
+            return o.tryPerformingAction(state, pos, level, player, hand, stack, hit);
         }
         return InteractionResult.PASS;
         //not sure if this is needed

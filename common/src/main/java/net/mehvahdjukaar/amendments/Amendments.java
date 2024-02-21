@@ -20,6 +20,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.datafix.DataFixers;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.LevelReader;
@@ -30,12 +31,16 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 
 public class Amendments {
     public static final String MOD_ID = "amendments";
     public static final Logger LOGGER = LogManager.getLogger("Amendments");
+
+    public static final List<String> OLD_MODS = List.of("supplementaries", "carpeted", "betterlily", "betterjukebox");
+
 
     public static ResourceLocation res(String name) {
         return new ResourceLocation(MOD_ID, name);
@@ -96,6 +101,7 @@ public class Amendments {
                 registerFluidBehavior(f);
             }
         }
+        if (client) AmendmentsClient.lateClientSetup();
     }
 
     public static void registerFluidBehavior(SoftFluid f) {

@@ -34,6 +34,7 @@ public class CauldronDyeWater implements BlockUse {
 
     @Override
     public InteractionResult tryPerformingAction(BlockState state, BlockPos pos, Level level, Player player, InteractionHand hand, ItemStack stack, BlockHitResult hit) {
+        if (player.isSecondaryUseActive()) return InteractionResult.PASS;
         if (state.is(Blocks.WATER_CAULDRON)) {
             if (stack.getItem() instanceof DyeItem dye) {
                 Integer l = state.getValue(LayeredCauldronBlock.LEVEL);

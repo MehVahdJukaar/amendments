@@ -6,13 +6,16 @@ import net.mehvahdjukaar.amendments.common.tile.CarpetedBlockTile;
 import net.mehvahdjukaar.amendments.reg.ModBlockProperties;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.moonlight.api.block.IBlockHolder;
+import net.mehvahdjukaar.moonlight.api.block.IRecolorable;
 import net.mehvahdjukaar.moonlight.api.platform.ForgeHelper;
+import net.mehvahdjukaar.moonlight.api.set.BlocksColorAPI;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -38,7 +41,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class CarpetSlabBlock extends SlabBlock implements EntityBlock {
+public class CarpetSlabBlock extends SlabBlock implements EntityBlock , IRecolorable {
 
     public static final IntegerProperty LIGHT_LEVEL = ModBlockProperties.LIGHT_LEVEL;
     public static final BooleanProperty SOLID = ModBlockProperties.SOLID;
@@ -188,4 +191,28 @@ public class CarpetSlabBlock extends SlabBlock implements EntityBlock {
         return newState;
     }
 
+    @Override
+    public boolean tryRecolor(Level level, BlockPos blockPos, BlockState blockState, @Nullable DyeColor dyeColor) {
+        if (level.getBlockEntity(blockPos) instanceof CarpetedBlockTile tile) {
+            var c = tile.getHeldBlock();
+            if (!c.isAir()) {
+                Block otherCarpet = BlocksColorAPI.changeColor(c.getBlock(), dyeColor);
+                if (otherCarpet != null && !c.is(otherCarpet)) {
+                    tile.setHeldBlock(otherCarpet.withPropertiesOf(c));
+                    tile.setChanged();
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public boolean isDefaultColor(Level level, BlockPos blockPos, BlockState blockState) {
+        if (level.getBlockEntity(blockPos) instanceof CarpetedBlockTile tile) {
+            var c = tile.getHeldBlock();
+            return BlocksColorAPI.isDefaultColor(c.getBlock());
+        }
+        return false;
+    }
 }

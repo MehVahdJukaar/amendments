@@ -1,6 +1,8 @@
 package net.mehvahdjukaar.amendments.reg;
 
 import net.mehvahdjukaar.amendments.Amendments;
+import net.mehvahdjukaar.moonlight.api.fluids.SoftFluid;
+import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidRegistry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
@@ -9,6 +11,7 @@ import net.minecraft.world.level.block.Block;
 
 public class ModTags {
 
+    public static final TagKey<SoftFluid> CAN_BOIL = fluidTag("can_boil");
     //block tags
     public static final TagKey<Block> POSTS = suppTag("posts");
     public static final TagKey<Block> PALISADES = suppTag("palisades");
@@ -34,6 +37,10 @@ public class ModTags {
 
     private static TagKey<Block> blockTag(String name) {
         return TagKey.create(Registries.BLOCK, Amendments.res(name));
+    }
+
+    private static TagKey<SoftFluid> fluidTag(String name) {
+        return TagKey.create(SoftFluidRegistry.KEY, Amendments.res(name));
     }
 
     private static TagKey<Block> suppTag(String name) {

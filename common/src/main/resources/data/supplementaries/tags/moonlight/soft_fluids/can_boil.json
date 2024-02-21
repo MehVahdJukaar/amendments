@@ -1,0 +1,7 @@
+{
+  "replace": false,
+  "values": [
+    {"id":"moonlight:potion","required":false},
+    {"id":"moonlight:water","required":false}
+  ]
+}

@@ -4,6 +4,7 @@ import net.mehvahdjukaar.amendments.common.tile.CarpetedBlockTile;
 import net.mehvahdjukaar.moonlight.api.client.model.BakedQuadsTransformer;
 import net.mehvahdjukaar.moonlight.api.client.model.CustomBakedModel;
 import net.mehvahdjukaar.moonlight.api.client.model.ExtraModelData;
+import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
@@ -32,8 +33,10 @@ public class CarpetedBlockModel implements CustomBakedModel {
     }
 
     @Override
-    public List<BakedQuad> getBlockQuads(BlockState state, Direction side, RandomSource rand, @Nullable RenderType renderType, ExtraModelData data) {
+    public List<BakedQuad> getBlockQuads(BlockState state, Direction side, RandomSource rand, @Nullable RenderType renderType,
+                                         ExtraModelData data) {
         List<BakedQuad> quads = new ArrayList<>();
+        boolean fabric = PlatHelper.getPlatform().isFabric();
 
         if (state == null) return quads;
         try {
@@ -42,7 +45,7 @@ public class CarpetedBlockModel implements CustomBakedModel {
             if (mimic != null) {
                 RenderType originalRenderType = ItemBlockRenderTypes.getChunkRenderType(mimic);
                 // only when on its original render layer or when we do block breaking anim (null render type)
-                if (originalRenderType == renderType || renderType == null) {
+                if (originalRenderType == renderType || renderType == null || fabric) {
                     BakedModel model = blockModelShaper.getBlockModel(mimic);
                     quads.addAll(model.getQuads(mimic, side, rand));
                 }
@@ -51,7 +54,7 @@ public class CarpetedBlockModel implements CustomBakedModel {
         }
 
 
-        if (renderType == RenderType.solid() || renderType == null) {
+        if (renderType == RenderType.solid() || renderType == null || fabric) {
             //only outputs carpet on the solid layer
             try {
                 BlockState carpetBlock = data.get(CarpetedBlockTile.CARPET_KEY);

@@ -43,14 +43,13 @@ public class HangingSignDisplayItem implements BlockUse {
             if (!be.isWaxed()) {
                 boolean front = be.isFacingFrontText(player);
 
-                if (stack.getItem() instanceof SignApplicator){
-                    if(!player.isSecondaryUseActive()) return InteractionResult.PASS;
-                }else{
-                    ItemStack item = front ? ext.getFrontItem() : ext.getBackItem();
-                    if (!stack.isEmpty() && !item.isEmpty()){
-                        //prevent editing text
-                        return InteractionResult.FAIL;
-                    }
+                ItemStack item = front ? ext.getFrontItem() : ext.getBackItem();
+                if (!stack.isEmpty() && !item.isEmpty()) {
+                    //prevent editing text
+                    return InteractionResult.FAIL;
+                }
+                if (stack.getItem() instanceof SignApplicator) {
+                    if (!player.isSecondaryUseActive()) return InteractionResult.PASS;
                 }
 
                 return interactWithFace(state, pos, level, player, hand, stack, be, ext, front);
@@ -81,8 +80,7 @@ public class HangingSignDisplayItem implements BlockUse {
             }
 
 
-
-                //hack so we can set dye
+            //hack so we can set dye
             setMessagesAndUpdate(be, front, "item");
 
             level.gameEvent(GameEvent.BLOCK_CHANGE, pos, GameEvent.Context.of(player, state));

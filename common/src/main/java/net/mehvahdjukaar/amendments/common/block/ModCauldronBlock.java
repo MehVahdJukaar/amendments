@@ -132,7 +132,6 @@ public abstract class ModCauldronBlock extends AbstractCauldronBlock implements 
 
             if (level.isClientSide) return;
 
-            boolean hasToLower = false;
             if (entity.isOnFire()) {
                 entity.clearFire();
                 playExtinguishSound(level, pos, entity);

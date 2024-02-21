@@ -18,6 +18,7 @@ public class AmendmentsPlatformStuffImpl {
 
             @Override
             public boolean canAddSoftFluid(SoftFluidStack fluidStack) {
+                if (fluidStack.is(BuiltInSoftFluids.WATER.get())) return false;
                 if (canMix.getAsBoolean() && fluidStack.is(BuiltInSoftFluids.POTION.get()) && fluidStack.is(this.getFluidValue())) {
                     // just compares bottle types
                     return this.getSpace() >= fluidStack.getCount() && this.fluid.getTag()

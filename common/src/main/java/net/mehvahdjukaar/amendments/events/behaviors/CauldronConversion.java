@@ -5,7 +5,6 @@ import net.mehvahdjukaar.amendments.common.tile.LiquidCauldronBlockTile;
 import net.mehvahdjukaar.amendments.configs.CommonConfigs;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.moonlight.api.fluids.BuiltInSoftFluids;
-import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidRegistry;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidStack;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidTank;
 import net.mehvahdjukaar.moonlight.api.util.DispenserHelper;
@@ -44,7 +43,7 @@ public class CauldronConversion implements BlockUse {
     //maybe move to mixin
     @Override
     public InteractionResult tryPerformingAction(BlockState state, BlockPos pos, Level level, Player player, InteractionHand hand, ItemStack stack, BlockHitResult hit) {
-        if (!state.is(Blocks.CAULDRON)) return InteractionResult.PASS;
+        if (player.isSecondaryUseActive()) return InteractionResult.PASS;
         BlockState newState = getNewState(pos, level, stack);
         if (newState != null) {
             level.setBlockAndUpdate(pos, newState);
@@ -61,17 +60,18 @@ public class CauldronConversion implements BlockUse {
 
     @Nullable
     public static BlockState getNewState(BlockPos pos, Level level, ItemStack stack) {
+
         Item item = stack.getItem();
-        var fluid = SoftFluidRegistry.fromItem(item);
+        var fluid = SoftFluidStack.fromItem(stack);
         if (fluid != null && !stack.is(Items.LAVA_BUCKET) && !stack.is(Items.POWDER_SNOW_BUCKET) &&
-                !stack.is(Items.WATER_BUCKET) && !((stack.is(Items.POTION) && fluid.is(BuiltInSoftFluids.WATER.getID())))) {
+                !stack.is(Items.WATER_BUCKET) && !((stack.is(Items.POTION) && fluid.getFirst().is(BuiltInSoftFluids.WATER.get())))) {
             BlockState newState;
             if (item == ModRegistry.DYE_BOTTLE_ITEM.get()) {
                 newState = ModRegistry.DYE_CAULDRON.get().defaultBlockState();
             } else {
                 newState = ModRegistry.LIQUID_CAULDRON.get().defaultBlockState()
                         .setValue(LiquidCauldronBlock.BOILING,
-                                LiquidCauldronBlock.shouldBoil(level.getBlockState(pos.below()), new SoftFluidStack(fluid)));
+                                LiquidCauldronBlock.shouldBoil(level.getBlockState(pos.below()), fluid.getFirst()));
             }
             return newState;
         }

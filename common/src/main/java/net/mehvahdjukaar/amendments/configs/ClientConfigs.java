@@ -22,6 +22,7 @@ public class ClientConfigs {
     public static final Supplier<Boolean> SIGN_ATTACHMENT;
     public static final Supplier<PendulumAnimation.Config> HANGING_SIGN_CONFIG;
     public static final Supplier<Double> ITEM_SCALE;
+    public static final Supplier<Boolean> POTION_TEXTURE;
 
     public static final Supplier<Boolean> FAST_LANTERNS;
     public static final Supplier<Boolean> LANTERN_HOLDING;
@@ -91,6 +92,11 @@ public class ClientConfigs {
                 .define("lantern_item_size", 10 / 16f, 0, 1);
         LANTERN_HOLDING = builder.comment("Gives a special animation to lanterns when held in hand")
                 .define("lantern_item_holding", true);
+        builder.pop();
+
+        builder.push("cauldron");
+        POTION_TEXTURE = builder.comment("Gives a unique texture to potion cauldrons")
+                        .define("potion_texture", true);
         builder.pop();
 
         builder.push("misc");

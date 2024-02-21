@@ -40,6 +40,7 @@ class DirectionalCakeConversion implements BlockUse {
     @Override
     public InteractionResult tryPerformingAction(BlockState state, BlockPos pos, Level world, Player player,
                                                  InteractionHand hand, ItemStack stack, BlockHitResult hit) {
+        if (player.isSecondaryUseActive()) return InteractionResult.PASS;
         //lets converting to candle cake
         if (state.is(BlockTags.CANDLE_CAKES) && stack.is(ItemTags.CANDLES)) {
             return InteractionResult.PASS;

@@ -7,7 +7,6 @@ import net.mehvahdjukaar.amendments.reg.ModBlockProperties;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.amendments.reg.ModTags;
 import net.mehvahdjukaar.moonlight.api.fluids.BuiltInSoftFluids;
-import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidRegistry;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidStack;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidTank;
 import net.mehvahdjukaar.moonlight.api.util.PotionNBTHelper;
@@ -58,7 +57,7 @@ public class LiquidCauldronBlock extends ModCauldronBlock {
 
     @Override
     public IntegerProperty getLevelProperty() {
-        return null;
+        return LEVEL;
     }
 
     @Override
@@ -75,8 +74,8 @@ public class LiquidCauldronBlock extends ModCauldronBlock {
     @Override
     public void receiveStalactiteDrip(BlockState state, Level level, BlockPos pos, Fluid fluid) {
         if (!isFull(state) && level.getBlockEntity(pos) instanceof LiquidCauldronBlockTile te) {
-            var sf = SoftFluidRegistry.fromVanillaFluid(fluid);
-            if (sf != null && te.getSoftFluidTank().addFluid(new SoftFluidStack(sf, 1))) {
+            var sf = SoftFluidStack.fromFluid(fluid,1, null);
+            if (sf != null && te.getSoftFluidTank().addFluid(sf)) {
                 level.gameEvent(GameEvent.BLOCK_CHANGE, pos, GameEvent.Context.of(state));
                 level.levelEvent(1047, pos, 0);
             }
@@ -130,7 +129,7 @@ public class LiquidCauldronBlock extends ModCauldronBlock {
     }
 
     public static boolean shouldBoil(BlockState belowState, SoftFluidStack fluid) {
-        return belowState.is(ModTags.HEAT_SOURCES) && fluid.is(BuiltInSoftFluids.POTION.get());
+        return belowState.is(ModTags.HEAT_SOURCES) && fluid.is(ModTags.CAN_BOIL);
     }
 
     @Override
@@ -176,15 +175,7 @@ public class LiquidCauldronBlock extends ModCauldronBlock {
         if (level.getBlockEntity(pos) instanceof LiquidCauldronBlockTile te) {
             if (state.getValue(BOILING)) {
                 int color = te.getSoftFluidTank().getParticleColor(level, pos);
-                addBubblingParticles(ModRegistry.BOILING_PARTICLE.get(), level, pos, 2,
-                        getContentHeight(state), rand, color);
-
-                if (level.random.nextInt(4) == 0) {
-                    level.playLocalSound(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5,
-                            SoundEvents.BUBBLE_COLUMN_UPWARDS_AMBIENT, SoundSource.BLOCKS,
-                            0.4F + level.random.nextFloat() * 0.2F,
-                            0.35F + level.random.nextFloat() * 0.2F, false);
-                }
+                playBubblingAnimation( level, pos, getContentHeight(state), rand, color);
             }
 
             if (level.random.nextInt(4) == 0) {
@@ -212,14 +203,23 @@ public class LiquidCauldronBlock extends ModCauldronBlock {
     }
 
 
-    private void addBubblingParticles(ParticleOptions type, Level level, BlockPos pos, int count,
-                                      double surface, RandomSource rand, int color) {
+    public static void playBubblingAnimation(Level level, BlockPos pos,
+                                       double surface, RandomSource rand, int color) {
 
+        var type = ModRegistry.BOILING_PARTICLE.get();
+        int count = 2;
         for (int i = 0; i < count; i++) {
             double x = pos.getX() + 0.1875D + (rand.nextFloat() * 0.625D);
             double y = pos.getY() + 5 / 16f;
             double z = pos.getZ() + 0.1875D + (rand.nextFloat() * 0.625D);
             level.addParticle(type, x, y, z, color, pos.getY() + surface, 0);
+        }
+
+        if (level.random.nextInt(4) == 0) {
+            level.playLocalSound(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5,
+                    SoundEvents.BUBBLE_COLUMN_UPWARDS_AMBIENT, SoundSource.BLOCKS,
+                    0.4F + level.random.nextFloat() * 0.2F,
+                    0.35F + level.random.nextFloat() * 0.2F, false);
         }
     }
 

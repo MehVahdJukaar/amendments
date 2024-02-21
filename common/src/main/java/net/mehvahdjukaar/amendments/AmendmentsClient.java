@@ -59,6 +59,9 @@ public class AmendmentsClient {
     public static final ResourceLocation BELL_ROPE = Amendments.res("block/bell_rope");
     public static final ResourceLocation BELL_CHAIN = Amendments.res("block/bell_chain");
     public static final ResourceLocation LECTERN_GUI = Amendments.res("textures/gui/lectern.png");
+    public static final ResourceLocation POTION_TEXTURE = Amendments.res("block/potion_cauldron");
+    public static final ResourceLocation MUSHROOM_STEW = Amendments.res("block/mushroom_stew_cauldron");
+    public static final ResourceLocation BEETROOT_SOUP = Amendments.res("block/beetroot_soup_cauldron");
 
     private static ModelLayerLocation loc(String name) {
         return new ModelLayerLocation(Amendments.res(name), name);
@@ -95,10 +98,20 @@ public class AmendmentsClient {
         ClientHelper.registerRenderType(ModRegistry.WALL_LANTERN.get(), RenderType.cutout());
         MenuScreens.register(ModRegistry.LECTERN_EDIT_MENU.get(), LecternBookEditScreen::new);
 
-        var anim = new LanternRendererExtension();
-        WallLanternModelsManager.getValidLanternItems().forEach(
-                item -> IThirdPersonSpecialItemRenderer.attachToItem(item, anim)
-        );
+
+    }
+
+    private static boolean hasRun = false;
+
+    public static void lateClientSetup() {
+        if (!hasRun) {
+            hasRun = true;
+            //for tags
+            var anim = new LanternRendererExtension();
+            WallLanternModelsManager.getValidLanternItems().forEach(
+                    item -> IThirdPersonSpecialItemRenderer.attachToItem(item, anim)
+            );
+        }
     }
 
 

@@ -51,5 +51,6 @@
   "item.amendments.dye_bottle.yellow": "Yellow",
   "item.amendments.dye_bottle.magenta": "Magenta",
   "item.amendments.dye_bottle.pink": "Pink",
-  "item.amendments.dye_bottle.cyan": "Cyan"
+  "item.amendments.dye_bottle.cyan": "Cyan",
+  "fluid.amendments.dye": "Dye"
 }

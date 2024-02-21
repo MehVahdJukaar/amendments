@@ -75,8 +75,9 @@ class DyeBehavior implements ItemUseOnBlock {
                 CriteriaTriggers.ITEM_USED_ON_BLOCK.trigger(serverPlayer, pos, stack);
                 serverPlayer.awardStat(Stats.ITEM_USED.get(stack.getItem()));
             }
+            return InteractionResult.sidedSuccess(level.isClientSide);
         }
-        return InteractionResult.sidedSuccess(level.isClientSide);
+        return InteractionResult.PASS;
     }
 
     private boolean recolor(Level level, BlockPos pos, BlockState state, DyeColor color) {
