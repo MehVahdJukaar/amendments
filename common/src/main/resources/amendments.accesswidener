@@ -42,3 +42,6 @@ accessible field net/minecraft/world/level/block/FlowerPotBlock POTTED_BY_CONTEN
 # fanric remappig
 accessible class net/minecraft/resources/ResourceLocation$Dummy
 
+accessible field net/minecraft/world/entity/ai/village/poi/PoiType matchingStates Ljava/util/Set;
+mutable field net/minecraft/world/entity/ai/village/poi/PoiType matchingStates Ljava/util/Set;
+accessible method net/minecraft/world/entity/ai/village/poi/PoiTypes registerBlockStates (Lnet/minecraft/core/Holder;Ljava/util/Set;)V

@@ -10,13 +10,20 @@ import net.mehvahdjukaar.amendments.Amendments;
 import net.mehvahdjukaar.amendments.AmendmentsClient;
 import net.mehvahdjukaar.amendments.events.ModEvents;
 import net.mehvahdjukaar.amendments.reg.ModConstants;
+import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
 import net.minecraft.Util;
 import net.minecraft.core.MappedRegistry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.ai.village.poi.PoiTypes;
+import net.minecraft.world.level.block.state.BlockState;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class AmendmentsFabric implements ModInitializer {
 
@@ -55,6 +62,16 @@ public class AmendmentsFabric implements ModInitializer {
         if(PlatHelper.getPhysicalSide().isClient()){
             ItemTooltipCallback.EVENT.register(AmendmentsClient::onItemTooltip);
         }
+
+        PlatHelper.addCommonSetup(()->{
+            var holder = BuiltInRegistries.POINT_OF_INTEREST_TYPE.getHolderOrThrow(PoiTypes.LEATHERWORKER);
+            var set = new HashSet<>(holder.value().matchingStates);
+            Set<BlockState> extraStates = Stream.of(ModRegistry.LIQUID_CAULDRON.get(), ModRegistry.DYE_CAULDRON.get()).flatMap(
+                    (block) -> block.getStateDefinition().getPossibleStates().stream()).collect(Collectors.toSet());
+            set.addAll(extraStates);
+            holder.value().matchingStates = set;
+            PoiTypes.registerBlockStates(holder, extraStates);
+        });
     }
 
 }

@@ -2,15 +2,28 @@ package net.mehvahdjukaar.amendments.forge;
 
 import net.mehvahdjukaar.amendments.Amendments;
 import net.mehvahdjukaar.amendments.events.ModEvents;
+import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.ai.village.poi.PoiType;
+import net.minecraft.world.entity.ai.village.poi.PoiTypes;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TagsUpdatedEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.registries.RegisterEvent;
+
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static net.mehvahdjukaar.amendments.Amendments.MOD_ID;
 
@@ -22,9 +35,25 @@ public class AmendmentsForge {
 
     public AmendmentsForge() {
         Amendments.init();
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(AmendmentsForge::onRegisterPOI);
         MinecraftForge.EVENT_BUS.register(this);
         if (PlatHelper.getPhysicalSide().isClient()) {
             MinecraftForge.EVENT_BUS.register(ClientEvents.class);
+        }
+    }
+
+    public static void onRegisterPOI(RegisterEvent event) {
+        if (event.getRegistryKey() == Registries.POINT_OF_INTEREST_TYPE) {
+            Set<BlockState> extraStates = Stream.of(ModRegistry.LIQUID_CAULDRON.get(), ModRegistry.DYE_CAULDRON.get()).flatMap(
+                    (block) -> block.getStateDefinition().getPossibleStates().stream()).collect(Collectors.toSet());
+            var holder = BuiltInRegistries.POINT_OF_INTEREST_TYPE.getHolderOrThrow(PoiTypes.LEATHERWORKER);
+            PoiType value = holder.value();
+            var set = new HashSet<>(value.matchingStates);
+            set.addAll(extraStates);
+            PoiType poiType = new PoiType(set, value.maxTickets(), value.validRange());
+
+            event.getForgeRegistry().register(new ResourceLocation("leatherworker"), poiType);
+
         }
     }
 

@@ -9,6 +9,7 @@ import net.minecraft.client.particle.*;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.SimpleParticleType;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.FastColor;
 
@@ -64,8 +65,7 @@ public class BoilingParticle extends TextureSheetParticle {
         this.xd *= 0.98;
         this.zd *= 0.98;
 
-        if (!this.level.getBlockState(BlockPos.containing(this.x, this.y, this.z))
-                .is(ModRegistry.LIQUID_CAULDRON.get())) {
+        if (!this.level.getBlockState(BlockPos.containing(this.x, this.y, this.z)).is(BlockTags.CAULDRONS)) {
             this.remove();
         }
 
