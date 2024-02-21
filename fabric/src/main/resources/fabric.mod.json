@@ -1,31 +1,31 @@
 {
   "schemaVersion": 1,
-  "id": "amendments",
-  "version": "${version}",
-  "name": "Amendments",
-  "description": "Improvements to various vanilla blocks",
+  "id": "${mod_id}",
+  "version": "${mod_version}",
+  "name": "${mod_name}",
+  "description": "${mod_description}",
   "authors": [
-    "Mehvahdjukaar", "Plantkillable"
+    "${mod_authors}"
   ],
   "contact": {
-    "homepage": "https://www.curseforge.com/minecraft/mc-mods/amendments"
+    "homepage": "${mod_homepage}",
+    "sources": "${mod_github}"
   },
-  "license": "ARR",
+  "license": "${mod_license}",
   "icon": "icon.png",
   "environment": "*",
   "entrypoints": {
-    "client": [
-    ],
     "main": [
       "net.mehvahdjukaar.amendments.fabric.AmendmentsFabric"
     ]
   },
   "mixins": [
-    "${mod_id}.mixins.json"
+    "${mod_id}.mixins.json",
+    "${mod_id}-common.mixins.json"
   ],
   "depends": {
     "fabric": "*",
-    "minecraft": ">=1.20",
-    "moonlight": ">=1.20-2.5.16"
+    "minecraft": ">=${minecraft_min_version} <${minecraft_max_version}",
+    "moonlight": ">=${required_moonlight_version}"
   }
 }

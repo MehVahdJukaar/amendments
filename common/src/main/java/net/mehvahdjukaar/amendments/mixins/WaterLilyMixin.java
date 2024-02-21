@@ -1,5 +1,6 @@
 package net.mehvahdjukaar.amendments.mixins;
 
+import net.mehvahdjukaar.amendments.common.block.WaterloggedLilyBlock;
 import net.mehvahdjukaar.amendments.common.tile.WaterloggedLilyBlockTile;
 import net.mehvahdjukaar.amendments.configs.CommonConfigs;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
@@ -36,7 +37,8 @@ public abstract class WaterLilyMixin extends Block {
             if (level.getBlockState(below).is(Blocks.WATER)) {
 
                 level.setBlock(pos, Blocks.AIR.defaultBlockState(), 2);
-                level.setBlock(below, ModRegistry.WATERLILY_BLOCK.get().defaultBlockState(), 2);
+                level.setBlock(below, ModRegistry.WATERLILY_BLOCK.get().defaultBlockState()
+                        .setValue(WaterloggedLilyBlock.EXTENDED,true), 2);
                 level.scheduleTick(below, ModRegistry.WATERLILY_BLOCK.get(), 1);
                 if (level.getBlockEntity(below) instanceof WaterloggedLilyBlockTile te) {
                     te.setHeldBlock(state);

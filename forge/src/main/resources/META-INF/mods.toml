@@ -1,41 +1,39 @@
 
-modLoader="javafml" #mandatory
+modLoader = "javafml"
+loaderVersion = "${loader_version_range}"
 
-loaderVersion="[41,)" #mandatory This is typically bumped every Minecraft version by Forge. See our download page for lists of versions.
+license = "${mod_license}"
+issueTrackerURL = "${mod_github}/issues"
 
-license="ARR"
-[[mods]] #mandatory
-
-modId="amendments" #mandatory
-version = "${version}"
-displayName="Amendments" #mandatory
-logoFile="icon.png" #optional
-authors="MehVahdJukaar, Plantkillable" #optional
-
-description='''Jukebox Visual Overhaul'''
-
-displayURL="https://www.curseforge.com/minecraft/mc-mods/amendments" #optional
-issueTrackerURL="https://www.curseforge.com/minecraft/mc-mods/amendments/issues" #optional
-itemIcon="minecraft:painting" #catalogue icon
-
-
-[[dependencies.amendments]] #optional
-    modId="forge" #mandatory
-    mandatory=true #mandatory
-    versionRange="[41,)" #mandatory
-    ordering="NONE"
-    side="BOTH"
+[[mods]]
+    modId = "amendments"
+    version = "${mod_version}"
+    displayName = "${mod_name}"
+    logoFile = "icon.png"
+    authors = "${mod_authors}"
+    credits = "${mod_credits}"
+    description = '''${mod_description}'''
+    modUrl = "${mod_homepage}"
+    itemIcon="minecraft:cauldron" #catalogue icon
 
 [[dependencies.amendments]]
-    modId="minecraft"
-    mandatory=true
-    versionRange="[1.20,)"
-    ordering="NONE"
-    side="BOTH"
+    modId = "forge"
+    mandatory = true
+    versionRange = "${neo_version_range}"
+    ordering = "NONE"
+    side = "BOTH"
 
 [[dependencies.amendments]]
-    modId="moonlight"
-    mandatory=true
-    versionRange="[1.20-2.5.16,)"
-    ordering="NONE"
-    side="BOTH"
+    modId = "minecraft"
+    mandatory = true
+    versionRange = "[${minecraft_min_version},${minecraft_max_version})"
+    ordering = "NONE"
+    side = "BOTH"
+
+
+[[dependencies.amendments]]
+    modId = "moonlight"
+    mandatory = true
+    versionRange = "${required_moonlight_version}"
+    ordering = "NONE"
+    side = "BOTH"

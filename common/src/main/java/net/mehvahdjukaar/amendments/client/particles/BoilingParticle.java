@@ -111,6 +111,7 @@ public class BoilingParticle extends TextureSheetParticle {
         public Particle createParticle(SimpleParticleType type, ClientLevel level, double x, double y, double z,
                                        double color, double surface, double unused) {
             int intColor = (int) color;
+            intColor = 0x21ff19;
             float r = FastColor.ARGB32.red(intColor) / 255f;
             float g = FastColor.ARGB32.green(intColor) / 255f;
             float b = FastColor.ARGB32.blue(intColor) / 255f;
