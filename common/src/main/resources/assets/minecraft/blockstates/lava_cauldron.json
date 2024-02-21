@@ -3,5 +3,6 @@
     "": {
       "model": "amendments:block/lava_cauldron_full"
     }
-  }
+  },
+  "translucent": false
 }

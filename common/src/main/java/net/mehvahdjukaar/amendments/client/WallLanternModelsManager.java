@@ -5,7 +5,7 @@ import com.google.gson.JsonElement;
 import net.mehvahdjukaar.amendments.Amendments;
 import net.mehvahdjukaar.amendments.client.renderers.LanternRendererExtension;
 import net.mehvahdjukaar.amendments.common.block.WallLanternBlock;
-import net.mehvahdjukaar.moonlight.api.item.IThirdPersonAnimationProvider;
+import net.mehvahdjukaar.moonlight.api.item.IThirdPersonSpecialItemRenderer;
 import net.mehvahdjukaar.moonlight.api.platform.ClientHelper;
 import net.mehvahdjukaar.moonlight.api.resources.RPUtils;
 import net.mehvahdjukaar.moonlight.api.util.Utils;
@@ -18,7 +18,6 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
@@ -37,6 +36,7 @@ public class WallLanternModelsManager {
 
     private static final Set<Block> POSSIBLE_LANTERNS = new HashSet<>();
     private static boolean initialized = false;
+    private static boolean animAdded = false;
 
     //early reload so we can register these models
     public static void refreshModels(ResourceManager manager) {
@@ -46,7 +46,7 @@ public class WallLanternModelsManager {
 
     private static void reloadModels(ResourceManager manager) {
         if (!initialized) {
-            initialize();
+            populate();
             initialized = true;
         }
         SPECIAL_LANTERN_MODELS.clear();
@@ -65,7 +65,7 @@ public class WallLanternModelsManager {
 
     private static void reloadTextures(ResourceManager manager) {
         if (!initialized) {
-            initialize();
+            populate();
             initialized = true;
         }
         SPECIAL_MOUNT_TEXTURES.clear();
@@ -89,7 +89,7 @@ public class WallLanternModelsManager {
         }
     }
 
-    private static void initialize() {
+    private static void populate() {
         ImmutableSet.Builder<Block> builder = ImmutableSet.builder();
         for (Block i : BuiltInRegistries.BLOCK) {
             if (WallLanternBlock.isValidBlock(i)) builder.add(i);
@@ -119,6 +119,17 @@ public class WallLanternModelsManager {
     }
 
     public static Set<Item> getValidLanternItems() {
-        return POSSIBLE_LANTERNS.stream().map(Block::asItem).collect(Collectors.toSet());
+        return POSSIBLE_LANTERNS.stream().map(Block::asItem)
+                .collect(Collectors.toSet());
     }
+
+    public static void addAnimations() {
+        if (initialized && !animAdded) {
+            animAdded = true;
+            var anim = new LanternRendererExtension();
+            POSSIBLE_LANTERNS.stream().map(Block::asItem).collect(Collectors.toSet())
+                    .forEach(item -> IThirdPersonSpecialItemRenderer.attachToItem(item, anim));
+        }
+    }
+
 }

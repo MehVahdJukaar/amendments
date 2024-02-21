@@ -40,9 +40,9 @@ dependencies {
     }
 
    // modImplementation ("net.mehvahdjukaar:moonlight-fabric:${rootProject.moonlight_version}")
-    //modImplementation("curse.maven:selene-499980:5093408")
+    modImplementation("curse.maven:selene-499980:5125476")
 
-    modImplementation ("net.mehvahdjukaar:moonlight-fabric:${moonlight_version}")
+    //modImplementation ("net.mehvahdjukaar:moonlight-fabric:${moonlight_version}")
 
     modImplementation ("net.mehvahdjukaar:supplementaries-fabric:${supplementaries_version}")
     modCompileOnly ("net.mehvahdjukaar:suppsquared-fabric:${suppsquared_version}")
@@ -83,7 +83,9 @@ processResources {
             mod_description      : mod_description,
             mod_credits          : mod_credits,
             mod_homepage         : mod_homepage,
-            mod_github           : mod_github
+            mod_github           : mod_github,
+            required_moonlight_version : required_moonlight_version
+
     ]
     // setting them as input
     inputs.properties replaceProperties

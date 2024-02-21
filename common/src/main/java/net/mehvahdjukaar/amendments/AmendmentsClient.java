@@ -18,7 +18,6 @@ import net.mehvahdjukaar.amendments.integration.CompatHandler;
 import net.mehvahdjukaar.amendments.integration.CompatObjects;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.moonlight.api.client.model.NestedModelLoader;
-import net.mehvahdjukaar.moonlight.api.item.IThirdPersonSpecialItemRenderer;
 import net.mehvahdjukaar.moonlight.api.misc.EventCalled;
 import net.mehvahdjukaar.moonlight.api.platform.ClientHelper;
 import net.mehvahdjukaar.moonlight.api.set.BlocksColorAPI;
@@ -101,17 +100,8 @@ public class AmendmentsClient {
 
     }
 
-    private static boolean hasRun = false;
-
     public static void lateClientSetup() {
-        if (!hasRun) {
-            hasRun = true;
-            //for tags
-            var anim = new LanternRendererExtension();
-            WallLanternModelsManager.getValidLanternItems().forEach(
-                    item -> IThirdPersonSpecialItemRenderer.attachToItem(item, anim)
-            );
-        }
+        WallLanternModelsManager.addAnimations();
     }
 
 

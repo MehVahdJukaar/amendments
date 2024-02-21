@@ -1,7 +1,6 @@
 package net.mehvahdjukaar.amendments.forge;
 
 import net.mehvahdjukaar.amendments.Amendments;
-import net.minecraft.core.DefaultedRegistry;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
@@ -19,6 +18,7 @@ public class RemapHandler {
         remapAll(event, BuiltInRegistries.BLOCK);
         remapAll(event, BuiltInRegistries.ITEM);
         remapAll(event, BuiltInRegistries.BLOCK_ENTITY_TYPE);
+        remapAll(event, BuiltInRegistries.ENTITY_TYPE);
     }
 
 

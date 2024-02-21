@@ -26,6 +26,7 @@ import java.util.List;
 public class CarpetedBlockModel implements CustomBakedModel {
     private final BakedModel carpet;
     private final BlockModelShaper blockModelShaper;
+    protected static boolean SINGLE_PASS = PlatHelper.getPlatform().isFabric();
 
     public CarpetedBlockModel(BakedModel carpet, ModelState state) {
         this.carpet = carpet;
@@ -36,7 +37,6 @@ public class CarpetedBlockModel implements CustomBakedModel {
     public List<BakedQuad> getBlockQuads(BlockState state, Direction side, RandomSource rand, @Nullable RenderType renderType,
                                          ExtraModelData data) {
         List<BakedQuad> quads = new ArrayList<>();
-        boolean fabric = PlatHelper.getPlatform().isFabric();
 
         if (state == null) return quads;
         try {
@@ -45,7 +45,7 @@ public class CarpetedBlockModel implements CustomBakedModel {
             if (mimic != null) {
                 RenderType originalRenderType = ItemBlockRenderTypes.getChunkRenderType(mimic);
                 // only when on its original render layer or when we do block breaking anim (null render type)
-                if (originalRenderType == renderType || renderType == null || fabric) {
+                if (originalRenderType == renderType || renderType == null || SINGLE_PASS) {
                     BakedModel model = blockModelShaper.getBlockModel(mimic);
                     quads.addAll(model.getQuads(mimic, side, rand));
                 }
@@ -54,7 +54,7 @@ public class CarpetedBlockModel implements CustomBakedModel {
         }
 
 
-        if (renderType == RenderType.solid() || renderType == null || fabric) {
+        if (renderType == RenderType.solid() || renderType == null || SINGLE_PASS) {
             //only outputs carpet on the solid layer
             try {
                 BlockState carpetBlock = data.get(CarpetedBlockTile.CARPET_KEY);

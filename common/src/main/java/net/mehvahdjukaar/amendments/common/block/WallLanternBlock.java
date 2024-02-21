@@ -27,6 +27,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -256,6 +257,7 @@ public class WallLanternBlock extends WaterBlock implements EntityBlock {
     }
 
     public static boolean isValidBlock(Block b) {
+        if (b.asItem() == Items.AIR) return false;
         if (b.builtInRegistryHolder().is(ModTags.WALL_LANTERNS_BLACKLIST)) return false;
         if (b.builtInRegistryHolder().is(ModTags.WALL_LANTERNS_WHITELIST)) return true;
         ResourceLocation id = Utils.getID(b);
