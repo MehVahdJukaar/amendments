@@ -142,7 +142,7 @@ public class HangingSignTileExtension {
     }
 
     public void updateAttachments(Level level, BlockPos pos, BlockState state) {
-        if (!isCeiling && ClientConfigs.SIGN_ATTACHMENT.get()) {
+        if (!isCeiling ) {
             Direction selfFacing = state.getValue(WallHangingSignBlock.FACING);
 
             rightAttachment = ModBlockProperties.PostType.get(level.getBlockState(pos.relative(selfFacing.getClockWise())), true);

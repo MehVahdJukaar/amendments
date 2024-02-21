@@ -197,6 +197,11 @@ public class HangingSignRendererExtension {
         ModBlockProperties.PostType right = extension.getRightAttachment();
         ModBlockProperties.PostType left = extension.getLeftAttachment();
 
+        if(!ClientConfigs.SIGN_ATTACHMENT.get()){
+            right = null;
+            left = null;
+        }
+
         VertexConsumer vc2 = null;
         if (right != null || left != null) {
             vc2 = extensionMaterial.buffer(bufferSource, model::renderType);

@@ -3,6 +3,7 @@ package net.mehvahdjukaar.amendments.mixins;
 import dev.architectury.injectables.annotations.PlatformOnly;
 import net.mehvahdjukaar.amendments.common.ExtendedHangingSign;
 import net.mehvahdjukaar.amendments.common.tile.HangingSignTileExtension;
+import net.mehvahdjukaar.moonlight.api.misc.ForgeOverride;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -23,7 +24,7 @@ public abstract class HangingSignBlockEntityMixin extends BlockEntity implements
         super(blockEntityType, blockPos, blockState);
     }
 
-    @PlatformOnly(PlatformOnly.FORGE)
+    @ForgeOverride
     public AABB getRenderBoundingBox() {
         return new AABB(worldPosition).inflate(0.5);
     }

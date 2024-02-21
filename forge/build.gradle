@@ -16,7 +16,7 @@ loom {
         extraAccessWideners.add loom.accessWidenerPath.get().asFile.name
 
         mixinConfig  "amendments.mixins.json"
-        mixinConfig  "amendments-forge.mixins.json"
+        mixinConfig  "amendments-common.mixins.json"
 
     }
 }
