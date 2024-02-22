@@ -74,7 +74,7 @@ public class LiquidCauldronBlock extends ModCauldronBlock {
     @Override
     public void receiveStalactiteDrip(BlockState state, Level level, BlockPos pos, Fluid fluid) {
         if (!isFull(state) && level.getBlockEntity(pos) instanceof LiquidCauldronBlockTile te) {
-            var sf = SoftFluidStack.fromFluid(fluid,1, null);
+            var sf = SoftFluidStack.fromFluid(fluid, 1, null);
             if (sf != null && te.getSoftFluidTank().addFluid(sf)) {
                 level.gameEvent(GameEvent.BLOCK_CHANGE, pos, GameEvent.Context.of(state));
                 level.levelEvent(1047, pos, 0);
@@ -175,18 +175,24 @@ public class LiquidCauldronBlock extends ModCauldronBlock {
         if (level.getBlockEntity(pos) instanceof LiquidCauldronBlockTile te) {
             if (state.getValue(BOILING)) {
                 int color = te.getSoftFluidTank().getParticleColor(level, pos);
-                playBubblingAnimation( level, pos, getContentHeight(state), rand, color);
+                playBubblingAnimation(level, pos, getContentHeight(state), rand, color);
             }
 
             if (level.random.nextInt(4) == 0) {
-                PotionNBTHelper.Type type = getSplashOrLingeringPotType(te.getSoftFluidTank().getFluid());
+                SoftFluidStack fluid = te.getSoftFluidTank().getFluid();
+                PotionNBTHelper.Type type = getSplashOrLingeringPotType(fluid);
                 if (type != null) {
                     ParticleOptions particle = type == PotionNBTHelper.Type.SPLASH ?
                             ParticleTypes.AMBIENT_ENTITY_EFFECT : ParticleTypes.ENTITY_EFFECT;
 
                     int color = te.getSoftFluidTank().getParticleColor(level, pos);
+                    double height = getContentHeight(state);
                     addPotionParticles(particle, level, pos, 1,
-                            getContentHeight(state), rand, color);
+                            height, rand, color);
+
+                    if (fluid.getCount() >= CommonConfigs.POTION_MIXING_LIMIT.get()) {
+                        addSurfaceParticles(ParticleTypes.SMOKE, level, pos, 2, height, rand, 0, 0, 0);
+                    }
                 }
             }
         }
@@ -204,16 +210,11 @@ public class LiquidCauldronBlock extends ModCauldronBlock {
 
 
     public static void playBubblingAnimation(Level level, BlockPos pos,
-                                       double surface, RandomSource rand, int color) {
+                                             double surface, RandomSource rand, int color) {
 
         var type = ModRegistry.BOILING_PARTICLE.get();
         int count = 2;
-        for (int i = 0; i < count; i++) {
-            double x = pos.getX() + 0.1875D + (rand.nextFloat() * 0.625D);
-            double y = pos.getY() + 5 / 16f;
-            double z = pos.getZ() + 0.1875D + (rand.nextFloat() * 0.625D);
-            level.addParticle(type, x, y, z, color, pos.getY() + surface, 0);
-        }
+        addSurfaceParticles(type, level, pos, count, surface, rand, color, pos.getY() + 5 / 16f, 0);
 
         if (level.random.nextInt(4) == 0) {
             level.playLocalSound(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5,
@@ -229,17 +230,18 @@ public class LiquidCauldronBlock extends ModCauldronBlock {
         float r = FastColor.ARGB32.red(color) / 255f;
         float g = FastColor.ARGB32.green(color) / 255f;
         float b = FastColor.ARGB32.blue(color) / 255f;
-
-        for (int i = 0; i < count; i++) {
-            double x = pos.getX() + 0.1875D + (rand.nextFloat() * 0.625D);
-            double y = pos.getY() + surface;
-            double z = pos.getZ() + 0.1875D + (rand.nextFloat() * 0.625D);
-            level.addParticle(type, x, y, z, r, g, b);
-        }
+        addSurfaceParticles(type, level, pos, count, surface, rand, r, g, b);
     }
 
     @Override
-    public BlockState updateStateOnFluidChange(BlockState state, SoftFluidStack fluid) {
+    public BlockState updateStateOnFluidChange(BlockState state, Level leve, BlockPos pos, SoftFluidStack fluid) {
+        //explosions?
+
+        if (fluid.getCount() > CommonConfigs.POTION_MIXING_LIMIT.get()) {
+            leve.explode(null, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5,
+                    1, Level.ExplosionInteraction.BLOCK);
+        }
+
         int light = fluid.getFluid().value().getLuminosity();
         if (light != state.getValue(ModBlockProperties.LIGHT_LEVEL)) {
             state = state.setValue(ModBlockProperties.LIGHT_LEVEL, light);

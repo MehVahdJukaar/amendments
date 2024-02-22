@@ -108,14 +108,14 @@ public class BoilingParticle extends TextureSheetParticle {
             this.sprite = sprites;
         }
 
-        public Particle createParticle(SimpleParticleType type, ClientLevel level, double x, double y, double z,
-                                       double color, double surface, double unused) {
+        public Particle createParticle(SimpleParticleType type, ClientLevel level, double x, double endY, double z,
+                                       double color, double startY, double unused) {
             int intColor = (int) color;
             float r = FastColor.ARGB32.red(intColor) / 255f;
             float g = FastColor.ARGB32.green(intColor) / 255f;
             float b = FastColor.ARGB32.blue(intColor) / 255f;
 
-            var particle = new BoilingParticle(level, x, y, z, surface, sprite);
+            var particle = new BoilingParticle(level, x, startY, z, endY, sprite);
             particle.setColor(r, g, b);
             return particle;
         }

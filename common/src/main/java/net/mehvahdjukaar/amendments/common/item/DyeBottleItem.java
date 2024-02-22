@@ -64,6 +64,11 @@ public class DyeBottleItem extends Item {
         return item;
     }
 
+    public static int mixColor(int oldColor, int newColor, int oldAmount, int newAmount) {
+        return new RGBColor(oldColor).asHCL()
+                .mixWith(new RGBColor(newColor).asHCL(), (float) newAmount / (oldAmount + newAmount))
+                .asRGB().toInt();
+    }
     @SuppressWarnings("ConstantConditions")
     @NotNull
     private static Integer getDyeInt(DyeColor color) {

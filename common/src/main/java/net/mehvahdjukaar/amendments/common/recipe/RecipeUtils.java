@@ -52,7 +52,7 @@ public class RecipeUtils {
                 if (try9x9) {
                     ItemStack crafted9 = simulateCrafting(level, p.getFirst(), playerItem, true);
                     if (crafted9 != null) {
-                        return Pair.of(crafted9, capacity / 8f);
+                        return Pair.of(crafted9, (float) capacity);
                     }
                 }
             }

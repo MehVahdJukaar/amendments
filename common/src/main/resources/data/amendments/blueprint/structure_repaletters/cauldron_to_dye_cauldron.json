@@ -1,0 +1,14 @@
+{
+  "repaletter": {
+    "type": "amendments:blockstate_replace",
+    "replaces_block": "minecraft:cauldron",
+    "replaces_with": {
+      "Name": "amendments:cauldron_hack",
+      "properties": {
+        "potion": true
+      }
+    },
+    "chance": 0.5
+  },
+  "structures": "#minecraft:village"
+}

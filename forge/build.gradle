@@ -15,8 +15,8 @@ loom {
         convertAccessWideners = true
         extraAccessWideners.add loom.accessWidenerPath.get().asFile.name
 
-        mixinConfig  "amendments.mixins.json"
-        mixinConfig  "amendments-common.mixins.json"
+        mixinConfig "amendments.mixins.json"
+        mixinConfig "amendments-common.mixins.json"
 
     }
 }
@@ -33,25 +33,25 @@ configurations {
 processResources {
     // input variables of this task:
     var replaceProperties = [
-            minecraft_version    : minecraft_version,
-            minecraft_min_version: minecraft_min_version,
-            minecraft_max_version: minecraft_max_version,
-            pack_format_number   : pack_format_number,
+            minecraft_version         : minecraft_version,
+            minecraft_min_version     : minecraft_min_version,
+            minecraft_max_version     : minecraft_max_version,
+            pack_format_number        : pack_format_number,
 
-            mod_id               : mod_id,
-            mod_name             : mod_name,
-            mod_version          : mod_version,
-            mod_license          : mod_license,
-            mod_authors          : mod_authors,
-            mod_description      : mod_description,
-            mod_credits          : mod_credits,
-            mod_homepage         : mod_homepage,
-            mod_github           : mod_github,
+            mod_id                    : mod_id,
+            mod_name                  : mod_name,
+            mod_version               : mod_version,
+            mod_license               : mod_license,
+            mod_authors               : mod_authors,
+            mod_description           : mod_description,
+            mod_credits               : mod_credits,
+            mod_homepage              : mod_homepage,
+            mod_github                : mod_github,
 
-            neo_version          : neo_version,
-            neo_version_range    : neo_version_range,
-            loader_version_range : loader_version_range,
-            required_moonlight_version : required_moonlight_version
+            neo_version               : neo_version,
+            neo_version_range         : neo_version_range,
+            loader_version_range      : loader_version_range,
+            required_moonlight_version: required_moonlight_version
     ]
     // setting them as input
     inputs.properties replaceProperties
@@ -113,7 +113,7 @@ publishing {
 sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 
-repositories{
+repositories {
     // Built mods
     mavenCentral()
 }
@@ -128,20 +128,19 @@ dependencies {
 
     implementation(annotationProcessor("io.github.llamalad7:mixinextras-common:${mixin_extras_version}"))
     implementation(include("io.github.llamalad7:mixinextras-forge:${mixin_extras_version}"))
-    implementation(annotationProcessor("com.github.bawnorton.mixinsquared:mixinsquared-common:${mixin_squared_version}"))
-    implementation(include("com.github.bawnorton.mixinsquared:mixinsquared-forge:${mixin_squared_version}"))
     annotationProcessor 'net.fabricmc:sponge-mixin:0.12.5+mixin.0.8.5'
 
-    modImplementation ("net.mehvahdjukaar:moonlight-forge:${rootProject.moonlight_version}")
-    modCompileOnly ("net.mehvahdjukaar:supplementaries-forge:${rootProject.supplementaries_version}")
+    modImplementation("net.mehvahdjukaar:moonlight-forge:${moonlight_version}")
+    modCompileOnly("net.mehvahdjukaar:supplementaries-forge:${supplementaries_version}")
     //modCompileOnly("curse.maven:supplementaries-412082:5097848")
-    modCompileOnly ("net.mehvahdjukaar:suppsquared-forge:${rootProject.suppsquared_version}")
+    modCompileOnly("net.mehvahdjukaar:suppsquared-forge:${suppsquared_version}")
 
     modRuntimeOnly("einstein.jmc:JustMoreCakes:forge-1.20-1.12.1")
 
     modCompileOnly("curse.maven:farmers-delight-398521:4679319")
     modCompileOnly("curse.maven:quark-243121:5093415")
     modCompileOnly("curse.maven:zeta-968868:5078215")
+    modImplementation("curse.maven:blueprint-382216:4594238")
 
     implementation 'org.jetbrains:annotations:22.0.0'
 }

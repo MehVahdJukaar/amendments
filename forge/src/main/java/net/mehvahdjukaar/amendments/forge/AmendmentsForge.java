@@ -1,7 +1,10 @@
 package net.mehvahdjukaar.amendments.forge;
 
 import net.mehvahdjukaar.amendments.Amendments;
+import net.mehvahdjukaar.amendments.integration.forge.BlueprintIntegration;
+import net.mehvahdjukaar.amendments.common.block.StructureCauldronHack;
 import net.mehvahdjukaar.amendments.events.ModEvents;
+import net.mehvahdjukaar.amendments.integration.CompatHandler;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -39,6 +42,11 @@ public class AmendmentsForge {
         MinecraftForge.EVENT_BUS.register(this);
         if (PlatHelper.getPhysicalSide().isClient()) {
             MinecraftForge.EVENT_BUS.register(ClientEvents.class);
+        }
+
+        if(CompatHandler.BLUEPRINT){
+            StructureCauldronHack.register();
+            BlueprintIntegration.init();
         }
     }
 

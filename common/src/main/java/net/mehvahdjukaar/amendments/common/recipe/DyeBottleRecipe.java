@@ -1,16 +1,12 @@
 package net.mehvahdjukaar.amendments.common.recipe;
 
 
-import com.ibm.icu.impl.Pair;
 import net.mehvahdjukaar.amendments.common.item.DyeBottleItem;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
-import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidStack;
 import net.mehvahdjukaar.moonlight.api.set.BlocksColorAPI;
 import net.minecraft.core.RegistryAccess;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.CraftingContainer;
-import net.minecraft.world.item.DyeItem;
 import net.minecraft.world.item.DyeableLeatherItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -18,6 +14,7 @@ import net.minecraft.world.item.crafting.CraftingBookCategory;
 import net.minecraft.world.item.crafting.CustomRecipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
 
 public class DyeBottleRecipe extends CustomRecipe {
 
@@ -64,11 +61,10 @@ public class DyeBottleRecipe extends CustomRecipe {
 
         if (leather.getItem() instanceof DyeableLeatherItem l) {
             result = leather.copy();
-            l.setColor(result, DyeBottleItem.getColor(dyeBottle));
+            l.setColor(result, DyeBottleItem.mixColor(DyeBottleItem.getColor(dyeBottle), l.getColor(leather), 1, 1));
         } else {
             result = BlocksColorAPI.changeColor(leather.getItem(),
                     DyeBottleItem.getClosestDye(dyeBottle)).getDefaultInstance();
-
         }
         return result;
     }
@@ -87,9 +83,6 @@ public class DyeBottleRecipe extends CustomRecipe {
     public RecipeSerializer<?> getSerializer() {
         return ModRegistry.DYE_BOTTLE_RECIPE.get();
     }
-
-
-
 
 
 }

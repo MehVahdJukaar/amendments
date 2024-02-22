@@ -86,8 +86,9 @@ public class WallLanternBakedModel implements CustomBakedModel {
                     Matrix4f mat = new Matrix4f();
                     mat.translate(0,2/16f,0);
                     mat.translate(dir.step().mul(-2/16f));
-//TODO: fix
-                    //mimicQuads = VertexUtils.transformQuads(mimicQuads, mat);
+                    BakedQuadsTransformer transformer = BakedQuadsTransformer.create()
+                            .applyingTransform(mat);
+                    quads.addAll(transformer.transformAll(mimicQuads));
                 }
             }
         } catch (Exception ignored) {

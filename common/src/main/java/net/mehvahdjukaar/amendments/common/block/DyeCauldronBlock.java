@@ -117,7 +117,7 @@ public class DyeCauldronBlock extends ModCauldronBlock {
     }
 
     @Override
-    public BlockState updateStateOnFluidChange(BlockState state, SoftFluidStack fluid) {
+    public BlockState updateStateOnFluidChange(BlockState state, Level level, BlockPos pos, SoftFluidStack fluid) {
         int height = fluid.getCount();
         if (fluid.isEmpty()) {
             state = Blocks.CAULDRON.defaultBlockState();

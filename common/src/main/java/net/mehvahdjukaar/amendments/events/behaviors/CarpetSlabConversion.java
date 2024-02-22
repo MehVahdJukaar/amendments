@@ -12,8 +12,12 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.*;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.CarpetBlock;
+import net.minecraft.world.level.block.EntityBlock;
+import net.minecraft.world.level.block.SlabBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.SlabType;
 import net.minecraft.world.phys.BlockHitResult;
 
 public class CarpetSlabConversion implements ItemUseOnBlock {
@@ -47,17 +51,18 @@ public class CarpetSlabConversion implements ItemUseOnBlock {
                                                  ItemStack stack, BlockHitResult hit) {
         if (!player.isSecondaryUseActive()) {
             BlockPos pos = hit.getBlockPos();
-            BlockState stairsState = level.getBlockState(pos);
-            Block block = stairsState.getBlock();
-            if (block instanceof SlabBlock && !(block instanceof EntityBlock)) {
+            BlockState slabState = level.getBlockState(pos);
+            Block block = slabState.getBlock();
+            if (block instanceof SlabBlock && slabState.getValue(SlabBlock.TYPE) == SlabType.BOTTOM
+                    && !(block instanceof EntityBlock)) {
                 BlockState carpet = ((BlockItem) stack.getItem()).getBlock().defaultBlockState();
 
                 InteractionResult result = InteractEvents.replaceSimilarBlock(ModRegistry.CARPET_SLAB.get(),
-                        player, stack, pos, level, stairsState, carpet.getSoundType(), SlabBlock.TYPE, SlabBlock.WATERLOGGED);
+                        player, stack, pos, level, slabState, carpet.getSoundType(), SlabBlock.TYPE, SlabBlock.WATERLOGGED);
 
                 if (result.consumesAction()) {
                     if (level.getBlockEntity(pos) instanceof CarpetedBlockTile tile) {
-                        tile.initialize(stairsState, carpet);
+                        tile.initialize(slabState, carpet);
                         return result;
                     }
                 }

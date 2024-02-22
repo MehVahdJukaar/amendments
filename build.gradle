@@ -40,7 +40,7 @@ subprojects {
         modrinth {
             projectId = "amendments"
             uploadFile = tasks.remapJar
-            gameVersions = [rootProject.minecraft_version]
+            gameVersions = [minecraft_version]
             loaders = [modLoader]
             changelog = changelogText
 
@@ -61,10 +61,10 @@ subprojects {
         curseforge {
             apiKey = env.CURSEFORGE_TOKEN
             project {
-                id = rootProject.project_id
+                id = project_id
                 changelog = changelogText
                 releaseType = 'release'
-                addGameVersion rootProject.minecraft_version
+                addGameVersion minecraft_version
                 addGameVersion modLoader.capitalize()
 
                 mainArtifact(tasks.remapJar)
@@ -73,10 +73,12 @@ subprojects {
                     relations {
                         requiredDependency "fabric-api"
                         requiredDependency "selene"
+                        optionalDependency "supplementaries"
                     }
                 } else {
                     relations {
                         requiredDependency "selene"
+                        optionalDependency "supplementaries"
                     }
                 }
             }

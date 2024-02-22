@@ -1,13 +1,23 @@
 package net.mehvahdjukaar.amendments.configs;
 
+import com.mojang.serialization.Codec;
 import net.mehvahdjukaar.amendments.Amendments;
 import net.mehvahdjukaar.amendments.common.entity.FallingLanternEntity;
 import net.mehvahdjukaar.moonlight.api.platform.configs.ConfigBuilder;
 import net.mehvahdjukaar.moonlight.api.platform.configs.ConfigSpec;
 import net.mehvahdjukaar.moonlight.api.platform.configs.ConfigType;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.ExtraCodecs;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.item.alchemy.Potions;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 
 public class CommonConfigs {
@@ -21,6 +31,8 @@ public class CommonConfigs {
     public static final Supplier<Boolean> LIQUID_CAULDRON;
     public static final Supplier<Boolean> CONNECT_TO_FENCES;
     public static final Supplier<MixingMode> POTION_MIXING;
+    public static final Supplier<Integer> POTION_MIXING_LIMIT;
+  //  public static final Supplier<Map<String, String>> INVERSE_POTIONS;
     public static final Supplier<Boolean> DYE_WATER;
     public static final Supplier<Boolean> CAULDRON_CRAFTING;
     public static final Supplier<Integer> DYE_RECIPES_PER_LAYER;
@@ -74,17 +86,23 @@ public class CommonConfigs {
                 .define("dye_water", true);
         DYE_RECIPES_PER_LAYER = builder.comment("Max amount of items that 1 cauldron layer can recolor." +
                         "This is a multiplier on top of vanilla crafting recipe amount")
-                .define("dye_recipes_per_layer", 8, 1, 64);
+                .define("dye_recipes_per_layer", 4, 1, 64);
         POTION_RECIPES_PER_LAYER = builder.comment("Max amount of items that 1 cauldron layer can craft with potions." +
                         "This is a multiplier on top of vanilla crafting recipe amount")
                 .define("potion_recipes_per_layer", 2, 1, 64);
         POTION_MIXING = builder.comment("Allows mixin potions in cauldrons")
                         .define("potions_mixing", MixingMode.ON);
+        POTION_MIXING_LIMIT = builder.comment("Max amount of effects allowed in a mixed potion")
+                .define("potion_mixing_limit", 8, 1, 64);
+       // INVERSE_POTIONS = builder.comment("Map of potion ids to their inverse ids. Used for potion mixing")
+         //       .defineObject("inverse_potions", CommonConfigs::getPotMap,
+           //             Codec.unboundedMap(ResourceLocation.CODEC, ResourceLocation.CODEC));
+
         CONNECT_TO_FENCES = builder.comment("Makes cauldrons connect to fences")
                         .define("connect_to_fences", true);
         builder.pop();
 
-        builder.push("carpeted_blocks");
+        builder.push("carpets");
         CARPETED_STAIRS = builder.comment("Allows you to place carpets on stairs")
                 .define("carpeted_stairs", true);
         CARPETED_SLABS = builder.comment("Allows you to place carpets on slabs")
@@ -160,10 +178,18 @@ public class CommonConfigs {
 
         builder.pop();
 
-
+        builder.setSynced();
         CONFIG = builder.buildAndRegister();
         CONFIG.loadFromFile();
     }
+
+    private static Map<ResourceLocation, ResourceLocation> getPotMap() {
+        Map<ResourceLocation, ResourceLocation> map = new HashMap<>();
+        BiConsumer<MobEffect, MobEffect> fun = (a, b) -> {
+          map.put(BuiltInRegistries.MOB_EFFECT.getKey(a), BuiltInRegistries.MOB_EFFECT.getKey(b));
+        };
+        return null;
+    };
 
 
     public static void init() {

@@ -21,7 +21,6 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.AbstractCauldronBlock;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -136,7 +135,7 @@ public abstract class ModCauldronBlock extends AbstractCauldronBlock implements 
                 entity.clearFire();
                 playExtinguishSound(level, pos, entity);
                 if (entity.mayInteract(level, pos)) {
-                    if(level.getBlockEntity(pos) instanceof LiquidCauldronBlockTile te){
+                    if (level.getBlockEntity(pos) instanceof LiquidCauldronBlockTile te) {
                         te.consumeOneLayer();
                     }
                 }
@@ -149,23 +148,26 @@ public abstract class ModCauldronBlock extends AbstractCauldronBlock implements 
     protected abstract void handleEntityInside(BlockState state, Level level, BlockPos pos, Entity entity);
 
     public void doCraftItem(Level level, BlockPos pos, Player player, InteractionHand hand, LiquidCauldronBlockTile te,
-                            SoftFluidStack fluid, ItemStack itemStack, ItemStack crafted, float layerPerItem, int itemCountMultiplier) {
+                            SoftFluidStack fluid, ItemStack itemStack, ItemStack crafted,
+                            float layerPerItem, int itemCountMultiplier) {
 
         if (player instanceof ServerPlayer serverPlayer) {
             player.awardStat(Stats.ITEM_USED.get(itemStack.getItem()));
             CriteriaTriggers.ITEM_USED_ON_BLOCK.trigger(serverPlayer, pos, itemStack);
-        }
+        } else return;
         level.playSound(player, pos, SoundEvents.BUCKET_EMPTY, SoundSource.BLOCKS, 1.0F, 1.3f);
 
 
-        int maxRecolorable = (int) (itemCountMultiplier * fluid.getCount() / (float) layerPerItem);
+        int maxRecolorable = (int) (crafted.getCount() * itemCountMultiplier * fluid.getCount() / layerPerItem);
         int amountToRecolor = Math.min(maxRecolorable, itemStack.getCount());
         crafted.setCount(amountToRecolor);
 
-        fluid.shrink(Mth.ceil((layerPerItem * amountToRecolor / (float) itemCountMultiplier)));
-        te.setChanged();
 
-        if (!player.isCreative()) itemStack.shrink(amountToRecolor);
+        if (!player.isCreative()) {
+            itemStack.shrink(amountToRecolor);
+            fluid.shrink(Mth.ceil((layerPerItem * amountToRecolor / (float) itemCountMultiplier)));
+            te.setChanged();
+        }
 
         if (itemStack.isEmpty()) {
             player.setItemInHand(hand, crafted);
@@ -176,6 +178,16 @@ public abstract class ModCauldronBlock extends AbstractCauldronBlock implements 
         }
     }
 
-    public abstract BlockState updateStateOnFluidChange(BlockState state, SoftFluidStack fluid);
+    public abstract BlockState updateStateOnFluidChange(BlockState state, Level level, BlockPos pos, SoftFluidStack fluid);
+
+    public static void addSurfaceParticles(ParticleOptions type, Level level, BlockPos pos, int count, double surface, RandomSource rand,
+                                    float r, float g, float b) {
+        for (int i = 0; i < count; i++) {
+            double x = pos.getX() + 0.1875D + (rand.nextFloat() * 0.625D);
+            double y = pos.getY() + surface;
+            double z = pos.getZ() + 0.1875D + (rand.nextFloat() * 0.625D);
+            level.addParticle(type, x, y, z, r, g, b);
+        }
+    }
 
 }

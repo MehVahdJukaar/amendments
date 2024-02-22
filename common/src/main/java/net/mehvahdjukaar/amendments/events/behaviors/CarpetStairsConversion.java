@@ -17,6 +17,7 @@ import net.minecraft.world.level.block.CarpetBlock;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.StairBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.Half;
 import net.minecraft.world.phys.BlockHitResult;
 
 public class CarpetStairsConversion implements ItemUseOnBlock {
@@ -52,7 +53,8 @@ public class CarpetStairsConversion implements ItemUseOnBlock {
             BlockPos pos = hit.getBlockPos();
             BlockState stairsState = level.getBlockState(pos);
             Block block = stairsState.getBlock();
-            if (block instanceof StairBlock && !(block instanceof EntityBlock)) {
+            if (block instanceof StairBlock && stairsState.getValue(StairBlock.HALF) == Half.BOTTOM &&
+                    !(block instanceof EntityBlock)) {
                 BlockState carpet = ((BlockItem) stack.getItem()).getBlock().defaultBlockState();
 
                 InteractionResult result = InteractEvents.replaceSimilarBlock(ModRegistry.CARPET_STAIRS.get(),

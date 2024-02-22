@@ -1,1 +1,6 @@
-lowered forge version range
+- fixed fast lanterns
+- fixed potion mixing of the same kind
+- fixed potion and dye cauldron crafting giving too many items
+- fixed leather items not being colored properly when already dyed
+- carpets being applied to top stairs and slabs
+- witch huts and villages will now have potion and dye cauldrons (requires blueprint)
