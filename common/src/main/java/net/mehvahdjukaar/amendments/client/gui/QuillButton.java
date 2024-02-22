@@ -2,6 +2,7 @@ package net.mehvahdjukaar.amendments.client.gui;
 
 import dev.architectury.injectables.annotations.PlatformOnly;
 import net.mehvahdjukaar.amendments.Amendments;
+import net.mehvahdjukaar.moonlight.api.misc.ForgeOverride;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
@@ -39,11 +40,16 @@ public class QuillButton extends AbstractWidget {
 
     @Override
     public void onClick(double mouseX, double mouseY) {
-        this.type = ++type % QuillType.values().length;
+        int length = QuillType.values().length;
+        if (Screen.hasShiftDown()) {
+            this.type = (length + type - 1) % length;
+        } else {
+            this.type = ++type % length;
+        }
         this.refreshTooltip();
     }
 
-    @PlatformOnly(PlatformOnly.FORGE)
+    @ForgeOverride
     public void onClick(double mouseX, double mouseY, int button) {
         type += button==0 ? 1 : -1;
         this.type = type % QuillType.values().length;

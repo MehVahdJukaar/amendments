@@ -10,6 +10,7 @@ import net.mehvahdjukaar.amendments.configs.CommonConfigs;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.moonlight.api.block.ILightable;
 import net.mehvahdjukaar.moonlight.api.block.IWashable;
+import net.mehvahdjukaar.moonlight.api.misc.ForgeOverride;
 import net.mehvahdjukaar.moonlight.api.set.BlocksColorAPI;
 import net.mehvahdjukaar.moonlight.api.util.Utils;
 import net.minecraft.Util;
@@ -135,7 +136,7 @@ public abstract class AbstractCandleSkullBlock extends AbstractCandleBlock imple
     }
 
     //@Override
-    @PlatformOnly(PlatformOnly.FORGE)
+    @ForgeOverride
     public ItemStack getCloneItemStack(BlockState state, HitResult hitResult, BlockGetter world, BlockPos pos, Player player) {
         if (world.getBlockEntity(pos) instanceof CandleSkullBlockTile tile) {
             double y = hitResult.getLocation().y;

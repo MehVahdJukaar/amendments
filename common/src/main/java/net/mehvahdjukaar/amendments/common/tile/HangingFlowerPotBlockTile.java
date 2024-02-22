@@ -5,6 +5,7 @@ import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.amendments.common.block.HangingFlowerPotBlock;
 import net.mehvahdjukaar.moonlight.api.block.IOwnerProtected;
 import net.mehvahdjukaar.moonlight.api.block.MimicBlockTile;
+import net.mehvahdjukaar.moonlight.api.misc.ForgeOverride;
 import net.mehvahdjukaar.moonlight.api.platform.ForgeHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -56,8 +57,7 @@ public class HangingFlowerPotBlockTile extends MimicBlockTile implements IOwnerP
         this.loadOwner(compound);
     }
 
-    //@Override
-    @PlatformOnly(PlatformOnly.FORGE)
+    @ForgeOverride
     public AABB getRenderBoundingBox() {
         return new AABB(this.worldPosition);
     }

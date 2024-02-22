@@ -6,6 +6,7 @@ import net.mehvahdjukaar.amendments.configs.CommonConfigs;
 import net.mehvahdjukaar.amendments.integration.CompatHandler;
 import net.mehvahdjukaar.amendments.integration.SuppCompat;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
+import net.mehvahdjukaar.moonlight.api.misc.ForgeOverride;
 import net.mehvahdjukaar.moonlight.api.platform.ForgeHelper;
 import net.mehvahdjukaar.moonlight.api.util.math.MthUtils;
 import net.minecraft.core.BlockPos;
@@ -101,7 +102,7 @@ public class DoubleCakeBlock extends DirectionalCakeBlock {
     }
 
     //@Override
-    @PlatformOnly(PlatformOnly.FORGE)
+    @ForgeOverride
     public SoundType getSoundType(BlockState state, LevelReader world, BlockPos pos, Entity entity) {
         return mimic.getSoundType();
     }
@@ -112,7 +113,7 @@ public class DoubleCakeBlock extends DirectionalCakeBlock {
     }
 
     //@Override
-    @PlatformOnly(PlatformOnly.FORGE)
+    @ForgeOverride
     public float getExplosionResistance(BlockState state, BlockGetter level, BlockPos pos, Explosion explosion) {
         return level instanceof Level l ? Math.max(ForgeHelper.getExplosionResistance(mimic, l, pos, explosion),
                 state.getBlock().getExplosionResistance()) : super.getExplosionResistance();

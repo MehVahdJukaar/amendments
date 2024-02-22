@@ -7,6 +7,7 @@ import net.mehvahdjukaar.amendments.reg.ModBlockProperties;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.moonlight.api.block.IBlockHolder;
 import net.mehvahdjukaar.moonlight.api.block.IRecolorable;
+import net.mehvahdjukaar.moonlight.api.misc.ForgeOverride;
 import net.mehvahdjukaar.moonlight.api.platform.ForgeHelper;
 import net.mehvahdjukaar.moonlight.api.set.BlocksColorAPI;
 import net.minecraft.core.BlockPos;
@@ -98,7 +99,7 @@ public class CarpetSlabBlock extends SlabBlock implements EntityBlock , IRecolor
 
     //might cause lag when breaking?
     //@Override
-    @PlatformOnly(PlatformOnly.FORGE)
+    @ForgeOverride
     public SoundType getSoundType(BlockState state, LevelReader world, BlockPos pos, Entity entity) {
         if (world.getBlockEntity(pos) instanceof CarpetedBlockTile tile) {
             SoundType mixed = tile.getSoundType();
@@ -125,7 +126,7 @@ public class CarpetSlabBlock extends SlabBlock implements EntityBlock , IRecolor
         return drops;
     }
 
-    @PlatformOnly(PlatformOnly.FORGE)
+    @ForgeOverride
     //@Override
     public ItemStack getCloneItemStack(BlockState state, HitResult target, BlockGetter level, BlockPos pos, Player player) {
         if (level.getBlockEntity(pos) instanceof CarpetedBlockTile tile) {

@@ -1,0 +1,7 @@
+{
+  "replace": false,
+  "values": [
+    {"id":"amendments:skull_candle_soul","required":false},
+    {"id":"amendments:skull_candle_soul_wall","required":false}
+  ]
+}
