@@ -12,8 +12,6 @@ import net.mehvahdjukaar.moonlight.api.fluids.BuiltInSoftFluids;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidStack;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidTank;
 import net.mehvahdjukaar.moonlight.api.util.PotionNBTHelper;
-import net.minecraft.client.particle.ParticleEngine;
-import net.minecraft.client.particle.PlayerCloudParticle;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleOptions;
@@ -146,7 +144,9 @@ public class LiquidCauldronBlock extends ModCauldronBlock {
                 level.getBlockEntity(pos) instanceof LiquidCauldronBlockTile tile) {
 
             SoftFluidStack fluid = tile.getSoftFluidTank().getFluid();
-            if (getPotType(fluid) != null && applyPotionFluidEffects(level, pos, living, fluid)) {
+            PotionNBTHelper.Type potType = getPotType(fluid);
+            if (potType != null && potType != PotionNBTHelper.Type.REGULAR &&
+                    applyPotionFluidEffects(level, pos, living, fluid)) {
                 tile.consumeOneLayer();
             }
             if (CompatHandler.ALEX_CAVES) {

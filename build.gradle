@@ -82,7 +82,7 @@ subprojects {
                         optionalDependency "blueprint"
                         optionalDependency "alexs-caves"
                         optionalDependency "shimmer"
-                        optionalDependency "farmersdelight"
+                        optionalDependency "farmers-delight"
                         optionalDependency "configured"
                         optionalDependency "flan"
                     }

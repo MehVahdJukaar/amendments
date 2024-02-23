@@ -5,6 +5,7 @@ import net.mehvahdjukaar.amendments.integration.CaveEnhancementsCompat;
 import net.mehvahdjukaar.amendments.integration.CompatHandler;
 import net.mehvahdjukaar.amendments.integration.CompatObjects;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
+import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
 import net.mehvahdjukaar.moonlight.api.util.Utils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -19,7 +20,6 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.CandleBlock;
 import net.minecraft.world.level.block.entity.SkullBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import org.jetbrains.annotations.Nullable;
 
 public class CandleSkullBlockTile extends EnhancedSkullBlockTile {
 
@@ -44,12 +44,11 @@ public class CandleSkullBlockTile extends EnhancedSkullBlockTile {
     @Override
     public void load(CompoundTag tag) {
         super.load(tag);
+        BlockState c = null;
         if (tag.contains("Candle", 10)) {
-            this.candle = Utils.readBlockState(tag.getCompound("Candle"), level);
-            if (this.candle.getBlock() instanceof CandleBlock candleBlock) {
-                this.waxTexture = getWaxColor(candleBlock);
-            } else this.waxTexture = getWaxColor((CandleBlock) Blocks.CANDLE);
+            c = Utils.readBlockState(tag.getCompound("Candle"), level);
         }
+        setCandle(c);
     }
 
     public BlockState getCandle() {
@@ -58,14 +57,19 @@ public class CandleSkullBlockTile extends EnhancedSkullBlockTile {
 
     public void setCandle(BlockState candle) {
         this.candle = candle;
+        if (PlatHelper.getPhysicalSide().isClient()) {
+            this.waxTexture = null;
+            if (this.candle != null) {
+                this.waxTexture = AmendmentsClient.SKULL_CANDLES_TEXTURES.get().get(this.candle.getBlock());
+            }
+        }
     }
 
     public boolean tryAddingCandle(CandleBlock candle) {
         if (this.candle.isAir() || (candle == this.candle.getBlock() && this.candle.getValue(CandleBlock.CANDLES) != 4)) {
 
             if (this.candle.isAir()) {
-                this.candle = candle.defaultBlockState();
-                this.waxTexture = getWaxColor(candle);
+                this.setCandle(candle.defaultBlockState());
             } else {
                 this.candle.cycle(CandleBlock.CANDLES);
             }
@@ -90,15 +94,9 @@ public class CandleSkullBlockTile extends EnhancedSkullBlockTile {
         }
     }
 
-    @Nullable
-    public static ResourceLocation getWaxColor(CandleBlock b) {
-        return AmendmentsClient.SKULL_CANDLES_TEXTURES.get().get(b);
-    }
-
-
     public static void tick(Level level, BlockPos pos, BlockState state, CandleSkullBlockTile e) {
         e.tick(level, pos, state);
-        if(CompatHandler.CAVE_ENHANCEMENTS && e.candle.is(CompatObjects.SPECTACLE_CANDLE.get())){
+        if (CompatHandler.CAVE_ENHANCEMENTS && e.candle.is(CompatObjects.SPECTACLE_CANDLE.get())) {
             CaveEnhancementsCompat.tick(level, pos, state);
         }
     }

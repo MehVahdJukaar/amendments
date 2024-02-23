@@ -59,7 +59,7 @@ public abstract class HangingSignRendererMixin extends SignRenderer {
             //normal model
             HangingSignRenderer.HangingSignModel model = this.hangingSignModels.get(woodType);
 
-            boolean translucent = woodType.name().equals("pirat");
+            boolean translucent = woodType.name().equals("rats:pirat");
             HangingSignRendererExtension.render(tile, partialTick, poseStack, bufferSource, packedLight, packedOverlay,
                     blockState, model, amendments$barModel, amendments$chains,
                     this.getSignMaterial(woodType),

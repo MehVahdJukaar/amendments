@@ -1,1 +1,3 @@
-- fixed a crash with ahnging signs on servers
+- fixed a crash on servers due to skull piles
+- fixe wall lanterns wall lanterns rendering weird
+- fixed potion mixing not adding potions correctly

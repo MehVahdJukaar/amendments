@@ -3,6 +3,7 @@ package net.mehvahdjukaar.amendments.common.tile;
 import net.mehvahdjukaar.amendments.common.PendulumAnimation;
 import net.mehvahdjukaar.amendments.common.SwingAnimation;
 import net.mehvahdjukaar.amendments.configs.ClientConfigs;
+import net.mehvahdjukaar.amendments.reg.ModBlockProperties;
 import net.mehvahdjukaar.moonlight.api.client.model.ExtraModelData;
 import net.mehvahdjukaar.moonlight.api.client.model.IExtraModelDataProvider;
 import net.mehvahdjukaar.moonlight.api.client.model.ModelDataKey;
@@ -20,7 +21,7 @@ import org.joml.Vector3f;
 
 public abstract class SwayingBlockTile extends BlockEntity implements IExtraModelDataProvider {
 
-    public static final ModelDataKey<Boolean> FANCY = new ModelDataKey<>(Boolean.class);
+    public static final ModelDataKey<Boolean> FANCY = ModBlockProperties.FANCY;
 
     // lod stuff (client)
     protected boolean shouldHaveTESR = false; // current

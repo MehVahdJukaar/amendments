@@ -1,11 +1,13 @@
 package net.mehvahdjukaar.amendments.common.tile;
 
-import com.google.common.base.Suppliers;
 import com.mojang.authlib.GameProfile;
 import net.mehvahdjukaar.amendments.AmendmentsClient;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
+import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
+import net.mehvahdjukaar.moonlight.api.util.Utils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.resources.ResourceLocation;
@@ -16,10 +18,7 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.CandleBlock;
-import net.minecraft.world.level.block.EntityBlock;
-import net.minecraft.world.level.block.Rotation;
-import net.minecraft.world.level.block.SkullBlock;
+import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.SkullBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -28,18 +27,11 @@ import net.minecraft.world.phys.Vec3;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Supplier;
-
 public class DoubleSkullBlockTile extends EnhancedSkullBlockTile {
-
-    //so we don't have to save the whole texture location but its index instead
-    private static final Supplier<List<ResourceLocation>> TEXTURE_IND =
-            Suppliers.memoize(() -> new ArrayList<>(AmendmentsClient.SKULL_CANDLES_TEXTURES.get().values()));
 
     @Nullable
     protected SkullBlockEntity innerTileUp = null;
+    private Block candleUp = null;
     //client only
     private ResourceLocation waxTexture = null;
 
@@ -52,8 +44,8 @@ public class DoubleSkullBlockTile extends EnhancedSkullBlockTile {
         super.saveAdditional(tag);
         this.saveInnerTile("SkullUp", this.innerTileUp, tag);
 
-        if (waxTexture != null) {
-            tag.putByte("WaxColor", (byte) TEXTURE_IND.get().indexOf(waxTexture));
+        if (candleUp != null) {
+            tag.putString("CandleAbove", Utils.getID(candleUp).toString());
         }
     }
 
@@ -61,12 +53,13 @@ public class DoubleSkullBlockTile extends EnhancedSkullBlockTile {
     public void load(CompoundTag tag) {
         super.load(tag);
         this.innerTileUp = this.loadInnerTile("SkullUp", this.innerTileUp, tag);
-
-        if (tag.contains("WaxColor")) {
-            this.waxTexture = TEXTURE_IND.get().get(tag.getByte("WaxColor"));
-        } else {
-            waxTexture = null;
+        Block b = null;
+        if (tag.contains("CandleAbove")) {
+            ResourceLocation candle = new ResourceLocation(tag.getString("CandleAbove"));
+            var o = BuiltInRegistries.BLOCK.getOptional(candle);
+            if (o.isPresent()) b = o.get();
         }
+        setCandleUp(b);
     }
 
     public ItemStack getSkullItemUp() {
@@ -126,14 +119,21 @@ public class DoubleSkullBlockTile extends EnhancedSkullBlockTile {
     }
 
     public void updateWax(BlockState above) {
-        ResourceLocation newTexture = null;
-        if (above.getBlock() instanceof CandleBlock block) {
-            newTexture = CandleSkullBlockTile.getWaxColor(block);
+        setCandleUp(above.getBlock());
+        if (this.level instanceof ServerLevel) {
+            this.level.sendBlockUpdated(this.worldPosition, this.getBlockState(), this.getBlockState(), 2);
         }
-        if (this.waxTexture != newTexture) {
-            this.waxTexture = newTexture;
-            if (this.level instanceof ServerLevel) {
-                this.level.sendBlockUpdated(this.worldPosition, this.getBlockState(), this.getBlockState(), 2);
+    }
+
+    private void setCandleUp(Block above) {
+        this.candleUp = null;
+        if (above instanceof CandleBlock) {
+            this.candleUp = above;
+        }
+        if (PlatHelper.getPhysicalSide().isClient()) {
+            this.waxTexture = null;
+            if (this.candleUp != null) {
+                this.waxTexture = AmendmentsClient.SKULL_CANDLES_TEXTURES.get().get(this.candleUp);
             }
         }
     }

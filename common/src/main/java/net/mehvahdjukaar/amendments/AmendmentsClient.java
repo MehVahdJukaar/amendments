@@ -206,11 +206,6 @@ public class AmendmentsClient {
     });
 
 
-    public static Level getClientLevel() {
-        return Minecraft.getInstance().level;
-    }
-
-
     //TODO: add
     @EventCalled
     public static void onItemTooltip(ItemStack itemStack, TooltipFlag tooltipFlag, List<Component> components) {

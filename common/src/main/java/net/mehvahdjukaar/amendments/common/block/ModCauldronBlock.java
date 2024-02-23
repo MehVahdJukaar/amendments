@@ -150,12 +150,12 @@ public abstract class ModCauldronBlock extends AbstractCauldronBlock implements 
     public void doCraftItem(Level level, BlockPos pos, Player player, InteractionHand hand, LiquidCauldronBlockTile te,
                             SoftFluidStack fluid, ItemStack itemStack, ItemStack crafted,
                             float layerPerItem, int itemCountMultiplier) {
+        level.playSound(player, pos, SoundEvents.BUCKET_EMPTY, SoundSource.BLOCKS, 1.0F, 1.3f);
 
         if (player instanceof ServerPlayer serverPlayer) {
             player.awardStat(Stats.ITEM_USED.get(itemStack.getItem()));
             CriteriaTriggers.ITEM_USED_ON_BLOCK.trigger(serverPlayer, pos, itemStack);
         } else return;
-        level.playSound(player, pos, SoundEvents.BUCKET_EMPTY, SoundSource.BLOCKS, 1.0F, 1.3f);
 
 
         int maxRecolorable = (int) (crafted.getCount() * itemCountMultiplier * fluid.getCount() / layerPerItem);
