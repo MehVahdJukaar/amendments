@@ -1,8 +1,1 @@
-- witch huts and villages will now have potion and dye cauldrons (requires blueprint)
-- tagged more structures to work with this including rep structures and yung
-- improved config screen
-- added more configs
-- fixed hanging sign item rendering backwards
-- mixing more than 8 potions will lead to unforseen consequences
-- same for mixing opposite potions (configurable)
-- added alex caves compat for acid liquid (deals damage and emits particles when in cauldron)
+- fixed wrong version requirement

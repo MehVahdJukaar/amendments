@@ -32,7 +32,7 @@
     "moonlight": ">=${required_moonlight_version}"
   },
   "conflicts": {
-    "supplementaries": "<2.8.0"
+    "supplementaries": "<1.20-2.8.0"
   },
   "incompatible": [
     "carpeted",

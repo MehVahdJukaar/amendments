@@ -37,3 +37,10 @@ issueTrackerURL = "${mod_github}/issues"
     versionRange = "${required_moonlight_version}"
     ordering = "NONE"
     side = "BOTH"
+
+[[dependencies.amendments]]
+    modId = "supplementaries"
+    mandatory = false
+    versionRange = "[1.20-2.8.0,)"
+    ordering = "NONE"
+    side = "BOTH"

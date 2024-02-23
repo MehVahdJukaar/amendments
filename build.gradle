@@ -81,6 +81,10 @@ subprojects {
                         optionalDependency "supplementaries"
                         optionalDependency "blueprint"
                         optionalDependency "alexs-caves"
+                        optionalDependency "shimmer"
+                        optionalDependency "farmersdelight"
+                        optionalDependency "configured"
+                        optionalDependency "flan"
                     }
                 }
             }

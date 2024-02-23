@@ -28,7 +28,7 @@ public class JukeboxTileRenderer implements BlockEntityRenderer<JukeboxBlockEnti
             poseStack.translate(0.5, 15.25 / 16f, 0.5);
 
             if(ClientConfigs.JUKEBOX_SPIN.get()) {
-                poseStack.mulPose(Axis.YP.rotationDegrees(((IBetterJukebox) blockEntity).getRotation(partialTick)));
+                poseStack.mulPose(Axis.YP.rotationDegrees(((IBetterJukebox) blockEntity).amendments$getRotation(partialTick)));
             }
             poseStack.mulPose(RotHlpr.X90);
 

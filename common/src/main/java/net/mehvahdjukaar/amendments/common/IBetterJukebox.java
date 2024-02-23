@@ -2,7 +2,7 @@ package net.mehvahdjukaar.amendments.common;
 
 public interface IBetterJukebox {
 
-    float getRotation(float partialTicks);
+    float amendments$getRotation(float partialTicks);
 
-    void setPlaying(boolean playing);
+    void amendments$setPlaying(boolean playing);
 }

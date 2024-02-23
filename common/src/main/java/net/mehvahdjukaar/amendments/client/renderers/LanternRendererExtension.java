@@ -27,6 +27,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.LanternBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import org.joml.Quaternionf;
 
@@ -203,7 +204,8 @@ public class LanternRendererExtension implements IThirdPersonAnimationProvider, 
     private static void renderLanternModel(ItemStack itemStack, PoseStack poseStack, MultiBufferSource buffer, int light) {
         Minecraft mc = Minecraft.getInstance();
         ItemRenderer itemRenderer = mc.getItemRenderer();
-        BlockState state = ((BlockItem) itemStack.getItem()).getBlock().defaultBlockState();
+        BlockState state = ((BlockItem) itemStack.getItem()).getBlock().defaultBlockState()
+                .setValue(LanternBlock.HANGING, false);
         var model = mc.getBlockRenderer().getBlockModel(state);
         poseStack.translate(0.5, 0.5, 0.5);
         itemRenderer.render(itemStack, ItemDisplayContext.NONE, false, poseStack,

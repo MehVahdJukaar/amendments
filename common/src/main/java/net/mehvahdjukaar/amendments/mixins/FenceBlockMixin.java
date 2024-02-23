@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 
 @Mixin(FenceBlock.class)
-public class FenceBlockMixin {
+public abstract class FenceBlockMixin {
 
     @ModifyReturnValue(method = "connectsTo", at = @At("RETURN"))
     public boolean amendments$cauldronConnect(boolean original, BlockState state, boolean isSideSolid, Direction direction) {

@@ -1,5 +1,6 @@
 package net.mehvahdjukaar.amendments.common.block;
 
+import net.mehvahdjukaar.amendments.common.LiquidMixer;
 import net.mehvahdjukaar.amendments.common.item.DyeBottleItem;
 import net.mehvahdjukaar.amendments.common.recipe.RecipeUtils;
 import net.mehvahdjukaar.amendments.common.tile.LiquidCauldronBlockTile;
@@ -31,8 +32,6 @@ import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.phys.BlockHitResult;
-
-import static net.mehvahdjukaar.amendments.common.tile.LiquidCauldronBlockTile.mixDye;
 
 public class DyeCauldronBlock extends ModCauldronBlock {
     public static final IntegerProperty LEVEL = BlockStateProperties.LEVEL_CAULDRON;
@@ -78,7 +77,7 @@ public class DyeCauldronBlock extends ModCauldronBlock {
             if (te.handleInteraction(player, hand)) {
                 return InteractionResult.sidedSuccess(level.isClientSide);
             }
-            if(!CommonConfigs.CAULDRON_CRAFTING.get())return InteractionResult.PASS;
+            if (!CommonConfigs.CAULDRON_CRAFTING.get()) return InteractionResult.PASS;
 
             SoftFluidTank tank = te.getSoftFluidTank();
             SoftFluidStack fluid = tank.getFluid();
@@ -150,7 +149,7 @@ public class DyeCauldronBlock extends ModCauldronBlock {
             if (count == 3) fluid.setCount(2); //hack!!
             SoftFluidStack dummyStack = DyeBottleItem.toFluidStack(dyeItem.getDyeColor(), 1);
 
-            mixDye(fluid, dummyStack);
+            LiquidMixer.mixDye(fluid, dummyStack);
 
             fluid.setCount(count);
             tile.setChanged();

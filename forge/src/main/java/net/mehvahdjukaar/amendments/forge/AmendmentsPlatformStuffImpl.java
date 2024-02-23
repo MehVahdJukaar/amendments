@@ -1,5 +1,6 @@
 package net.mehvahdjukaar.amendments.forge;
 
+import net.mehvahdjukaar.amendments.common.LiquidMixer;
 import net.mehvahdjukaar.amendments.common.tile.LiquidCauldronBlockTile;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.moonlight.api.fluids.BuiltInSoftFluids;
@@ -30,7 +31,7 @@ public class AmendmentsPlatformStuffImpl {
             @Override
             protected void addFluidOntoExisting(SoftFluidStack incoming) {
                 if (canMix.getAsBoolean() && incoming.is(BuiltInSoftFluids.POTION.get())) {
-                    LiquidCauldronBlockTile.mixPotions(this.fluid, incoming);
+                    LiquidMixer.mixPotions(this.fluid, incoming);
                     needsColorRefresh = true;
 
                 }
@@ -52,7 +53,7 @@ public class AmendmentsPlatformStuffImpl {
             @Override
             protected void addFluidOntoExisting(SoftFluidStack fluidStack) {
                 if (fluidStack.is(ModRegistry.DYE_SOFT_FLUID.get())) {
-                    LiquidCauldronBlockTile.mixDye(this.fluid, fluidStack);
+                    LiquidMixer.mixDye(this.fluid, fluidStack);
                 }
                 super.addFluidOntoExisting(fluidStack);
             }

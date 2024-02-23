@@ -72,12 +72,13 @@ public abstract class JukeboxBlockEntityMixin extends BlockEntity implements IBe
         return ClientboundBlockEntityDataPacket.create(this);
     }
 
-    public float getRotation(float partialTicks) {
+    @Override
+    public float amendments$getRotation(float partialTicks) {
         return Mth.rotLerp(partialTicks, amendments$prevRot, amendments$rot);
     }
 
     @Override
-    public void setPlaying(boolean playing) {
+    public void amendments$setPlaying(boolean playing) {
         isPlaying = playing;
     }
 }
