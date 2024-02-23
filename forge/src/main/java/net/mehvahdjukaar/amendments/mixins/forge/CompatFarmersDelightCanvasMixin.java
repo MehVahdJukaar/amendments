@@ -66,7 +66,7 @@ public abstract class CompatFarmersDelightCanvasMixin extends SignRenderer {
 
                     this.getCanvasSignMaterial(dye),
                     ModMaterials.CANVAS_SIGH_MATERIAL,
-                    this, 0.6f / 0.4f * ClientConfigs.getSignColorMult());
+                    this, 0.6f / 0.4f * ClientConfigs.getSignColorMult(), false);
             ci.cancel();
         }
     }

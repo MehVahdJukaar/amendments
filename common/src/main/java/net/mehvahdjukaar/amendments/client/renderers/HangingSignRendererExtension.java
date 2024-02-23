@@ -9,7 +9,6 @@ import net.mehvahdjukaar.amendments.configs.ClientConfigs;
 import net.mehvahdjukaar.amendments.integration.CompatHandler;
 import net.mehvahdjukaar.amendments.integration.SuppCompat;
 import net.mehvahdjukaar.amendments.reg.ModBlockProperties;
-import net.mehvahdjukaar.moonlight.api.block.ItemDisplayTile;
 import net.mehvahdjukaar.moonlight.api.client.util.LOD;
 import net.mehvahdjukaar.moonlight.api.client.util.RotHlpr;
 import net.mehvahdjukaar.moonlight.api.client.util.TextUtil;
@@ -36,7 +35,6 @@ import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.item.BannerPatternItem;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.CeilingHangingSignBlock;
 import net.minecraft.world.level.block.WallSignBlock;
@@ -88,12 +86,11 @@ public class HangingSignRendererExtension {
     }
 
 
-
     public static void render(SignBlockEntity tile, float partialTicks, PoseStack poseStack, MultiBufferSource bufferSource,
                               int light, int overlay, BlockState state,
                               HangingSignRenderer.HangingSignModel model, List<ModelPart> barModel, ModelPart chains,
                               Material material, Material extensionMaterial, SignRenderer renderer,
-                              float colorMult) { //color mult for FD
+                              float colorMult, boolean translucent) { //color mult for FD. Translucent for rats
 
         poseStack.pushPose();
 
@@ -110,7 +107,7 @@ public class HangingSignRendererExtension {
         poseStack.mulPose(yaw);
 
         model.evaluateVisibleParts(state);
-        VertexConsumer vertexConsumer = material.buffer(bufferSource, model::renderType);
+        VertexConsumer vertexConsumer = material.buffer(bufferSource, translucent ? RenderType::entityTranslucent : model::renderType);
         HangingSignTileExtension extension = ((ExtendedHangingSign) tile).getExtension();
 
         poseStack.scale(1, -1, -1);
@@ -197,7 +194,7 @@ public class HangingSignRendererExtension {
         ModBlockProperties.PostType right = extension.getRightAttachment();
         ModBlockProperties.PostType left = extension.getLeftAttachment();
 
-        if(!ClientConfigs.SIGN_ATTACHMENT.get()){
+        if (!ClientConfigs.SIGN_ATTACHMENT.get()) {
             right = null;
             left = null;
         }
@@ -235,8 +232,7 @@ public class HangingSignRendererExtension {
                     colorMult);
         } else if (CompatHandler.SUPPLEMENTARIES && item.getItem() instanceof BannerPatternItem banner) {
             renderBannerPattern(tile.getFrontText(), poseStack, buffer, light, banner);
-        }
-        else {
+        } else {
             poseStack.mulPose(RotHlpr.Y180);
             renderItem(item, poseStack, buffer, light, overlay, tile.getLevel());
         }
@@ -307,7 +303,7 @@ public class HangingSignRendererExtension {
             int lv = light >> 16 & '\uffff';
 
             VertexUtil.addQuad(consumer, poseStack, -0.4375F, -0.4375F, 0.4375F, 0.4375F,
-                     0.5f + 0.09375f, 1 - 0.0625f,0.15625f, 0.0625f, r, g, b, 255, lu, lv);
+                    0.5f + 0.09375f, 1 - 0.0625f, 0.15625f, 0.0625f, r, g, b, 255, lu, lv);
 
             poseStack.popPose();
         }
@@ -317,7 +313,7 @@ public class HangingSignRendererExtension {
         ItemRenderer itemRenderer = Minecraft.getInstance().getItemRenderer();
         BakedModel model = itemRenderer.getModel(stack, level, null, 0);
         poseStack.pushPose();
-        float z = model.isGui3d() ? 7/64f : 5/64f;
+        float z = model.isGui3d() ? 7 / 64f : 5 / 64f;
         poseStack.translate(0, -9 / 16f, -z);
 
         float scale = ClientConfigs.getItemPixelScale() / 16f;

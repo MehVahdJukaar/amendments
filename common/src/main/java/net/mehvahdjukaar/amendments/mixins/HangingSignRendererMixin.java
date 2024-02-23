@@ -56,14 +56,16 @@ public abstract class HangingSignRendererMixin extends SignRenderer {
         if (ClientConfigs.SIGN_ATTACHMENT.get() || ClientConfigs.SWINGING_SIGNS.get()) {
             BlockState blockState = tile.getBlockState();
             WoodType woodType = SignBlock.getWoodType(blockState.getBlock());
+            //normal model
             HangingSignRenderer.HangingSignModel model = this.hangingSignModels.get(woodType);
 
+            boolean translucent = woodType.name().equals("pirat");
             HangingSignRendererExtension.render(tile, partialTick, poseStack, bufferSource, packedLight, packedOverlay,
                     blockState, model, amendments$barModel, amendments$chains,
-
                     this.getSignMaterial(woodType),
                     ModMaterials.HANGING_SIGN_EXTENSIONS.get().get(woodType),
-                    this, CompatHandler.SUPPLEMENTARIES ? SuppCompat.getSignColorMult() : 1);
+                    this, CompatHandler.SUPPLEMENTARIES ? SuppCompat.getSignColorMult() : 1,
+                    translucent);
 
             ci.cancel();
         }

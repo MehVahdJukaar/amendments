@@ -1,1 +1,1 @@
-- fixed wrong version requirement
+- fixed a crash with ahnging signs on servers

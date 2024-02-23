@@ -142,6 +142,7 @@ dependencies {
     modCompileOnly("curse.maven:zeta-968868:5078215")
     modImplementation("curse.maven:blueprint-382216:4594238")
     modImplementation ("curse.maven:configured-457570:5101367")
+    modImplementation ("curse.maven:rats-323596:4802123")
 
 
     modImplementation("curse.maven:alexs-caves-924854:4806837")
