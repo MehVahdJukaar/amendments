@@ -25,6 +25,9 @@ import net.minecraft.world.phys.BlockHitResult;
 
 public class HangingSignDisplayItem implements BlockUse {
 
+    // just here because im too lazy to move to static class. we arent using the block use anymore
+    public static final HangingSignDisplayItem INSTANCE = new HangingSignDisplayItem();
+
     @Override
     public boolean isEnabled() {
         return CommonConfigs.HANGING_SIGN_ITEM.get();

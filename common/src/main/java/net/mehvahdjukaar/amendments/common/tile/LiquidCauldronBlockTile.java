@@ -14,7 +14,6 @@ import net.mehvahdjukaar.moonlight.api.client.model.ModelDataKey;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluid;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidStack;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidTank;
-import net.mehvahdjukaar.moonlight.api.util.math.colors.RGBColor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -126,12 +125,10 @@ public class LiquidCauldronBlockTile extends BlockEntity implements IExtraModelD
         int oldAmount = tankFluid.getCount();
         int newAmount = newFluid.getCount();
         CompoundTag combinedTag = new CompoundTag();
-        combinedTag.putInt(DyeBottleItem.COLOR_TAG, DyeBottleItem. mixColor(oldColor, newColor, oldAmount, newAmount));
+        combinedTag.putInt(DyeBottleItem.COLOR_TAG, DyeBottleItem.mixColor(oldColor, newColor, oldAmount, newAmount));
 
         tankFluid.setTag(combinedTag);
     }
-
-
 
 
     @Override
@@ -185,7 +182,7 @@ public class LiquidCauldronBlockTile extends BlockEntity implements IExtraModelD
         BlockState state = this.getBlockState();
 
         if (state.getBlock() instanceof ModCauldronBlock cb) {
-            state = cb.updateStateOnFluidChange(state, fluidTank.getFluid());
+            state = cb.updateStateOnFluidChange(state, level, worldPosition, fluidTank.getFluid());
         }
 
         if (state != this.getBlockState()) {

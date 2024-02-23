@@ -3,6 +3,8 @@ package net.mehvahdjukaar.amendments.common.block;
 import net.mehvahdjukaar.amendments.common.recipe.RecipeUtils;
 import net.mehvahdjukaar.amendments.common.tile.LiquidCauldronBlockTile;
 import net.mehvahdjukaar.amendments.configs.CommonConfigs;
+import net.mehvahdjukaar.amendments.integration.AlexCavesCompat;
+import net.mehvahdjukaar.amendments.integration.CompatHandler;
 import net.mehvahdjukaar.amendments.reg.ModBlockProperties;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.amendments.reg.ModTags;
@@ -40,6 +42,7 @@ import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -140,9 +143,12 @@ public class LiquidCauldronBlock extends ModCauldronBlock {
         if (entity instanceof LivingEntity living && entity.mayInteract(level, pos) &&
                 level.getBlockEntity(pos) instanceof LiquidCauldronBlockTile tile) {
 
-            SoftFluidStack stack = tile.getSoftFluidTank().getFluid();
-            if (getSplashOrLingeringPotType(stack) != null && applyPotionFluidEffects(level, pos, living, stack)) {
+            SoftFluidStack fluid = tile.getSoftFluidTank().getFluid();
+            if (getPotType(fluid) != null && applyPotionFluidEffects(level, pos, living, fluid)) {
                 tile.consumeOneLayer();
+            }
+            if (CompatHandler.ALEX_CAVES) {
+                AlexCavesCompat.acidDamage(fluid, level, pos, state, entity);
             }
         }
     }
@@ -180,32 +186,40 @@ public class LiquidCauldronBlock extends ModCauldronBlock {
 
             if (level.random.nextInt(4) == 0) {
                 SoftFluidStack fluid = te.getSoftFluidTank().getFluid();
-                PotionNBTHelper.Type type = getSplashOrLingeringPotType(fluid);
+                PotionNBTHelper.Type type = getPotType(fluid);
+                double height = getContentHeight(state);
                 if (type != null) {
-                    ParticleOptions particle = type == PotionNBTHelper.Type.SPLASH ?
-                            ParticleTypes.AMBIENT_ENTITY_EFFECT : ParticleTypes.ENTITY_EFFECT;
-
-                    int color = te.getSoftFluidTank().getParticleColor(level, pos);
-                    double height = getContentHeight(state);
-                    addPotionParticles(particle, level, pos, 1,
-                            height, rand, color);
-
-                    if (fluid.getCount() >= CommonConfigs.POTION_MIXING_LIMIT.get()) {
+                    if (getPotionEffectAmount(fluid) >= CommonConfigs.POTION_MIXING_LIMIT.get()) {
                         addSurfaceParticles(ParticleTypes.SMOKE, level, pos, 2, height, rand, 0, 0, 0);
                     }
+                    if (type != PotionNBTHelper.Type.REGULAR) {
+
+                        ParticleOptions particle = type == PotionNBTHelper.Type.SPLASH ?
+                                ParticleTypes.AMBIENT_ENTITY_EFFECT : ParticleTypes.ENTITY_EFFECT;
+
+                        int color = te.getSoftFluidTank().getParticleColor(level, pos);
+                        addPotionParticles(particle, level, pos, 1,
+                                height, rand, color);
+
+                    }
+                }
+                if (CompatHandler.ALEX_CAVES) {
+                    AlexCavesCompat.acidParticles(fluid, level, pos, rand, height);
                 }
             }
         }
     }
 
     @Nullable
-    private PotionNBTHelper.Type getSplashOrLingeringPotType(SoftFluidStack stack) {
+    private PotionNBTHelper.Type getPotType(SoftFluidStack stack) {
         if (stack.is(BuiltInSoftFluids.POTION.get()) && stack.hasTag()) {
-            var type = PotionNBTHelper.getPotionType(stack.getTag());
-            if (type == PotionNBTHelper.Type.REGULAR) return null;
-            else return type;
+            return PotionNBTHelper.getPotionType(stack.getTag());
         }
         return null;
+    }
+
+    private int getPotionEffectAmount(SoftFluidStack stack) {
+        return PotionUtils.getAllEffects(stack.getTag()).size();
     }
 
 
@@ -234,12 +248,22 @@ public class LiquidCauldronBlock extends ModCauldronBlock {
     }
 
     @Override
-    public BlockState updateStateOnFluidChange(BlockState state, Level leve, BlockPos pos, SoftFluidStack fluid) {
+    public BlockState updateStateOnFluidChange(BlockState state, Level level, BlockPos pos, SoftFluidStack fluid) {
         //explosions?
 
-        if (fluid.getCount() > CommonConfigs.POTION_MIXING_LIMIT.get()) {
-            leve.explode(null, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5,
-                    1, Level.ExplosionInteraction.BLOCK);
+        int potionEffectAmount = getPotionEffectAmount(fluid);
+        if (potionEffectAmount >= CommonConfigs.POTION_MIXING_LIMIT.get()) {
+            if (potionEffectAmount > CommonConfigs.POTION_MIXING_LIMIT.get()) {
+                level.destroyBlock(pos, true);
+                Vec3 vec3 = pos.getCenter();
+                level.explode(null, level.damageSources().badRespawnPointExplosion(vec3), null, vec3.x, vec3.y, vec3.z,
+                        1.4f, false, Level.ExplosionInteraction.NONE);
+
+                return state;
+            } else {
+                addSurfaceParticles(ParticleTypes.SMOKE, level, pos, 12, getContentHeight(state), level.random, 0, 0, 0);
+                level.playSound(null, pos, SoundEvents.GENERIC_EXTINGUISH_FIRE, SoundSource.BLOCKS, 1.0f, 1.0f);
+            }
         }
 
         int light = fluid.getFluid().value().getLuminosity();

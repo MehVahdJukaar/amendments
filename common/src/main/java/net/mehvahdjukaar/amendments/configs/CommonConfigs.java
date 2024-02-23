@@ -1,28 +1,24 @@
 package net.mehvahdjukaar.amendments.configs;
 
-import com.mojang.serialization.Codec;
 import net.mehvahdjukaar.amendments.Amendments;
 import net.mehvahdjukaar.amendments.common.entity.FallingLanternEntity;
 import net.mehvahdjukaar.moonlight.api.platform.configs.ConfigBuilder;
 import net.mehvahdjukaar.moonlight.api.platform.configs.ConfigSpec;
 import net.mehvahdjukaar.moonlight.api.platform.configs.ConfigType;
+import net.mehvahdjukaar.moonlight.api.util.Utils;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.effect.MobEffect;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.item.alchemy.Potions;
+import net.minecraft.world.effect.MobEffects;
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 
 public class CommonConfigs {
 
-    public enum MixingMode{
+    public enum MixingMode {
         OFF, ONLY_BOILING, ON
     }
 
@@ -32,7 +28,7 @@ public class CommonConfigs {
     public static final Supplier<Boolean> CONNECT_TO_FENCES;
     public static final Supplier<MixingMode> POTION_MIXING;
     public static final Supplier<Integer> POTION_MIXING_LIMIT;
-  //  public static final Supplier<Map<String, String>> INVERSE_POTIONS;
+    public static final Supplier<Map<MobEffect, MobEffect>> INVERSE_POTIONS;
     public static final Supplier<Boolean> DYE_WATER;
     public static final Supplier<Boolean> CAULDRON_CRAFTING;
     public static final Supplier<Integer> DYE_RECIPES_PER_LAYER;
@@ -65,12 +61,10 @@ public class CommonConfigs {
 
     public static final Supplier<Boolean> LILY_PADS_ON;
 
-    public static final ConfigSpec CONFIG;
+    public static final ConfigSpec SPEC;
 
     static {
         ConfigBuilder builder = ConfigBuilder.create(Amendments.MOD_ID, ConfigType.COMMON);
-
-        builder.push("features");
 
         builder.push("hanging_signs");
         HANGING_SIGN_ITEM = builder.comment("Allows placing items on hanging signs")
@@ -79,7 +73,7 @@ public class CommonConfigs {
 
         builder.push("cauldron");
         LIQUID_CAULDRON = builder.comment("Enables enhanced cauldron")
-                .define("enabled", true);
+                .define("enhanced_cauldron", true);
         CAULDRON_CRAFTING = builder.comment("Allows crafting items using cauldrons by clicking on them")
                 .define("crafting", true);
         DYE_WATER = builder.comment("Allows dying cauldron water bedrock style and mixing them too")
@@ -91,15 +85,16 @@ public class CommonConfigs {
                         "This is a multiplier on top of vanilla crafting recipe amount")
                 .define("potion_recipes_per_layer", 2, 1, 64);
         POTION_MIXING = builder.comment("Allows mixin potions in cauldrons")
-                        .define("potions_mixing", MixingMode.ON);
+                .define("potions_mixing", MixingMode.ON);
         POTION_MIXING_LIMIT = builder.comment("Max amount of effects allowed in a mixed potion")
                 .define("potion_mixing_limit", 8, 1, 64);
-       // INVERSE_POTIONS = builder.comment("Map of potion ids to their inverse ids. Used for potion mixing")
-         //       .defineObject("inverse_potions", CommonConfigs::getPotMap,
-           //             Codec.unboundedMap(ResourceLocation.CODEC, ResourceLocation.CODEC));
+        INVERSE_POTIONS = builder.comment("Map of potion ids to their inverse ids. Used for potion mixing")
+                .defineObject("inverse_potions", CommonConfigs::getInverseEffects,
+                        Utils.optionalMapCodec(BuiltInRegistries.MOB_EFFECT.byNameCodec(),
+                                BuiltInRegistries.MOB_EFFECT.byNameCodec()));
 
         CONNECT_TO_FENCES = builder.comment("Makes cauldrons connect to fences")
-                        .define("connect_to_fences", true);
+                .define("connect_to_fences", true);
         builder.pop();
 
         builder.push("carpets");
@@ -136,7 +131,7 @@ public class CommonConfigs {
         //wall lantern
         builder.push("lantern");
         WALL_LANTERN = builder.comment("Allow wall lanterns placement")
-                .define("enabled", true);
+                .define("wall_lanterns", true);
 
         WALL_LANTERN_HIGH_PRIORITY = builder.comment("Gives high priority to wall lantern placement. Enable to override other wall lanterns placements, disable if it causes issues with other mods that use lower priority block click events")
                 .define("high_priority", true);
@@ -173,24 +168,28 @@ public class CommonConfigs {
 
         builder.push("lily_pad");
         LILY_PADS_ON = builder.comment("Allows lilypads to have any block placed ontop")
-                        .define("better_lilypads", true);
-        builder.pop();
-
+                .define("better_lilypads", true);
         builder.pop();
 
         builder.setSynced();
-        CONFIG = builder.buildAndRegister();
-        CONFIG.loadFromFile();
+        SPEC = builder.buildAndRegister();
+        SPEC.loadFromFile();
     }
 
-    private static Map<ResourceLocation, ResourceLocation> getPotMap() {
-        Map<ResourceLocation, ResourceLocation> map = new HashMap<>();
-        BiConsumer<MobEffect, MobEffect> fun = (a, b) -> {
-          map.put(BuiltInRegistries.MOB_EFFECT.getKey(a), BuiltInRegistries.MOB_EFFECT.getKey(b));
-        };
-        return null;
-    };
-
+    private static Map<MobEffect, MobEffect> getInverseEffects() {
+        Map<MobEffect, MobEffect> map = new HashMap<>();
+        map.put(MobEffects.DIG_SPEED, MobEffects.DIG_SLOWDOWN);
+        map.put(MobEffects.DIG_SLOWDOWN, MobEffects.DIG_SPEED);
+        map.put(MobEffects.MOVEMENT_SPEED, MobEffects.MOVEMENT_SLOWDOWN);
+        map.put(MobEffects.MOVEMENT_SLOWDOWN, MobEffects.MOVEMENT_SPEED);
+        map.put(MobEffects.DAMAGE_RESISTANCE, MobEffects.WEAKNESS);
+        map.put(MobEffects.WEAKNESS, MobEffects.DAMAGE_RESISTANCE);
+        map.put(MobEffects.HARM, MobEffects.HEAL);
+        map.put(MobEffects.HEAL, MobEffects.HARM);
+        map.put(MobEffects.LUCK, MobEffects.UNLUCK);
+        map.put(MobEffects.UNLUCK, MobEffects.LUCK);
+        return map;
+    }
 
     public static void init() {
 

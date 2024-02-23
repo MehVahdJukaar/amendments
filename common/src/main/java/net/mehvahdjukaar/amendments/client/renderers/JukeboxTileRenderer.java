@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.mehvahdjukaar.amendments.AmendmentsClient;
 import net.mehvahdjukaar.amendments.common.IBetterJukebox;
+import net.mehvahdjukaar.amendments.configs.ClientConfigs;
 import net.mehvahdjukaar.moonlight.api.client.util.RotHlpr;
 import net.mehvahdjukaar.moonlight.api.client.util.VertexUtil;
 import net.minecraft.client.renderer.LevelRenderer;
@@ -26,7 +27,9 @@ public class JukeboxTileRenderer implements BlockEntityRenderer<JukeboxBlockEnti
         if (!item.isEmpty() && blockEntity.getBlockState().getValue(JukeboxBlock.HAS_RECORD)) {
             poseStack.translate(0.5, 15.25 / 16f, 0.5);
 
-            poseStack.mulPose(Axis.YP.rotationDegrees(((IBetterJukebox) blockEntity).getRotation(partialTick)));
+            if(ClientConfigs.JUKEBOX_SPIN.get()) {
+                poseStack.mulPose(Axis.YP.rotationDegrees(((IBetterJukebox) blockEntity).getRotation(partialTick)));
+            }
             poseStack.mulPose(RotHlpr.X90);
 
 

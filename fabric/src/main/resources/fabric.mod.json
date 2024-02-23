@@ -17,6 +17,9 @@
   "entrypoints": {
     "main": [
       "net.mehvahdjukaar.amendments.fabric.AmendmentsFabric"
+    ],
+    "modmenu": [
+      "net.mehvahdjukaar.amendments.integration.fabric.ModMenuCompat"
     ]
   },
   "mixins": [
@@ -27,5 +30,13 @@
     "fabric": "*",
     "minecraft": ">=${minecraft_min_version} <${minecraft_max_version}",
     "moonlight": ">=${required_moonlight_version}"
-  }
+  },
+  "conflicts": {
+    "supplementaries": "<2.8.0"
+  },
+  "incompatible": [
+    "carpeted",
+    "betterlily",
+    "betterjukebox"
+  ]
 }

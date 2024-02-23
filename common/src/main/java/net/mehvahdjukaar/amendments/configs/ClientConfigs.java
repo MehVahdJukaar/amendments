@@ -4,7 +4,9 @@ import net.mehvahdjukaar.amendments.Amendments;
 import net.mehvahdjukaar.amendments.common.PendulumAnimation;
 import net.mehvahdjukaar.moonlight.api.ModSharedVariables;
 import net.mehvahdjukaar.moonlight.api.platform.configs.ConfigBuilder;
+import net.mehvahdjukaar.moonlight.api.platform.configs.ConfigSpec;
 import net.mehvahdjukaar.moonlight.api.platform.configs.ConfigType;
+import net.minecraft.world.level.block.Blocks;
 
 import java.util.function.Supplier;
 
@@ -14,6 +16,7 @@ public class ClientConfigs {
     }
 
     public static final Supplier<Boolean> TOOLTIP_HINTS;
+    public static final Supplier<Boolean> CUSTOM_CONFIGURED_SCREEN;
 
     public static final Supplier<Double> LILY_OFFSET;
     public static final Supplier<Boolean> BELL_CONNECTION;
@@ -23,6 +26,8 @@ public class ClientConfigs {
     public static final Supplier<PendulumAnimation.Config> HANGING_SIGN_CONFIG;
     public static final Supplier<Double> ITEM_SCALE;
     public static final Supplier<Boolean> POTION_TEXTURE;
+    public static final Supplier<Boolean> JUKEBOX_MODEL;
+    public static final Supplier<Boolean> JUKEBOX_SPIN;
 
     public static final Supplier<Boolean> FAST_LANTERNS;
     public static final Supplier<Boolean> LANTERN_HOLDING;
@@ -36,19 +41,21 @@ public class ClientConfigs {
     private static float signColorMult = 1.2f;
     private static float hsScale = 1;
 
+    public static final ConfigSpec SPEC;
+
     static {
         ConfigBuilder builder = ConfigBuilder.create(Amendments.MOD_ID, ConfigType.CLIENT);
 
         builder.push("general");
-
         TOOLTIP_HINTS = builder.define("tooltip_hints", true);
+        CUSTOM_CONFIGURED_SCREEN = builder.define("custom_configured_screen", true);
         builder.pop();
 
         builder.push("lily_pad");
         LILY_OFFSET = builder.comment("set to 0 tho have lilypads at the same exact position as vanilla." +
                         "negative numbers will place them in their own blockspace right below avoiding any clipping." +
                         "best of both worlds at default as its barely within its space")
-                .define("y_offset", -0.25 / 16f - 0.001, -1, 1);
+                .define("y_offset", -0.25 / 16d - 0.001, -1, 1);
         builder.pop();
 
         builder.push("bell");
@@ -89,25 +96,33 @@ public class ClientConfigs {
                 PendulumAnimation.Config::new,
                 PendulumAnimation.Config.CODEC);
         LANTERN_HOLDING_SIZE = builder.comment("Size lanterns when held in hand")
-                .define("lantern_item_size", 10 / 16f, 0, 1);
+                .define("lantern_item_size", 10 / 16d, 0, 1);
         LANTERN_HOLDING = builder.comment("Gives a special animation to lanterns when held in hand")
                 .define("lantern_item_holding", true);
         builder.pop();
 
         builder.push("cauldron");
         POTION_TEXTURE = builder.comment("Gives a unique texture to potion cauldrons")
-                        .define("potion_texture", true);
+                .define("potion_texture", true);
+        builder.pop();
+
+        builder.push("jukebox");
+        JUKEBOX_MODEL = builder.comment("Use the new jukebox model")
+                .define("new_model", true);
+        JUKEBOX_SPIN = builder.comment("Makes jukebox disc spin while playing")
+                .define("disc_spin", true);
         builder.pop();
 
         builder.push("misc");
 
         BRIGHTEN_SIGN_TEXT_COLOR = builder.comment("A scalar multiplier that will be applied to sign text making it brighter, supposedly more legible")
-                .define("sign_text_color_multiplier", 1.2f, 0, 5);
+                .define("sign_text_color_multiplier", 1.2d, 0, 5);
 
         builder.pop();
 
         builder.onChange(ClientConfigs::onChange);
-        builder.buildAndRegister().loadFromFile();
+        SPEC = builder.buildAndRegister();
+        SPEC.loadFromFile();
 
         ModSharedVariables.registerDouble("color_multiplier", () -> (double) signColorMult);
     }

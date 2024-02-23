@@ -79,6 +79,8 @@ subprojects {
                     relations {
                         requiredDependency "selene"
                         optionalDependency "supplementaries"
+                        optionalDependency "blueprint"
+                        optionalDependency "alexs-caves"
                     }
                 }
             }

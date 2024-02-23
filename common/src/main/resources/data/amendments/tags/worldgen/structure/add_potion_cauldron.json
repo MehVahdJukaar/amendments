@@ -1,0 +1,15 @@
+{
+  "replace": false,
+  "values": [
+    {
+      "id": "snowyspirit:gingerbread_house",
+      "required": false
+    },
+    {
+      "tag": "repurposed_structures:collections/witch_huts",
+      "required": false
+    },
+    "#minecraft:swamp_hut",
+    "betterwitchhuts:witch_hut"
+  ]
+}

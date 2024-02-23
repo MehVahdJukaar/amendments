@@ -1,13 +1,14 @@
 {
   "repaletter": {
     "type": "amendments:blockstate_replace",
-    "replaces_block": "minecraft:cauldron",
+    "replaces_block": "minecraft:water_cauldron",
     "replaces_with": {
       "Name": "amendments:cauldron_hack",
       "properties": {
-        "potion": true
+        "potion": false
       }
-    }
+    },
+    "chance": 0.65
   },
-  "structures": "#amendments:add_potion_cauldron"
+  "structures": "#minecraft:village"
 }

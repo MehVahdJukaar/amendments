@@ -14,4 +14,6 @@ public class CompatHandler {
     public static final boolean CAVE_ENHANCEMENTS = PlatHelper.isModLoaded("cave_enhancements");
     public static final boolean FLAN = PlatHelper.isModLoaded("flan");
     public static final boolean BLUEPRINT = PlatHelper.isModLoaded("blueprint");
+    public static final boolean CONFIGURED = PlatHelper.isModLoaded("configured");
+    public static final boolean ALEX_CAVES = PlatHelper.isModLoaded("alexscaves");
 }

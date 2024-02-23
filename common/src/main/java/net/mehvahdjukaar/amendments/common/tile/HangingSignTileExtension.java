@@ -133,12 +133,13 @@ public class HangingSignTileExtension {
             }
         }
         if (direction == Direction.DOWN) {
-            updateCanSwing(state, neighborState);
+            updateCanSwing(state, neighborState, level, pos);
         }
     }
 
-    private void updateCanSwing(BlockState state, BlockState neighborState) {
-        canSwing = isCeiling ? !state.getValue(CeilingHangingSignBlock.ATTACHED) : !Amendments.canConnectDown(neighborState);
+    private void updateCanSwing(BlockState state, BlockState neighborState, LevelAccessor level, BlockPos pos) {
+        canSwing = isCeiling ? !state.getValue(CeilingHangingSignBlock.ATTACHED) :
+                !Amendments.canConnectDown(neighborState, level, pos);
     }
 
     public void updateAttachments(Level level, BlockPos pos, BlockState state) {
@@ -149,7 +150,7 @@ public class HangingSignTileExtension {
             leftAttachment = ModBlockProperties.PostType.get(level.getBlockState(pos.relative(selfFacing.getCounterClockWise())), true);
         }
         BlockState below = level.getBlockState(pos.below());
-        updateCanSwing(state, below);
+        updateCanSwing(state, below, level, pos);
 
     }
 

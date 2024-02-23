@@ -1,12 +1,15 @@
 package net.mehvahdjukaar.amendments.forge;
 
 import net.mehvahdjukaar.amendments.Amendments;
+import net.mehvahdjukaar.amendments.configs.ClientConfigs;
 import net.mehvahdjukaar.amendments.integration.forge.BlueprintIntegration;
 import net.mehvahdjukaar.amendments.common.block.StructureCauldronHack;
 import net.mehvahdjukaar.amendments.events.ModEvents;
 import net.mehvahdjukaar.amendments.integration.CompatHandler;
+import net.mehvahdjukaar.amendments.integration.forge.configured.ModConfigSelectScreen;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
+import net.mehvahdjukaar.supplementaries.Supplementaries;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
@@ -42,6 +45,9 @@ public class AmendmentsForge {
         MinecraftForge.EVENT_BUS.register(this);
         if (PlatHelper.getPhysicalSide().isClient()) {
             MinecraftForge.EVENT_BUS.register(ClientEvents.class);
+            if (CompatHandler.CONFIGURED && ClientConfigs.CUSTOM_CONFIGURED_SCREEN.get()) {
+                ModConfigSelectScreen.registerConfigScreen(Amendments.MOD_ID, ModConfigSelectScreen::new);
+            }
         }
 
         if(CompatHandler.BLUEPRINT){

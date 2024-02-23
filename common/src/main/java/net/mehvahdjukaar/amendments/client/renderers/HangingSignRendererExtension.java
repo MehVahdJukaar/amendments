@@ -237,6 +237,7 @@ public class HangingSignRendererExtension {
             renderBannerPattern(tile.getFrontText(), poseStack, buffer, light, banner);
         }
         else {
+            poseStack.mulPose(RotHlpr.Y180);
             renderItem(item, poseStack, buffer, light, overlay, tile.getLevel());
         }
     }
@@ -255,7 +256,6 @@ public class HangingSignRendererExtension {
             poseStack.mulPose(RotHlpr.Y180);
             renderBannerPattern(tile.getBackText(), poseStack, buffer, light, banner);
         } else {
-            poseStack.mulPose(RotHlpr.Y180);
             renderItem(item, poseStack, buffer, light, overlay, tile.getLevel());
         }
     }
@@ -318,7 +318,7 @@ public class HangingSignRendererExtension {
         BakedModel model = itemRenderer.getModel(stack, level, null, 0);
         poseStack.pushPose();
         float z = model.isGui3d() ? 7/64f : 5/64f;
-        poseStack.translate(0, -9 / 16f, z);
+        poseStack.translate(0, -9 / 16f, -z);
 
         float scale = ClientConfigs.getItemPixelScale() / 16f;
         poseStack.scale(scale, scale, scale);

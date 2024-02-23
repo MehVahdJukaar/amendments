@@ -73,6 +73,34 @@ public class ClientResourceGenerator extends DynClientResourcesGenerator {
                             }
                             """));
         }
+
+        if(ClientConfigs.JUKEBOX_MODEL.get()){
+            this.dynamicPack.addItemModel(new ResourceLocation("jukebox"), JsonParser.parseString(
+                    """ 
+                            {
+                              "parent": "amendments:block/jukebox"
+                            }
+                            """));
+            this.dynamicPack.addItemModel(new ResourceLocation("jukebox"), JsonParser.parseString(
+                    """ 
+                            {
+                              "parent": "amendments:block/jukebox"
+                            }
+                            """));
+            this.dynamicPack.addBlockState(new ResourceLocation("jukebox"), JsonParser.parseString(
+                    """ 
+                            {
+                              "variants": {
+                                "has_record=true": {
+                                  "model": "amendments:block/jukebox_on"
+                                },
+                                "has_record=false": {
+                                  "model": "amendments:block/jukebox"
+                                }
+                              }
+                            }
+                            """));
+        }
     }
 
     private void generateHangingSignAssets(ResourceManager manager) {

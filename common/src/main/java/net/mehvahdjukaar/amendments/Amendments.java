@@ -24,8 +24,12 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.ai.village.poi.PoiTypes;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.SupportType;
+import net.minecraft.world.level.block.TorchBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -129,9 +133,9 @@ public class Amendments {
         return Block.canSupportCenter(world, pos, Direction.DOWN);
     }
 
-    public static boolean canConnectDown(BlockState neighborState) {
+    public static boolean canConnectDown(BlockState neighborState, LevelAccessor level, BlockPos pos) {
         if (CompatHandler.SUPPLEMENTARIES) return SuppCompat.canConnectDown(neighborState);
-        return neighborState.isSolid();
+        return neighborState.isFaceSturdy(level, pos, Direction.UP, SupportType.CENTER);
     }
 
 }
