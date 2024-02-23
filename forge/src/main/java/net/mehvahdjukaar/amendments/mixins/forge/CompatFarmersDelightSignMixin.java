@@ -1,8 +1,8 @@
 package net.mehvahdjukaar.amendments.mixins.forge;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.mehvahdjukaar.amendments.configs.ClientConfigs;
 import net.mehvahdjukaar.moonlight.api.util.math.ColorUtils;
-import net.mehvahdjukaar.supplementaries.configs.ClientConfigs;
 import net.minecraft.client.model.Model;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.core.BlockPos;
