@@ -12,6 +12,8 @@ import net.mehvahdjukaar.moonlight.api.fluids.BuiltInSoftFluids;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidStack;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidTank;
 import net.mehvahdjukaar.moonlight.api.util.PotionNBTHelper;
+import net.minecraft.client.particle.ParticleEngine;
+import net.minecraft.client.particle.PlayerCloudParticle;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleOptions;
@@ -189,7 +191,7 @@ public class LiquidCauldronBlock extends ModCauldronBlock {
                 PotionNBTHelper.Type type = getPotType(fluid);
                 double height = getContentHeight(state);
                 if (type != null) {
-                    if (getPotionEffectAmount(fluid) >= CommonConfigs.POTION_MIXING_LIMIT.get()) {
+                    if (getPotionEffects(fluid).size() >= CommonConfigs.POTION_MIXING_LIMIT.get()) {
                         addSurfaceParticles(ParticleTypes.SMOKE, level, pos, 2, height, rand, 0, 0, 0);
                     }
                     if (type != PotionNBTHelper.Type.REGULAR) {
@@ -218,8 +220,8 @@ public class LiquidCauldronBlock extends ModCauldronBlock {
         return null;
     }
 
-    private int getPotionEffectAmount(SoftFluidStack stack) {
-        return PotionUtils.getAllEffects(stack.getTag()).size();
+    private List<MobEffectInstance> getPotionEffects(SoftFluidStack stack) {
+        return PotionUtils.getAllEffects(stack.getTag());
     }
 
 
@@ -251,20 +253,8 @@ public class LiquidCauldronBlock extends ModCauldronBlock {
     public BlockState updateStateOnFluidChange(BlockState state, Level level, BlockPos pos, SoftFluidStack fluid) {
         //explosions?
 
-        int potionEffectAmount = getPotionEffectAmount(fluid);
-        if (potionEffectAmount >= CommonConfigs.POTION_MIXING_LIMIT.get()) {
-            if (potionEffectAmount > CommonConfigs.POTION_MIXING_LIMIT.get()) {
-                level.destroyBlock(pos, true);
-                Vec3 vec3 = pos.getCenter();
-                level.explode(null, level.damageSources().badRespawnPointExplosion(vec3), null, vec3.x, vec3.y, vec3.z,
-                        1.4f, false, Level.ExplosionInteraction.NONE);
-
-                return state;
-            } else {
-                addSurfaceParticles(ParticleTypes.SMOKE, level, pos, 12, getContentHeight(state), level.random, 0, 0, 0);
-                level.playSound(null, pos, SoundEvents.GENERIC_EXTINGUISH_FIRE, SoundSource.BLOCKS, 1.0f, 1.0f);
-            }
-        }
+        BlockState exploded = maybeExplode(state, level, pos, fluid);
+        if (exploded != null) return exploded;
 
         int light = fluid.getFluid().value().getLuminosity();
         if (light != state.getValue(ModBlockProperties.LIGHT_LEVEL)) {
@@ -277,6 +267,41 @@ public class LiquidCauldronBlock extends ModCauldronBlock {
             state = state.setValue(LiquidCauldronBlock.LEVEL, height);
         }
         return state;
+    }
+
+    @Nullable
+    private BlockState maybeExplode(BlockState state, Level level, BlockPos pos, SoftFluidStack fluid) {
+        var potionEffects = getPotionEffects(fluid);
+        int potionEffectAmount = potionEffects.size();
+        if (potionEffectAmount >= CommonConfigs.POTION_MIXING_LIMIT.get()) {
+            if (potionEffectAmount > CommonConfigs.POTION_MIXING_LIMIT.get()) {
+                level.destroyBlock(pos, true);
+                Vec3 vec3 = pos.getCenter();
+                level.explode(null, level.damageSources().badRespawnPointExplosion(vec3), null, vec3.x, vec3.y, vec3.z,
+                        1.4f, false, Level.ExplosionInteraction.NONE);
+
+                return state;
+            } else {
+                addSurfaceParticles(ParticleTypes.SMOKE, level, pos, 12, getContentHeight(state), level.random, 0, 0, 0);
+                level.playSound(null, pos, SoundEvents.GENERIC_EXTINGUISH_FIRE, SoundSource.BLOCKS, 1.0f, 1.0f);
+                return null;
+            }
+        }
+        //fizzle
+        var inverse = CommonConfigs.INVERSE_POTIONS.get();
+        var effects = potionEffects.stream().map(MobEffectInstance::getEffect).toList();
+        for (var effect : effects) {
+            var inv = inverse.get(effect);
+            if (inv != null && effects.contains(inv)) {
+
+                addSurfaceParticles(ParticleTypes.POOF, level, pos, 8, getContentHeight(state), level.random,
+                        0, 0.01f + level.random.nextFloat() * 0.1f, 0);
+                level.playSound(null, pos, SoundEvents.GENERIC_EXTINGUISH_FIRE, SoundSource.BLOCKS, 1.0f, 1.0f);
+                return Blocks.CAULDRON.defaultBlockState();
+            }
+        }
+
+        return null;
     }
 
 

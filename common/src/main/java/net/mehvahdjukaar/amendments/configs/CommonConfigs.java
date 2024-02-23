@@ -182,8 +182,8 @@ public class CommonConfigs {
         map.put(MobEffects.DIG_SLOWDOWN, MobEffects.DIG_SPEED);
         map.put(MobEffects.MOVEMENT_SPEED, MobEffects.MOVEMENT_SLOWDOWN);
         map.put(MobEffects.MOVEMENT_SLOWDOWN, MobEffects.MOVEMENT_SPEED);
-        map.put(MobEffects.DAMAGE_RESISTANCE, MobEffects.WEAKNESS);
-        map.put(MobEffects.WEAKNESS, MobEffects.DAMAGE_RESISTANCE);
+        map.put(MobEffects.DAMAGE_BOOST, MobEffects.WEAKNESS);
+        map.put(MobEffects.WEAKNESS, MobEffects.DAMAGE_BOOST);
         map.put(MobEffects.HARM, MobEffects.HEAL);
         map.put(MobEffects.HEAL, MobEffects.HARM);
         map.put(MobEffects.LUCK, MobEffects.UNLUCK);
