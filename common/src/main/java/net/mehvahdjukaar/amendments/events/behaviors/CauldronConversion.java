@@ -3,8 +3,9 @@ package net.mehvahdjukaar.amendments.events.behaviors;
 import net.mehvahdjukaar.amendments.common.block.LiquidCauldronBlock;
 import net.mehvahdjukaar.amendments.common.tile.LiquidCauldronBlockTile;
 import net.mehvahdjukaar.amendments.configs.CommonConfigs;
+import net.mehvahdjukaar.amendments.integration.CompatHandler;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
-import net.mehvahdjukaar.moonlight.api.fluids.BuiltInSoftFluids;
+import net.mehvahdjukaar.amendments.reg.ModTags;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidStack;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidTank;
 import net.mehvahdjukaar.moonlight.api.util.DispenserHelper;
@@ -63,8 +64,8 @@ public class CauldronConversion implements BlockUse {
 
         Item item = stack.getItem();
         var fluid = SoftFluidStack.fromItem(stack);
-        if (fluid != null && !stack.is(Items.LAVA_BUCKET) && !stack.is(Items.POWDER_SNOW_BUCKET) &&
-                !stack.is(Items.WATER_BUCKET) && !((stack.is(Items.POTION) && fluid.getFirst().is(BuiltInSoftFluids.WATER.get())))) {
+        if (fluid != null && !fluid.getFirst().is(ModTags.CAULDRON_BLACKLIST)) {
+            if (CompatHandler.RATS && stack.is(Items.MILK_BUCKET)) return null;
             BlockState newState;
             if (item == ModRegistry.DYE_BOTTLE_ITEM.get()) {
                 newState = ModRegistry.DYE_CAULDRON.get().defaultBlockState();

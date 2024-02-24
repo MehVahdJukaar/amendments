@@ -7,6 +7,7 @@ import net.mehvahdjukaar.amendments.common.CakeRegistry;
 import net.mehvahdjukaar.amendments.configs.ClientConfigs;
 import net.mehvahdjukaar.amendments.integration.CompatHandler;
 import net.mehvahdjukaar.amendments.mixins.SignRendererAccessor;
+import net.mehvahdjukaar.moonlight.api.events.AfterLanguageLoadEvent;
 import net.mehvahdjukaar.moonlight.api.resources.RPUtils;
 import net.mehvahdjukaar.moonlight.api.resources.ResType;
 import net.mehvahdjukaar.moonlight.api.resources.StaticResource;
@@ -22,7 +23,6 @@ import net.mehvahdjukaar.moonlight.api.util.Utils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
-import net.minecraft.client.renderer.blockentity.SignRenderer;
 import net.minecraft.client.resources.model.Material;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
@@ -74,7 +74,7 @@ public class ClientResourceGenerator extends DynClientResourcesGenerator {
                             """));
         }
 
-        if(ClientConfigs.JUKEBOX_MODEL.get()){
+        if (ClientConfigs.JUKEBOX_MODEL.get()) {
             this.dynamicPack.addItemModel(new ResourceLocation("jukebox"), JsonParser.parseString(
                     """ 
                             {
@@ -126,9 +126,9 @@ public class ClientResourceGenerator extends DynClientResourcesGenerator {
             Material hangingSignMaterial = Sheets.getHangingSignMaterial(vanilla);
             if (hangingSignMaterial == null) {
                 try {
-                    BlockEntity be = ((EntityBlock)hangingSign).newBlockEntity(BlockPos.ZERO, hangingSign.defaultBlockState());
+                    BlockEntity be = ((EntityBlock) hangingSign).newBlockEntity(BlockPos.ZERO, hangingSign.defaultBlockState());
                     BlockEntityRenderer<?> renderer = Minecraft.getInstance().getBlockEntityRenderDispatcher().getRenderer(be);
-                    if(renderer instanceof SignRendererAccessor sr){
+                    if (renderer instanceof SignRendererAccessor sr) {
                         hangingSignMaterial = sr.invokeGetSignMaterial(vanilla);
                     }
                 } catch (Exception e) {
@@ -259,6 +259,16 @@ public class ClientResourceGenerator extends DynClientResourcesGenerator {
                     Amendments.LOGGER.error("Failed to generate model for double cake {},", t, e);
                 }
             }
+        }
+    }
+
+
+    @Override
+    public void addDynamicTranslations(AfterLanguageLoadEvent languageEvent) {
+        if (languageEvent.isDefault()) {
+            languageEvent.addEntry("item.minecraft.lingering_potion.effect.empty", "Lingering Mixed Potion");
+            languageEvent.addEntry("item.minecraft.splash_potion.effect.empty", "Splash Mixed Potion");
+            languageEvent.addEntry("item.minecraft.potion.effect.empty", "Mixed Potion");
         }
     }
 }

@@ -12,6 +12,7 @@ import net.minecraft.world.level.block.Block;
 public class ModTags {
 
     public static final TagKey<SoftFluid> CAN_BOIL = fluidTag("can_boil");
+    public static final TagKey<SoftFluid> CAULDRON_BLACKLIST = fluidTag("cant_go_in_cauldron");
     //block tags
     public static final TagKey<Block> POSTS = suppTag("posts");
     public static final TagKey<Block> PALISADES = suppTag("palisades");
