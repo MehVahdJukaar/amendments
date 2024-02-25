@@ -16,6 +16,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.violetmoon.quark.addons.oddities.module.MatrixEnchantingModule;
 import org.violetmoon.quark.addons.oddities.util.Influence;
 import org.violetmoon.quark.api.IEnchantmentInfluencer;
@@ -29,6 +30,7 @@ public abstract class CompatQuarkSelfCandleSkullMixin implements IEnchantmentInf
     @Shadow
     public abstract ParticleType<? extends ParticleOptions> getParticle();
 
+    @Unique
     private DyeColor getColor(BlockState s, BlockGetter level, BlockPos pos) {
         if (s.getValue(CandleBlock.LIT)) {
             if (level.getBlockEntity(pos) instanceof CandleSkullBlockTile tile) {

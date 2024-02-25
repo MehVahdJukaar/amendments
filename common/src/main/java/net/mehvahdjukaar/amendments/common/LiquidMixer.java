@@ -40,7 +40,7 @@ public class LiquidMixer {
                         effectInstance -> effectInstance,
                         LiquidMixer::mergeEffects));
 
-        mergedMap.entrySet().removeIf(e -> e.getValue().getDuration() <= 0 || e.getValue().getAmplifier() <= 0);
+        mergedMap.entrySet().removeIf(e -> e.getValue().getDuration() <= 0 || e.getValue().getAmplifier() < 0);
 
         tankTag.putInt("CustomPotionColor", PotionUtils.getColor(mergedMap.values()));
         tankTag.remove("Potion"); //remove normal potion

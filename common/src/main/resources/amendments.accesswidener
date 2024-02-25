@@ -30,6 +30,7 @@ accessible method net/minecraft/client/gui/screens/inventory/BookEditScreen setC
 accessible method net/minecraft/client/gui/screens/inventory/BookEditScreen getClipboard ()Ljava/lang/String;
 
 accessible class net/minecraft/client/gui/screens/inventory/BookEditScreen$DisplayCache
+accessible class net/minecraft/client/gui/screens/inventory/BookEditScreen$DisplayCache
 accessible class net/minecraft/client/gui/screens/inventory/BookEditScreen$Pos2i
 
 accessible method net/minecraft/world/entity/Entity getSwimSplashSound ()Lnet/minecraft/sounds/SoundEvent;
