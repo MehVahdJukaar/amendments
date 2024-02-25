@@ -61,18 +61,22 @@ public class CauldronConversion implements BlockUse {
 
     @Nullable
     public static BlockState getNewState(BlockPos pos, Level level, ItemStack stack) {
-
-        Item item = stack.getItem();
         var fluid = SoftFluidStack.fromItem(stack);
-        if (fluid != null && !fluid.getFirst().is(ModTags.CAULDRON_BLACKLIST)) {
-            if (CompatHandler.RATS && stack.is(Items.MILK_BUCKET)) return null;
+        if (fluid == null) return null;
+        if (CompatHandler.RATS && stack.is(Items.MILK_BUCKET)) return null;
+        return getNewState(pos, level, fluid.getFirst());
+    }
+
+    @Nullable
+    public static BlockState getNewState(BlockPos pos, Level level, SoftFluidStack fluid) {
+        if (fluid != null && !fluid.is(ModTags.CAULDRON_BLACKLIST)) {
             BlockState newState;
-            if (item == ModRegistry.DYE_BOTTLE_ITEM.get()) {
+            if (fluid.is(ModRegistry.DYE_SOFT_FLUID.get())) {
                 newState = ModRegistry.DYE_CAULDRON.get().defaultBlockState();
             } else {
                 newState = ModRegistry.LIQUID_CAULDRON.get().defaultBlockState()
                         .setValue(LiquidCauldronBlock.BOILING,
-                                LiquidCauldronBlock.shouldBoil(level.getBlockState(pos.below()), fluid.getFirst()));
+                                LiquidCauldronBlock.shouldBoil(level.getBlockState(pos.below()), fluid));
             }
             return newState;
         }

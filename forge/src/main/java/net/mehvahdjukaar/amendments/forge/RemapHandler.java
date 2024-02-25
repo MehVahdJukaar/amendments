@@ -4,12 +4,13 @@ import net.mehvahdjukaar.amendments.Amendments;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.RecordItem;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.MissingMappingsEvent;
 
 
-@Mod.EventBusSubscriber
+@Mod.EventBusSubscriber(modid = Amendments.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class RemapHandler {
 
 
@@ -22,11 +23,11 @@ public class RemapHandler {
     }
 
 
-    private static <T> void remapAll(MissingMappingsEvent event, Registry<T> block) {
+    private static <T> void remapAll(MissingMappingsEvent event, Registry<T> registry) {
         for (var mod : Amendments.OLD_MODS) {
-            for (var mapping : event.getMappings(block.key(), mod)) {
+            for (var mapping : event.getMappings(registry.key(), mod)) {
                 ResourceLocation newLoc = Amendments.res(mapping.getKey().getPath());
-                var newBlock = block.getOptional(newLoc);
+                var newBlock = registry.getOptional(newLoc);
                 newBlock.ifPresent(mapping::remap);
             }
         }

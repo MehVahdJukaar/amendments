@@ -63,8 +63,10 @@ public class BoilingWaterCauldronBlock extends LayeredCauldronBlock {
     @Override
     public void fallOn(Level level, BlockState state, BlockPos pos, Entity entity, float fallDistance) {
         if (this.isEntityInsideContent(state, pos, entity)) {
-            LiquidCauldronBlock.playSplashAnimation(level, pos, entity, getContentHeight(state),
-                    3694022);
+            if(level.isClientSide) {
+                LiquidCauldronBlock.playSplashAnimation(level, pos, entity, getContentHeight(state),
+                        3694022);
+            }
             super.fallOn(level, state, pos, entity, 0);
         } else super.fallOn(level, state, pos, entity, fallDistance);
     }

@@ -20,7 +20,11 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TagsUpdatedEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.event.server.ServerAboutToStartEvent;
+import net.minecraftforge.event.server.ServerStartedEvent;
+import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
+import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -41,7 +45,8 @@ public class AmendmentsForge {
 
     public AmendmentsForge() {
         Amendments.init();
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(AmendmentsForge::onRegisterPOI);
+        IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
+        bus.addListener(AmendmentsForge::onRegisterPOI);
         MinecraftForge.EVENT_BUS.register(this);
         if (PlatHelper.getPhysicalSide().isClient()) {
             MinecraftForge.EVENT_BUS.register(ClientEvents.class);

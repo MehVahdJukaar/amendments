@@ -6,10 +6,13 @@
       "required": false
     },
     {
-      "tag": "repurposed_structures:collections/witch_huts",
+      "id": "betterwitchhuts:witch_hut",
       "required": false
     },
-    "#minecraft:swamp_hut",
-    "betterwitchhuts:witch_hut"
+    {
+      "id": "#repurposed_structures:collections/witch_huts",
+      "required": false
+    },
+    "#minecraft:swamp_hut"
   ]
 }

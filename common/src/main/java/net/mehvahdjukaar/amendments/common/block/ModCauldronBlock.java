@@ -63,7 +63,7 @@ public abstract class ModCauldronBlock extends AbstractCauldronBlock implements 
     @Override
     public void fallOn(Level level, BlockState state, BlockPos pos, Entity entity, float fallDistance) {
         if (isEntityInsideContent(state, pos, entity)) {
-            if (level.getBlockEntity(pos) instanceof LiquidCauldronBlockTile tile) {
+            if (level.isClientSide && level.getBlockEntity(pos) instanceof LiquidCauldronBlockTile tile) {
                 int color = tile.getSoftFluidTank().getParticleColor(level, pos);
                 playSplashAnimation(level, pos, entity, getContentHeight(state), color);
             }
@@ -181,7 +181,7 @@ public abstract class ModCauldronBlock extends AbstractCauldronBlock implements 
     public abstract BlockState updateStateOnFluidChange(BlockState state, Level level, BlockPos pos, SoftFluidStack fluid);
 
     public static void addSurfaceParticles(ParticleOptions type, Level level, BlockPos pos, int count, double surface, RandomSource rand,
-                                    float r, float g, float b) {
+                                           float r, float g, float b) {
         for (int i = 0; i < count; i++) {
             double x = pos.getX() + 0.1875D + (rand.nextFloat() * 0.625D);
             double y = pos.getY() + surface;
