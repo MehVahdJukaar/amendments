@@ -1,5 +1,6 @@
 package net.mehvahdjukaar.amendments.reg;
 
+import net.mehvahdjukaar.amendments.common.tile.DynamicRenderedBlockTile;
 import net.mehvahdjukaar.amendments.integration.CompatHandler;
 import net.mehvahdjukaar.amendments.integration.SuppCompat;
 import net.mehvahdjukaar.moonlight.api.block.MimicBlockTile;
@@ -19,7 +20,7 @@ import java.util.Locale;
 public class ModBlockProperties {
 
     public static final ModelDataKey<BlockState> MIMIC = MimicBlockTile.MIMIC_KEY;
-    public static final ModelDataKey<Boolean> FANCY = new ModelDataKey<>(Boolean.class);
+    public static final ModelDataKey<Boolean> FANCY = DynamicRenderedBlockTile.IS_FANCY;
     public static final EnumProperty<SignAttachment> SIGN_ATTACHMENT = EnumProperty.create("sign_attachment", SignAttachment.class);
     public static final EnumProperty<BlockAttachment> BLOCK_ATTACHMENT = EnumProperty.create("attachment", BlockAttachment.class);
     public static final IntegerProperty LIGHT_LEVEL = IntegerProperty.create("light_level", 0, 15);

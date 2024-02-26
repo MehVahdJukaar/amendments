@@ -23,6 +23,7 @@ import net.mehvahdjukaar.moonlight.api.platform.RegHelper;
 import net.mehvahdjukaar.moonlight.api.set.BlockSetAPI;
 import net.mehvahdjukaar.moonlight.api.set.BlocksColorAPI;
 import net.minecraft.Util;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -198,6 +199,17 @@ public class ModRegistry {
                     .sized(0.98F, 0.98F)
                     .clientTrackingRange(10)
                     .updateInterval(20));
+
+    //tool hook
+    public static final Supplier<ToolHookBlock> TOOL_HOOK = regBlock(TOOL_HOOK_NAME, () -> {
+        var p = BlockBehaviour.Properties.copy(Blocks.TRIPWIRE_HOOK).dropsLike(Blocks.TRIPWIRE_HOOK);
+        return new ToolHookBlock(p);
+    });
+
+    public static final Supplier<BlockEntityType<ToolHookBlockTile>> TOOL_HOOK_TILE = regTile(
+            TOOL_HOOK_NAME, () -> PlatHelper.newBlockEntityType(
+                    ToolHookBlockTile::new, TOOL_HOOK.get()));
+
 
     //stackable skulls
     public static final Supplier<Block> SKULL_PILE = regBlock(SKULL_PILE_NAME, () -> {

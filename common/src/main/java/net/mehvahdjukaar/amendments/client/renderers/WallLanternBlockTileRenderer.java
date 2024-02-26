@@ -29,6 +29,10 @@ public class WallLanternBlockTileRenderer implements BlockEntityRenderer<WallLan
         this.camera = Minecraft.getInstance().gameRenderer.getMainCamera();
     }
 
+    @Override
+    public int getViewDistance() {
+        return BlockEntityRenderer.super.getViewDistance();
+    }
 
     public void renderLantern(WallLanternBlockTile tile, BlockState lanternState, float partialTicks, PoseStack poseStack, MultiBufferSource bufferIn,
                               int combinedLightIn, int combinedOverlayIn, boolean ceiling) {

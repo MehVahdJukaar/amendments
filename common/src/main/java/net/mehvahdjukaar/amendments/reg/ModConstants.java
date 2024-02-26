@@ -16,4 +16,5 @@ public class ModConstants {
     public static final String SKULL_CANDLE_SOUL_NAME = "skull_candle_soul";
     public static final String WALL_LANTERN_NAME = "wall_lantern";
     public static final String FALLING_LANTERN_NAME = "falling_lantern";
+    public static final String TOOL_HOOK_NAME = "tool_hook";
 }
