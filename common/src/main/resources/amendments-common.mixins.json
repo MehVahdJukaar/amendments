@@ -21,6 +21,7 @@
     "LanternBlockPlacementMixin",
     "LecternBlockEntityMixin",
     "LecternBlockMixin",
+    "PotionTooltipMixin",
     "VineMixin",
     "WallHangingSignBlockMixin",
     "WaterLilyMixin"

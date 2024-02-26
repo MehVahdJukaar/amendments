@@ -1,10 +1,8 @@
 package net.mehvahdjukaar.amendments.common.block;
 
 
-import dev.architectury.injectables.annotations.PlatformOnly;
 import net.mehvahdjukaar.amendments.common.tile.CarpetedBlockTile;
 import net.mehvahdjukaar.amendments.reg.ModBlockProperties;
-import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.moonlight.api.block.IBlockHolder;
 import net.mehvahdjukaar.moonlight.api.block.IRecolorable;
 import net.mehvahdjukaar.moonlight.api.misc.ForgeOverride;
@@ -29,8 +27,11 @@ import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
+import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.BlockHitResult;
@@ -42,7 +43,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class CarpetSlabBlock extends SlabBlock implements EntityBlock , IRecolorable {
+public class CarpetSlabBlock extends SlabBlock implements EntityBlock, IRecolorable {
 
     public static final IntegerProperty LIGHT_LEVEL = ModBlockProperties.LIGHT_LEVEL;
     public static final BooleanProperty SOLID = ModBlockProperties.SOLID;
@@ -53,7 +54,6 @@ public class CarpetSlabBlock extends SlabBlock implements EntityBlock , IRecolor
                 .lightLevel(state -> Math.max(0, state.getValue(LIGHT_LEVEL))));
         this.registerDefaultState(this.defaultBlockState().setValue(SOLID, true).setValue(LIGHT_LEVEL, 0));
     }
-
 
     @Override
     public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
@@ -127,7 +127,6 @@ public class CarpetSlabBlock extends SlabBlock implements EntityBlock , IRecolor
     }
 
     @ForgeOverride
-    //@Override
     public ItemStack getCloneItemStack(BlockState state, HitResult target, BlockGetter level, BlockPos pos, Player player) {
         if (level.getBlockEntity(pos) instanceof CarpetedBlockTile tile) {
             if (target instanceof BlockHitResult hs && hs.getDirection() == Direction.UP) {
@@ -155,41 +154,19 @@ public class CarpetSlabBlock extends SlabBlock implements EntityBlock , IRecolor
     }
 
     @Override
-    public BlockState updateShape(BlockState state, Direction facing, BlockState facingState, LevelAccessor world, BlockPos currentPos,
-                                  BlockPos facingPos) {
-        var newState = super.updateShape(state, facing, facingState, world, currentPos, facingPos);
-        if (world.getBlockEntity(currentPos) instanceof CarpetedBlockTile tile) {
-            BlockState oldHeld = tile.getHeldBlock();
-
-            CarpetedBlockTile otherTile = null;
-            if (facingState.is(ModRegistry.CARPET_STAIRS.get())) {
-                if (world.getBlockEntity(facingPos) instanceof CarpetedBlockTile te2) {
-                    otherTile = te2;
-                    facingState = otherTile.getHeldBlock();
-                }
+    public boolean placeLiquid(LevelAccessor level, BlockPos pos, BlockState state, FluidState fluidState) {
+        if (!state.getValue(BlockStateProperties.WATERLOGGED) && fluidState.getType() == Fluids.WATER) {
+            if (!level.isClientSide() && level.getBlockEntity(pos) instanceof CarpetedBlockTile te && level instanceof Level l) {
+                Block.popResource(l, pos, te.getCarpet().getBlock().asItem().getDefaultInstance());
+                level.setBlock(pos, te.getSlab().getBlock()
+                        .withPropertiesOf(state)
+                        .setValue(BlockStateProperties.WATERLOGGED, true), 3);
+                level.scheduleTick(pos, fluidState.getType(), fluidState.getType().getTickDelay(level));
             }
-
-            BlockState newHeld = oldHeld.updateShape(facing, facingState, world, currentPos, facingPos);
-
-            //manually refreshTextures facing states
-
-            BlockState newFacing = facingState.updateShape(facing.getOpposite(), newHeld, world, facingPos, currentPos);
-
-            if (newFacing != facingState) {
-                if (otherTile != null) {
-                    otherTile.setHeldBlock(newFacing);
-                    otherTile.setChanged();
-                } else {
-                    world.setBlock(facingPos, newFacing, 2);
-                }
-            }
-
-            if (newHeld != oldHeld) {
-                tile.setHeldBlock(newHeld);
-            }
+            return true;
+        } else {
+            return false;
         }
-
-        return newState;
     }
 
     @Override

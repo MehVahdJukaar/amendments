@@ -6,6 +6,7 @@ import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidStack;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidTank;
 import net.mehvahdjukaar.moonlight.api.util.math.ColorUtils;
 import net.mehvahdjukaar.moonlight.api.util.math.colors.HSLColor;
+import net.mehvahdjukaar.moonlight.api.util.math.colors.LABColor;
 import net.mehvahdjukaar.moonlight.api.util.math.colors.RGBColor;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
@@ -84,11 +85,12 @@ public class DyeBottleItem extends Item {
     }
 
     public static DyeColor getClosestDye(int tintColor) {
-        HSLColor color = new RGBColor(tintColor).asHSL();
+        LABColor color = new RGBColor(tintColor).asLAB();
         double minDist = Double.MAX_VALUE;
         DyeColor minColor = null;
         for (DyeColor dyeColor : DyeColor.values()) {
-            HSLColor c2 = new RGBColor(getDyeInt(dyeColor)).asHSL();
+            //hsl distance is broken
+            LABColor c2 = new RGBColor(getDyeInt(dyeColor)).asLAB();
             double dist = c2.distTo(color);
             if (dist < minDist) {
                 minDist = dist;

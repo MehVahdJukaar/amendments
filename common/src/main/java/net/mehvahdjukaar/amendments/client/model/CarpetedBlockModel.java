@@ -1,6 +1,8 @@
 package net.mehvahdjukaar.amendments.client.model;
 
+import net.mehvahdjukaar.amendments.common.block.CarpetSlabBlock;
 import net.mehvahdjukaar.amendments.common.tile.CarpetedBlockTile;
+import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.moonlight.api.client.model.BakedQuadsTransformer;
 import net.mehvahdjukaar.moonlight.api.client.model.CustomBakedModel;
 import net.mehvahdjukaar.moonlight.api.client.model.ExtraModelData;
@@ -62,10 +64,11 @@ public class CarpetedBlockModel implements CustomBakedModel {
 
                 if (!carpetQuads.isEmpty()) {
                     if (carpetBlock != null) {
+                        boolean occl = (state.is(ModRegistry.CARPET_SLAB.get()));
                         TextureAtlasSprite sprite = getCarpetSprite(carpetBlock);
                         BakedQuadsTransformer transformer = BakedQuadsTransformer.create()
                                 .applyingSprite(sprite)
-                                .applyingAmbientOcclusion(false);
+                                .applyingAmbientOcclusion(occl);
                         carpetQuads = transformer.transformAll(carpetQuads);
                     }
                     quads.addAll(carpetQuads);

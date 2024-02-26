@@ -38,6 +38,7 @@ import java.util.stream.Stream;
 public class ClientResourceGenerator extends DynClientResourcesGenerator {
     public ClientResourceGenerator() {
         super(new DynamicTexturePack(Amendments.res("generated_pack")));
+        this.dynamicPack.addNamespaces("minecraft");
     }
 
     @Override
@@ -75,12 +76,6 @@ public class ClientResourceGenerator extends DynClientResourcesGenerator {
         }
 
         if (ClientConfigs.JUKEBOX_MODEL.get()) {
-            this.dynamicPack.addItemModel(new ResourceLocation("jukebox"), JsonParser.parseString(
-                    """ 
-                            {
-                              "parent": "amendments:block/jukebox"
-                            }
-                            """));
             this.dynamicPack.addItemModel(new ResourceLocation("jukebox"), JsonParser.parseString(
                     """ 
                             {

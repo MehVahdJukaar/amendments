@@ -18,6 +18,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -58,6 +59,10 @@ public class CarpetedBlockTile extends MimicBlockTile {
 
     public BlockState getCarpet() {
         return getHeldBlock(1);
+    }
+
+    public BlockState getSlab(){
+        return getHeldBlock();
     }
 
     @Override
@@ -122,5 +127,6 @@ public class CarpetedBlockTile extends MimicBlockTile {
 
         return soundType;
     }
+
 }
 

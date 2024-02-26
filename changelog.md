@@ -1,3 +1,3 @@
-fixed a particle crash on servers
-fixed structure repaletters not working cause of broen tag
-fixed potion mixing not working anymore with potions having an amplifier of 0
+- fixed jukebox model not being applied on first reload
+- waterlogged lilypad conversion will now happen seamlessly (hitbox and models dont appear to move)
+- waterlogging a carpeted block will make the carpet pop off

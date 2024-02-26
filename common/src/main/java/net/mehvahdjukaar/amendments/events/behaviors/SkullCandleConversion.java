@@ -74,7 +74,8 @@ public class SkullCandleConversion implements ItemUseOnBlock {
                 }
 
                 InteractionResult result = InteractEvents.replaceSimilarBlock(b,
-                        player, stack, pos, world, state, SoundType.CANDLE, SkullBlock.ROTATION, WallSkullBlock.FACING);
+                        player, stack, pos, world, state, SoundType.CANDLE,
+                        true, SkullBlock.ROTATION, WallSkullBlock.FACING);
 
                 if (result.consumesAction()) {
                     if (world.getBlockEntity(pos) instanceof CandleSkullBlockTile tile) {

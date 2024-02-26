@@ -2,6 +2,10 @@
   "replace": false,
   "values": [
     {"id":"moonlight:potion","required":false},
-    {"id":"moonlight:water","required":false}
+    {"id":"moonlight:water","required":false},
+    {"id":"moonlight:suspirious_stew","required":false},
+    {"id":"moonlight:rabbit_stew","required":false},
+    {"id":"moonlight:beetroot_soup","required":false},
+    {"id":"moonlight:mushroom_stew","required":false}
   ]
 }

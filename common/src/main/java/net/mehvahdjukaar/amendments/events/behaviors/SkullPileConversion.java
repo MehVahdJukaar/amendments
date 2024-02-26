@@ -62,7 +62,7 @@ class SkullPileConversion implements ItemUseOnBlock {
                 ItemStack copy = stack.copy();
 
                 InteractionResult result = InteractEvents.replaceSimilarBlock(ModRegistry.SKULL_PILE.get(),
-                        player, stack, pos, world, state, null, SkullBlock.ROTATION);
+                        player, stack, pos, world, state, null, true, SkullBlock.ROTATION);
 
                 if (result.consumesAction()) {
                     if (world.getBlockEntity(pos) instanceof DoubleSkullBlockTile tile) {

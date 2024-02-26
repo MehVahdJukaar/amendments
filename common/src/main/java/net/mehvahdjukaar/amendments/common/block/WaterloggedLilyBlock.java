@@ -44,6 +44,7 @@ public class WaterloggedLilyBlock extends WaterlilyBlock implements LiquidBlockC
 
     protected static final VoxelShape AABB = Block.box(1.0D, 15.0D, 1.0D, 15.0D, 16D, 15.0D);
     protected static final VoxelShape AABB_EXTENDED = Block.box(1.0D, 15.0D, 1.0D, 15.0D, 17.5, 15.0D);
+    protected static final VoxelShape AABB_FAKE = Block.box(1.0D, 16.0D, 1.0D, 15.0D, 17.5, 15.0D);
     protected static final VoxelShape AABB_SUPPORT = Block.box(0.0D, 15.0D, 0.0D, 16.0D, 16D, 16.0D);
 
     public static final BooleanProperty EXTENDED = BlockStateProperties.EXTENDED;
@@ -61,12 +62,22 @@ public class WaterloggedLilyBlock extends WaterlilyBlock implements LiquidBlockC
 
     @Override
     public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext collisionContext) {
+        return state.getValue(EXTENDED) ? AABB_FAKE : AABB;
+    }
+
+    @Override
+    public VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return state.getValue(EXTENDED) ? AABB_EXTENDED : AABB;
     }
 
     @Override
     public VoxelShape getBlockSupportShape(BlockState state, BlockGetter reader, BlockPos pos) {
         return AABB_SUPPORT;
+    }
+
+    @Override
+    public VoxelShape getVisualShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+        return Shapes.empty();
     }
 
     @Override
@@ -192,7 +203,6 @@ public class WaterloggedLilyBlock extends WaterlilyBlock implements LiquidBlockC
         return false;
     }
 
-    //@Override
     @ForgeOverride
     public float getExplosionResistance(BlockState state, BlockGetter world, BlockPos pos, Explosion explosion) {
         if (world.getBlockEntity(pos) instanceof IBlockHolder tile) {
@@ -220,8 +230,5 @@ public class WaterloggedLilyBlock extends WaterlilyBlock implements LiquidBlockC
         return Blocks.LILY_PAD.getDescriptionId();
     }
 
-    @Override
-    public VoxelShape getVisualShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
-        return Shapes.empty();
-    }
+
 }

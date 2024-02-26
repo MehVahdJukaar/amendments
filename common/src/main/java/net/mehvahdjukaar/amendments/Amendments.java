@@ -74,7 +74,6 @@ public class Amendments {
         //here we go. ideas part 2
         //carpeted trapdoor
         //flower pot broken color and grass
-        //lantern holding animation
         //campfire interact hoppers
         //make directional cake reg override
         //tripwire hook and lead
@@ -84,9 +83,10 @@ public class Amendments {
         //hanging signs banner pattersn and items
         //cobwebs animation string thngies
         //shiny particles on emeralds
-
+        //pink petals
         //waterlogged hollow logs have bubbles wit magma quark
         //particle mod snow rain enderman teleport, smoke wind lightning
+        //low tech mod?
     }
 
     private static void setup() {

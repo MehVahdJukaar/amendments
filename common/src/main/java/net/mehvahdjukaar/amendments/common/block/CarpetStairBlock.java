@@ -31,9 +31,12 @@ import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.Half;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
+import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.BlockHitResult;
@@ -93,6 +96,22 @@ public class CarpetStairBlock extends ModStairBlock implements EntityBlock, IRec
             voxelShape = Shapes.or(voxelShape, OCTET_PPP);
         }
         return voxelShape;
+    }
+
+    @Override
+    public boolean placeLiquid(LevelAccessor level, BlockPos pos, BlockState state, FluidState fluidState) {
+        if (!state.getValue(BlockStateProperties.WATERLOGGED) && fluidState.getType() == Fluids.WATER) {
+            if (!level.isClientSide() && level.getBlockEntity(pos) instanceof CarpetedBlockTile te && level instanceof Level l) {
+                Block.popResource(l, pos, te.getCarpet().getBlock().asItem().getDefaultInstance());
+                level.setBlock(pos, te.getSlab().getBlock()
+                        .withPropertiesOf(state)
+                        .setValue(BlockStateProperties.WATERLOGGED, true), 3);
+                level.scheduleTick(pos, fluidState.getType(), fluidState.getType().getTickDelay(level));
+            }
+            return true;
+        } else {
+            return false;
+        }
     }
 
     @Override

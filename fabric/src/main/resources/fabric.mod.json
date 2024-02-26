@@ -34,9 +34,9 @@
   "conflicts": {
     "supplementaries": "<1.20-2.8.0"
   },
-  "incompatible": [
-    "carpeted",
-    "betterlily",
-    "betterjukebox"
-  ]
+  "breaks": {
+    "carpeted": "*",
+    "betterlily": "*",
+    "betterjukebox": "*"
+  }
 }

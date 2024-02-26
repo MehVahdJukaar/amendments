@@ -181,7 +181,9 @@ public class InteractEvents {
 
     public static InteractionResult replaceSimilarBlock(Block blockOverride, Player player, ItemStack stack,
                                                         BlockPos pos, Level level, BlockState replaced,
-                                                        @Nullable SoundType sound, Property<?>... properties) {
+                                                        @Nullable SoundType sound,
+                                                        boolean keepWater,
+                                                        Property<?>... properties) {
 
         BlockState newState = blockOverride.defaultBlockState();
         for (Property<?> p : properties) {
@@ -189,7 +191,8 @@ public class InteractEvents {
         }
         if (newState.hasProperty(BlockStateProperties.WATERLOGGED)) {
             FluidState fluidstate = level.getFluidState(pos);
-            newState = newState.setValue(BlockStateProperties.WATERLOGGED, fluidstate.is(FluidTags.WATER) && fluidstate.getAmount() == 8);
+            newState = newState.setValue(BlockStateProperties.WATERLOGGED,
+                    keepWater && fluidstate.is(FluidTags.WATER) && fluidstate.getAmount() == 8);
         }
         if (!level.setBlock(pos, newState, 3)) {
             return InteractionResult.FAIL;

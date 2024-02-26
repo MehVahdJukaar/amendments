@@ -58,8 +58,8 @@ public class CarpetStairsConversion implements ItemUseOnBlock {
                 BlockState carpet = ((BlockItem) stack.getItem()).getBlock().defaultBlockState();
 
                 InteractionResult result = InteractEvents.replaceSimilarBlock(ModRegistry.CARPET_STAIRS.get(),
-                        player, stack, pos, level, stairsState, carpet.getSoundType(), StairBlock.FACING, StairBlock.WATERLOGGED,
-                        StairBlock.SHAPE, StairBlock.HALF);
+                        player, stack, pos, level, stairsState, carpet.getSoundType(),
+                        false, StairBlock.FACING, StairBlock.WATERLOGGED, StairBlock.SHAPE, StairBlock.HALF);
 
                 if (result.consumesAction()) {
                     if (level.getBlockEntity(pos) instanceof CarpetedBlockTile tile) {
