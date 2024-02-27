@@ -35,6 +35,8 @@ public class CommonConfigs {
     public static final Supplier<Integer> POTION_RECIPES_PER_LAYER;
     //TODO: more cauldron configs
 
+    public static final Supplier<Boolean> TOOL_HOOK;
+
     public static final Supplier<Boolean> CARPETED_STAIRS;
     public static final Supplier<Boolean> CARPETED_SLABS;
 
@@ -95,6 +97,11 @@ public class CommonConfigs {
 
         CONNECT_TO_FENCES = builder.comment("Makes cauldrons connect to fences")
                 .define("connect_to_fences", true);
+        builder.pop();
+
+        builder.push("tripwire_hook");
+        TOOL_HOOK = builder.comment("Allows placing tools on tripwire hooks")
+                .define("tool_hook", true);
         builder.pop();
 
         builder.push("carpets");

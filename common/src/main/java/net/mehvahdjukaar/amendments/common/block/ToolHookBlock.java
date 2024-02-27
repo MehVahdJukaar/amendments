@@ -1,12 +1,15 @@
 package net.mehvahdjukaar.amendments.common.block;
 
 import net.mehvahdjukaar.amendments.common.tile.ToolHookBlockTile;
+import net.mehvahdjukaar.moonlight.api.block.ItemDisplayTile;
+import net.mehvahdjukaar.moonlight.api.misc.ForgeOverride;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.entity.Entity;
+import net.minecraft.world.Containers;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -18,17 +21,18 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
-import net.minecraft.world.level.gameevent.GameEvent;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 
-public class ToolHookBlock extends Block implements EntityBlock{
+public class ToolHookBlock extends Block implements EntityBlock {
     public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
-    public static final VoxelShape NORTH_AABB = Block.box(5.0, 0.0, 10.0, 11.0, 10.0, 16.0);
-    public static final VoxelShape SOUTH_AABB = Block.box(5.0, 0.0, 0.0, 11.0, 10.0, 6.0);
-    public static final VoxelShape WEST_AABB = Block.box(10.0, 0.0, 5.0, 16.0, 10.0, 11.0);
-    public static final VoxelShape EAST_AABB = Block.box(0.0, 0.0, 5.0, 6.0, 10.0, 11.0);
+    public static final VoxelShape NORTH_AABB = Block.box(5.0, 5.0, 10.0, 11.0, 15.0, 16.0);
+    public static final VoxelShape SOUTH_AABB = Block.box(5.0, 5.0, 0.0, 11.0, 15.0, 6.0);
+    public static final VoxelShape WEST_AABB = Block.box(10.0, 5.0, 5.0, 16.0, 15.0, 11.0);
+    public static final VoxelShape EAST_AABB = Block.box(0.0, 5.0, 5.0, 6.0, 15.0, 11.0);
 
     public ToolHookBlock(BlockBehaviour.Properties properties) {
         super(properties);
@@ -80,23 +84,6 @@ public class ToolHookBlock extends Block implements EntityBlock{
         return null;
     }
 
-
-    private void emitState(Level level, BlockPos pos, boolean attached, boolean powered, boolean wasAttached, boolean wasPowered) {
-        if (powered && !wasPowered) {
-            level.playSound((Player) null, pos, SoundEvents.TRIPWIRE_CLICK_ON, SoundSource.BLOCKS, 0.4F, 0.6F);
-            level.gameEvent((Entity) null, GameEvent.BLOCK_ACTIVATE, pos);
-        } else if (!powered && wasPowered) {
-            level.playSound((Player) null, pos, SoundEvents.TRIPWIRE_CLICK_OFF, SoundSource.BLOCKS, 0.4F, 0.5F);
-            level.gameEvent((Entity) null, GameEvent.BLOCK_DEACTIVATE, pos);
-        } else if (attached && !wasAttached) {
-            level.playSound((Player) null, pos, SoundEvents.TRIPWIRE_ATTACH, SoundSource.BLOCKS, 0.4F, 0.7F);
-            level.gameEvent((Entity) null, GameEvent.BLOCK_ATTACH, pos);
-        } else if (!attached && wasAttached) {
-            level.playSound((Player) null, pos, SoundEvents.TRIPWIRE_DETACH, SoundSource.BLOCKS, 0.4F, 1.2F / (level.random.nextFloat() * 0.2F + 0.9F));
-            level.gameEvent((Entity) null, GameEvent.BLOCK_DETACH, pos);
-        }
-    }
-
     @Override
     public BlockState rotate(BlockState state, Rotation rotation) {
         return state.setValue(FACING, rotation.rotate(state.getValue(FACING)));
@@ -112,9 +99,37 @@ public class ToolHookBlock extends Block implements EntityBlock{
         builder.add(FACING);
     }
 
+    @Override
+    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+        if (level.getBlockEntity(pos) instanceof ToolHookBlockTile tile) {
+            return tile.interact(player, hand);
+        }
+        return super.use(state, level, pos, player, hand, hit);
+    }
+
     @Nullable
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
         return new ToolHookBlockTile(pos, state);
+    }
+
+    @ForgeOverride
+    public ItemStack getCloneItemStack(BlockState state, HitResult target, BlockGetter world, BlockPos pos, Player player) {
+        if (world.getBlockEntity(pos) instanceof ItemDisplayTile tile) {
+            ItemStack i = tile.getDisplayedItem();
+            if (!i.isEmpty()) return i;
+        }
+        return super.getCloneItemStack(world, pos, state);
+    }
+
+    @Override
+    public void onRemove(BlockState state, Level world, BlockPos pos, BlockState newState, boolean isMoving) {
+        if (state.getBlock() != newState.getBlock()) {
+            if (world.getBlockEntity(pos) instanceof ItemDisplayTile tile) {
+                Containers.dropContents(world, pos, tile);
+                world.updateNeighbourForOutputSignal(pos, this);
+            }
+            super.onRemove(state, world, pos, newState, isMoving);
+        }
     }
 }

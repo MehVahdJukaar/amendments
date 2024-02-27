@@ -60,8 +60,12 @@ public class CauldronBakedModel implements CustomBakedModel {
                     stillTexture = AmendmentsClient.POTION_TEXTURE;
                 }else if(fluid == BuiltInSoftFluids.MUSHROOM_STEW.get()){
                     stillTexture = AmendmentsClient.MUSHROOM_STEW;
-                }else if(false && fluid == BuiltInSoftFluids.BEETROOT_SOUP.get()){
+                }else if(fluid == BuiltInSoftFluids.BEETROOT_SOUP.get()){
                     stillTexture = AmendmentsClient.BEETROOT_SOUP;
+                }else if(fluid == BuiltInSoftFluids.RABBIT_STEW.get()){
+                    stillTexture = AmendmentsClient.RABBIT_STEW;
+                } else if(fluid == BuiltInSoftFluids.SUS_STEW.get()){
+                    stillTexture = AmendmentsClient.SUS_STEW;
                 }
                 TextureAtlasSprite sprite = ClientHelper.getBlockMaterial(stillTexture).sprite();
                 transformer.applyingAmbientOcclusion(false)

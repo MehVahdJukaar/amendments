@@ -1,0 +1,10 @@
+{
+  "replace": false,
+  "values": [
+    {"id":"supplementaries:wrench","required":false},
+    {"id":"create:wrench","required":false},
+    {"id":"minecraft:spyglass","required":false},
+    {"id":"c:tool","required":false},
+    {"id":"c:tools","required":false}
+  ]
+}

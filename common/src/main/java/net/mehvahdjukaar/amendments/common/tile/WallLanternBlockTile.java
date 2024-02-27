@@ -53,7 +53,7 @@ public class WallLanternBlockTile extends SwayingBlockTile implements IBlockHold
     public ExtraModelData getExtraModelData() {
         return ExtraModelData.builder()
                 .with(MIMIC_KEY, this.getHeldBlock())
-                .with(IS_FANCY, this.shouldBeFancy)
+                .with(IS_FANCY, this.rendersFancy())
                 .build();
     }
 

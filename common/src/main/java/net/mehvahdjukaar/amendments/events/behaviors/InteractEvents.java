@@ -66,6 +66,7 @@ public class InteractEvents {
         blockUse.add(new BellChainRing());
         blockUse.add(new CauldronConversion());
         blockUse.add(new CauldronDyeWater());
+        blockUse.add(new ToolHookConversion());
 
         itemUseOnBlockHP.add(new SkullCandleConversion());
         itemUseOnBlockHP.add(new DyeBehavior());

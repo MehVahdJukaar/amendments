@@ -85,7 +85,7 @@ public class LanternRendererExtension implements IThirdPersonAnimationProvider, 
             float scale = (float) (double) ClientConfigs.LANTERN_HOLDING_SIZE.get();
 
             poseStack.scale(scale, scale, scale);
-            poseStack.mulPose(RotHlpr.X180);
+            poseStack.mulPose(RotHlpr.Z180);
             poseStack.translate(-0.5, -0.5, -0.5);
             poseStack.translate(0, -3 / 16f, 0);
 

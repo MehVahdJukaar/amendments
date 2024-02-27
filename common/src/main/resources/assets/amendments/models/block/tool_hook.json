@@ -1,0 +1,4 @@
+{
+	"loader": "amendments:tool_hook",
+	"hook": "minecraft:block/tripwire_hook"
+}

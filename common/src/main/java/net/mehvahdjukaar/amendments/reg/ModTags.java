@@ -31,6 +31,7 @@ public class ModTags {
     //item tags
 
     public static final TagKey<Item> GOES_IN_LECTERN = itemTag("goes_in_lectern");
+    public static final TagKey<Item> GOES_IN_TRIPWIRE_HOOK = itemTag("goes_in_tripwire_hook");
 
     private static TagKey<Item> itemTag(String name) {
         return TagKey.create(Registries.ITEM, Amendments.res(name));

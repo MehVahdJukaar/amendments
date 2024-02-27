@@ -7,31 +7,35 @@ import net.mehvahdjukaar.amendments.common.block.WallLanternBlock;
 import net.mehvahdjukaar.amendments.common.tile.WallLanternBlockTile;
 import net.mehvahdjukaar.amendments.integration.CompatHandler;
 import net.mehvahdjukaar.amendments.integration.ShimmerCompat;
-import net.mehvahdjukaar.moonlight.api.client.util.LOD;
 import net.mehvahdjukaar.moonlight.api.client.util.RenderUtil;
 import net.mehvahdjukaar.moonlight.api.client.util.RotHlpr;
-import net.minecraft.client.Camera;
-import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 
 
 public class WallLanternBlockTileRenderer implements BlockEntityRenderer<WallLanternBlockTile> {
     protected final BlockRenderDispatcher blockRenderer;
-    private final Camera camera;
+    protected final ItemRenderer itemRenderer;
 
     public WallLanternBlockTileRenderer(BlockEntityRendererProvider.Context context) {
         this.blockRenderer = context.getBlockRenderDispatcher();
-        this.camera = Minecraft.getInstance().gameRenderer.getMainCamera();
+        this.itemRenderer = context.getItemRenderer();
     }
 
     @Override
-    public int getViewDistance() {
-        return BlockEntityRenderer.super.getViewDistance();
+    public boolean shouldRender(WallLanternBlockTile blockEntity, Vec3 cameraPos) {
+        return blockEntity.shouldRenderFancy(cameraPos);
     }
 
     public void renderLantern(WallLanternBlockTile tile, BlockState lanternState, float partialTicks, PoseStack poseStack, MultiBufferSource bufferIn,
@@ -50,11 +54,20 @@ public class WallLanternBlockTileRenderer implements BlockEntityRenderer<WallLan
         BakedModel model = WallLanternModelsManager.getModel(
                 blockRenderer.getBlockModelShaper(), lanternState);
         // render block
+        Level level = tile.getLevel();
+        BlockPos pos = tile.getBlockPos();
         if (CompatHandler.SHIMMER) {
             ShimmerCompat.renderWithBloom(poseStack, (p, b) ->
-                    RenderUtil.renderBlock(model, 0, p, b, lanternState, tile.getLevel(), tile.getBlockPos(), blockRenderer));
+                    RenderUtil.renderBlock(model, 0, p, b, lanternState, level, pos, blockRenderer));
         } else {
-            RenderUtil.renderBlock(model, 0, poseStack, bufferIn, lanternState, tile.getLevel(), tile.getBlockPos(), blockRenderer);
+            if (true) {
+                var cons = bufferIn.getBuffer(ItemBlockRenderTypes.getRenderType(
+                        Items.OBSIDIAN.getDefaultInstance(), true
+                ));
+                itemRenderer.renderModelLists(model,
+                        ItemStack.EMPTY,
+                        combinedLightIn, combinedOverlayIn, poseStack, cons);
+            } else RenderUtil.renderBlock(model, 0, poseStack, bufferIn, lanternState, level, pos, blockRenderer);
         }
 
         poseStack.popPose();
@@ -65,12 +78,6 @@ public class WallLanternBlockTileRenderer implements BlockEntityRenderer<WallLan
     public void render(WallLanternBlockTile tile, float partialTicks, PoseStack matrixStackIn,
                        MultiBufferSource bufferIn, int combinedLightIn,
                        int combinedOverlayIn) {
-        if (tile.shouldRenderFancy()) {
-            this.renderLantern(tile, tile.getHeldBlock(), partialTicks, matrixStackIn, bufferIn, combinedLightIn, combinedOverlayIn, false);
-        }
-
-        LOD lod = new LOD(camera, tile.getBlockPos());
-
-        tile.setFancyRenderer(lod.isNear());
+        this.renderLantern(tile, tile.getHeldBlock(), partialTicks, matrixStackIn, bufferIn, combinedLightIn, combinedOverlayIn, false);
     }
 }

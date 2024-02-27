@@ -35,6 +35,7 @@ public class ClientConfigs {
     public static final Supplier<PendulumAnimation.Config> WALL_LANTERN_CONFIG;
 
     public static final Supplier<Boolean> COLORED_ARROWS;
+    public static final Supplier<Boolean> ANIMATED_HOOKS;
 
     public static final Supplier<Double> BRIGHTEN_SIGN_TEXT_COLOR;
 
@@ -73,6 +74,11 @@ public class ClientConfigs {
         //Keep?
         COLORED_ARROWS = builder.comment("Makes tipped arrows show their colors when loaded with a crossbow")
                 .define("crossbows_colors", true);
+        builder.pop();
+
+        builder.push("tripwire_hook");
+        ANIMATED_HOOKS = builder.comment("Makes hooks render faster using a block model instead of tile renderer. Cost is that animated and enchanted items will appear static")
+                .define("fast_hooks", false);
         builder.pop();
 
         builder.push("hanging_sign");

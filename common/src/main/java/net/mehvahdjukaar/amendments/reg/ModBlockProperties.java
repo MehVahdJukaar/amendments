@@ -8,6 +8,7 @@ import net.mehvahdjukaar.moonlight.api.client.model.ModelDataKey;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.StringRepresentable;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.EndRodBlock;
 import net.minecraft.world.level.block.WallBlock;
@@ -20,6 +21,7 @@ import java.util.Locale;
 public class ModBlockProperties {
 
     public static final ModelDataKey<BlockState> MIMIC = MimicBlockTile.MIMIC_KEY;
+    public static final ModelDataKey<ItemStack> ITEM = new ModelDataKey<>(ItemStack.class);
     public static final ModelDataKey<Boolean> FANCY = DynamicRenderedBlockTile.IS_FANCY;
     public static final EnumProperty<SignAttachment> SIGN_ATTACHMENT = EnumProperty.create("sign_attachment", SignAttachment.class);
     public static final EnumProperty<BlockAttachment> BLOCK_ATTACHMENT = EnumProperty.create("attachment", BlockAttachment.class);

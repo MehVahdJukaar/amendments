@@ -32,9 +32,8 @@ public abstract class SwayingBlockTile extends DynamicRenderedBlockTile {
     }
 
     @Override
-    public void setFancyRenderer(boolean fancy) {
-        super.setFancyRenderer(fancy);
-        if (!fancy) this.animation.reset();
+    public void onFancyChanged(boolean newFancy) {
+        if (!newFancy) this.animation.reset();
     }
 
 
@@ -50,8 +49,7 @@ public abstract class SwayingBlockTile extends DynamicRenderedBlockTile {
 
 
     public static void clientTick(Level pLevel, BlockPos pPos, BlockState pState, SwayingBlockTile tile) {
-        tile.clientTick();
-        if (tile.wasFancy) {
+        if (tile.rendersFancy()) {
             tile.animation.tick(pLevel, pPos, pState);
         }
     }

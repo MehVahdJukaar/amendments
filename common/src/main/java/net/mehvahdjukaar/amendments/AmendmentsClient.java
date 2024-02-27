@@ -60,7 +60,9 @@ public class AmendmentsClient {
     public static final ResourceLocation LECTERN_GUI = Amendments.res("textures/gui/lectern.png");
     public static final ResourceLocation POTION_TEXTURE = Amendments.res("block/potion_cauldron");
     public static final ResourceLocation MUSHROOM_STEW = Amendments.res("block/mushroom_stew_cauldron");
+    public static final ResourceLocation RABBIT_STEW = Amendments.res("block/rabbit_stew_cauldron");
     public static final ResourceLocation BEETROOT_SOUP = Amendments.res("block/beetroot_soup_cauldron");
+    public static final ResourceLocation SUS_STEW = Amendments.res("block/suspicious_stew_cauldron");
 
     private static ModelLayerLocation loc(String name) {
         return new ModelLayerLocation(Amendments.res(name), name);
@@ -95,6 +97,7 @@ public class AmendmentsClient {
         ClientHelper.registerRenderType(ModRegistry.DYE_CAULDRON.get(), RenderType.cutout(), RenderType.translucent());
         ClientHelper.registerRenderType(ModRegistry.HANGING_FLOWER_POT.get(), RenderType.cutout());
         ClientHelper.registerRenderType(ModRegistry.WALL_LANTERN.get(), RenderType.cutout());
+        ClientHelper.registerRenderType(ModRegistry.TOOL_HOOK.get(), RenderType.cutout());
         MenuScreens.register(ModRegistry.LECTERN_EDIT_MENU.get(), LecternBookEditScreen::new);
     }
 
@@ -119,6 +122,7 @@ public class AmendmentsClient {
         event.register(ModRegistry.SKULL_PILE_TILE.get(), DoubleSkullBlockTileRenderer::new);
         event.register(ModRegistry.SKULL_CANDLE_TILE.get(), CandleSkullBlockTileRenderer::new);
         event.register(ModRegistry.WALL_LANTERN_TILE.get(), WallLanternBlockTileRenderer::new);
+        event.register(ModRegistry.TOOL_HOOK_TILE.get(), ToolHookTileRenderer::new);
 
     }
 
@@ -146,6 +150,7 @@ public class AmendmentsClient {
         event.register(Amendments.res("wall_lantern"), new NestedModelLoader("support", WallLanternBakedModel::new));
         event.register(Amendments.res("cauldron"), new CauldronModelLoader());
         event.register(Amendments.res("hanging_pot"), new NestedModelLoader("rope", HangingPotBakedModel::new));
+        event.register(Amendments.res("tool_hook"), new NestedModelLoader("hook", ToolHookBakedModel::new));
 
     }
 

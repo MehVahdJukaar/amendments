@@ -1,7 +1,6 @@
 package net.mehvahdjukaar.amendments.client.model;
 
 import net.mehvahdjukaar.amendments.client.WallLanternModelsManager;
-import net.mehvahdjukaar.amendments.common.block.WallLanternBlock;
 import net.mehvahdjukaar.amendments.reg.ModBlockProperties;
 import net.mehvahdjukaar.moonlight.api.block.MimicBlock;
 import net.mehvahdjukaar.moonlight.api.client.model.BakedQuadsTransformer;
@@ -19,11 +18,9 @@ import net.minecraft.client.resources.model.ModelState;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import org.joml.Matrix4f;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class WallLanternBakedModel implements CustomBakedModel {
@@ -73,19 +70,17 @@ public class WallLanternBakedModel implements CustomBakedModel {
 
             if (!fancy) {
                 if (mimic != null && !(mimic.getBlock() instanceof MimicBlock) && !mimic.isAir() && state != null) {
-                    Direction dir = state.getValue(WallLanternBlock.FACING);
-                    if (mimic.hasProperty(BlockStateProperties.FACING)) {
-                        mimic = mimic.setValue(BlockStateProperties.FACING, dir);
-                    } else if (mimic.hasProperty(BlockStateProperties.HORIZONTAL_FACING)) {
-                        mimic = mimic.setValue(BlockStateProperties.HORIZONTAL_FACING, dir);
-                    }
 
                     BakedModel model = WallLanternModelsManager.getModel(blockModelShaper, mimic);
 
                     List<BakedQuad> mimicQuads = model.getQuads(mimic, side, rand);
                     Matrix4f mat = new Matrix4f();
-                    mat.translate(0,2/16f,0);
-                    mat.translate(dir.step().mul(-2/16f));
+                    mat.translate(1f, 1f, 1f);
+                    mat.mul(rotation.getRotation().getMatrix());
+                    mat.translate(-1f, -1f, -1f);
+
+                    mat.translate(0, 2 / 16f, 2 / 16f);
+
                     BakedQuadsTransformer transformer = BakedQuadsTransformer.create()
                             .applyingTransform(mat);
                     quads.addAll(transformer.transformAll(mimicQuads));

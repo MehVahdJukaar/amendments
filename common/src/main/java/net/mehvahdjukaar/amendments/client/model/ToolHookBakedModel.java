@@ -1,9 +1,7 @@
 package net.mehvahdjukaar.amendments.client.model;
 
-import net.mehvahdjukaar.amendments.client.WallLanternModelsManager;
-import net.mehvahdjukaar.amendments.common.block.WallLanternBlock;
+import com.mojang.math.Axis;
 import net.mehvahdjukaar.amendments.reg.ModBlockProperties;
-import net.mehvahdjukaar.moonlight.api.block.MimicBlock;
 import net.mehvahdjukaar.moonlight.api.client.model.BakedQuadsTransformer;
 import net.mehvahdjukaar.moonlight.api.client.model.CustomBakedModel;
 import net.mehvahdjukaar.moonlight.api.client.model.ExtraModelData;
@@ -18,8 +16,9 @@ import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.ModelState;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.item.DiggerItem;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import org.joml.Matrix4f;
 
 import java.util.ArrayList;
@@ -41,56 +40,45 @@ public class ToolHookBakedModel implements CustomBakedModel {
 
         List<BakedQuad> quads = new ArrayList<>();
 
-        BlockState mimic = null;
         try {
-            mimic = data.get(ModBlockProperties.MIMIC);
-        } catch (Exception ignored) {
-        }
+            var tripwireQuads = tripwireHook.getQuads(state, side, rand);
+            Matrix4f mat = new Matrix4f();
+            mat.translate(0, 5 / 16f, 0);
 
-        //support
-        try {
-
-            var supportQuads = tripwireHook.getQuads(state, side, rand);
-            if (!supportQuads.isEmpty()) {
-                if (mimic != null) {
-                    var sprite = WallLanternModelsManager.getTexture(mimic.getBlock());
-                    if (sprite != null) {
-                        BakedQuadsTransformer transformer = BakedQuadsTransformer.create()
-                                .applyingSprite(sprite);
-                        supportQuads = transformer.transformAll(supportQuads);
-                    }
-                }
-                quads.addAll(supportQuads);
-            }
+            BakedQuadsTransformer transformer = BakedQuadsTransformer.create()
+                    .applyingTransform(mat);
+            quads.addAll(transformer.transformAll(tripwireQuads));
 
         } catch (Exception ignored) {
         }
 
-        //mimic
-        try {
-            boolean fancy = Boolean.TRUE.equals(data.get(ModBlockProperties.FANCY));
+        if (side == null) {
+            try {
+                boolean fancy = Boolean.TRUE.equals(data.get(ModBlockProperties.FANCY));
+                ItemStack item = data.get(ModBlockProperties.ITEM);
+                if (!fancy && !item.isEmpty()) {
 
-            if (!fancy) {
-                if (mimic != null && !(mimic.getBlock() instanceof MimicBlock) && !mimic.isAir() && state != null) {
-                    Direction dir = state.getValue(WallLanternBlock.FACING);
-                    if (mimic.hasProperty(BlockStateProperties.FACING)) {
-                        mimic = mimic.setValue(BlockStateProperties.FACING, dir);
-                    } else if (mimic.hasProperty(BlockStateProperties.HORIZONTAL_FACING)) {
-                        mimic = mimic.setValue(BlockStateProperties.HORIZONTAL_FACING, dir);
-                    }
+                    var itemModel = Minecraft.getInstance().getItemRenderer().getItemModelShaper().getItemModel(item);
 
-                    BakedModel model = WallLanternModelsManager.getModel(blockModelShaper, mimic);
-
-                    List<BakedQuad> mimicQuads = model.getQuads(mimic, side, rand);
+                    float scale = 12 / 16f;
                     Matrix4f mat = new Matrix4f();
-                    mat.translate(0,2/16f,0);
-                    mat.translate(dir.step().mul(-2/16f));
+                    float x = item.getItem() instanceof DiggerItem ? 1 / 16f : 0;
+
+                    mat.translate(1f, 1f, 1f);
+                    mat.mul(rotation.getRotation().getMatrix());
+                    mat.rotate(Axis.ZP.rotationDegrees(225));
+                    mat.scale(scale, scale, scale);
+                    mat.translate(-1f, -1f, -1f);
+                    mat.translate(-x, 0, 1.4f / (16f * scale));
+
                     BakedQuadsTransformer transformer = BakedQuadsTransformer.create()
                             .applyingTransform(mat);
-                    quads.addAll(transformer.transformAll(mimicQuads));
+
+                    quads.addAll(transformer.transformAll(itemModel.getQuads(null, null, rand)));
+
                 }
+            } catch (Exception ignored) {
             }
-        } catch (Exception ignored) {
         }
         return quads;
     }
@@ -117,16 +105,6 @@ public class ToolHookBakedModel implements CustomBakedModel {
 
     @Override
     public TextureAtlasSprite getBlockParticle(ExtraModelData data) {
-        BlockState mimic = data.get(ModBlockProperties.MIMIC);
-        if (mimic != null && !mimic.isAir()) {
-
-            BakedModel model = blockModelShaper.getBlockModel(mimic);
-            try {
-                return model.getParticleIcon();
-            } catch (Exception ignored) {
-            }
-
-        }
         return tripwireHook.getParticleIcon();
     }
 

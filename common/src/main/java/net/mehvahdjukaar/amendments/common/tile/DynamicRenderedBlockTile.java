@@ -3,24 +3,23 @@ package net.mehvahdjukaar.amendments.common.tile;
 import net.mehvahdjukaar.moonlight.api.client.model.ExtraModelData;
 import net.mehvahdjukaar.moonlight.api.client.model.IExtraModelDataProvider;
 import net.mehvahdjukaar.moonlight.api.client.model.ModelDataKey;
+import net.mehvahdjukaar.moonlight.api.client.util.LOD;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import org.joml.Vector3f;
+import net.minecraft.world.phys.Vec3;
 
+@Deprecated(forRemoval = true)
 public abstract class DynamicRenderedBlockTile extends BlockEntity implements IExtraModelDataProvider {
 
     public static final ModelDataKey<Boolean> IS_FANCY = new ModelDataKey<>(Boolean.class);
 
     // lod stuff (client)
-    protected boolean shouldBeFancy = false; // current
-    protected boolean wasFancy = false; // old
-    private int ticksToSwitchMode = 0;
+    private boolean isFancy = false; // current
+    private int extraFancyTicks = 0;
 
     protected DynamicRenderedBlockTile(BlockEntityType<?> tileEntityTypeIn, BlockPos pos, BlockState state) {
         super(tileEntityTypeIn, pos, state);
@@ -31,45 +30,38 @@ public abstract class DynamicRenderedBlockTile extends BlockEntity implements IE
     //called when data is actually refreshed
     @Override
     public ExtraModelData getExtraModelData() {
-        this.ticksToSwitchMode = 2;
         return ExtraModelData.builder()
-                .with(IS_FANCY, this.shouldBeFancy)
+                .with(IS_FANCY, this.isFancy)
                 .build();
     }
 
-    // call each render tick from your tile renderer
-    public void setFancyRenderer(boolean fancy) {
-        if (this.isNeverFancy()) fancy = false;
-        if (fancy != this.shouldBeFancy) {
-            this.wasFancy = this.shouldBeFancy;
-            this.shouldBeFancy = fancy;
-            //model data doesn't like other levels. linked to crashes with other mods
+    public void onFancyChanged(boolean fancy) {
+    }
+
+    // call in your tile renderer
+    public boolean rendersFancy() {
+        return isFancy;
+    }
+
+    public boolean shouldRenderFancy(Vec3 cameraPos) {
+        LOD lod = new LOD(cameraPos, this.getBlockPos());
+        boolean newFancyStatus = lod.isNear();
+        boolean oldStatus = this.isFancy;
+        if (oldStatus != newFancyStatus) {
+            this.isFancy = newFancyStatus;
+            onFancyChanged(isFancy);
             if (this.level == Minecraft.getInstance().level) {
                 this.requestModelReload();
                 this.level.sendBlockUpdated(this.worldPosition, getBlockState(), getBlockState(), Block.UPDATE_IMMEDIATE);
             }
+            if (!isFancy) extraFancyTicks = 4;
         }
-    }
-
-    // call in your tile renderer
-    public boolean shouldRenderFancy() {
-        if (this.wasFancy != this.shouldBeFancy && !this.wasFancy) {
-            // makes TESR wait 1 render cycle,
-            // so it's in sync with model data refreshVisuals
-            this.wasFancy = true;
+        if (extraFancyTicks > 0) {
+            extraFancyTicks--;
+            return true;
         }
-        return wasFancy;
-    }
-
-    public void clientTick() {
-        if (this.wasFancy != this.shouldBeFancy && this.wasFancy && this.ticksToSwitchMode > 0) {
-            this.ticksToSwitchMode--;
-            if (this.ticksToSwitchMode == 0) {
-                //makes TESR wait 1 render cycle,
-                // so it's in sync with model data refreshVisuals
-                this.wasFancy = false;
-            }
-        }
+        // 1 tick delay
+        return isFancy;
     }
 
 }

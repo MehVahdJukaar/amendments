@@ -78,9 +78,13 @@ public abstract class ModCauldronBlock extends AbstractCauldronBlock implements 
         RandomSource rand = level.random;
         float speed = Math.min(1.0F, (float) Math.sqrt(movement.x * movement.x * 0.2 + movement.y * movement.y + movement.z * movement.z * 0.2) * offset);
         if (speed < 0.25F) {
-            e.playSound(e.getSwimSplashSound(), speed, 1.0F + (rand.nextFloat() - rand.nextFloat()) * 0.4F);
+            level.playLocalSound(e.getX(), e.getY(), e.getZ(),
+                    e.getSwimSplashSound(), e.getSoundSource(),
+                    speed, 1.0F + (rand.nextFloat() - rand.nextFloat()) * 0.4F, false);
         } else {
-            e.playSound(e.getSwimHighSpeedSplashSound(), speed, 1.0F + (rand.nextFloat() - rand.nextFloat()) * 0.4F);
+            level.playLocalSound(e.getX(), e.getY(), e.getZ(),
+                    e.getSwimHighSpeedSplashSound(), e.getSoundSource(),
+                    speed, 1.0F + (rand.nextFloat() - rand.nextFloat()) * 0.4F, false);
         }
 
         double surface = pos.getY() + waterLevel;
