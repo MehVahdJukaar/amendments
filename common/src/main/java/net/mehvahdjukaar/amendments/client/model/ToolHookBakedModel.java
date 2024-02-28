@@ -6,8 +6,8 @@ import net.mehvahdjukaar.moonlight.api.client.model.BakedQuadsTransformer;
 import net.mehvahdjukaar.moonlight.api.client.model.CustomBakedModel;
 import net.mehvahdjukaar.moonlight.api.client.model.ExtraModelData;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.ItemModelShaper;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.block.BlockModelShaper;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.ItemOverrides;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
@@ -26,12 +26,12 @@ import java.util.List;
 
 public class ToolHookBakedModel implements CustomBakedModel {
     private final BakedModel tripwireHook;
-    private final BlockModelShaper blockModelShaper;
+    private final ItemModelShaper itemModelShaper;
     private final ModelState rotation;
 
     public ToolHookBakedModel(BakedModel tripwireHook, ModelState state) {
         this.tripwireHook = tripwireHook;
-        this.blockModelShaper = Minecraft.getInstance().getBlockRenderer().getBlockModelShaper();
+        this.itemModelShaper = Minecraft.getInstance().getItemRenderer().getItemModelShaper();
         this.rotation = state;
     }
 
@@ -58,7 +58,7 @@ public class ToolHookBakedModel implements CustomBakedModel {
                 ItemStack item = data.get(ModBlockProperties.ITEM);
                 if (!fancy && !item.isEmpty()) {
 
-                    var itemModel = Minecraft.getInstance().getItemRenderer().getItemModelShaper().getItemModel(item);
+                    var itemModel = itemModelShaper.getItemModel(item);
 
                     float scale = 12 / 16f;
                     Matrix4f mat = new Matrix4f();

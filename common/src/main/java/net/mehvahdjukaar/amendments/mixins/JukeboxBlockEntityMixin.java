@@ -2,6 +2,7 @@ package net.mehvahdjukaar.amendments.mixins;
 
 import net.mehvahdjukaar.amendments.common.IBetterJukebox;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
@@ -14,6 +15,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.entity.JukeboxBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -27,6 +29,10 @@ public abstract class JukeboxBlockEntityMixin extends BlockEntity implements IBe
 
     @Shadow
     private boolean isPlaying;
+    @Shadow
+    @Final
+    private NonNullList<ItemStack> items;
+
     @Unique
     private float amendments$rot = 0;
     @Unique
@@ -34,6 +40,12 @@ public abstract class JukeboxBlockEntityMixin extends BlockEntity implements IBe
 
     protected JukeboxBlockEntityMixin(BlockEntityType<?> blockEntityType, BlockPos blockPos, BlockState blockState) {
         super(blockEntityType, blockPos, blockState);
+    }
+
+    //vix vanilla bug
+    @Inject(method = "load", at = @At("HEAD"))
+    public void amendments$fixItemSync(CompoundTag tag, CallbackInfo ci) {
+        this.items.set(0, ItemStack.EMPTY);
     }
 
     @Inject(method = "removeItem", at = @At("TAIL"))
@@ -47,7 +59,8 @@ public abstract class JukeboxBlockEntityMixin extends BlockEntity implements IBe
     }
 
     @Inject(method = "tick", at = @At("TAIL"))
-    public void tick(Level level, BlockPos blockPos, BlockState blockState, CallbackInfo ci) {
+    public void amendments$tickAnimation(Level level, BlockPos blockPos, BlockState blockState, CallbackInfo ci) {
+        if (!level.isClientSide) return;
         amendments$prevRot = amendments$rot;
         if (isPlaying) {
             amendments$rot += 1;
@@ -75,10 +88,5 @@ public abstract class JukeboxBlockEntityMixin extends BlockEntity implements IBe
     @Override
     public float amendments$getRotation(float partialTicks) {
         return Mth.rotLerp(partialTicks, amendments$prevRot, amendments$rot);
-    }
-
-    @Override
-    public void amendments$setPlaying(boolean playing) {
-        isPlaying = playing;
     }
 }

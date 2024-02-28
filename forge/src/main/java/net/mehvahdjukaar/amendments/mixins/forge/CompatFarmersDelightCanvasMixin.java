@@ -25,6 +25,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
+import org.violetmoon.quark.content.mobs.entity.Crab;
+import org.violetmoon.quark.mixin.mixins.client.JukeboxBlockEntityMixin;
 import vectorwing.farmersdelight.client.renderer.HangingCanvasSignRenderer;
 
 import javax.annotation.Nullable;
