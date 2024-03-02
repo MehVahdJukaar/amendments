@@ -1,29 +1,16 @@
 package net.mehvahdjukaar.amendments.client;
 
 import com.google.common.base.Suppliers;
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
 import net.mehvahdjukaar.amendments.Amendments;
-
-import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.resources.model.Material;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.BannerPatternItem;
-import net.minecraft.world.level.block.entity.BannerPattern;
 import net.minecraft.world.level.block.state.properties.WoodType;
-import org.jetbrains.annotations.Nullable;
 
-import java.time.Duration;
 import java.util.IdentityHashMap;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
-
-import static net.minecraft.client.renderer.texture.TextureAtlas.LOCATION_BLOCKS;
 
 public class ModMaterials {
     public static final ResourceLocation SIGN_SHEET = new ResourceLocation("textures/atlas/signs.png");

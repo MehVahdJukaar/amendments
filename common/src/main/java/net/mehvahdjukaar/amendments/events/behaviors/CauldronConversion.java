@@ -22,6 +22,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.CauldronBlock;
 import net.minecraft.world.level.block.DispenserBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
@@ -45,6 +46,11 @@ public class CauldronConversion implements BlockUse {
     @Override
     public InteractionResult tryPerformingAction(BlockState state, BlockPos pos, Level level, Player player, InteractionHand hand, ItemStack stack, BlockHitResult hit) {
         if (player.isSecondaryUseActive()) return InteractionResult.PASS;
+        return convert(state, pos, level, player, hand, stack);
+    }
+
+
+    public static InteractionResult convert(BlockState state, BlockPos pos, Level level, Player player, InteractionHand hand, ItemStack stack) {
         BlockState newState = getNewState(pos, level, stack);
         if (newState != null) {
             level.setBlockAndUpdate(pos, newState);
@@ -53,6 +59,7 @@ public class CauldronConversion implements BlockUse {
                     return InteractionResult.sidedSuccess(level.isClientSide);
                 } else {
                     level.setBlockAndUpdate(pos, state);
+                    return InteractionResult.PASS;
                 }
             }
         }
@@ -63,6 +70,7 @@ public class CauldronConversion implements BlockUse {
     public static BlockState getNewState(BlockPos pos, Level level, ItemStack stack) {
         var fluid = SoftFluidStack.fromItem(stack);
         if (fluid == null) return null;
+        if (((CauldronBlock) Blocks.CAULDRON).interactions.containsKey(stack.getItem())) return null;
         if (CompatHandler.RATS && stack.is(Items.MILK_BUCKET)) return null;
         return getNewState(pos, level, fluid.getFirst());
     }

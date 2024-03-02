@@ -32,6 +32,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.alchemy.PotionUtils;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -252,9 +253,10 @@ public class LiquidCauldronBlock extends ModCauldronBlock {
     @Override
     public BlockState updateStateOnFluidChange(BlockState state, Level level, BlockPos pos, SoftFluidStack fluid) {
         //explosions?
-
-        BlockState exploded = maybeExplode(state, level, pos, fluid);
-        if (exploded != null) return exploded;
+        if(!(level instanceof WorldGenLevel)) {
+            BlockState exploded = maybeExplode(state, level, pos, fluid);
+            if (exploded != null) return exploded;
+        }
 
         int light = fluid.getFluid().value().getLuminosity();
         if (light != state.getValue(ModBlockProperties.LIGHT_LEVEL)) {

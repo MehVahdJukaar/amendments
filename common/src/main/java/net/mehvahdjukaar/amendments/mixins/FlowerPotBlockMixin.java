@@ -1,7 +1,6 @@
 package net.mehvahdjukaar.amendments.mixins;
 
 import net.mehvahdjukaar.amendments.common.block.HangingFlowerPotBlock;
-import net.mehvahdjukaar.amendments.common.tile.HangingFlowerPotBlockTile;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;

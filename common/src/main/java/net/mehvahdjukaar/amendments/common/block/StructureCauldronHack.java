@@ -30,7 +30,6 @@ import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.function.Supplier;
 
 public class StructureCauldronHack extends Block implements EntityBlock {

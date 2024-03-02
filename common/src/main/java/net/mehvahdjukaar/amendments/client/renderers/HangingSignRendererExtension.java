@@ -86,7 +86,7 @@ public class HangingSignRendererExtension {
     }
 
 
-    public static void render(SignBlockEntity tile, float partialTicks, PoseStack poseStack, MultiBufferSource bufferSource,
+    public static void render(SignBlockEntity tile, HangingSignTileExtension extension,  float partialTicks, PoseStack poseStack, MultiBufferSource bufferSource,
                               int light, int overlay, BlockState state,
                               HangingSignRenderer.HangingSignModel model, List<ModelPart> barModel, ModelPart chains,
                               Material material, Material extensionMaterial, SignRenderer renderer,
@@ -108,7 +108,6 @@ public class HangingSignRendererExtension {
 
         model.evaluateVisibleParts(state);
         VertexConsumer vertexConsumer = material.buffer(bufferSource, translucent ? RenderType::entityTranslucent : model::renderType);
-        HangingSignTileExtension extension = ((ExtendedHangingSign) tile).getExtension();
 
         poseStack.scale(1, -1, -1);
         //TODO: ceiling banner rot
@@ -123,7 +122,7 @@ public class HangingSignRendererExtension {
         poseStack.pushPose();
 
         Quaternionf pitch = new Quaternionf();
-        if (((ExtendedHangingSign) tile).getExtension().canSwing()) {
+        if (extension.canSwing()) {
             float rot = extension.animation.getAngle(partialTicks);
 
             if (!wallSign && attached) {

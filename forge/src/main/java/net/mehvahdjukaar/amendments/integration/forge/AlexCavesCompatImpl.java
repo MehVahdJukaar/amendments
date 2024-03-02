@@ -5,6 +5,7 @@ import com.github.alexmodguy.alexscaves.server.block.ACBlockRegistry;
 import com.github.alexmodguy.alexscaves.server.block.fluid.ACFluidRegistry;
 import com.github.alexmodguy.alexscaves.server.misc.ACSoundRegistry;
 import com.github.alexthe666.citadel.server.block.LecternBooks;
+import com.github.alexthe666.rats.registry.RatsCauldronRegistry;
 import net.mehvahdjukaar.amendments.common.block.LiquidCauldronBlock;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluid;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidRegistry;
@@ -40,6 +41,7 @@ public class AlexCavesCompatImpl {
 
     public static void acidDamage(SoftFluidStack fluid, Level level, BlockPos pos, BlockState state, Entity entity) {
         if (fluid.is(ACID.get())) {
+
             try {
                 //hack
                 FluidType acidFluid = ACFluidRegistry.ACID_FLUID_TYPE.get();

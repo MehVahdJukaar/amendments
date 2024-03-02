@@ -40,8 +40,10 @@ accessible field net/minecraft/world/entity/Entity wasTouchingWater Z
 
 accessible field net/minecraft/world/level/block/FlowerPotBlock POTTED_BY_CONTENT Ljava/util/Map;
 
-# fanric remappig
+# fabric remappig
 accessible class net/minecraft/resources/ResourceLocation$Dummy
+
+accessible field net/minecraft/world/level/block/AbstractCauldronBlock interactions Ljava/util/Map;
 
 accessible field net/minecraft/world/entity/ai/village/poi/PoiType matchingStates Ljava/util/Set;
 mutable field net/minecraft/world/entity/ai/village/poi/PoiType matchingStates Ljava/util/Set;

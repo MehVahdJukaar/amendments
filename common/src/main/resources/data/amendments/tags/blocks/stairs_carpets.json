@@ -2,6 +2,7 @@
   "replace": false,
   "values": [
     "#minecraft:wool_carpets",
-    "minecraft:moss_carpet"
+    "minecraft:moss_carpet",
+    {"id":"quark:bamboo_mat","required":false}
   ]
 }

@@ -24,7 +24,6 @@ import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 public class CauldronBakedModel implements CustomBakedModel {
     private static final boolean SINGLE_PASS = PlatHelper.getPlatform().isFabric();

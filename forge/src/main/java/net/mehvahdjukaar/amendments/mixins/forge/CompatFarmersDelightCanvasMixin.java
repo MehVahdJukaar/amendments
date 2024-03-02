@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.mehvahdjukaar.amendments.AmendmentsClient;
 import net.mehvahdjukaar.amendments.client.ModMaterials;
 import net.mehvahdjukaar.amendments.client.renderers.HangingSignRendererExtension;
+import net.mehvahdjukaar.amendments.common.ExtendedHangingSign;
 import net.mehvahdjukaar.amendments.configs.ClientConfigs;
 import net.mehvahdjukaar.moonlight.api.fluids.forge.SoftFluidTankImpl;
 import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
@@ -58,11 +59,11 @@ public abstract class CompatFarmersDelightCanvasMixin extends SignRenderer {
                                       BlockState state, SignBlock sign, HangingSignRenderer.HangingSignModel model,
                                       DyeColor dye) {
 
-        if (ClientConfigs.SIGN_ATTACHMENT.get() || ClientConfigs.SWINGING_SIGNS.get()) {
+        if ((ClientConfigs.SIGN_ATTACHMENT.get() || ClientConfigs.SWINGING_SIGNS.get()) && tile instanceof ExtendedHangingSign ext) {
 
             BlockState blockState = tile.getBlockState();
 
-            HangingSignRendererExtension.render(tile, partialTick,
+            HangingSignRendererExtension.render(tile, ext.getExtension(), partialTick,
                     poseStack, bufferSource, packedLight, packedOverlay,
                     blockState, model, amendments$barModel, amendments$chains,
 

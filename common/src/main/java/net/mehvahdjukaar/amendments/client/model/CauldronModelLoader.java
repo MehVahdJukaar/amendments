@@ -8,8 +8,6 @@ import net.mehvahdjukaar.moonlight.api.client.model.CustomGeometry;
 import net.mehvahdjukaar.moonlight.api.client.model.CustomModelLoader;
 import net.minecraft.util.GsonHelper;
 
-import static net.mehvahdjukaar.moonlight.api.client.model.NestedModelLoader.parseModel;
-
 public class CauldronModelLoader implements CustomModelLoader {
 
     @Override

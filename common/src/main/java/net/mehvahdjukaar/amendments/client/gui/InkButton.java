@@ -1,6 +1,5 @@
 package net.mehvahdjukaar.amendments.client.gui;
 
-import dev.architectury.injectables.annotations.PlatformOnly;
 import net.mehvahdjukaar.amendments.Amendments;
 import net.mehvahdjukaar.moonlight.api.misc.ForgeOverride;
 import net.minecraft.ChatFormatting;

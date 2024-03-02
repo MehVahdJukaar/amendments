@@ -4,7 +4,7 @@ import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
 
 public class CompatHandler {
 
-    public static final boolean FARMERS_DELIGHT = PlatHelper.isModLoaded("farmers_delight");
+    public static final boolean FARMERS_DELIGHT = PlatHelper.isModLoaded("farmersdelight");
     public static final boolean SUPPLEMENTARIES = PlatHelper.isModLoaded("supplementaries");
     public static final boolean SUPPSQUARED = PlatHelper.isModLoaded("suppsquared");
     public static final boolean QUARK = PlatHelper.isModLoaded("quark");

@@ -1,6 +1,5 @@
 package net.mehvahdjukaar.amendments.client.model;
 
-import net.mehvahdjukaar.amendments.common.block.CarpetSlabBlock;
 import net.mehvahdjukaar.amendments.common.tile.CarpetedBlockTile;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.moonlight.api.client.model.BakedQuadsTransformer;

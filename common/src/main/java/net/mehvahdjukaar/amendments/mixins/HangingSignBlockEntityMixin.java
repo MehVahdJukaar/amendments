@@ -1,6 +1,5 @@
 package net.mehvahdjukaar.amendments.mixins;
 
-import dev.architectury.injectables.annotations.PlatformOnly;
 import net.mehvahdjukaar.amendments.common.ExtendedHangingSign;
 import net.mehvahdjukaar.amendments.common.tile.HangingSignTileExtension;
 import net.mehvahdjukaar.moonlight.api.misc.ForgeOverride;

@@ -45,7 +45,7 @@ dependencies {
     //modImplementation ("net.mehvahdjukaar:moonlight-fabric:${moonlight_version}")
 
     modImplementation ("net.mehvahdjukaar:supplementaries-fabric:${supplementaries_version}")
-    modCompileOnly ("net.mehvahdjukaar:suppsquared-fabric:${suppsquared_version}")
+    //modCompileOnly ("net.mehvahdjukaar:suppsquared-fabric:${suppsquared_version}")
     modCompileOnly("curse.maven:farmers-delight-fabric-482834:4111426")
 
 

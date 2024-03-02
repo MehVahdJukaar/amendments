@@ -1,6 +1,5 @@
 package net.mehvahdjukaar.amendments.mixins;
 
-import dev.architectury.injectables.annotations.PlatformOnly;
 import net.mehvahdjukaar.moonlight.api.misc.ForgeOverride;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;

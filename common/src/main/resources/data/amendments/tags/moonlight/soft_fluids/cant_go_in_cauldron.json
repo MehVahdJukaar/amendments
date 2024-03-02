@@ -1,7 +1,6 @@
 {
   "replace": false,
   "values": [
-    {"id":"moonlight:lava","required":false},
     {"id":"moonlight:powder_snow","required":false},
     {"id":"moonlight:water","required":false}
   ]

@@ -1,8 +1,7 @@
 package net.mehvahdjukaar.amendments.common.tile;
 
-import dev.architectury.injectables.annotations.PlatformOnly;
-import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.amendments.common.block.HangingFlowerPotBlock;
+import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.moonlight.api.block.IOwnerProtected;
 import net.mehvahdjukaar.moonlight.api.block.MimicBlockTile;
 import net.mehvahdjukaar.moonlight.api.misc.ForgeOverride;

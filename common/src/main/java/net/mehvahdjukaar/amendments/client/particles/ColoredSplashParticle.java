@@ -7,7 +7,6 @@ import net.minecraft.client.particle.SplashParticle;
 import net.minecraft.client.particle.SpriteSet;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.util.FastColor;
-import net.minecraft.world.level.block.BubbleColumnBlock;
 
 public class ColoredSplashParticle implements ParticleProvider<SimpleParticleType> {
     private final SplashParticle.Provider provider;

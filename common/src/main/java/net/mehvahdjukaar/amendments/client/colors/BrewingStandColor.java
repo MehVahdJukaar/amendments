@@ -3,7 +3,6 @@ package net.mehvahdjukaar.amendments.client.colors;
 import net.mehvahdjukaar.amendments.configs.ClientConfigs;
 import net.minecraft.client.color.block.BlockColor;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.alchemy.PotionUtils;
 import net.minecraft.world.level.BlockAndTintGetter;

@@ -10,15 +10,12 @@ import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidStack;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidTank;
 import net.mehvahdjukaar.supplementaries.client.ModMaterials;
 import net.mehvahdjukaar.supplementaries.common.block.IRopeConnection;
-import net.mehvahdjukaar.supplementaries.common.block.blocks.EndermanSkullBlock;
-import net.mehvahdjukaar.supplementaries.common.block.blocks.GunpowderBlock;
-import net.mehvahdjukaar.supplementaries.common.block.blocks.RopeBlock;
-import net.mehvahdjukaar.supplementaries.common.block.blocks.StickBlock;
-import net.mehvahdjukaar.supplementaries.common.block.faucet.IFaucetBlockTarget;
+import net.mehvahdjukaar.supplementaries.common.block.blocks.*;
+import net.mehvahdjukaar.supplementaries.common.block.faucet.FaucetTarget;
+import net.mehvahdjukaar.supplementaries.common.block.tiles.FaucetBlockTile;
 import net.mehvahdjukaar.supplementaries.common.utils.BlockUtil;
 import net.mehvahdjukaar.supplementaries.common.utils.MiscUtils;
 import net.mehvahdjukaar.supplementaries.configs.ClientConfigs;
-import net.mehvahdjukaar.supplementaries.integration.CompatHandler;
 import net.mehvahdjukaar.supplementaries.integration.InspirationCompat;
 import net.minecraft.client.resources.model.Material;
 import net.minecraft.core.BlockPos;
@@ -37,7 +34,14 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import org.jetbrains.annotations.Nullable;
 
+import static net.mehvahdjukaar.amendments.events.behaviors.CauldronConversion.getNewState;
+
+
 public class SuppCompat {
+
+    public static void setup(){
+        FaucetBlockTile.registerInteraction(new FaucetCauldronConversion());
+    }
 
     public static boolean canBannerAttachToRope(BlockState state, BlockState above) {
         if (above.getBlock() instanceof RopeBlock) {
@@ -99,51 +103,29 @@ public class SuppCompat {
 
     @Environment(EnvType.CLIENT)
     @Nullable
-    public static Material getFlagMaterial(BannerPatternItem bannerPatternItem){
+    public static Material getFlagMaterial(BannerPatternItem bannerPatternItem) {
         return ModMaterials.getFlagMaterialForPatternItem(bannerPatternItem);
     }
-/*
-   public static class FaucetCauldronConversion implements IFaucetBlockTarget {
+
+
+    public static class FaucetCauldronConversion implements FaucetTarget.BlState {
 
         @Override
-        public InteractionResult tryFill(Level level, SoftFluidTank faucetTank, BlockPos pos, BlockState state) {
-            if (state.getBlock() == Blocks.CAULDRON) {
-                SoftFluidStack fluid = faucetTank.getFluid();
-
-                BlockState newState = CauldronConversion. getNewState(pos, level, fluid);
+        public Integer fill(Level level, BlockPos pos, BlockState target, SoftFluidStack fluid, int minAmount) {
+            if (target.is(Blocks.CAULDRON)) {
+                BlockState newState = getNewState(pos, level, fluid);
                 if (newState != null) {
                     level.setBlockAndUpdate(pos, newState);
                     if (level.getBlockEntity(pos) instanceof LiquidCauldronBlockTile te) {
-                        if (te.handleInteraction(player, hand)) {
-                            return InteractionResult.sidedSuccess(level.isClientSide);
-                        } else {
-                            level.setBlockAndUpdate(pos, state);
-                        }
-                    }
-                    //TODO: allow lava
-                }
-
-                if (CompatHandler.INSPIRATIONS) {
-                    return InspirationCompat.tryAddFluid(level.getBlockEntity(pos), faucetTank);
-                } else if (fluid.is(BuiltInSoftFluids.WATER.get())) {
-                    if (state.is(Blocks.WATER_CAULDRON)) {
-                        int levels = state.getValue(BlockStateProperties.LEVEL_CAULDRON);
-                        if (levels < 3) {
-                            level.setBlock(pos, state.setValue(BlockStateProperties.LEVEL_CAULDRON, levels + 1), 3);
-                            return InteractionResult.SUCCESS;
-                        }
-                        return InteractionResult.FAIL;
-                    } else if (state.is(Blocks.CAULDRON)) {
-                        level.setBlock(pos, Blocks.WATER_CAULDRON.defaultBlockState().setValue(BlockStateProperties.LEVEL_CAULDRON, 1), 3);
-                        return InteractionResult.SUCCESS;
+                        SoftFluidTank tank = te.getSoftFluidTank();
+                        tank.setFluid(fluid.copyWithCount(minAmount));
+                        return minAmount;
                     }
                 }
             }
-            return InteractionResult.PASS;
+            return null;
         }
-
-
-    }*/
+    }
 
 
 }

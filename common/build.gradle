@@ -17,9 +17,9 @@ dependencies {
 
     annotationProcessor 'net.fabricmc:sponge-mixin:0.12.5+mixin.0.8.5'
 
-    modImplementation ("net.mehvahdjukaar:moonlight:${rootProject.moonlight_version}")
-    modCompileOnly ("net.mehvahdjukaar:supplementaries:${rootProject.supplementaries_version}")
-    modCompileOnly ("net.mehvahdjukaar:suppsquared:${rootProject.suppsquared_version}")
+    modImplementation ("net.mehvahdjukaar:moonlight:${moonlight_version}")
+    modCompileOnly ("net.mehvahdjukaar:supplementaries:${supplementaries_version}")
+    modImplementation("curse.maven:supplementaries-squared-838411:5130385")
     modImplementation("curse.maven:cave-enhancements-597562:4388535")
     modImplementation("com.lowdragmc.shimmer:Shimmer-common:1.19.2-0.1.14")
 

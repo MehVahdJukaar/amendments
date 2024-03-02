@@ -8,6 +8,8 @@ import net.mehvahdjukaar.amendments.configs.ClientConfigs;
 import net.mehvahdjukaar.amendments.integration.CompatHandler;
 import net.mehvahdjukaar.amendments.mixins.SignRendererAccessor;
 import net.mehvahdjukaar.moonlight.api.events.AfterLanguageLoadEvent;
+import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidStack;
+import net.mehvahdjukaar.moonlight.api.platform.ClientHelper;
 import net.mehvahdjukaar.moonlight.api.resources.RPUtils;
 import net.mehvahdjukaar.moonlight.api.resources.ResType;
 import net.mehvahdjukaar.moonlight.api.resources.StaticResource;
@@ -176,8 +178,10 @@ public class ClientResourceGenerator extends DynClientResourcesGenerator {
                 .copyRect(9, 6, 1, 1, 9, 6)
                 .copyRect(5, 8, 1, 1, 6, 9)
                 .build();
-        try (TextureImage template = TextureImage.open(manager,
-                Amendments.res("block/music_disc_template"));
+        try (TextureImage fallback = TextureImage.open(manager,
+                Amendments.res("block/music_disc_generic"));
+             TextureImage template = TextureImage.open(manager,
+                     Amendments.res("block/music_disc_template"));
              TextureImage mask = TextureImage.open(manager,
                      Amendments.res("block/music_disc_mask"));) {
             Respriter respriter = Respriter.of(template);
@@ -199,7 +203,8 @@ public class ClientResourceGenerator extends DynClientResourcesGenerator {
                     }
                     this.dynamicPack.addAndCloseTexture(res, newImage);
                 } catch (Exception ex) {
-                    getLogger().warn("Failed to generate record item texture for {}", e.getKey(), ex);
+                    getLogger().warn("Failed to generate record item texture for {}. No model / texture found", e.getKey());
+                    this.dynamicPack.addAndCloseTexture(res, fallback.makeCopy());
                 }
             }
         } catch (Exception ignored) {

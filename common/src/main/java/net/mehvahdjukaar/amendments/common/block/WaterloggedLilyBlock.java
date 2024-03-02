@@ -1,6 +1,5 @@
 package net.mehvahdjukaar.amendments.common.block;
 
-import dev.architectury.injectables.annotations.PlatformOnly;
 import net.mehvahdjukaar.amendments.common.tile.WaterloggedLilyBlockTile;
 import net.mehvahdjukaar.moonlight.api.block.IBlockHolder;
 import net.mehvahdjukaar.moonlight.api.misc.ForgeOverride;

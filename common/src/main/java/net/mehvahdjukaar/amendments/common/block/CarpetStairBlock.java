@@ -1,8 +1,6 @@
 package net.mehvahdjukaar.amendments.common.block;
 
 
-import dev.architectury.injectables.annotations.PlatformOnly;
-import net.mehvahdjukaar.amendments.common.tile.CandleSkullBlockTile;
 import net.mehvahdjukaar.amendments.common.tile.CarpetedBlockTile;
 import net.mehvahdjukaar.amendments.reg.ModBlockProperties;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
