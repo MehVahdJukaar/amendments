@@ -1,1 +1,3 @@
-- fixed unsafe cast
+- cauldron can interact with supplementaries faucet
+- fixed FD hanging sign compat texture
+- cauldron conversion will not apply to anything that already has a cauldron behavior
