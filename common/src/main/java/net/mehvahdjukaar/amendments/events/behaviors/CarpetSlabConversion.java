@@ -59,7 +59,7 @@ public class CarpetSlabConversion implements ItemUseOnBlock {
 
                 InteractionResult result = InteractEvents.replaceSimilarBlock(ModRegistry.CARPET_SLAB.get(),
                         player, stack, pos, level, slabState, carpet.getSoundType(),
-                        false, SlabBlock.TYPE, SlabBlock.WATERLOGGED);
+                        false,false, SlabBlock.TYPE, SlabBlock.WATERLOGGED);
 
                 if (result.consumesAction()) {
                     if (level.getBlockEntity(pos) instanceof CarpetedBlockTile tile) {

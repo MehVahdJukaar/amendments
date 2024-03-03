@@ -25,8 +25,6 @@ public class ModTags {
 
     public static final TagKey<Block> VINE_SUPPORT = blockTag("vine_support");
 
-    public static final TagKey<Block> WALL_LANTERNS_BLACKLIST = blockTag("wall_lanterns_blacklist");
-    public static final TagKey<Block> WALL_LANTERNS_WHITELIST = blockTag("wall_lanterns_whitelist");
 
     //item tags
 

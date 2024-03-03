@@ -138,7 +138,7 @@ public class LiquidCauldronBlock extends ModCauldronBlock {
 
     @Override
     protected void handleEntityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
-        if (state.getValue(BOILING)) {
+        if (state.getValue(BOILING) && entity instanceof LivingEntity) {
             entity.hurt(new DamageSource(ModRegistry.BOILING_DAMAGE.getHolder()), 1.0F);
         }
         if (entity instanceof LivingEntity living && entity.mayInteract(level, pos) &&

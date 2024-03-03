@@ -183,7 +183,7 @@ public class InteractEvents {
     public static InteractionResult replaceSimilarBlock(Block blockOverride, Player player, ItemStack stack,
                                                         BlockPos pos, Level level, BlockState replaced,
                                                         @Nullable SoundType sound,
-                                                        boolean keepWater,
+                                                        boolean keepWater,boolean playEvent,
                                                         Property<?>... properties) {
 
         BlockState newState = blockOverride.defaultBlockState();
@@ -201,7 +201,7 @@ public class InteractEvents {
         if (player instanceof ServerPlayer serverPlayer) {
             CriteriaTriggers.PLACED_BLOCK.trigger(serverPlayer, pos, stack);
         }
-        level.gameEvent(player, GameEvent.BLOCK_PLACE, pos);
+        if (playEvent) level.gameEvent(player, GameEvent.BLOCK_PLACE, pos);
 
         if (sound == null) sound = newState.getSoundType();
         level.playSound(player, pos, sound.getPlaceSound(), SoundSource.BLOCKS, (sound.getVolume() + 1.0F) / 2.0F, sound.getPitch() * 0.8F);

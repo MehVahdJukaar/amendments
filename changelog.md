@@ -1,3 +1,4 @@
-- cauldron can interact with supplementaries faucet
-- fixed FD hanging sign compat texture
-- cauldron conversion will not apply to anything that already has a cauldron behavior
+- you can now craft stews (and just stews, dont ask for potions) by using boiling water and a cauldron
+- fixed cauldron not updating bubbling state when filled with water
+- fixed bubbling cauldron damating non living entities
+- wall lanterns whitelist is now a config

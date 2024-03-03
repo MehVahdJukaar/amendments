@@ -79,7 +79,7 @@ class DoubleCakeConversion implements ItemUseOnBlock {
             Block doubleCake = t.getBlockOfThis("double_cake");
             if (doubleCake != null) {
                 return InteractEvents.replaceSimilarBlock(doubleCake,
-                        player, stack, pos, level, state, null,true, DoubleCakeBlock.FACING);
+                        player, stack, pos, level, state, null,true, true, DoubleCakeBlock.FACING);
             }
         }
         return InteractionResult.PASS;

@@ -9,7 +9,6 @@ import net.mehvahdjukaar.amendments.integration.SuppCompat;
 import net.mehvahdjukaar.amendments.integration.SuppSquaredCompat;
 import net.mehvahdjukaar.amendments.reg.ModBlockProperties;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
-import net.mehvahdjukaar.amendments.reg.ModTags;
 import net.mehvahdjukaar.moonlight.api.block.IBlockHolder;
 import net.mehvahdjukaar.moonlight.api.block.WaterBlock;
 import net.mehvahdjukaar.moonlight.api.util.Utils;
@@ -258,10 +257,9 @@ public class WallLanternBlock extends WaterBlock implements EntityBlock {
 
     public static boolean isValidBlock(Block b) {
         if (b.asItem() == Items.AIR) return false;
-        if (b.builtInRegistryHolder().is(ModTags.WALL_LANTERNS_BLACKLIST)) return false;
-        if (b.builtInRegistryHolder().is(ModTags.WALL_LANTERNS_WHITELIST)) return true;
         ResourceLocation id = Utils.getID(b);
         String namespace = id.getNamespace();
+        if (CommonConfigs.WALL_LANTERN_WHITELIST.get().contains(id.toString())) return true;
         if (CommonConfigs.WALL_LANTERN_BLACKLIST.get().contains(namespace)) return false;
         if (namespace.equals("skinnedlanterns") || (namespace.equals("twigs") && id.getPath().contains("paper_lantern")))
             return true;
