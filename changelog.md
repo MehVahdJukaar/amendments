@@ -1,4 +1,2 @@
-- you can now craft stews (and just stews, dont ask for potions) by using boiling water and a cauldron
-- fixed cauldron not updating bubbling state when filled with water
-- fixed bubbling cauldron damating non living entities
-- wall lanterns whitelist is now a config
+improved splash an dbubble particles to have correct light level depending on fluid
+campfire smoke will no longer go through cauldrons

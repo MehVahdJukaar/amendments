@@ -20,7 +20,7 @@ public class SoftFluidColor implements BlockColor {
                     if (tank.getFluid().is(BuiltInSoftFluids.SUS_STEW.get())) return -1;
                     if (tank.getFluid().is(BuiltInSoftFluids.RABBIT_STEW.get())) return -1;
                     if (tank.getFluid().is(BuiltInSoftFluids.MUSHROOM_STEW.get())) return -1;
-                    return tank.getTintColor(level, pos);
+                    return tank.getCachedStillColor(level, pos);
                 }
             }
         }

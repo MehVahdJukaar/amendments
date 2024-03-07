@@ -64,14 +64,15 @@ public abstract class ModCauldronBlock extends AbstractCauldronBlock implements 
     public void fallOn(Level level, BlockState state, BlockPos pos, Entity entity, float fallDistance) {
         if (isEntityInsideContent(state, pos, entity)) {
             if (level.isClientSide && level.getBlockEntity(pos) instanceof LiquidCauldronBlockTile tile) {
-                int color = tile.getSoftFluidTank().getParticleColor(level, pos);
-                playSplashAnimation(level, pos, entity, getContentHeight(state), color);
+                int color = tile.getSoftFluidTank().getCachedParticleColor(level, pos);
+                int light = tile.getSoftFluidTank().getFluidValue().getEmissivity();
+                playSplashAnimation(level, pos, entity, getContentHeight(state), color, light);
             }
             super.fallOn(level, state, pos, entity, 0);
         } else super.fallOn(level, state, pos, entity, fallDistance);
     }
 
-    public static void playSplashAnimation(Level level, BlockPos pos, Entity e, double waterLevel, int color) {
+    public static void playSplashAnimation(Level level, BlockPos pos, Entity e, double waterLevel, int color, int light) {
         Entity feetEntity = e.isVehicle() && e.getControllingPassenger() != null ? e.getControllingPassenger() : e;
         float offset = feetEntity == e ? 0.2F : 0.9F;
         Vec3 movement = feetEntity.getDeltaMovement();
@@ -92,17 +93,18 @@ public abstract class ModCauldronBlock extends AbstractCauldronBlock implements 
         float radius = 1.5f;
         float width = e.getBbWidth();
 
-        spawnSplashParticles(level, e, pos, rand, surface, color,
+        spawnSplashParticles(level, e, pos, rand, surface, color, light,
                 ModRegistry.BOILING_PARTICLE.get(), radius, width);
 
-        spawnSplashParticles(level, e, pos, rand, surface, color,
+        spawnSplashParticles(level, e, pos, rand, surface, color, light,
                 ModRegistry.SPLASH_PARTICLE.get(), radius, width);
 
         e.gameEvent(GameEvent.SPLASH);
     }
 
     private static void spawnSplashParticles(Level level, Entity e, BlockPos pos,
-                                             RandomSource rand, double surface, int color,
+                                             RandomSource rand, double surface,
+                                             int color, int light,
                                              ParticleOptions particleOptions,
                                              float radius, float width) {
         float mx = pos.getX() + 0.125f;
@@ -117,7 +119,7 @@ public abstract class ModCauldronBlock extends AbstractCauldronBlock implements 
             z = e.getZ() + (rand.nextDouble() - 0.5) * width * radius;
             if (x >= mx && x <= Mx && z >= mz && z <= Mz) {
                 level.addParticle(particleOptions,
-                        x, surface, z, color, surface, 0);
+                        x, surface, z, color, surface, light);
             }
         }
     }

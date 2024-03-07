@@ -11,6 +11,7 @@
     "BlocksMixin",
     "BrewingMixin",
     "BrewingStandMixin",
+    "CampfireBlockEntityMixin",
     "CauldronBlockMixin",
     "CeilingHangingSignBlockMixin",
     "CompatQuarkSelfCandleSkullMixin",

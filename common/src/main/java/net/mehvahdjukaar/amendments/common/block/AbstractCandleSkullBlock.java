@@ -162,7 +162,7 @@ public abstract class AbstractCandleSkullBlock extends AbstractCandleBlock imple
     //same as ILightUpBlock (todo: try to merge)
     @Override
     public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult pHit) {
-        if (Utils.mayBuild(player,pos)) {
+        if (Utils.mayBuild(player, pos)) {
             ItemStack stack = player.getItemInHand(hand);
             //add candles
             if (stack.is(ItemTags.CANDLES) && stack.getItem() instanceof BlockItem blockItem) {
@@ -195,18 +195,18 @@ public abstract class AbstractCandleSkullBlock extends AbstractCandleBlock imple
     }
 
     @Override
-    public boolean isLitUp(BlockState state) {
+    public boolean isLitUp(BlockState state, LevelAccessor level, BlockPos pos) {
         return state.getValue(LIT);
     }
 
     @Override
-    public BlockState toggleLitState(BlockState state, boolean lit) {
-        return state.setValue(LIT, lit);
+    public void setLitUp(BlockState state, LevelAccessor world, BlockPos pos, boolean lit) {
+        world.setBlock(pos, state.setValue(LIT, lit), 3);
     }
 
     @Override
     public boolean canBeExtinguishedBy(ItemStack item) {
-        return  item.isEmpty() || ILightable.super.canBeExtinguishedBy(item);
+        return item.isEmpty() || ILightable.super.canBeExtinguishedBy(item);
     }
 
     @Override

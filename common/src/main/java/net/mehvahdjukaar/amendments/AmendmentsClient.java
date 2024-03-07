@@ -12,6 +12,7 @@ import net.mehvahdjukaar.amendments.client.model.*;
 import net.mehvahdjukaar.amendments.client.particles.BoilingParticle;
 import net.mehvahdjukaar.amendments.client.particles.ColoredSplashParticle;
 import net.mehvahdjukaar.amendments.client.renderers.*;
+import net.mehvahdjukaar.amendments.common.block.BoilingWaterCauldronBlock;
 import net.mehvahdjukaar.amendments.common.item.DyeBottleItem;
 import net.mehvahdjukaar.amendments.configs.ClientConfigs;
 import net.mehvahdjukaar.amendments.integration.CompatHandler;
@@ -29,13 +30,16 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.FallingBlockRenderer;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.resources.model.Material;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.*;
+import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -126,7 +130,7 @@ public class AmendmentsClient {
 
     private static void registerParticles(ClientHelper.ParticleEvent event) {
         event.register(ModRegistry.BOILING_PARTICLE.get(), BoilingParticle.Provider::new);
-        event.register(ModRegistry.SPLASH_PARTICLE.get(), ColoredSplashParticle::new);
+        event.register(ModRegistry.SPLASH_PARTICLE.get(), ColoredSplashParticle.Provider::new);
     }
 
     @EventCalled
@@ -164,11 +168,12 @@ public class AmendmentsClient {
         event.register(new MimicBlockColor(), ModRegistry.CARPET_STAIRS.get(), ModRegistry.CARPET_SLAB.get(),
                 ModRegistry.WALL_LANTERN.get(), ModRegistry.HANGING_FLOWER_POT.get(), ModRegistry.WATERLILY_BLOCK.get());
         //event.register(new LilyBlockColor(), ModRegistry.WATERLILY_BLOCK.get());
-        event.register((blockState, level, pos, i) -> i == 1 && level != null && pos != null ? BiomeColors.getAverageWaterColor(level, pos) : -1,
-                Blocks.WATER_CAULDRON);
+        event.register(BoilingWaterCauldronBlock::getWaterColor, Blocks.WATER_CAULDRON);
         event.register(new BrewingStandColor(), Blocks.BREWING_STAND);
         event.register(new SoftFluidColor(), ModRegistry.DYE_CAULDRON.get(), ModRegistry.LIQUID_CAULDRON.get());
     }
+
+
 
 
     public static Map<Item, Material> getAllRecords() {

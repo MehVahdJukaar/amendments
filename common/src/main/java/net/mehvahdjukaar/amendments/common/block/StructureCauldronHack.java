@@ -93,7 +93,7 @@ public class StructureCauldronHack extends Block implements EntityBlock {
                     if (level.random.nextFloat() < 0.4) {
                         PotionNBTHelper.Type.SPLASH.applyToTag(tag);
                     }
-                    te.getSoftFluidTank().setFluid(new SoftFluidStack(
+                    te.getSoftFluidTank().setFluid(SoftFluidStack.of(
                             BuiltInSoftFluids.POTION.getHolder(), level.random.nextIntBetweenInclusive(1, 4), tag
                     ));
                     te.setChanged();

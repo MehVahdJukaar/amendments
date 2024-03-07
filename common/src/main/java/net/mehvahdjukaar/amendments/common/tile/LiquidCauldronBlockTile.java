@@ -1,6 +1,6 @@
 package net.mehvahdjukaar.amendments.common.tile;
 
-import net.mehvahdjukaar.amendments.AmendmentsPlatformStuff;
+import net.mehvahdjukaar.amendments.common.LiquidMixer;
 import net.mehvahdjukaar.amendments.common.block.DyeCauldronBlock;
 import net.mehvahdjukaar.amendments.common.block.LiquidCauldronBlock;
 import net.mehvahdjukaar.amendments.common.block.ModCauldronBlock;
@@ -10,8 +10,12 @@ import net.mehvahdjukaar.moonlight.api.block.ISoftFluidTankProvider;
 import net.mehvahdjukaar.moonlight.api.client.model.ExtraModelData;
 import net.mehvahdjukaar.moonlight.api.client.model.IExtraModelDataProvider;
 import net.mehvahdjukaar.moonlight.api.client.model.ModelDataKey;
+import net.mehvahdjukaar.moonlight.api.fluids.BuiltInSoftFluids;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluid;
+import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidStack;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidTank;
+import net.mehvahdjukaar.moonlight.api.util.PotionNBTHelper;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
@@ -21,6 +25,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
+
 public class LiquidCauldronBlockTile extends BlockEntity implements IExtraModelDataProvider, ISoftFluidTankProvider {
     public static final ModelDataKey<SoftFluid> FLUID = new ModelDataKey<>(SoftFluid.class);
 
@@ -28,8 +33,8 @@ public class LiquidCauldronBlockTile extends BlockEntity implements IExtraModelD
 
     public SoftFluidTank makeTank(BlockState blockState) {
         return blockState.getBlock() instanceof DyeCauldronBlock ?
-                AmendmentsPlatformStuff.createCauldronDyeTank() :
-                AmendmentsPlatformStuff.createCauldronLiquidTank(this::canMixPotions);
+                createCauldronDyeTank() :
+                createCauldronLiquidTank();
     }
 
     private boolean canMixPotions() {
@@ -44,14 +49,9 @@ public class LiquidCauldronBlockTile extends BlockEntity implements IExtraModelD
         //this.fluidHolder.setFluid(ModRegistry.DYE_SOFT_FLUID.get());
     }
 
-
-
-
     @Override
-    public ExtraModelData getExtraModelData() {
-        return ExtraModelData.builder()
-                .with(FLUID, fluidTank.getFluidValue())
-                .build();
+    public void addExtraModelData(ExtraModelData.Builder builder) {
+        builder.with(FLUID, fluidTank.getFluidValue());
     }
 
     @Override
@@ -124,5 +124,53 @@ public class LiquidCauldronBlockTile extends BlockEntity implements IExtraModelD
     public void consumeOneLayer() {
         this.fluidTank.getFluid().shrink(1);
         this.setChanged();
+    }
+
+
+    public SoftFluidTank createCauldronLiquidTank( ) {
+        return new SoftFluidTank(4) {
+
+            @Override
+            public boolean canAddSoftFluid(SoftFluidStack fluidStack) {
+                if (fluidStack.is(BuiltInSoftFluids.WATER.get())) return false;
+                if (canMixPotions() && fluidStack.is(BuiltInSoftFluids.POTION.get()) && fluidStack.is(this.getFluidValue())) {
+                    // just compares bottle types
+                    return this.getSpace() >= fluidStack.getCount() && this.fluidStack.getTag()
+                            .getString(PotionNBTHelper.POTION_TYPE_KEY).equals(
+                                    fluidStack.getTag().getString(PotionNBTHelper.POTION_TYPE_KEY));
+                }
+                return super.canAddSoftFluid(fluidStack);
+            }
+
+            @Override
+            protected void addFluidOntoExisting(SoftFluidStack incoming) {
+                if (canMixPotions() && incoming.is(BuiltInSoftFluids.POTION.get())) {
+                    LiquidMixer.mixPotions(this.fluidStack, incoming);
+                    needsColorRefresh = true;
+
+                }
+                super.addFluidOntoExisting(incoming);
+            }
+        };
+    }
+
+    public SoftFluidTank createCauldronDyeTank() {
+        return new SoftFluidTank(3) {
+
+            @Override
+            public boolean canAddSoftFluid(SoftFluidStack fluidStack) {
+                if (fluidStack.is(ModRegistry.DYE_SOFT_FLUID.get()) && fluidStack.is(this.getFluidValue())) {
+                    return this.getSpace() >= fluidStack.getCount(); //discard nbt
+                } else return super.canAddSoftFluid(fluidStack);
+            }
+
+            @Override
+            protected void addFluidOntoExisting(SoftFluidStack fluidStack) {
+                if (fluidStack.is(ModRegistry.DYE_SOFT_FLUID.get())) {
+                    LiquidMixer.mixDye(this.fluidStack, fluidStack);
+                }
+                super.addFluidOntoExisting(fluidStack);
+            }
+        };
     }
 }

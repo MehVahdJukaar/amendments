@@ -6,6 +6,7 @@ import net.mehvahdjukaar.amendments.configs.CommonConfigs;
 import net.mehvahdjukaar.amendments.integration.CompatHandler;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.amendments.reg.ModTags;
+import net.mehvahdjukaar.moonlight.api.fluids.BuiltInSoftFluids;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidStack;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidTank;
 import net.mehvahdjukaar.moonlight.api.util.DispenserHelper;
@@ -46,12 +47,14 @@ public class CauldronConversion implements BlockUse {
     @Override
     public InteractionResult tryPerformingAction(BlockState state, BlockPos pos, Level level, Player player, InteractionHand hand, ItemStack stack, BlockHitResult hit) {
         if (player.isSecondaryUseActive()) return InteractionResult.PASS;
-        return convert(state, pos, level, player, hand, stack);
+        return convert(state, pos, level, player, hand, stack, true);
     }
 
 
-    public static InteractionResult convert(BlockState state, BlockPos pos, Level level, Player player, InteractionHand hand, ItemStack stack) {
-        BlockState newState = getNewState(pos, level, stack);
+    //caled by mixin
+    public static InteractionResult convert(BlockState state, BlockPos pos, Level level, Player player, InteractionHand hand,
+                                            ItemStack stack, boolean checkCauldronInteractions) {
+        BlockState newState = getNewState(pos, level, stack, checkCauldronInteractions);
         if (newState != null) {
             level.setBlockAndUpdate(pos, newState);
             if (level.getBlockEntity(pos) instanceof LiquidCauldronBlockTile te) {
@@ -66,13 +69,20 @@ public class CauldronConversion implements BlockUse {
         return InteractionResult.PASS;
     }
 
-    @Nullable
     public static BlockState getNewState(BlockPos pos, Level level, ItemStack stack) {
+        return getNewState(pos, level, stack, true);
+    }
+
+    @Nullable
+    public static BlockState getNewState(BlockPos pos, Level level, ItemStack stack, boolean checkCauldronInteractions) {
         var fluid = SoftFluidStack.fromItem(stack);
         if (fluid == null) return null;
-        if (((CauldronBlock) Blocks.CAULDRON).interactions.containsKey(stack.getItem())) return null;
+        SoftFluidStack first = fluid.getFirst();
+
+        if (checkCauldronInteractions && ((CauldronBlock) Blocks.CAULDRON).interactions.containsKey(stack.getItem())
+                && !first.is(BuiltInSoftFluids.POTION.get())) return null;
         if (CompatHandler.RATS && stack.is(Items.MILK_BUCKET)) return null;
-        return getNewState(pos, level, fluid.getFirst());
+        return getNewState(pos, level, first);
     }
 
     @Nullable

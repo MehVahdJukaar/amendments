@@ -37,11 +37,9 @@ public class CarpetedBlockTile extends MimicBlockTile {
     }
 
     @Override
-    public ExtraModelData getExtraModelData() {
-        return ExtraModelData.builder()
-                .with(MIMIC_KEY, mimic)
-                .with(CARPET_KEY, carpet)
-                .build();
+    public void addExtraModelData(ExtraModelData.Builder builder) {
+        super.addExtraModelData(builder);
+        builder.with(CARPET_KEY, carpet);
     }
 
     @Override
@@ -59,7 +57,7 @@ public class CarpetedBlockTile extends MimicBlockTile {
         return getHeldBlock(1);
     }
 
-    public BlockState getSlab(){
+    public BlockState getSlab() {
         return getHeldBlock();
     }
 

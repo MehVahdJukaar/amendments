@@ -54,7 +54,7 @@ public class DyeBottleItem extends Item {
     public static SoftFluidStack toFluidStack(DyeColor color, int amount) {
         CompoundTag tag = new CompoundTag();
         tag.putInt(COLOR_TAG, getDyeInt(color));
-        return new SoftFluidStack(ModRegistry.DYE_SOFT_FLUID.getHolder(), amount, tag);
+        return SoftFluidStack.of(ModRegistry.DYE_SOFT_FLUID.getHolder(), amount, tag);
     }
 
     public static ItemStack fromFluidStack(SoftFluidStack stack) {

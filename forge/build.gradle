@@ -129,10 +129,10 @@ dependencies {
     implementation(include("io.github.llamalad7:mixinextras-forge:${mixin_extras_version}"))
     annotationProcessor 'net.fabricmc:sponge-mixin:0.12.5+mixin.0.8.5'
 
-    //modImplementation("net.mehvahdjukaar:moonlight-forge:${moonlight_version}")
+    modImplementation("net.mehvahdjukaar:moonlight-forge:${moonlight_version}")
     modCompileOnly("net.mehvahdjukaar:supplementaries-forge:${supplementaries_version}")
     //modCompileOnly("curse.maven:supplementaries-412082:5097848")
-    modImplementation("curse.maven:selene-499980:5132734")
+    // modImplementation("curse.maven:selene-499980:5132734")
     modCompileOnly("net.mehvahdjukaar:suppsquared-forge:${suppsquared_version}")
 
     modRuntimeOnly("einstein.jmc:JustMoreCakes:forge-1.20-1.12.1")

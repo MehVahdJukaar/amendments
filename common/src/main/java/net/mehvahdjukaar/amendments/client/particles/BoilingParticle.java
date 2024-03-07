@@ -5,6 +5,7 @@ import net.mehvahdjukaar.moonlight.api.util.math.MthUtils;
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.*;
+import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.SimpleParticleType;
@@ -17,21 +18,23 @@ public class BoilingParticle extends TextureSheetParticle {
     private final TextureAtlasSprite shineSprite;
     private final double waterLevel;
     private final double growFactor;
+    private final int lightLevel;
     private int maxTry = 200;
 
-    BoilingParticle(ClientLevel level, double x, double y, double z, double waterLevel, SpriteSet sprites) {
+    BoilingParticle(ClientLevel level, double x, double y, double z, double waterLevel, int lightLevel, SpriteSet sprites) {
         super(level, x, y, z);
         this.setSize(0.0625F, 0.0625F);
         this.quadSize *= this.random.nextFloat() * 0.4F + 0.16F;
         this.xd = (level.random.nextFloat() * 2.0 - 1.0) * 0.005;
         this.yd = (level.random.nextFloat() * 2.0 - 1.0) * 0.005;
         this.zd = (level.random.nextFloat() * 2.0 - 1.0) * 0.005;
-        this.lifetime = (int) ( MthUtils.nextWeighted(level.random, 25, 1,5));
+        this.lifetime = (int) (MthUtils.nextWeighted(level.random, 26, 1, 5));
         this.sprites = sprites;
         this.setSpriteFromAge(this.sprites);
         this.shineSprite = sprites.get(0, 6);
         this.waterLevel = waterLevel;
-        this.growFactor = 0.002 + level.random.nextFloat()*0.004;
+        this.growFactor = 0.002 + level.random.nextFloat() * 0.004;
+        this.lightLevel = lightLevel;
     }
 
     @Override
@@ -88,6 +91,14 @@ public class BoilingParticle extends TextureSheetParticle {
     }
 
     @Override
+    protected int getLightColor(float partialTick) {
+        int lightColor = super.getLightColor(partialTick);
+        int sky = LightTexture.sky(lightColor);
+        int block = LightTexture.block(lightColor);
+        return LightTexture.pack(Math.max(lightLevel, block), sky);
+    }
+
+    @Override
     public void setSpriteFromAge(SpriteSet sprite) {
         if (!this.removed) {
             int newAge = Math.max(1, 5 - (this.lifetime - this.age));
@@ -107,13 +118,13 @@ public class BoilingParticle extends TextureSheetParticle {
         }
 
         public Particle createParticle(SimpleParticleType type, ClientLevel level, double x, double endY, double z,
-                                       double color, double startY, double unused) {
+                                       double color, double startY, double light) {
             int intColor = (int) color;
             float r = FastColor.ARGB32.red(intColor) / 255f;
             float g = FastColor.ARGB32.green(intColor) / 255f;
             float b = FastColor.ARGB32.blue(intColor) / 255f;
 
-            var particle = new BoilingParticle(level, x, startY, z, endY, sprite);
+            var particle = new BoilingParticle(level, x, startY, z, endY,(int)light, sprite);
             particle.setColor(r, g, b);
             return particle;
         }

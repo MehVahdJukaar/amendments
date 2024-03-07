@@ -259,7 +259,9 @@ public class WallLanternBlock extends WaterBlock implements EntityBlock {
         if (b.asItem() == Items.AIR) return false;
         ResourceLocation id = Utils.getID(b);
         String namespace = id.getNamespace();
-        if (CommonConfigs.WALL_LANTERN_WHITELIST.get().contains(id.toString())) return true;
+        if (CommonConfigs.WALL_LANTERN_WHITELIST.get().contains(id.toString())){
+            return true;
+        }
         if (CommonConfigs.WALL_LANTERN_BLACKLIST.get().contains(namespace)) return false;
         if (namespace.equals("skinnedlanterns") || (namespace.equals("twigs") && id.getPath().contains("paper_lantern")))
             return true;

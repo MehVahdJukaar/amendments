@@ -31,7 +31,7 @@ public abstract class CompatQuarkSelfCandleSkullMixin implements IEnchantmentInf
     public abstract ParticleType<? extends ParticleOptions> getParticle();
 
     @Unique
-    private DyeColor getColor(BlockState s, BlockGetter level, BlockPos pos) {
+    private DyeColor amendments$getColor(BlockState s, BlockGetter level, BlockPos pos) {
         if (s.getValue(CandleBlock.LIT)) {
             if (level.getBlockEntity(pos) instanceof CandleSkullBlockTile tile) {
                 BlockState state = tile.getCandle();
@@ -45,7 +45,7 @@ public abstract class CompatQuarkSelfCandleSkullMixin implements IEnchantmentInf
 
     @Override
     public float[] getEnchantmentInfluenceColor(BlockGetter world, BlockPos pos, BlockState state) {
-        DyeColor color = getColor(state, world, pos);
+        DyeColor color = amendments$getColor(state, world, pos);
         return color == null ? null : color.getTextureDiffuseColors();
     }
 
@@ -73,7 +73,7 @@ public abstract class CompatQuarkSelfCandleSkullMixin implements IEnchantmentInf
 
     @Override
     public boolean influencesEnchantment(BlockGetter world, BlockPos pos, BlockState state, Enchantment enchantment) {
-        DyeColor color = getColor(state, world, pos);
+        DyeColor color = amendments$getColor(state, world, pos);
         if (color == null) return false;
         Influence influence = MatrixEnchantingModule.candleInfluences.get(color);
         List<Enchantment> boosts = (this.getParticle() != ParticleTypes.SMALL_FLAME) ? influence.dampen() : influence.boost();
@@ -82,7 +82,7 @@ public abstract class CompatQuarkSelfCandleSkullMixin implements IEnchantmentInf
 
     @Override
     public boolean dampensEnchantment(BlockGetter world, BlockPos pos, BlockState state, Enchantment enchantment) {
-        DyeColor color = getColor(state, world, pos);
+        DyeColor color = amendments$getColor(state, world, pos);
         if (color == null) return false;
         Influence influence = MatrixEnchantingModule.candleInfluences.get(color);
         List<Enchantment> dampens = (this.getParticle() != ParticleTypes.SMALL_FLAME) ? influence.boost() : influence.dampen();

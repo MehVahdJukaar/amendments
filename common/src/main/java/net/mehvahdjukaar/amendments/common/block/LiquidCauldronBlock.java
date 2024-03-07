@@ -79,7 +79,7 @@ public class LiquidCauldronBlock extends ModCauldronBlock {
     public void receiveStalactiteDrip(BlockState state, Level level, BlockPos pos, Fluid fluid) {
         if (!isFull(state) && level.getBlockEntity(pos) instanceof LiquidCauldronBlockTile te) {
             var sf = SoftFluidStack.fromFluid(fluid, 1, null);
-            if (sf != null && te.getSoftFluidTank().addFluid(sf)) {
+            if (!sf.isEmpty() && te.getSoftFluidTank().addFluid(sf)) {
                 level.gameEvent(GameEvent.BLOCK_CHANGE, pos, GameEvent.Context.of(state));
                 level.levelEvent(1047, pos, 0);
             }
@@ -182,13 +182,15 @@ public class LiquidCauldronBlock extends ModCauldronBlock {
     public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource rand) {
 
         if (level.getBlockEntity(pos) instanceof LiquidCauldronBlockTile te) {
+            SoftFluidTank tank = te.getSoftFluidTank();
             if (state.getValue(BOILING)) {
-                int color = te.getSoftFluidTank().getParticleColor(level, pos);
-                playBubblingAnimation(level, pos, getContentHeight(state), rand, color);
+                int color = tank.getCachedParticleColor(level, pos);
+                int light = tank.getFluidValue().getEmissivity();
+                playBubblingAnimation(level, pos, getContentHeight(state), rand, color, light);
             }
 
             if (level.random.nextInt(4) == 0) {
-                SoftFluidStack fluid = te.getSoftFluidTank().getFluid();
+                SoftFluidStack fluid = tank.getFluid();
                 PotionNBTHelper.Type type = getPotType(fluid);
                 double height = getContentHeight(state);
                 if (type != null) {
@@ -200,7 +202,7 @@ public class LiquidCauldronBlock extends ModCauldronBlock {
                         ParticleOptions particle = type == PotionNBTHelper.Type.SPLASH ?
                                 ParticleTypes.AMBIENT_ENTITY_EFFECT : ParticleTypes.ENTITY_EFFECT;
 
-                        int color = te.getSoftFluidTank().getParticleColor(level, pos);
+                        int color = tank.getCachedParticleColor(level, pos);
                         addPotionParticles(particle, level, pos, 1,
                                 height, rand, color);
 
@@ -227,11 +229,11 @@ public class LiquidCauldronBlock extends ModCauldronBlock {
 
 
     public static void playBubblingAnimation(Level level, BlockPos pos,
-                                             double surface, RandomSource rand, int color) {
+                                             double surface, RandomSource rand, int color, int light) {
 
         var type = ModRegistry.BOILING_PARTICLE.get();
         int count = 2;
-        addSurfaceParticles(type, level, pos, count, surface, rand, color, pos.getY() + 5 / 16f, 0);
+        addSurfaceParticles(type, level, pos, count, surface, rand, color, pos.getY() + 5 / 16f, light);
 
         if (level.random.nextInt(4) == 0) {
             level.playLocalSound(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5,
@@ -253,12 +255,12 @@ public class LiquidCauldronBlock extends ModCauldronBlock {
     @Override
     public BlockState updateStateOnFluidChange(BlockState state, Level level, BlockPos pos, SoftFluidStack fluid) {
         //explosions?
-        if(!(level instanceof WorldGenLevel)) {
+        if (!(level instanceof WorldGenLevel)) {
             BlockState exploded = maybeExplode(state, level, pos, fluid);
             if (exploded != null) return exploded;
         }
 
-        int light = fluid.getFluid().value().getLuminosity();
+        int light = fluid.fluid().getLuminosity();
         if (light != state.getValue(ModBlockProperties.LIGHT_LEVEL)) {
             state = state.setValue(ModBlockProperties.LIGHT_LEVEL, light);
         }

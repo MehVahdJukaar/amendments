@@ -35,12 +35,12 @@ public class AbstractCauldronBlockMixin extends Block {
                                  @Local InteractionHand hand, @Local ItemStack stack) {
         // do something
         if (original == InteractionResult.PASS && this == Blocks.CAULDRON && CommonConfigs.LIQUID_CAULDRON.get()) {
-            return CauldronConversion.convert(state, pos, level, player, hand, stack);
+            return CauldronConversion.convert(state, pos, level, player, hand, stack, false);
         }
         BlockState newState = level.getBlockState(pos);
-        if (newState.getBlock() == Blocks.CAULDRON) {
+        if (newState.getBlock() instanceof BoilingWaterCauldronBlock) {
             boolean isFire = LiquidCauldronBlock.shouldBoil(level.getBlockState(pos.below()),
-                    new SoftFluidStack(BuiltInSoftFluids.WATER.getHolder()));
+                    SoftFluidStack.of(BuiltInSoftFluids.WATER.getHolder()));
             if (isFire) {
                 level.setBlockAndUpdate(pos, newState.setValue(BoilingWaterCauldronBlock.BOILING, true));
             }

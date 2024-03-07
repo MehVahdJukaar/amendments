@@ -196,15 +196,12 @@ public class LanternRendererExtension implements IThirdPersonAnimationProvider, 
         return false;
     }
 
-    public static void renderDebug(PoseStack poseStack, MultiBufferSource buffer) {
-
-    }
 
     private static void renderLanternModel(ItemStack itemStack, PoseStack poseStack, MultiBufferSource buffer, int light) {
         Minecraft mc = Minecraft.getInstance();
         ItemRenderer itemRenderer = mc.getItemRenderer();
-        BlockState state = ((BlockItem) itemStack.getItem()).getBlock().defaultBlockState()
-                .setValue(LanternBlock.HANGING, false);
+        BlockState state = ((BlockItem) itemStack.getItem()).getBlock().defaultBlockState();
+        if (state.hasProperty(LanternBlock.HANGING)) state = state.setValue(LanternBlock.HANGING, false);
         var model = mc.getBlockRenderer().getBlockModel(state);
         poseStack.translate(0.5, 0.5, 0.5);
         itemRenderer.render(itemStack, ItemDisplayContext.NONE, false, poseStack,

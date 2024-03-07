@@ -39,7 +39,7 @@ public class RecipeUtils {
 
     public static Pair<ItemStack, Float> craftWithFluid(Level level, SoftFluidStack fluidStack, ItemStack playerItem,
                                                         boolean try9x9) {
-        SoftFluid sf = fluidStack.getFluid().value();
+        SoftFluid sf = fluidStack.fluid();
         for (var category : sf.getContainerList().getCategories()) {
             int capacity = category.getCapacity();
             if (capacity > fluidStack.getCount()) continue;

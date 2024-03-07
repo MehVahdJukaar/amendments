@@ -144,11 +144,11 @@ public class CommonConfigs {
         WALL_LANTERN_HIGH_PRIORITY = builder.comment("Gives high priority to wall lantern placement. Enable to override other wall lanterns placements, disable if it causes issues with other mods that use lower priority block click events")
                 .define("high_priority", true);
 
-        List<String> modBlacklist = Arrays.asList("extlights", "betterendforge", "tconstruct", "enigmaticlegacy", "beautify");
+        List<String> modBlacklist = Arrays.asList("extlights", "betterendforge", "spelunkery", "galosphere", "tconstruct", "enigmaticlegacy", "beautify");
         WALL_LANTERN_BLACKLIST = builder.comment("Mod ids of mods that have lantern block that extend the base lantern class but don't look like one")
                 .define("mod_blacklist", modBlacklist);
         WALL_LANTERN_WHITELIST = builder.comment("Ids of blocks that are not detected as lanterns but should be")
-                .define("id_whitelist", List.of("spelunkery", "galosphere"));
+                .define("id_whitelist", List.of(""));
         FALLING_LANTERNS = builder.comment("Allows ceiling lanterns to fall if their support is broken." +
                         "Additionally if they fall from high enough they will break creating a fire where they land")
                 .define("falling_lanterns", FallingLanternEntity.FallMode.ON);

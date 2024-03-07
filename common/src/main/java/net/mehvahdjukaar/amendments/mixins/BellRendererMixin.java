@@ -28,9 +28,11 @@ public abstract class BellRendererMixin {
                 case CHAIN -> AmendmentsClient.BELL_CHAIN;
                 default -> null;
             };
+            int light = LevelRenderer.getLightColor(tile.getLevel(), tile.getBlockPos().below());
             if (model != null) {
-                int light = LevelRenderer.getLightColor(tile.getLevel(), tile.getBlockPos().below());
-                RenderUtil.renderModel(model, matrixStackIn, bufferIn, Minecraft.getInstance().getBlockRenderer(),
+                RenderUtil.renderModel(
+                        model, matrixStackIn, bufferIn,
+                        Minecraft.getInstance().getBlockRenderer(),
                         light, combinedOverlayIn, true);
             }
         }

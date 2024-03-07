@@ -38,17 +38,13 @@ public class ToolHookBlockTile extends ItemDisplayTile implements IExtraModelDat
     }
 
     public boolean isNeverFancy() {
-        if(true)return false;
         return !ClientConfigs.ANIMATED_HOOKS.get();
     }
 
-    //called when data is actually refreshed
     @Override
-    public ExtraModelData getExtraModelData() {
-        return ExtraModelData.builder()
-                .with(IS_FANCY, this.isFancy)
-                .with(ITEM, this.getDisplayedItem())
-                .build();
+    public void addExtraModelData(ExtraModelData.Builder builder) {
+        builder.with(IS_FANCY, this.isFancy);
+        builder.with(ITEM, this.getDisplayedItem());
     }
 
     public void onFancyChanged(boolean fancy) {
@@ -99,7 +95,7 @@ public class ToolHookBlockTile extends ItemDisplayTile implements IExtraModelDat
     @Override
     public void updateTileOnInventoryChanged() {
         super.updateTileOnInventoryChanged();
-        if(this.getDisplayedItem().isEmpty() && level != null){
+        if (this.getDisplayedItem().isEmpty() && level != null) {
             this.level.setBlockAndUpdate(worldPosition, Blocks.TRIPWIRE_HOOK.withPropertiesOf(this.getBlockState()));
         }
     }

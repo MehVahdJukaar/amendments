@@ -53,7 +53,7 @@ public class CauldronBakedModel implements CustomBakedModel {
             SoftFluid fluid = extraModelData.get(LiquidCauldronBlockTile.FLUID);
             BakedQuadsTransformer transformer = BakedQuadsTransformer.create();
             // has custom fluid
-            if (fluid != null && !fluid.isEmpty()) {
+            if (fluid != null && !fluid.isEmptyFluid()) {
                 ResourceLocation stillTexture = fluid.getStillTexture();
                 if (ClientConfigs.POTION_TEXTURE.get() && fluid == BuiltInSoftFluids.POTION.get()) {
                     stillTexture = AmendmentsClient.POTION_TEXTURE;
@@ -68,7 +68,7 @@ public class CauldronBakedModel implements CustomBakedModel {
                 }
                 TextureAtlasSprite sprite = ClientHelper.getBlockMaterial(stillTexture).sprite();
                 transformer.applyingAmbientOcclusion(false)
-                        .applyingEmissivity(fluid.getLuminosity())
+                        .applyingEmissivity(fluid.getEmissivity())
                         .applyingSprite(sprite);
             } else {
                 transformer.applyingAmbientOcclusion(false);
