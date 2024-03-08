@@ -32,7 +32,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.alchemy.PotionUtils;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
-import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -54,7 +53,7 @@ public class LiquidCauldronBlock extends ModCauldronBlock {
     public static final BooleanProperty BOILING = ModBlockProperties.BOILING;
 
     public LiquidCauldronBlock(Properties properties) {
-        super(properties);
+        super(properties.lightLevel(value -> value.getValue(LIGHT_LEVEL)));
         this.registerDefaultState(this.getStateDefinition().any()
                 .setValue(LEVEL, 1).setValue(LIGHT_LEVEL, 0).setValue(BOILING, false));
     }
@@ -255,10 +254,8 @@ public class LiquidCauldronBlock extends ModCauldronBlock {
     @Override
     public BlockState updateStateOnFluidChange(BlockState state, Level level, BlockPos pos, SoftFluidStack fluid) {
         //explosions?
-        if (!(level instanceof WorldGenLevel)) {
-            BlockState exploded = maybeExplode(state, level, pos, fluid);
-            if (exploded != null) return exploded;
-        }
+        BlockState exploded = maybeExplode(state, level, pos, fluid);
+        if (exploded != null) return exploded;
 
         int light = fluid.fluid().getLuminosity();
         if (light != state.getValue(ModBlockProperties.LIGHT_LEVEL)) {
@@ -286,7 +283,8 @@ public class LiquidCauldronBlock extends ModCauldronBlock {
 
                 return state;
             } else {
-                addSurfaceParticles(ParticleTypes.SMOKE, level, pos, 12, getContentHeight(state), level.random, 0, 0, 0);
+                if (level.isClientSide)
+                    addSurfaceParticles(ParticleTypes.SMOKE, level, pos, 12, getContentHeight(state), level.random, 0, 0, 0);
                 level.playSound(null, pos, SoundEvents.GENERIC_EXTINGUISH_FIRE, SoundSource.BLOCKS, 1.0f, 1.0f);
                 return null;
             }
@@ -297,9 +295,9 @@ public class LiquidCauldronBlock extends ModCauldronBlock {
         for (var effect : effects) {
             var inv = inverse.get(effect);
             if (inv != null && effects.contains(inv)) {
-
-                addSurfaceParticles(ParticleTypes.POOF, level, pos, 8, getContentHeight(state), level.random,
-                        0, 0.01f + level.random.nextFloat() * 0.1f, 0);
+                if (level.isClientSide)
+                    addSurfaceParticles(ParticleTypes.POOF, level, pos, 8, getContentHeight(state), level.random,
+                            0, 0.01f + level.random.nextFloat() * 0.1f, 0);
                 level.playSound(null, pos, SoundEvents.GENERIC_EXTINGUISH_FIRE, SoundSource.BLOCKS, 1.0f, 1.0f);
                 return Blocks.CAULDRON.defaultBlockState();
             }

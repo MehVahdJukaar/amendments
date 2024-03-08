@@ -10,6 +10,7 @@ import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.DyeableLeatherItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.ArmorDyeRecipe;
 import net.minecraft.world.item.crafting.CraftingBookCategory;
 import net.minecraft.world.item.crafting.CustomRecipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
@@ -60,7 +61,12 @@ public class DyeBottleRecipe extends CustomRecipe {
 
         if (leather.getItem() instanceof DyeableLeatherItem l) {
             result = leather.copy();
-            l.setColor(result, DyeBottleItem.mixColor(DyeBottleItem.getColor(dyeBottle), l.getColor(leather), 1, 1));
+
+            if(l.hasCustomColor(leather)) {
+                l.setColor(result, DyeBottleItem.mixColor(DyeBottleItem.getColor(dyeBottle), l.getColor(leather), 1, 1));
+            }else{
+                l.setColor(result, DyeBottleItem.getColor(dyeBottle));
+            }
         } else {
             result = BlocksColorAPI.changeColor(leather.getItem(),
                     DyeBottleItem.getClosestDye(dyeBottle)).getDefaultInstance();
