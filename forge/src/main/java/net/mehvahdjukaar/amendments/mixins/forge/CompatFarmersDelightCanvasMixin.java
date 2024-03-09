@@ -2,11 +2,9 @@ package net.mehvahdjukaar.amendments.mixins.forge;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.mehvahdjukaar.amendments.AmendmentsClient;
-import net.mehvahdjukaar.amendments.client.ModMaterials;
 import net.mehvahdjukaar.amendments.client.renderers.HangingSignRendererExtension;
 import net.mehvahdjukaar.amendments.common.ExtendedHangingSign;
 import net.mehvahdjukaar.amendments.configs.ClientConfigs;
-import net.mehvahdjukaar.moonlight.api.fluids.forge.SoftFluidTankImpl;
 import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -68,7 +66,7 @@ public abstract class CompatFarmersDelightCanvasMixin extends SignRenderer {
                     blockState, model, amendments$barModel, amendments$chains,
 
                     this.getCanvasSignMaterial(dye),
-                    ModMaterials.CANVAS_SIGH_MATERIAL,
+                    AmendmentsClient.CANVAS_SIGH_MATERIAL,
                     this, 0.6f / 0.4f * ClientConfigs.getSignColorMult(), false);
             ci.cancel();
         }

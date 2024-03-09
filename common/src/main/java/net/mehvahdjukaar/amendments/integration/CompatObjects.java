@@ -19,6 +19,8 @@ public class CompatObjects {
 
     public static final Supplier<Item> SPECTACLE_CANDLE_ITEM = makeCompatObject("cave_enhancements:spectacle_candle", BuiltInRegistries.ITEM);
 
+    public static final Supplier<Item> ETCHED_DISC = makeCompatObject("etched:etched_music_disc", BuiltInRegistries.ITEM);
+
     public static final Supplier<Block> SPECTACLE_CANDLE = makeCompatObject("cave_enhancements:spectacle_candle", BuiltInRegistries.BLOCK);
 
     public static final Supplier<ParticleType<?>> SMALL_SOUL_FLAME = makeCompatObject("buzzier_bees:small_soul_fire_flame", BuiltInRegistries.PARTICLE_TYPE);

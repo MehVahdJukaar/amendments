@@ -2,7 +2,6 @@ package net.mehvahdjukaar.amendments.mixins;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.mehvahdjukaar.amendments.AmendmentsClient;
-import net.mehvahdjukaar.amendments.client.ModMaterials;
 import net.mehvahdjukaar.amendments.client.renderers.HangingSignRendererExtension;
 import net.mehvahdjukaar.amendments.common.ExtendedHangingSign;
 import net.mehvahdjukaar.amendments.configs.ClientConfigs;
@@ -66,7 +65,7 @@ public abstract class HangingSignRendererMixin extends SignRenderer {
                     partialTick, poseStack, bufferSource, packedLight, packedOverlay,
                     blockState, model, amendments$barModel, amendments$chains,
                     this.getSignMaterial(woodType),
-                    ModMaterials.HANGING_SIGN_EXTENSIONS.get().get(woodType),
+                    AmendmentsClient.HANGING_SIGN_EXTENSIONS.get().get(woodType),
                     this, CompatHandler.SUPPLEMENTARIES ? SuppCompat.getSignColorMult() : 1,
                     translucent);
 

@@ -138,6 +138,7 @@ dependencies {
     modRuntimeOnly("einstein.jmc:JustMoreCakes:forge-1.20-1.12.1")
 
     modImplementation("curse.maven:farmers-delight-398521:5051242")
+    modImplementation("curse.maven:etched-491890:5065299")
     modImplementation("curse.maven:quark-243121:5093415")
     modImplementation("curse.maven:zeta-968868:5078215")
     modImplementation("curse.maven:blueprint-382216:4594238")

@@ -25,34 +25,65 @@ import net.mehvahdjukaar.moonlight.api.set.BlocksColorAPI;
 import net.mehvahdjukaar.moonlight.api.util.Utils;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.model.geom.ModelLayerLocation;
-import net.minecraft.client.renderer.BiomeColors;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.FallingBlockRenderer;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.resources.model.Material;
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.*;
-import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.WoodType;
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 
 public class AmendmentsClient {
 
-    private static final Map<Item, Material> RECORDS = new HashMap<>();
-    private static final Material DEFAULT_RECORD = new Material(TextureAtlas.LOCATION_BLOCKS,
+    public static final ResourceLocation SIGN_SHEET = new ResourceLocation("textures/atlas/signs.png");
+
+    public static final Material CANVAS_SIGH_MATERIAL = new Material(SIGN_SHEET,
+            Amendments.res("entity/signs/hanging/farmersdelight/extension_canvas"));
+
+    public static final Supplier<Map<WoodType, Material>> HANGING_SIGN_EXTENSIONS =
+            Suppliers.memoize(() -> WoodType.values().collect(Collectors.toMap(
+                    Function.identity(),
+                    w -> {
+                        String str = w.name();
+                        if (str.contains(":")) {
+                            str = str.replace(":", "/extension_");
+                        } else str = "extension_" + str;
+                        return new Material(SIGN_SHEET, Amendments.res("entity/signs/hanging/" + str));
+                    },
+                    (v1, v2) -> v1,
+                    IdentityHashMap::new)));
+
+    private static final Map<Item, Material> RECORD_MATERIALS = new HashMap<>();
+    public static final Material DEFAULT_RECORD = new Material(TextureAtlas.LOCATION_BLOCKS,
             Amendments.res("block/music_disc_template"));
+    public static final Material TINTED_RECORD = new Material(TextureAtlas.LOCATION_BLOCKS,
+            Amendments.res("block/music_disc_tinted"));
+    public static final List<Material> RECORD_PATTERNS = List.of(
+            new Material(TextureAtlas.LOCATION_BLOCKS, Amendments.res("block/music_disc_pattern_1")),
+            new Material(TextureAtlas.LOCATION_BLOCKS, Amendments.res("block/music_disc_pattern_2")),
+            new Material(TextureAtlas.LOCATION_BLOCKS, Amendments.res("block/music_disc_pattern_3")),
+            new Material(TextureAtlas.LOCATION_BLOCKS, Amendments.res("block/music_disc_pattern_4")),
+            new Material(TextureAtlas.LOCATION_BLOCKS, Amendments.res("block/music_disc_pattern_5"))
+    );
+    public static final List<Material> RECORD_PATTERNS_OVERLAY = List.of(
+            new Material(TextureAtlas.LOCATION_BLOCKS, Amendments.res("block/music_disc_pattern_1s")),
+            new Material(TextureAtlas.LOCATION_BLOCKS, Amendments.res("block/music_disc_pattern_2s")),
+            new Material(TextureAtlas.LOCATION_BLOCKS, Amendments.res("block/music_disc_pattern_3s")),
+            new Material(TextureAtlas.LOCATION_BLOCKS, Amendments.res("block/music_disc_pattern_4s")),
+            new Material(TextureAtlas.LOCATION_BLOCKS, Amendments.res("block/music_disc_pattern_5s"))
+    );
+
     public static final ModelLayerLocation HANGING_SIGN_EXTENSION = loc("hanging_sign_extension");
     public static final ModelLayerLocation HANGING_SIGN_EXTENSION_CHAINS = loc("hanging_sign_chains");
     public static final ModelLayerLocation SKULL_CANDLE_OVERLAY = loc("skull_candle");
@@ -177,17 +208,17 @@ public class AmendmentsClient {
 
 
     public static Map<Item, Material> getAllRecords() {
-        if (RECORDS.isEmpty()) {
+        if (RECORD_MATERIALS.isEmpty()) {
             for (var i : BuiltInRegistries.ITEM) {
                 if (i instanceof RecordItem) {
-                    RECORDS.put(i, new Material(TextureAtlas.LOCATION_BLOCKS,
+                    RECORD_MATERIALS.put(i, new Material(TextureAtlas.LOCATION_BLOCKS,
                             Amendments.res("block/" + Utils.getID(i).toString()
                                     .replace("minecraft:", "")
                                     .replace(":", "/"))));
                 }
             }
         }
-        return RECORDS;
+        return RECORD_MATERIALS;
     }
 
     public static Material getRecordMaterial(Item item) {

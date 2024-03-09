@@ -1,1 +1,1 @@
-fixed potion mixing bug
+added etched compat
