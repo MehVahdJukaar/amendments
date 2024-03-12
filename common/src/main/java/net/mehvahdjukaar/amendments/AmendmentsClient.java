@@ -70,6 +70,7 @@ public class AmendmentsClient {
     public static final Material TINTED_RECORD = new Material(TextureAtlas.LOCATION_BLOCKS,
             Amendments.res("block/music_disc_tinted"));
     public static final List<Material> RECORD_PATTERNS = List.of(
+            new Material(TextureAtlas.LOCATION_BLOCKS, Amendments.res("block/music_disc_pattern_0")),
             new Material(TextureAtlas.LOCATION_BLOCKS, Amendments.res("block/music_disc_pattern_1")),
             new Material(TextureAtlas.LOCATION_BLOCKS, Amendments.res("block/music_disc_pattern_2")),
             new Material(TextureAtlas.LOCATION_BLOCKS, Amendments.res("block/music_disc_pattern_3")),

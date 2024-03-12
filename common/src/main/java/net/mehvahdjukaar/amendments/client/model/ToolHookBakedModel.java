@@ -64,11 +64,9 @@ public class ToolHookBakedModel implements CustomBakedModel {
                     Matrix4f mat = new Matrix4f();
                     float x = item.getItem() instanceof DiggerItem ? 1 / 16f : 0;
 
-                    mat.translate(1f, 1f, 1f);
                     mat.mul(rotation.getRotation().getMatrix());
                     mat.rotate(Axis.ZP.rotationDegrees(225));
                     mat.scale(scale, scale, scale);
-                    mat.translate(-1f, -1f, -1f);
                     mat.translate(-x, 0, 1.4f / (16f * scale));
 
                     BakedQuadsTransformer transformer = BakedQuadsTransformer.create()

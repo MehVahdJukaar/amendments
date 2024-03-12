@@ -75,9 +75,7 @@ public class WallLanternBakedModel implements CustomBakedModel {
 
                     List<BakedQuad> mimicQuads = model.getQuads(mimic, side, rand);
                     Matrix4f mat = new Matrix4f();
-                    mat.translate(1f, 1f, 1f);
                     mat.mul(rotation.getRotation().getMatrix());
-                    mat.translate(-1f, -1f, -1f);
 
                     mat.translate(0, 2 / 16f, 2 / 16f);
 
