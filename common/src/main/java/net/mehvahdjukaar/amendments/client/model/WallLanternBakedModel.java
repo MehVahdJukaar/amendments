@@ -1,6 +1,7 @@
 package net.mehvahdjukaar.amendments.client.model;
 
 import net.mehvahdjukaar.amendments.client.WallLanternModelsManager;
+import net.mehvahdjukaar.amendments.common.tile.WallLanternBlockTile;
 import net.mehvahdjukaar.amendments.reg.ModBlockProperties;
 import net.mehvahdjukaar.moonlight.api.block.MimicBlock;
 import net.mehvahdjukaar.moonlight.api.client.model.BakedQuadsTransformer;
@@ -66,7 +67,7 @@ public class WallLanternBakedModel implements CustomBakedModel {
 
         //mimic
         try {
-            boolean fancy = Boolean.TRUE.equals(data.get(ModBlockProperties.FANCY));
+            boolean fancy = Boolean.TRUE.equals(data.get(WallLanternBlockTile.IS_FANCY));
 
             if (!fancy) {
                 if (mimic != null && !(mimic.getBlock() instanceof MimicBlock) && !mimic.isAir() && state != null) {

@@ -3,10 +3,12 @@ package net.mehvahdjukaar.amendments.common.tile;
 import com.mojang.datafixers.util.Pair;
 import net.mehvahdjukaar.amendments.common.block.CarpetSlabBlock;
 import net.mehvahdjukaar.amendments.common.block.CarpetStairBlock;
+import net.mehvahdjukaar.amendments.reg.ModBlockProperties;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.moonlight.api.block.MimicBlockTile;
 import net.mehvahdjukaar.moonlight.api.client.model.ExtraModelData;
 import net.mehvahdjukaar.moonlight.api.client.model.ModelDataKey;
+import net.mehvahdjukaar.moonlight.api.platform.ForgeHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -79,9 +81,9 @@ public class CarpetedBlockTile extends MimicBlockTile {
             this.mimic = state;
             if (this.level instanceof ServerLevel) {
                 this.setChanged();
-                int newLight = this.getLightValue();
+                int newLight = ForgeHelper.getLightEmission(state, level, worldPosition);
                 this.level.setBlock(this.worldPosition, this.getBlockState()
-                        .setValue(CarpetStairBlock.LIGHT_LEVEL, newLight).setValue(CarpetSlabBlock.SOLID, state.canOcclude()), 3);
+                        .setValue(ModBlockProperties.LIGHT_LEVEL, newLight).setValue(CarpetSlabBlock.SOLID, state.canOcclude()), 3);
                 this.level.sendBlockUpdated(this.worldPosition, this.getBlockState(), this.getBlockState(), Block.UPDATE_CLIENTS);
             } else {
                 this.requestModelReload();
@@ -99,11 +101,6 @@ public class CarpetedBlockTile extends MimicBlockTile {
         this.setHeldBlock(carpet, 1);
         this.setHeldBlock(stairs, 0);
     }
-
-    public int getLightValue() {
-        return this.getHeldBlock().getLightEmission();
-    }
-
 
     @Nullable
     public SoundType getSoundType() {

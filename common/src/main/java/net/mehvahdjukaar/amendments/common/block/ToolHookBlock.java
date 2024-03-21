@@ -67,15 +67,10 @@ public class ToolHookBlock extends Block implements EntityBlock {
         BlockState blockState = this.defaultBlockState();
         LevelReader levelReader = context.getLevel();
         BlockPos blockPos = context.getClickedPos();
-        Direction[] directions = context.getNearestLookingDirections();
-        Direction[] var6 = directions;
-        int var7 = directions.length;
-
-        for (int var8 = 0; var8 < var7; ++var8) {
-            Direction direction = var6[var8];
+        for (Direction direction : context.getNearestLookingDirections()) {
             if (direction.getAxis().isHorizontal()) {
-                Direction direction2 = direction.getOpposite();
-                blockState = blockState.setValue(FACING, direction2);
+                Direction opposite = direction.getOpposite();
+                blockState = blockState.setValue(FACING, opposite);
                 if (blockState.canSurvive(levelReader, blockPos)) {
                     return blockState;
                 }

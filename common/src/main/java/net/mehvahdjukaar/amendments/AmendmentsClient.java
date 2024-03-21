@@ -78,6 +78,7 @@ public class AmendmentsClient {
             new Material(TextureAtlas.LOCATION_BLOCKS, Amendments.res("block/music_disc_pattern_5"))
     );
     public static final List<Material> RECORD_PATTERNS_OVERLAY = List.of(
+            new Material(TextureAtlas.LOCATION_BLOCKS, Amendments.res("block/music_disc_pattern_0s")),
             new Material(TextureAtlas.LOCATION_BLOCKS, Amendments.res("block/music_disc_pattern_1s")),
             new Material(TextureAtlas.LOCATION_BLOCKS, Amendments.res("block/music_disc_pattern_2s")),
             new Material(TextureAtlas.LOCATION_BLOCKS, Amendments.res("block/music_disc_pattern_3s")),

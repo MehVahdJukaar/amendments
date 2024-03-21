@@ -44,7 +44,7 @@ class BellChainRing implements BlockUse {
             if (findAndRingBell(world, pos, player, 0, predicate)) {
                 return InteractionResult.sidedSuccess(world.isClientSide);
             }
-            return InteractionResult.sidedSuccess(world.isClientSide);
+            //return InteractionResult.sidedSuccess(world.isClientSide);
         }
         return InteractionResult.PASS;
     }

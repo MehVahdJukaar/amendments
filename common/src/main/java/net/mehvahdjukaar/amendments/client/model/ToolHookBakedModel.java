@@ -1,6 +1,7 @@
 package net.mehvahdjukaar.amendments.client.model;
 
 import com.mojang.math.Axis;
+import net.mehvahdjukaar.amendments.common.tile.ToolHookBlockTile;
 import net.mehvahdjukaar.amendments.reg.ModBlockProperties;
 import net.mehvahdjukaar.moonlight.api.client.model.BakedQuadsTransformer;
 import net.mehvahdjukaar.moonlight.api.client.model.CustomBakedModel;
@@ -54,7 +55,7 @@ public class ToolHookBakedModel implements CustomBakedModel {
 
         if (side == null) {
             try {
-                boolean fancy = Boolean.TRUE.equals(data.get(ModBlockProperties.FANCY));
+                boolean fancy = Boolean.TRUE.equals(data.get(ToolHookBlockTile.IS_FANCY));
                 ItemStack item = data.get(ModBlockProperties.ITEM);
                 if (!fancy && !item.isEmpty()) {
 

@@ -4,6 +4,8 @@ import net.mehvahdjukaar.amendments.configs.ClientConfigs;
 import net.mehvahdjukaar.amendments.reg.ModBlockProperties;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.amendments.reg.ModTags;
+import net.mehvahdjukaar.moonlight.api.block.DynamicRenderedBlockTile;
+import net.mehvahdjukaar.moonlight.api.block.DynamicRenderedItemDisplayTile;
 import net.mehvahdjukaar.moonlight.api.block.ItemDisplayTile;
 import net.mehvahdjukaar.moonlight.api.client.model.ExtraModelData;
 import net.mehvahdjukaar.moonlight.api.client.model.IExtraModelDataProvider;
@@ -18,63 +20,29 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 
-public class ToolHookBlockTile extends ItemDisplayTile implements IExtraModelDataProvider {
+public class ToolHookBlockTile extends DynamicRenderedItemDisplayTile {
 
-    public static final ModelDataKey<Boolean> IS_FANCY = ModBlockProperties.FANCY;
     public static final ModelDataKey<ItemStack> ITEM = ModBlockProperties.ITEM;
 
-    // lod stuff (client)
-    private boolean isFancy = false; // current
-    private int extraFancyTicks = 0;
 
     public ToolHookBlockTile(BlockPos pos, BlockState state) {
         super(ModRegistry.TOOL_HOOK_TILE.get(), pos, state);
     }
-
 
     @Override
     protected Component getDefaultName() {
         return Component.literal("tool hook");
     }
 
+    @Override
     public boolean isNeverFancy() {
         return !ClientConfigs.ANIMATED_HOOKS.get();
     }
 
     @Override
     public void addExtraModelData(ExtraModelData.Builder builder) {
-        builder.with(IS_FANCY, this.isFancy);
+        super.addExtraModelData(builder);
         builder.with(ITEM, this.getDisplayedItem());
-    }
-
-    public void onFancyChanged(boolean fancy) {
-    }
-
-    // call in your tile renderer
-    public boolean rendersFancy() {
-        return isFancy;
-    }
-
-    public boolean shouldRenderFancy(Vec3 cameraPos) {
-        if (isNeverFancy()) return false;
-        LOD lod = new LOD(cameraPos, this.getBlockPos());
-        boolean newFancyStatus = lod.isVeryNear();
-        boolean oldStatus = this.isFancy;
-        if (oldStatus != newFancyStatus) {
-            this.isFancy = newFancyStatus;
-            onFancyChanged(isFancy);
-            if (this.level == Minecraft.getInstance().level) {
-                this.requestModelReload();
-                this.level.sendBlockUpdated(this.worldPosition, getBlockState(), getBlockState(), Block.UPDATE_IMMEDIATE);
-            }
-            if (!isFancy) extraFancyTicks = 4;
-        }
-        if (extraFancyTicks > 0) {
-            extraFancyTicks--;
-            return true;
-        }
-        // 1 tick delay
-        return isFancy;
     }
 
     @Override

@@ -3,7 +3,7 @@ package net.mehvahdjukaar.amendments.common.tile;
 import net.mehvahdjukaar.amendments.common.PendulumAnimation;
 import net.mehvahdjukaar.amendments.common.SwingAnimation;
 import net.mehvahdjukaar.amendments.configs.ClientConfigs;
-import net.mehvahdjukaar.moonlight.api.client.renderer.DynamicRenderedBlockTile;
+import net.mehvahdjukaar.moonlight.api.block.DynamicRenderedBlockTile;
 import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;

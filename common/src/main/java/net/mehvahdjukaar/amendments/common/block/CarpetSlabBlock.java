@@ -51,7 +51,7 @@ public class CarpetSlabBlock extends SlabBlock implements EntityBlock, IRecolora
 
     public CarpetSlabBlock(Block block) {
         super(Properties.copy(block)
-                .lightLevel(state -> Math.max(0, state.getValue(LIGHT_LEVEL))));
+                .lightLevel(state ->  state.getValue(LIGHT_LEVEL)));
         this.registerDefaultState(this.defaultBlockState().setValue(SOLID, true).setValue(LIGHT_LEVEL, 0));
     }
 
