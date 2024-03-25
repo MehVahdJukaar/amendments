@@ -20,11 +20,12 @@ public class BrewingStandColor implements BlockColor {
             BlockEntity te = world.getBlockEntity(pos);
             if (te instanceof BrewingStandBlockEntity br) {
                 ItemStack item = br.getItem(tint-1);
-                if (!item.isEmpty()) {
+                if (!item.isEmpty() && item.hasTag()) {
                     //TODO: use dynamic pack
                     if (!ClientConfigs.COLORED_BREWING_STAND.get()) return 0xff3434;
                     return PotionUtils.getColor(item);
                 }
+                else return -1;
             }
         }
         return 0xffffff;

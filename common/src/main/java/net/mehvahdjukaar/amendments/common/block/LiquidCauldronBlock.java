@@ -210,6 +210,18 @@ public class LiquidCauldronBlock extends ModCauldronBlock {
                 if (CompatHandler.ALEX_CAVES) {
                     AlexCavesCompat.acidParticles(fluid, level, pos, rand, height);
                 }
+
+                BlockPos blockPos = pos.above();
+                if (fluid.is(BuiltInSoftFluids.LAVA.get()) && level.getBlockState(blockPos).isAir() && !level.getBlockState(blockPos).isSolidRender(level, blockPos)) {
+                    var c = pos.getCenter();
+                    if (rand.nextInt(20) == 0) {
+                        addSurfaceParticles(ParticleTypes.LAVA, level, pos, 1, height, rand, 0, 0, 0);
+                        level.playLocalSound(c.x, height, c.z, SoundEvents.LAVA_POP, SoundSource.BLOCKS, 0.2F + rand.nextFloat() * 0.2F, 0.9F + rand.nextFloat() * 0.15F, false);
+                    }
+                    if (rand.nextInt(40) == 0) {
+                        level.playLocalSound(c.x, height, c.z, SoundEvents.LAVA_AMBIENT, SoundSource.BLOCKS, 0.2F + rand.nextFloat() * 0.2F, 0.9F + rand.nextFloat() * 0.15F, false);
+                    }
+                }
             }
         }
     }

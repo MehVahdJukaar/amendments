@@ -21,6 +21,7 @@
     "JukeboxBlockEntityMixin",
     "JukeboxBlockMixin",
     "LanternBlockPlacementMixin",
+    "LavaCauldronMixin",
     "LecternBlockEntityMixin",
     "LecternBlockMixin",
     "PotionTooltipMixin",

@@ -59,10 +59,6 @@ public class CarpetedBlockTile extends MimicBlockTile {
         return getHeldBlock(1);
     }
 
-    public BlockState getSlab() {
-        return getHeldBlock();
-    }
-
     @Override
     public void saveAdditional(CompoundTag tag) {
         super.saveAdditional(tag);
@@ -77,17 +73,20 @@ public class CarpetedBlockTile extends MimicBlockTile {
 
     @Override
     public boolean setHeldBlock(BlockState state, int index) {
+        if (this.level instanceof ServerLevel) {
+            this.setChanged();
+            int newLight = Math.max(ForgeHelper.getLightEmission(getCarpet(), level, worldPosition),
+                    ForgeHelper.getLightEmission(getHeldBlock(), level, worldPosition));
+            this.level.setBlock(this.worldPosition, this.getBlockState()
+                    .setValue(ModBlockProperties.LIGHT_LEVEL, newLight).setValue(CarpetSlabBlock.SOLID,
+                            getHeldBlock().canOcclude()), 3);
+            this.level.sendBlockUpdated(this.worldPosition, this.getBlockState(), this.getBlockState(), Block.UPDATE_CLIENTS);
+        } else {
+            this.requestModelReload();
+        }
+
         if (index == 0) {
             this.mimic = state;
-            if (this.level instanceof ServerLevel) {
-                this.setChanged();
-                int newLight = ForgeHelper.getLightEmission(state, level, worldPosition);
-                this.level.setBlock(this.worldPosition, this.getBlockState()
-                        .setValue(ModBlockProperties.LIGHT_LEVEL, newLight).setValue(CarpetSlabBlock.SOLID, state.canOcclude()), 3);
-                this.level.sendBlockUpdated(this.worldPosition, this.getBlockState(), this.getBlockState(), Block.UPDATE_CLIENTS);
-            } else {
-                this.requestModelReload();
-            }
             return true;
         } else if (index == 1) {
             this.carpet = state;

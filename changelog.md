@@ -1,1 +1,2 @@
-actually fixed etched disc
+Added a tweak to fix Entity Renderer shading. Its now exactly the same that block shading use
+This means that if you render something with a block renderer or just a normal baked model, they will appear exactly identical

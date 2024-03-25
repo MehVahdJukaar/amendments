@@ -1,6 +1,7 @@
 package net.mehvahdjukaar.amendments.client;
 
 import com.google.gson.JsonParser;
+import com.mojang.blaze3d.platform.Lighting;
 import net.mehvahdjukaar.amendments.Amendments;
 import net.mehvahdjukaar.amendments.AmendmentsClient;
 import net.mehvahdjukaar.amendments.common.CakeRegistry;
@@ -34,6 +35,7 @@ import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.apache.logging.log4j.Logger;
+import org.joml.Vector3f;
 
 import java.util.stream.Stream;
 
@@ -55,6 +57,7 @@ public class ClientResourceGenerator extends DynClientResourcesGenerator {
 
     @Override
     public void regenerateDynamicAssets(ResourceManager manager) {
+
         //need this here for reasons I forgot
         WallLanternModelsManager.refreshModels(manager);
 

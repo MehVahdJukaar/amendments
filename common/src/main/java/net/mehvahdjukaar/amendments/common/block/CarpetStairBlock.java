@@ -101,7 +101,7 @@ public class CarpetStairBlock extends ModStairBlock implements EntityBlock, IRec
         if (!state.getValue(BlockStateProperties.WATERLOGGED) && fluidState.getType() == Fluids.WATER) {
             if (!level.isClientSide() && level.getBlockEntity(pos) instanceof CarpetedBlockTile te && level instanceof Level l) {
                 Block.popResource(l, pos, te.getCarpet().getBlock().asItem().getDefaultInstance());
-                level.setBlock(pos, te.getSlab().getBlock()
+                level.setBlock(pos, te.getHeldBlock().getBlock()
                         .withPropertiesOf(state)
                         .setValue(BlockStateProperties.WATERLOGGED, true), 3);
                 level.scheduleTick(pos, fluidState.getType(), fluidState.getType().getTickDelay(level));
