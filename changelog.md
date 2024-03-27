@@ -1,2 +1,2 @@
-Added a tweak to fix Entity Renderer shading. Its now exactly the same that block shading use
-This means that if you render something with a block renderer or just a normal baked model, they will appear exactly identical
+- should work with Farmers Delight Refabricated 2.0.0
+- Get it here https://www.curseforge.com/minecraft/mc-mods/farmers-delight-refabricated

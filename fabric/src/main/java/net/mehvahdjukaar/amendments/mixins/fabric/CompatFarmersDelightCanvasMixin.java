@@ -1,4 +1,4 @@
-package net.mehvahdjukaar.amendments.mixins.forge;
+package net.mehvahdjukaar.amendments.mixins.fabric;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.mehvahdjukaar.amendments.AmendmentsClient;
@@ -16,6 +16,7 @@ import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.block.SignBlock;
 import net.minecraft.world.level.block.entity.SignBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Pseudo;
 import org.spongepowered.asm.mixin.Shadow;
@@ -26,11 +27,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 import vectorwing.farmersdelight.client.renderer.HangingCanvasSignRenderer;
 
-import javax.annotation.Nullable;
 import java.util.List;
 
 
-// freaking arch cant remap in common...
 @Pseudo
 @Mixin(HangingCanvasSignRenderer.class)
 public abstract class CompatFarmersDelightCanvasMixin extends SignRenderer {

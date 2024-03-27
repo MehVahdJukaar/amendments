@@ -22,6 +22,7 @@ dependencies {
     modImplementation("curse.maven:supplementaries-squared-838411:5130385")
     modImplementation("curse.maven:cave-enhancements-597562:4388535")
     modImplementation("com.lowdragmc.shimmer:Shimmer-common:1.19.2-0.1.14")
+    modImplementation("curse.maven:farmers-delight-398521:5051242")
 
     modImplementation("curse.maven:quark-243121:5093415")
     modImplementation("curse.maven:zeta-968868:5078215")

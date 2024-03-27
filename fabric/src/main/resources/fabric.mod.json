@@ -37,6 +37,7 @@
   "breaks": {
     "carpeted": "*",
     "betterlily": "*",
-    "betterjukebox": "*"
+    "betterjukebox": "*",
+    "farmersdelight": "<1.20-2.0.0"
   }
 }
