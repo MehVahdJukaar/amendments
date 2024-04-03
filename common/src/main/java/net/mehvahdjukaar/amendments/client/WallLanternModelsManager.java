@@ -5,6 +5,7 @@ import com.google.gson.JsonElement;
 import net.mehvahdjukaar.amendments.Amendments;
 import net.mehvahdjukaar.amendments.client.renderers.LanternRendererExtension;
 import net.mehvahdjukaar.amendments.common.block.WallLanternBlock;
+import net.mehvahdjukaar.amendments.configs.ClientConfigs;
 import net.mehvahdjukaar.moonlight.api.item.IThirdPersonSpecialItemRenderer;
 import net.mehvahdjukaar.moonlight.api.platform.ClientHelper;
 import net.mehvahdjukaar.moonlight.api.resources.RPUtils;
@@ -124,7 +125,7 @@ public class WallLanternModelsManager {
     }
 
     public static void addAnimations() {
-        if (initialized && !animAdded) {
+        if (initialized && !animAdded && ClientConfigs.LANTERN_HOLDING.get()) {
             animAdded = true;
             var anim = new LanternRendererExtension();
             POSSIBLE_LANTERNS.stream().map(Block::asItem).collect(Collectors.toSet())

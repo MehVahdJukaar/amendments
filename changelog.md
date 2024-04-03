@@ -1,2 +1,1 @@
-- should work with Farmers Delight Refabricated 2.0.0
-- Get it here https://www.curseforge.com/minecraft/mc-mods/farmers-delight-refabricated
+improved versioning
