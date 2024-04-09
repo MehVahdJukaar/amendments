@@ -1,1 +1,1 @@
-fixed etched disc color
+fixed music disc texture

@@ -70,20 +70,20 @@ public class AmendmentsClient {
     public static final Material TINTED_RECORD = new Material(TextureAtlas.LOCATION_BLOCKS,
             Amendments.res("block/music_disc_tinted"));
     public static final List<Material> RECORD_PATTERNS = List.of(
-            new Material(TextureAtlas.LOCATION_BLOCKS, Amendments.res("block/music_disc_pattern_0")),
-            new Material(TextureAtlas.LOCATION_BLOCKS, Amendments.res("block/music_disc_pattern_1")),
-            new Material(TextureAtlas.LOCATION_BLOCKS, Amendments.res("block/music_disc_pattern_2")),
-            new Material(TextureAtlas.LOCATION_BLOCKS, Amendments.res("block/music_disc_pattern_3")),
-            new Material(TextureAtlas.LOCATION_BLOCKS, Amendments.res("block/music_disc_pattern_4")),
-            new Material(TextureAtlas.LOCATION_BLOCKS, Amendments.res("block/music_disc_pattern_5"))
+            new Material(TextureAtlas.LOCATION_BLOCKS, Amendments.res("block/music_discs/music_disc_pattern_0")),
+            new Material(TextureAtlas.LOCATION_BLOCKS, Amendments.res("block/music_discs/music_disc_pattern_1")),
+            new Material(TextureAtlas.LOCATION_BLOCKS, Amendments.res("block/music_discs/music_disc_pattern_2")),
+            new Material(TextureAtlas.LOCATION_BLOCKS, Amendments.res("block/music_discs/music_disc_pattern_3")),
+            new Material(TextureAtlas.LOCATION_BLOCKS, Amendments.res("block/music_discs/music_disc_pattern_4")),
+            new Material(TextureAtlas.LOCATION_BLOCKS, Amendments.res("block/music_discs/music_disc_pattern_5"))
     );
     public static final List<Material> RECORD_PATTERNS_OVERLAY = List.of(
-            new Material(TextureAtlas.LOCATION_BLOCKS, Amendments.res("block/music_disc_pattern_0s")),
-            new Material(TextureAtlas.LOCATION_BLOCKS, Amendments.res("block/music_disc_pattern_1s")),
-            new Material(TextureAtlas.LOCATION_BLOCKS, Amendments.res("block/music_disc_pattern_2s")),
-            new Material(TextureAtlas.LOCATION_BLOCKS, Amendments.res("block/music_disc_pattern_3s")),
-            new Material(TextureAtlas.LOCATION_BLOCKS, Amendments.res("block/music_disc_pattern_4s")),
-            new Material(TextureAtlas.LOCATION_BLOCKS, Amendments.res("block/music_disc_pattern_5s"))
+            new Material(TextureAtlas.LOCATION_BLOCKS, Amendments.res("block/music_discs/music_disc_pattern_0s")),
+            new Material(TextureAtlas.LOCATION_BLOCKS, Amendments.res("block/music_discs/music_disc_pattern_1s")),
+            new Material(TextureAtlas.LOCATION_BLOCKS, Amendments.res("block/music_discs/music_disc_pattern_2s")),
+            new Material(TextureAtlas.LOCATION_BLOCKS, Amendments.res("block/music_discs/music_disc_pattern_3s")),
+            new Material(TextureAtlas.LOCATION_BLOCKS, Amendments.res("block/music_discs/music_disc_pattern_4s")),
+            new Material(TextureAtlas.LOCATION_BLOCKS, Amendments.res("block/music_discs/music_disc_pattern_5s"))
     );
 
     public static final ModelLayerLocation HANGING_SIGN_EXTENSION = loc("hanging_sign_extension");
