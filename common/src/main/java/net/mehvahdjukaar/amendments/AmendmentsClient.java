@@ -214,7 +214,7 @@ public class AmendmentsClient {
             for (var i : BuiltInRegistries.ITEM) {
                 if (i instanceof RecordItem) {
                     RECORD_MATERIALS.put(i, new Material(TextureAtlas.LOCATION_BLOCKS,
-                            Amendments.res("block/" + Utils.getID(i).toString()
+                            Amendments.res("block/music_discs/" + Utils.getID(i).toString()
                                     .replace("minecraft:", "")
                                     .replace(":", "/"))));
                 }

@@ -182,11 +182,11 @@ public class ClientResourceGenerator extends DynClientResourcesGenerator {
                 .copyRect(5, 8, 1, 1, 6, 9)
                 .build();
         try (TextureImage fallback = TextureImage.open(manager,
-                Amendments.res("block/music_disc_generic"));
+                Amendments.res("block/music_discs/music_disc_generic"));
              TextureImage template = TextureImage.open(manager,
-                     Amendments.res("block/music_disc_template"));
+                     Amendments.res("block/music_discs/music_disc_template"));
              TextureImage mask = TextureImage.open(manager,
-                     Amendments.res("block/music_disc_mask"));) {
+                     Amendments.res("block/music_discs/music_disc_mask"));) {
             Respriter respriter = Respriter.of(template);
 
             for (var e : AmendmentsClient.getAllRecords().entrySet()) {

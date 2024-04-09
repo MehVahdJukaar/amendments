@@ -60,11 +60,11 @@ public class JukeboxTileRenderer implements BlockEntityRenderer<JukeboxBlockEnti
                 int pattern = tag.getInt("Pattern");
                 if (!label.isEmpty() && pattern < 6) {
                     builder = AmendmentsClient.RECORD_PATTERNS.get(pattern).buffer(bufferSource, RenderType::entityCutout);
-                    int primaryColor = tag.getInt("Primary");
+                    int primaryColor = label.getInt("Primary");
                     if (primaryColor == 0) primaryColor = -1;
                     drawColoredQuad(poseStack, builder, lu, lv, primaryColor);
                     builder = AmendmentsClient.RECORD_PATTERNS_OVERLAY.get(pattern).buffer(bufferSource, RenderType::entityCutout);
-                    int secondaryColor = tag.getInt("Secondary");
+                    int secondaryColor = label.getInt("Secondary");
                     if (secondaryColor == 0) secondaryColor = -1;
                     drawColoredQuad(poseStack, builder, lu, lv, secondaryColor);
                 }
