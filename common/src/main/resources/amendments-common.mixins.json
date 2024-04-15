@@ -27,6 +27,7 @@
     "PotionTooltipMixin",
     "VineMixin",
     "WallHangingSignBlockMixin",
+    "SkullBlockMixin",
     "WaterLilyMixin"
   ],
   "client": [

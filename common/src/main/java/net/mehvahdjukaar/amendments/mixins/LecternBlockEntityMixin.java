@@ -1,6 +1,7 @@
 package net.mehvahdjukaar.amendments.mixins;
 
 import net.mehvahdjukaar.amendments.common.LecternEditMenu;
+import net.mehvahdjukaar.amendments.configs.CommonConfigs;
 import net.mehvahdjukaar.amendments.reg.ModTags;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -45,7 +46,7 @@ public abstract class LecternBlockEntityMixin extends BlockEntity implements Con
 
     @Inject(method = "createMenu", at = @At("HEAD"), cancellable = true)
     public void createEditMenu(int i, Inventory inventory, Player player, CallbackInfoReturnable<AbstractContainerMenu> cir) {
-        if (this.getBook().getItem() instanceof WritableBookItem) {
+        if (this.getBook().getItem() instanceof WritableBookItem  && CommonConfigs.LECTERN_STUFF.get()) {
             cir.setReturnValue(new LecternEditMenu(i, (LecternBlockEntity) (Object) this, this.dataAccess));
         }
     }

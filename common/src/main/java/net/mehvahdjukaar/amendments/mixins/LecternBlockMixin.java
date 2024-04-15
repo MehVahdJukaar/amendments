@@ -1,5 +1,6 @@
 package net.mehvahdjukaar.amendments.mixins;
 
+import net.mehvahdjukaar.amendments.configs.CommonConfigs;
 import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
@@ -21,7 +22,8 @@ public abstract class LecternBlockMixin {
     @Inject(method = "openScreen", at = @At("HEAD"), cancellable = true)
     public void openCustomMenu(Level level, BlockPos pos, Player player, CallbackInfo ci){
         BlockEntity blockEntity = level.getBlockEntity(pos);
-        if (blockEntity instanceof LecternBlockEntity be && be.getBook().getItem() instanceof WritableBookItem) {
+        if (blockEntity instanceof LecternBlockEntity be && be.getBook().getItem() instanceof WritableBookItem
+        && CommonConfigs.LECTERN_STUFF.get()) {
             PlatHelper.openCustomMenu((ServerPlayer) player,be,pos);
             player.awardStat(Stats.INTERACT_WITH_LECTERN);
             ci.cancel();

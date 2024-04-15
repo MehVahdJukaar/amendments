@@ -66,9 +66,9 @@ public class AmendmentsClient {
 
     private static final Map<Item, Material> RECORD_MATERIALS = new HashMap<>();
     public static final Material DEFAULT_RECORD = new Material(TextureAtlas.LOCATION_BLOCKS,
-            Amendments.res("block/music_disc_template"));
+            Amendments.res("block//music_discs/music_disc_template"));
     public static final Material TINTED_RECORD = new Material(TextureAtlas.LOCATION_BLOCKS,
-            Amendments.res("block/music_disc_tinted"));
+            Amendments.res("block/music_discs/music_disc_tinted"));
     public static final List<Material> RECORD_PATTERNS = List.of(
             new Material(TextureAtlas.LOCATION_BLOCKS, Amendments.res("block/music_discs/music_disc_pattern_0")),
             new Material(TextureAtlas.LOCATION_BLOCKS, Amendments.res("block/music_discs/music_disc_pattern_1")),

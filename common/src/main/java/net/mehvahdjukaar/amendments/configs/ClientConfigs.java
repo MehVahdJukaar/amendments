@@ -46,6 +46,7 @@ public class ClientConfigs {
     static {
         ConfigBuilder builder = ConfigBuilder.create(Amendments.MOD_ID, ConfigType.CLIENT);
 
+
         builder.push("general");
         TOOLTIP_HINTS = builder.define("tooltip_hints", true);
         CUSTOM_CONFIGURED_SCREEN = builder.define("custom_configured_screen", true);

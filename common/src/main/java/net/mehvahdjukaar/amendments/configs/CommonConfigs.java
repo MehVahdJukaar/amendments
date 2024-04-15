@@ -63,11 +63,18 @@ public class CommonConfigs {
     public static final Supplier<Boolean> DYE_BLOCKS;
 
     public static final Supplier<Boolean> LILY_PADS_ON;
+    public static final Supplier<Boolean> LECTERN_STUFF;
+
 
     public static final ConfigSpec SPEC;
 
     static {
         ConfigBuilder builder = ConfigBuilder.create(Amendments.MOD_ID, ConfigType.COMMON);
+
+        builder.push("lectern");
+        LECTERN_STUFF = builder.comment("Improved lectern screen allowing to edit font of a book while on it")
+                .define("improved_screen", true);
+        builder.pop();
 
         builder.push("hanging_signs");
         HANGING_SIGN_ITEM = builder.comment("Allows placing items on hanging signs")

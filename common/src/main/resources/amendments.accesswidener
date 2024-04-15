@@ -33,6 +33,7 @@ accessible class net/minecraft/client/gui/screens/inventory/BookEditScreen$Displ
 accessible class net/minecraft/client/gui/screens/inventory/BookEditScreen$DisplayCache
 accessible class net/minecraft/client/gui/screens/inventory/BookEditScreen$Pos2i
 
+accessible field net/minecraft/world/level/block/state/StateDefinition$Builder properties Ljava/util/Map;
 
 accessible method net/minecraft/world/entity/Entity getSwimSplashSound ()Lnet/minecraft/sounds/SoundEvent;
 accessible method net/minecraft/world/entity/Entity getSwimHighSpeedSplashSound ()Lnet/minecraft/sounds/SoundEvent;

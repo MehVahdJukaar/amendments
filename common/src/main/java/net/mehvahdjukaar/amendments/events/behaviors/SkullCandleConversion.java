@@ -5,6 +5,7 @@ import net.mehvahdjukaar.amendments.configs.CommonConfigs;
 import net.mehvahdjukaar.amendments.integration.CompatHandler;
 import net.mehvahdjukaar.amendments.integration.CompatObjects;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
+import net.mehvahdjukaar.moonlight.api.set.BlocksColorAPI;
 import net.mehvahdjukaar.moonlight.api.util.Utils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
@@ -44,7 +45,7 @@ public class SkullCandleConversion implements ItemUseOnBlock {
     public static boolean isCorrectCandle(Item item) {
         if (item instanceof BlockItem bi && bi.getBlock() instanceof CandleBlock) {
             var n = Utils.getID(item).getNamespace();
-            return (n.equals("minecraft") || n.equals("tinted") ||
+            return (n.equals("minecraft") || n.equals("tinted") || n.equals("dye_depot") ||
                     item == CompatObjects.SOUL_CANDLE_ITEM.get() ||
                     item == CompatObjects.SPECTACLE_CANDLE_ITEM.get());
         }
