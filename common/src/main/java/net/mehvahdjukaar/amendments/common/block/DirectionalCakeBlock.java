@@ -71,7 +71,7 @@ public class DirectionalCakeBlock extends CakeBlock implements SimpleWaterlogged
 
     public DirectionalCakeBlock(CakeRegistry.CakeType type) {
         super(Utils.copyPropertySafe(type.cake).dropsLike(type.cake));
-        this.registerDefaultState(this.stateDefinition.any().setValue(BITES, 0)
+        this.registerDefaultState(this.defaultBlockState().setValue(BITES, 0)
                 .setValue(FACING, Direction.WEST).setValue(WATERLOGGED, false));
         this.type = type;
     }
@@ -163,6 +163,7 @@ public class DirectionalCakeBlock extends CakeBlock implements SimpleWaterlogged
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+        super.createBlockStateDefinition(builder);
         builder.add(FACING, BITES, WATERLOGGED);
     }
 
@@ -194,7 +195,7 @@ public class DirectionalCakeBlock extends CakeBlock implements SimpleWaterlogged
 
     @Override
     public void animateTick(BlockState stateIn, Level level, BlockPos pos, RandomSource rand) {
-        if(CompatHandler.SUPPLEMENTARIES) SuppCompat.spawnCakeParticles(level, pos, rand);
+        if (CompatHandler.SUPPLEMENTARIES) SuppCompat.spawnCakeParticles(level, pos, rand);
 
     }
 }

@@ -1,1 +1,1 @@
-fixed music disk texture for etched
+fixed hanging signs not dropping their held item when broken

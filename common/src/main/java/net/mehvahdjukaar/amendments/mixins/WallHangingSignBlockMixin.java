@@ -22,6 +22,8 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.loot.LootParams;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
@@ -29,6 +31,9 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Mixin(WallHangingSignBlock.class)
 public abstract class WallHangingSignBlockMixin extends Block implements EntityBlock {
@@ -89,5 +94,17 @@ public abstract class WallHangingSignBlockMixin extends Block implements EntityB
         var ret = HangingSignDisplayItem.INSTANCE.tryPerformingAction(state, pos, level, player,
                 hand, player.getItemInHand(hand), hit);
         if (ret != InteractionResult.PASS) cir.setReturnValue(ret);
+    }
+
+    @Override
+    public List<ItemStack> getDrops(BlockState state, LootParams.Builder params) {
+        var list = new ArrayList<>(super.getDrops(state, params));
+        if (params.getOptionalParameter(LootContextParams.BLOCK_ENTITY) instanceof ExtendedHangingSign tile) {
+            ItemStack backItem = tile.getExtension().getBackItem();
+            if (!backItem.isEmpty()) list.add(backItem);
+            ItemStack frontItem = tile.getExtension().getFrontItem();
+            if (!frontItem.isEmpty()) list.add(frontItem);
+        }
+        return list;
     }
 }
