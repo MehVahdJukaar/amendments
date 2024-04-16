@@ -12,10 +12,12 @@ import net.mehvahdjukaar.moonlight.api.fluids.BuiltInSoftFluids;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidStack;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidTank;
 import net.mehvahdjukaar.moonlight.api.util.PotionNBTHelper;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.FastColor;
@@ -45,6 +47,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
+import java.awt.*;
 import java.util.List;
 
 public class LiquidCauldronBlock extends ModCauldronBlock {
@@ -89,6 +92,7 @@ public class LiquidCauldronBlock extends ModCauldronBlock {
     public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         if (level.getBlockEntity(pos) instanceof LiquidCauldronBlockTile te) {
             if (te.handleInteraction(player, hand)) {
+                maybeSendPotionMixMessage(te.getSoftFluidTank(), player);
                 return InteractionResult.sidedSuccess(level.isClientSide);
             }
             if (!CommonConfigs.CAULDRON_CRAFTING.get()) return InteractionResult.PASS;
@@ -280,6 +284,16 @@ public class LiquidCauldronBlock extends ModCauldronBlock {
             state = state.setValue(LiquidCauldronBlock.LEVEL, height);
         }
         return state;
+    }
+
+    public void maybeSendPotionMixMessage(SoftFluidTank fluidTank, Player player) {
+        if (fluidTank.getFluid().is(BuiltInSoftFluids.POTION.get())) {
+            var potionEffects = getPotionEffects(fluidTank.getFluid());
+            int potionEffectAmount = potionEffects.size();
+            if (potionEffectAmount == CommonConfigs.POTION_MIXING_LIMIT.get()) {
+                player.displayClientMessage(Component.translatable("message.amendments.cauldron"), true);
+            }
+        }
     }
 
     @Nullable

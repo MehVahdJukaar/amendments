@@ -163,8 +163,8 @@ public class DirectionalCakeBlock extends CakeBlock implements SimpleWaterlogged
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+        builder.add(FACING, WATERLOGGED);
         super.createBlockStateDefinition(builder);
-        builder.add(FACING, BITES, WATERLOGGED);
     }
 
     @Override

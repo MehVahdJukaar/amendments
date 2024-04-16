@@ -1,1 +1,2 @@
-fixed hanging signs not dropping their held item when broken
+improved double skull logic
+added message when adding too many potions

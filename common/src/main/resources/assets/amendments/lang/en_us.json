@@ -83,5 +83,6 @@
   "item.amendments.dye_bottle.mint": "Mint",
   "item.amendments.dye_bottle.aqua": "Aqua",
   "item.amendments.dye_bottle.slate": "Slate",
-  "fluid.amendments.dye": "Dye"
+  "fluid.amendments.dye": "Dye",
+  "message.amendments.cauldron": "The potion mix seems unstable..."
 }
