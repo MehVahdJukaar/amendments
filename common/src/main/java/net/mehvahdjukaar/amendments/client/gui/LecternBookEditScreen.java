@@ -47,7 +47,7 @@ public class LecternBookEditScreen extends BookEditScreen implements MenuAccess<
     };
 
 
-    private int lastPage = 0;
+    private int lastPage;
     private Button takeBookButton;
     private QuillButton quill;
     private InkButton ink;
@@ -61,12 +61,17 @@ public class LecternBookEditScreen extends BookEditScreen implements MenuAccess<
 
     @Override
     public void saveChanges(boolean publish) {
+        this.saveChanges(publish, false);
+    }
+
+    public void saveChanges(boolean publish, boolean takeBook) {
         if (this.isModified) {
             this.eraseEmptyTrailingPages();
             this.updateLocalCopy(publish);
 
             ModNetwork.CHANNEL.sendToServer(new SyncLecternBookMessage(menu.getPos(),
-                    this.pages, publish ? Optional.of(this.title.trim()) : Optional.empty()));
+                    this.pages, publish ? Optional.of(this.title.trim()) : Optional.empty(),
+                    takeBook));
         }
     }
 
@@ -89,8 +94,8 @@ public class LecternBookEditScreen extends BookEditScreen implements MenuAccess<
 
         int width = 76;
         this.takeBookButton = this.addRenderableWidget(Button.builder(Component.translatable("lectern.take_book"), (button) -> {
-            this.saveChanges(false);
-            this.sendButtonClick(3);
+            this.saveChanges(false, true);
+            if (!this.isModified) this.sendButtonClick(3);
         }).bounds(this.width / 2 - width / 2 - 6, 196, width, 20).build());
 
         super.init();
@@ -151,6 +156,12 @@ public class LecternBookEditScreen extends BookEditScreen implements MenuAccess<
             if (value > lastPage) {
                 lastPage++;
                 super.pageForward();
+                if (lastPage > this.pages.size()) {
+                    for(int i = 0; i < value - this.pages.size(); i++){
+                        this.pages.add("");
+                    }
+                    this.isModified = true;
+                }
             } else {
                 lastPage--;
                 super.pageBack();

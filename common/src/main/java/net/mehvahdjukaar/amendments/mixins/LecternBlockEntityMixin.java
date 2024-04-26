@@ -5,6 +5,9 @@ import net.mehvahdjukaar.amendments.configs.CommonConfigs;
 import net.mehvahdjukaar.amendments.reg.ModTags;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -16,11 +19,13 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.entity.LecternBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(LecternBlockEntity.class)
@@ -44,12 +49,30 @@ public abstract class LecternBlockEntityMixin extends BlockEntity implements Con
     @Shadow
     public abstract void setBook(ItemStack stack);
 
+    @Shadow
+    ItemStack book;
+
+    @Shadow
+    private int pageCount;
+
     @Inject(method = "createMenu", at = @At("HEAD"), cancellable = true)
     public void createEditMenu(int i, Inventory inventory, Player player, CallbackInfoReturnable<AbstractContainerMenu> cir) {
-        if (this.getBook().getItem() instanceof WritableBookItem  && CommonConfigs.LECTERN_STUFF.get()) {
+        if (this.getBook().getItem() instanceof WritableBookItem && CommonConfigs.LECTERN_STUFF.get()) {
             cir.setReturnValue(new LecternEditMenu(i, (LecternBlockEntity) (Object) this, this.dataAccess));
         }
     }
+
+    @Inject(method = "setPage", at = @At("HEAD"))
+    public void setPage(int page, CallbackInfo ci) {
+        // increments max number of pages
+        if (page >= this.pageCount && page <= 100 &&
+                this.book.getItem() instanceof WritableBookItem && CommonConfigs.LECTERN_STUFF.get()) {
+            //weirdness because empty book has 0 pages and we want to skip to second page here
+            if (pageCount == 0) this.pageCount+=2;
+            else this.pageCount++;
+        }
+    }
+
 
     @Override
     public int getContainerSize() {
@@ -101,11 +124,9 @@ public abstract class LecternBlockEntityMixin extends BlockEntity implements Con
         return saveWithoutMetadata();
     }
 
-    //TODO: add back
-    /*
     @Nullable
     @Override
     public Packet<ClientGamePacketListener> getUpdatePacket() {
         return ClientboundBlockEntityDataPacket.create(this);
-    }*/
+    }
 }

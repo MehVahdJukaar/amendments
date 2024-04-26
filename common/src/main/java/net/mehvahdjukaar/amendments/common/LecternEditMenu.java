@@ -39,6 +39,5 @@ public class LecternEditMenu extends LecternMenu {
     @Override
     public void initializeContents(int stateId, List<ItemStack> items, ItemStack carried) {
         super.initializeContents(stateId, items, carried);
-        int aa = 1;
     }
 }

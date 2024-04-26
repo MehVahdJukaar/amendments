@@ -2,6 +2,7 @@ package net.mehvahdjukaar.amendments.common.network;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import net.mehvahdjukaar.amendments.common.LecternEditMenu;
 import net.mehvahdjukaar.moonlight.api.platform.network.ChannelHandler;
 import net.mehvahdjukaar.moonlight.api.platform.network.Message;
 import net.minecraft.core.BlockPos;
@@ -34,18 +35,21 @@ public class SyncLecternBookMessage implements Message {
     private final List<String> pages;
     private final Optional<String> title;
     private final BlockPos pos;
+    private final boolean takeBook;
 
-    public SyncLecternBookMessage(BlockPos pos, List<String> list, Optional<String> optional) {
+    public SyncLecternBookMessage(BlockPos pos, List<String> list, Optional<String> optional, boolean takeBook) {
         this.pos = pos;
         this.pages = ImmutableList.copyOf(list);
         this.title = optional;
+        this.takeBook = takeBook;
     }
 
-    public SyncLecternBookMessage(FriendlyByteBuf friendlyByteBuf) {
-        this.pos = friendlyByteBuf.readBlockPos();
-        this.pages = friendlyByteBuf.readCollection(FriendlyByteBuf.limitValue(Lists::newArrayListWithCapacity, 200),
+    public SyncLecternBookMessage(FriendlyByteBuf buffer) {
+        this.pos = buffer.readBlockPos();
+        this.pages = buffer.readCollection(FriendlyByteBuf.limitValue(Lists::newArrayListWithCapacity, 200),
                 b -> b.readUtf(8192));
-        this.title = friendlyByteBuf.readOptional(b -> b.readUtf(128));
+        this.title = buffer.readOptional(b -> b.readUtf(128));
+        this.takeBook = buffer.readBoolean();
     }
 
     @Override
@@ -57,6 +61,7 @@ public class SyncLecternBookMessage implements Message {
         buffer.writeOptional(this.title, (friendlyByteBuf, string) -> {
             friendlyByteBuf.writeUtf(string, 128);
         });
+        buffer.writeBoolean(this.takeBook);
     }
 
     @Override
@@ -76,7 +81,8 @@ public class SyncLecternBookMessage implements Message {
                 Consumer<List<FilteredText>> consumer = title.isPresent() ?
                         l -> this.signBook(be, player, book, l.get(0), l.subList(1, l.size())) :
                         l -> this.updateBookContents(be, player, book, l);
-                this.filterTextPacket(player, list, TextFilter::processMessageBundle).thenAcceptAsync(consumer, level.getServer());
+                this.filterTextPacket(player, list, TextFilter::processMessageBundle)
+                        .thenAcceptAsync(consumer, level.getServer());
             }
         }
     }
@@ -145,5 +151,13 @@ public class SyncLecternBookMessage implements Message {
 
         be.setBook(book);
         player.level().sendBlockUpdated(pos, be.getBlockState(), be.getBlockState(), 3);
+
+        //needs to happen here otherwise the book is taken before the packet is sent
+        if (takeBook) {
+            if (player.containerMenu instanceof LecternEditMenu m) {
+                //take button menu
+                m.clickMenuButton(player, 3);
+            }
+        }
     }
 }

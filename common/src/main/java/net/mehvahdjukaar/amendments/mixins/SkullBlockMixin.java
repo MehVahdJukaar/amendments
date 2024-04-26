@@ -1,16 +1,15 @@
 package net.mehvahdjukaar.amendments.mixins;
 
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
-import net.mehvahdjukaar.amendments.common.block.DoubleSkullBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.tags.FluidTags;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SimpleWaterloggedBlock;
 import net.minecraft.world.level.block.SkullBlock;
-import net.minecraft.world.level.block.WallSkullBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
@@ -27,6 +26,18 @@ public abstract class SkullBlockMixin extends Block implements SimpleWaterlogged
 
     public SkullBlockMixin(Properties properties) {
         super(properties);
+    }
+
+    @Override
+    public boolean placeLiquid(LevelAccessor level, BlockPos pos, BlockState state, FluidState fluidState) {
+        if (!state.hasProperty(BlockStateProperties.WATERLOGGED)) return false;
+        return SimpleWaterloggedBlock.super.placeLiquid(level, pos, state, fluidState);
+    }
+
+    @Override
+    public ItemStack pickupBlock(LevelAccessor level, BlockPos pos, BlockState state) {
+        if (!state.hasProperty(BlockStateProperties.WATERLOGGED)) return ItemStack.EMPTY;
+        return SimpleWaterloggedBlock.super.pickupBlock(level, pos, state);
     }
 
     @Inject(method = "<init>", at = @At("RETURN"))
@@ -62,10 +73,7 @@ public abstract class SkullBlockMixin extends Block implements SimpleWaterlogged
     @Inject(method = "createBlockStateDefinition", at = @At("RETURN"))
     protected void amendments$addWaterlogging(StateDefinition.Builder<Block, BlockState> builder, CallbackInfo ci) {
         if (!builder.properties.containsValue(BlockStateProperties.WATERLOGGED)) {
-            Class<?> c = this.getClass();
-            if (c == SkullBlock.class || c == WallSkullBlock.class || c == DoubleSkullBlock.class) {
-                builder.add(BlockStateProperties.WATERLOGGED);
-            }
+            builder.add(BlockStateProperties.WATERLOGGED);
         }
     }
 }

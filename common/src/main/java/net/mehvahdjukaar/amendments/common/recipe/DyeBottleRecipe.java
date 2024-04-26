@@ -24,23 +24,31 @@ public class DyeBottleRecipe extends CustomRecipe {
 
     @Override
     public boolean matches(CraftingContainer craftingContainer, Level level) {
-        boolean hasDye = false;
         boolean hasDyableItem = false;
 
+        ItemStack dyeBottle = ItemStack.EMPTY;
         for (ItemStack itemstack : craftingContainer.getItems()) {
             if (!itemstack.isEmpty()) {
                 Item item = itemstack.getItem();
                 if (item == ModRegistry.DYE_BOTTLE_ITEM.get()) {
-                    if (hasDye) return false;
-                    else hasDye = true;
-                } else if (item instanceof DyeableLeatherItem ||
-                        (BlocksColorAPI.getKey(item) != null && !BlocksColorAPI.isDefaultColor(item))) {
-                    if (hasDyableItem) return false;
-                    else hasDyableItem = true;
+                    if (!dyeBottle.isEmpty()) return false;
+                    dyeBottle = itemstack;
                 }
             }
         }
-        return hasDye && hasDyableItem;
+        if (dyeBottle.isEmpty()) return false;
+        for (var itemstack : craftingContainer.getItems()) {
+            if (!itemstack.isEmpty()) {
+                Item item = itemstack.getItem();
+                if (item instanceof DyeableLeatherItem ||
+                            (BlocksColorAPI.changeColor(item,
+                                    DyeBottleItem.getClosestDye(dyeBottle)) != null)) {
+                        if (hasDyableItem) return false;
+                        else hasDyableItem = true;
+                    }
+                }
+            }
+        return hasDyableItem;
     }
 
     @Override

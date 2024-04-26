@@ -40,6 +40,7 @@ public class HangingSignDisplayItem implements BlockUse {
 
     @Override
     public InteractionResult tryPerformingAction(BlockState state, BlockPos pos, Level level, Player player, InteractionHand hand, ItemStack stack, BlockHitResult hit) {
+        if (!isEnabled()) return InteractionResult.PASS;
         if (level.getBlockEntity(pos) instanceof ExtendedHangingSign e) {
             SignBlockEntity be = ((SignBlockEntity) e);
             HangingSignTileExtension ext = e.getExtension();
