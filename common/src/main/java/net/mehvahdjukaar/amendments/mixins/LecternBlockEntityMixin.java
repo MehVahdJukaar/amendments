@@ -16,6 +16,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.WritableBookItem;
+import net.minecraft.world.level.block.LecternBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.entity.LecternBlockEntity;
@@ -28,6 +29,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
+import static net.minecraft.world.level.block.LecternBlock.resetBookState;
 
 @Mixin(LecternBlockEntity.class)
 public abstract class LecternBlockEntityMixin extends BlockEntity implements Container {
@@ -55,6 +58,8 @@ public abstract class LecternBlockEntityMixin extends BlockEntity implements Con
 
     @Shadow
     private int pageCount;
+
+    @Shadow public abstract boolean hasBook();
 
     @Inject(method = "createMenu", at = @At("HEAD"), cancellable = true)
     public void createEditMenu(int i, Inventory inventory, Player player, CallbackInfoReturnable<AbstractContainerMenu> cir) {
@@ -123,6 +128,15 @@ public abstract class LecternBlockEntityMixin extends BlockEntity implements Con
     @Override
     public CompoundTag getUpdateTag() {
         return saveWithoutMetadata();
+    }
+
+    @Override
+    public void setChanged() {
+        super.setChanged();
+        if(level != null) {
+            resetBookState(null, level, worldPosition, getBlockState(), this.hasBook());
+        }
+        //this.level.sendBlockUpdated(this.worldPosition, this.getBlockState(), this.getBlockState(), 3);
     }
 
     @Nullable

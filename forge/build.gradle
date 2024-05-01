@@ -147,6 +147,7 @@ dependencies {
     modImplementation("curse.maven:skinned-lanterns-414154:4656953")
     modImplementation("curse.maven:spelunkery-790530:5043883")
     modImplementation("curse.maven:scholar-961802:5214379")
+    modImplementation("curse.maven:map-atlases-forge-519759:5307805")
 
     modImplementation ("maven.modrinth:dye-depot:1.0.0-forge")
 

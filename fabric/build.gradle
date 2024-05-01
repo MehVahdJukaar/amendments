@@ -63,6 +63,8 @@ dependencies {
     //modImplementation("curse.maven:blockus-312289:5067058")
     //modImplementation("curse.maven:regions-unexplored-659110:5012053")
     //modImplementation("curse.maven:terrablender-fabric-565956:5008701")
+    modImplementation("curse.maven:integrated-stronghold-815548:5178478")
+    modImplementation("curse.maven:integrated-api-817709:5241490")
 
 }
 
