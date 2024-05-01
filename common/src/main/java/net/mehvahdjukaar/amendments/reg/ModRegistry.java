@@ -1,5 +1,6 @@
 package net.mehvahdjukaar.amendments.reg;
 
+import com.google.common.base.Preconditions;
 import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap;
 import net.mehvahdjukaar.amendments.common.CakeRegistry;
 import net.mehvahdjukaar.amendments.common.LecternEditMenu;
@@ -82,7 +83,8 @@ public class ModRegistry {
         }
         if (CommonConfigs.CEILING_BANNERS.get()) {
             for (var e : CEILING_BANNERS.entrySet()) {
-                event.registerSimple(BannerBlock.byColor(e.getKey()).asItem(), e.getValue().get());
+                event.registerSimple(Preconditions.checkNotNull(BannerBlock.byColor(e.getKey()).asItem()),
+                        e.getValue().get());
             }
         }
     }

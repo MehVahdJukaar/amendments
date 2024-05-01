@@ -13,7 +13,7 @@ dependencies {
 
     implementation(annotationProcessor("io.github.llamalad7:mixinextras-common:${mixin_extras_version}"))
     implementation("io.github.llamalad7:mixinextras-forge:${mixin_extras_version}")
-    modCompileOnly("curse.maven:flan-forge-493246:3902633")
+    modCompileOnly("curse.maven:flan-404578:5290167")
 
     annotationProcessor 'net.fabricmc:sponge-mixin:0.12.5+mixin.0.8.5'
 
