@@ -2,8 +2,11 @@ package net.mehvahdjukaar.amendments.forge;
 
 import net.mehvahdjukaar.amendments.AmendmentsClient;
 import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
+import net.minecraft.world.inventory.LecternMenu;
+import net.minecraft.world.level.biome.Biome;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.client.event.ScreenEvent;
+import net.minecraftforge.client.gui.overlay.VanillaGuiOverlay;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.lwjgl.glfw.GLFW;

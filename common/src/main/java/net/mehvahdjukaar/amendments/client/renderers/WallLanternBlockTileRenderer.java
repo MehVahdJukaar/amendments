@@ -2,6 +2,8 @@ package net.mehvahdjukaar.amendments.client.renderers;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
+import net.mehvahdjukaar.amendments.Amendments;
+import net.mehvahdjukaar.amendments.AmendmentsClient;
 import net.mehvahdjukaar.amendments.client.WallLanternModelsManager;
 import net.mehvahdjukaar.amendments.common.block.WallLanternBlock;
 import net.mehvahdjukaar.amendments.common.tile.WallLanternBlockTile;
@@ -60,13 +62,14 @@ public class WallLanternBlockTileRenderer implements BlockEntityRenderer<WallLan
             ShimmerCompat.renderWithBloom(poseStack, (p, b) ->
                     RenderUtil.renderBlock(model, 0, p, b, lanternState, level, pos, blockRenderer));
         } else {
-            if (true) {
-                var cons = bufferIn.getBuffer(ItemBlockRenderTypes.getRenderType(
+            if (AmendmentsClient.hasFixedNormals()) {
+                //this has better shading for diagonal planes but below is same as in block model
+                var vertexConsumer = bufferIn.getBuffer(ItemBlockRenderTypes.getRenderType(
                         Items.OBSIDIAN.getDefaultInstance(), true
                 ));
                 itemRenderer.renderModelLists(model,
                         ItemStack.EMPTY,
-                        combinedLightIn, combinedOverlayIn, poseStack, cons);
+                        combinedLightIn, combinedOverlayIn, poseStack, vertexConsumer);
             } else RenderUtil.renderBlock(model, 0, poseStack, bufferIn, lanternState, level, pos, blockRenderer);
         }
 

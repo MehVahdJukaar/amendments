@@ -42,7 +42,6 @@ public class Amendments {
 
     public static final List<String> OLD_MODS = List.of("supplementaries", "carpeted", "betterlily", "betterjukebox");
 
-
     public static ResourceLocation res(String name) {
         return new ResourceLocation(MOD_ID, name);
     }

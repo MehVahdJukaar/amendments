@@ -16,6 +16,8 @@ public class CompatObjects {
     public static final Supplier<Item> SOUL_CANDLE_ITEM = make("buzzier_bees:soul_candle", BuiltInRegistries.ITEM);
 
     public static final Supplier<Block> SOUL_CANDLE = make("buzzier_bees:soul_candle", BuiltInRegistries.BLOCK);
+    public static final Supplier<Block> ENDER_CANDLE = make("buzzier_bees:ender_candle", BuiltInRegistries.BLOCK);
+    public static final Supplier<Block> CUPRIC_CANDLE = make("buzzier_bees:cupric_candle", BuiltInRegistries.BLOCK);
 
     public static final Supplier<Item> SPECTACLE_CANDLE_ITEM = make("cave_enhancements:spectacle_candle", BuiltInRegistries.ITEM);
 

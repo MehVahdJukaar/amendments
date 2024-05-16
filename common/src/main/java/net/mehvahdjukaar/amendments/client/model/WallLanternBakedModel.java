@@ -7,6 +7,7 @@ import net.mehvahdjukaar.moonlight.api.block.MimicBlock;
 import net.mehvahdjukaar.moonlight.api.client.model.BakedQuadsTransformer;
 import net.mehvahdjukaar.moonlight.api.client.model.CustomBakedModel;
 import net.mehvahdjukaar.moonlight.api.client.model.ExtraModelData;
+import net.mehvahdjukaar.moonlight.api.platform.ClientHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.BlockModelShaper;
@@ -18,6 +19,7 @@ import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.ModelState;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.state.BlockState;
 import org.joml.Matrix4f;
 
@@ -68,12 +70,10 @@ public class WallLanternBakedModel implements CustomBakedModel {
         //mimic
         try {
             boolean fancy = Boolean.TRUE.equals(data.get(WallLanternBlockTile.IS_FANCY));
-
             if (!fancy) {
                 if (mimic != null && !(mimic.getBlock() instanceof MimicBlock) && !mimic.isAir() && state != null) {
 
                     BakedModel model = WallLanternModelsManager.getModel(blockModelShaper, mimic);
-
                     List<BakedQuad> mimicQuads = model.getQuads(mimic, side, rand);
                     Matrix4f mat = new Matrix4f();
                     mat.mul(rotation.getRotation().getMatrix());

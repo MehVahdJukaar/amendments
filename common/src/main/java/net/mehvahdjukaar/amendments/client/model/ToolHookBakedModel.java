@@ -19,6 +19,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.DiggerItem;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.state.BlockState;
 import org.joml.Matrix4f;
 
@@ -52,7 +53,6 @@ public class ToolHookBakedModel implements CustomBakedModel {
 
         } catch (Exception ignored) {
         }
-
         if (side == null) {
             try {
                 boolean fancy = Boolean.TRUE.equals(data.get(ToolHookBlockTile.IS_FANCY));

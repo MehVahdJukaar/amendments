@@ -4,21 +4,14 @@ import net.mehvahdjukaar.amendments.configs.ClientConfigs;
 import net.mehvahdjukaar.amendments.reg.ModBlockProperties;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.amendments.reg.ModTags;
-import net.mehvahdjukaar.moonlight.api.block.DynamicRenderedBlockTile;
 import net.mehvahdjukaar.moonlight.api.block.DynamicRenderedItemDisplayTile;
-import net.mehvahdjukaar.moonlight.api.block.ItemDisplayTile;
 import net.mehvahdjukaar.moonlight.api.client.model.ExtraModelData;
-import net.mehvahdjukaar.moonlight.api.client.model.IExtraModelDataProvider;
 import net.mehvahdjukaar.moonlight.api.client.model.ModelDataKey;
-import net.mehvahdjukaar.moonlight.api.client.util.LOD;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.*;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.Vec3;
 
 public class ToolHookBlockTile extends DynamicRenderedItemDisplayTile {
 
@@ -36,7 +29,7 @@ public class ToolHookBlockTile extends DynamicRenderedItemDisplayTile {
 
     @Override
     public boolean isNeverFancy() {
-        return !ClientConfigs.ANIMATED_HOOKS.get();
+        return ClientConfigs.FAST_HOOKS.get();
     }
 
     @Override

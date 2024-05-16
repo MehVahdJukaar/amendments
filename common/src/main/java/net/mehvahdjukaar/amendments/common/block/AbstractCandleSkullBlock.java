@@ -199,6 +199,12 @@ public abstract class AbstractCandleSkullBlock extends AbstractCandleBlock imple
         return state.getValue(LIT);
     }
 
+    @Deprecated(forRemoval = true)
+    @Override
+    public boolean isLitUp(BlockState state) {
+        return state.getValue(LIT);
+    }
+
     @Override
     public void setLitUp(BlockState state, LevelAccessor world, BlockPos pos, boolean lit) {
         world.setBlock(pos, state.setValue(LIT, lit), 3);

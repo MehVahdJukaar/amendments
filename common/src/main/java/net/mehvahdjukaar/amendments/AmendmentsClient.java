@@ -1,6 +1,7 @@
 package net.mehvahdjukaar.amendments;
 
 import com.google.common.base.Suppliers;
+import dev.architectury.injectables.annotations.ExpectPlatform;
 import net.mehvahdjukaar.amendments.client.ClientResourceGenerator;
 import net.mehvahdjukaar.amendments.client.WallLanternModelsManager;
 import net.mehvahdjukaar.amendments.client.colors.BrewingStandColor;
@@ -46,6 +47,7 @@ import java.util.stream.Collectors;
 
 public class AmendmentsClient {
 
+
     public static final ResourceLocation SIGN_SHEET = new ResourceLocation("textures/atlas/signs.png");
 
     public static final Material CANVAS_SIGH_MATERIAL = new Material(SIGN_SHEET,
@@ -66,7 +68,7 @@ public class AmendmentsClient {
 
     private static final Map<Item, Material> RECORD_MATERIALS = new HashMap<>();
     public static final Material DEFAULT_RECORD = new Material(TextureAtlas.LOCATION_BLOCKS,
-            Amendments.res("block//music_discs/music_disc_template"));
+            Amendments.res("block/music_discs/music_disc_template"));
     public static final Material TINTED_RECORD = new Material(TextureAtlas.LOCATION_BLOCKS,
             Amendments.res("block/music_discs/music_disc_tinted"));
     public static final List<Material> RECORD_PATTERNS = List.of(
@@ -240,6 +242,12 @@ public class AmendmentsClient {
         if (CompatObjects.SOUL_CANDLE.get() != null) {
             map.put(CompatObjects.SOUL_CANDLE.get(), Amendments.res("textures/block/skull_candles/soul.png"));
         }
+        if (CompatObjects.CUPRIC_CANDLE.get() != null) {
+            map.put(CompatObjects.CUPRIC_CANDLE.get(), Amendments.res("textures/block/skull_candles/cupric.png"));
+        }
+        if (CompatObjects.ENDER_CANDLE.get() != null) {
+            map.put(CompatObjects.ENDER_CANDLE.get(), Amendments.res("textures/block/skull_candles/ender.png"));
+        }
         if (CompatObjects.SPECTACLE_CANDLE.get() != null) {
             map.put(CompatObjects.SPECTACLE_CANDLE.get(), Amendments.res("textures/block/skull_candles/spectacle.png"));
         }
@@ -255,33 +263,11 @@ public class AmendmentsClient {
         }
 
     }
-/*
-    //TODO: what is this for?
-    public static void addOverrideTooltips(ItemStack itemStack, TooltipFlag tooltipFlag, List<Component> components) {
-        Item item = itemStack.getItem();
 
-        for(var override : ITEM_USE_ON_BLOCK.get(item)) {
-            if (override != null && override.isEnabled()) {
-                MutableComponent t = override.getTooltip();
-                if (t != null) components.add(t.withStyle(ChatFormatting.DARK_GRAY).withStyle(ChatFormatting.ITALIC));
-            } else {
-                ItemUse o = ITEM_USE.get(item);
-                if (o != null && o.isEnabled()) {
-                    MutableComponent t = o.getTooltip();
-                    if (t != null)
-                        components.add(t.withStyle(ChatFormatting.DARK_GRAY).withStyle(ChatFormatting.ITALIC));
-                }
-            }
-        }
-
-
-        @Override
-        public void appendHoverText(ItemStack pStack, Level pLevel, List<Component> pTooltipComponents, TooltipFlag pIsAdvanced) {
-            if (net.mehvahdjukaar.amendments.configs.ClientConfigs.PLACEABLE_TOOLTIP.get()) {
-                pTooltipComponents.add(Component.translatable("message.amendments.wall_lantern").withStyle(ChatFormatting.DARK_GRAY).withStyle(ChatFormatting.ITALIC));
-            }
-        }
-    }*/
+    @ExpectPlatform
+    public static boolean hasFixedNormals(){
+        throw new AssertionError();
+    }
 
 
 }

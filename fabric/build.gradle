@@ -63,9 +63,14 @@ dependencies {
     //modImplementation("curse.maven:blockus-312289:5067058")
     //modImplementation("curse.maven:regions-unexplored-659110:5012053")
     //modImplementation("curse.maven:terrablender-fabric-565956:5008701")
-    modImplementation("curse.maven:integrated-stronghold-815548:5178478")
-    modImplementation("curse.maven:integrated-api-817709:5241490")
+    //modImplementation("curse.maven:integrated-stronghold-815548:5178478")
+    //modImplementation("curse.maven:integrated-api-817709:5241490")
+    modImplementation("curse.maven:cyanide-541676:4824161")
+   // modImplementation("curse.maven:midnightlib-488090:4576371")
+    //modImplementation("com.simibubi.create:create-fabric-${project.minecraft_version}:" +
+      //      "${project.create_version}+mc${project.minecraft_version}")
 
+//    modImplementation("com.tterrag.registrate_fabric:Registrate:MC1.20.1-${project.registrate_version}")
 }
 
 

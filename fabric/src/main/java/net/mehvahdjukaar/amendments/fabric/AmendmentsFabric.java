@@ -28,7 +28,7 @@ import java.util.stream.Stream;
 
 public class AmendmentsFabric implements ModInitializer {
 
-    public static final List<String> NAMES= Util.make(Lists.newArrayList(), list -> {
+    public static final List<String> NAMES = Util.make(Lists.newArrayList(), list -> {
         list.add(ModConstants.CEILING_BANNER_NAME);
         list.add(ModConstants.HANGING_FLOWER_POT_NAME);
         list.add(ModConstants.LIQUID_CAULDRON_NAME);
@@ -46,13 +46,15 @@ public class AmendmentsFabric implements ModInitializer {
     });
 
     public static ResourceLocation shouldRemap(String namespace, String path) {
-        if(Amendments.OLD_MODS.contains(namespace)){
-            if(NAMES.contains(path)){
+        if (Amendments.OLD_MODS.contains(namespace)) {
+            if (NAMES.contains(path)) {
                 return Amendments.res(path);
             }
         }
         return null;
-    };
+    }
+
+    ;
 
     public void onInitialize() {
         Amendments.init();
@@ -60,11 +62,11 @@ public class AmendmentsFabric implements ModInitializer {
         UseBlockCallback.EVENT.register(ModEvents::onRightClickBlock);
         UseItemCallback.EVENT.register(ModEvents::onUseItem);
         CommonLifecycleEvents.TAGS_LOADED.register(Amendments::onCommonTagUpdate);
-        if(PlatHelper.getPhysicalSide().isClient()){
+        if (PlatHelper.getPhysicalSide().isClient()) {
             ItemTooltipCallback.EVENT.register(AmendmentsClient::onItemTooltip);
         }
 
-        PlatHelper.addCommonSetup(()->{
+        PlatHelper.addCommonSetup(() -> {
             var holder = BuiltInRegistries.POINT_OF_INTEREST_TYPE.getHolderOrThrow(PoiTypes.LEATHERWORKER);
             var set = new HashSet<>(holder.value().matchingStates);
             Set<BlockState> extraStates = Stream.of(ModRegistry.LIQUID_CAULDRON.get(), ModRegistry.DYE_CAULDRON.get()).flatMap(
