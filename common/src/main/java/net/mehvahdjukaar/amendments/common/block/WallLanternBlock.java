@@ -7,6 +7,7 @@ import net.mehvahdjukaar.amendments.configs.CommonConfigs;
 import net.mehvahdjukaar.amendments.integration.CompatHandler;
 import net.mehvahdjukaar.amendments.integration.SuppCompat;
 import net.mehvahdjukaar.amendments.integration.SuppSquaredCompat;
+import net.mehvahdjukaar.amendments.integration.ThinAirCompat;
 import net.mehvahdjukaar.amendments.reg.ModBlockProperties;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.moonlight.api.block.IBlockHolder;
@@ -45,6 +46,7 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraft.world.ticks.TickPriority;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -170,13 +172,24 @@ public class WallLanternBlock extends WaterBlock implements EntityBlock {
     }
 
     @Override
-    public void tick(BlockState state, ServerLevel worldIn, BlockPos pos, RandomSource rand) {
-        super.tick(state, worldIn, pos, rand);
-        if (worldIn.getBlockEntity(pos) instanceof WallLanternBlockTile te && te.isRedstoneLantern()) {
-            if (state.getValue(LIT) && !worldIn.hasNeighborSignal(pos)) {
-                worldIn.setBlock(pos, state.cycle(LIT), 2);
-                if (te.getHeldBlock().hasProperty(LIT))
-                    te.setHeldBlock(te.getHeldBlock().cycle(LIT));
+    public void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource rand) {
+        super.tick(state, level, pos, rand);
+        if (level.getBlockEntity(pos) instanceof WallLanternBlockTile te) {
+            if (te.isRedstoneLantern()) {
+                if (state.getValue(LIT) && !level.hasNeighborSignal(pos)) {
+                    level.setBlock(pos, state.cycle(LIT), 2);
+                    if (te.getHeldBlock().hasProperty(LIT))
+                        te.setHeldBlock(te.getHeldBlock().cycle(LIT));
+                }
+            }
+            if (CompatHandler.THIN_AIR) {
+                BlockState lantern = te.getHeldBlock();
+                if (ThinAirCompat.isAirLantern(lantern)) {
+                    te.setHeldBlock(lantern); //this automatically updates it
+                    if(te.getHeldBlock() != lantern){
+                        level.sendBlockUpdated(pos, state, state, 3);
+                    }
+                }
             }
         }
     }
@@ -259,7 +272,7 @@ public class WallLanternBlock extends WaterBlock implements EntityBlock {
         if (b.asItem() == Items.AIR) return false;
         ResourceLocation id = Utils.getID(b);
         String namespace = id.getNamespace();
-        if (CommonConfigs.WALL_LANTERN_WHITELIST.get().contains(id.toString())){
+        if (CommonConfigs.WALL_LANTERN_WHITELIST.get().contains(id.toString())) {
             return true;
         }
         if (CommonConfigs.WALL_LANTERN_BLACKLIST.get().contains(namespace)) return false;
@@ -270,4 +283,5 @@ public class WallLanternBlock extends WaterBlock implements EntityBlock {
         }
         return false;
     }
+
 }

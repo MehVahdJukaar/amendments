@@ -1,6 +1,8 @@
 package net.mehvahdjukaar.amendments.common.tile;
 
 import net.mehvahdjukaar.amendments.common.block.WallLanternBlock;
+import net.mehvahdjukaar.amendments.integration.CompatHandler;
+import net.mehvahdjukaar.amendments.integration.ThinAirCompat;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.moonlight.api.block.IBlockHolder;
 import net.mehvahdjukaar.moonlight.api.block.IOwnerProtected;
@@ -16,6 +18,8 @@ import net.minecraft.nbt.NbtUtils;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LanternBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.ticks.TickPriority;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 
@@ -79,6 +83,14 @@ public class WallLanternBlockTile extends SwayingBlockTile implements IBlockHold
         if (state.hasProperty(LanternBlock.HANGING)) {
             state = state.setValue(LanternBlock.HANGING, false);
         }
+        if (CompatHandler.THIN_AIR && this.level != null && ThinAirCompat.isAirLantern(state)) {
+            var newState = ThinAirCompat.maybeSetAirQuality(state, Vec3.atCenterOf(this.worldPosition), this.level);
+            if (newState != null) {
+                state = newState;
+            }
+            level.scheduleTick(worldPosition, getBlockState().getBlock(), 20, TickPriority.NORMAL);
+        }
+
         this.mimic = state;
 
 

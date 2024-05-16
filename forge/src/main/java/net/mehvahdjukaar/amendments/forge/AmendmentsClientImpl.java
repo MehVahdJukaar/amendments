@@ -4,6 +4,6 @@ import net.minecraftforge.common.ForgeConfig;
 
 public class AmendmentsClientImpl {
     public static boolean hasFixedNormals() {
-        return ForgeConfig.CLIENT.calculateAllNormals.get();
+        return false;// ForgeConfig.CLIENT.calculateAllNormals.get();
     }
 }

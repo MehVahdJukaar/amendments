@@ -1,2 +1,1 @@
-added buzzier bees compat for candle wax
-fixed etched disc texture
+added thin air compat for wall lanterns and lanterns in hand

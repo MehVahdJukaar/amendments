@@ -202,8 +202,11 @@ public class LanternRendererExtension implements IThirdPersonAnimationProvider, 
         Minecraft mc = Minecraft.getInstance();
         ItemRenderer itemRenderer = mc.getItemRenderer();
         BlockState state = ((BlockItem) itemStack.getItem()).getBlock().defaultBlockState();
-        if(CompatHandler.THIN_AIR){
-           state = ThinAirCompat.maybeSetAirQuality(state, entity, itemStack);
+        if (CompatHandler.THIN_AIR) {
+            var newState = ThinAirCompat.maybeSetAirQuality(state, entity.getEyePosition(), entity.level());
+            if (newState != null) {
+                state = newState;
+            }
         }
         if (state.hasProperty(LanternBlock.HANGING)) state = state.setValue(LanternBlock.HANGING, false);
         var model = mc.getBlockRenderer().getBlockModel(state);
