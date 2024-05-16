@@ -39,13 +39,14 @@ dependencies {
         exclude module: "fabric-api"
     }
 
-    modImplementation ("net.mehvahdjukaar:moonlight-fabric:${rootProject.moonlight_version}")
-    //modImplementation("curse.maven:selene-499980:5125476")
-
     //modImplementation ("net.mehvahdjukaar:moonlight-fabric:${moonlight_version}")
+    //modImplementation ("net.mehvahdjukaar:moonlight-fabric:${rootProject.moonlight_version}")
+    modImplementation("curse.maven:selene-499980:5306530")
 
-    modImplementation ("net.mehvahdjukaar:supplementaries-fabric:${supplementaries_version}")
-    //modCompileOnly ("net.mehvahdjukaar:suppsquared-fabric:${suppsquared_version}")
+    //modImplementation ("net.mehvahdjukaar:supplementaries-fabric:${supplementaries_version}")
+    modImplementation("curse.maven:supplementaries-412082:5147147")
+	
+	//modCompileOnly ("net.mehvahdjukaar:suppsquared-fabric:${suppsquared_version}")
     modCompileOnly("curse.maven:farmers-delight-refabricated-993166:5215068")
 
 
@@ -63,8 +64,15 @@ dependencies {
     //modImplementation("curse.maven:blockus-312289:5067058")
     //modImplementation("curse.maven:regions-unexplored-659110:5012053")
     //modImplementation("curse.maven:terrablender-fabric-565956:5008701")
-    modImplementation("curse.maven:integrated-stronghold-815548:5178478")
-    modImplementation("curse.maven:integrated-api-817709:5241490")
+	//modImplementation("curse.maven:create-328085:4835191")
+	//modImplementation("curse.maven:midnightlib-488090:4576371")
+    //modImplementation("curse.maven:integrated-stronghold-815548:5178478")
+    //modImplementation("curse.maven:integrated-api-817709:5241490")
+	
+	//testing thin air compatibility
+	//modImplementation("curse.maven:forge-config-api-port-fabric-547434:4583000")
+	//modImplementation("curse.maven:puzzles-lib-495476:5330449")
+	//modImplementation("curse.maven:new-thin-air-878379:5068248")
 
 }
 
