@@ -2,9 +2,9 @@ package net.mehvahdjukaar.amendments.client.renderers;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
-import fuzs.thinair.api.v1.AirQualityHelper;
-import fuzs.thinair.world.level.block.SafetyLanternBlock;
 import net.mehvahdjukaar.amendments.configs.ClientConfigs;
+import net.mehvahdjukaar.amendments.integration.CompatHandler;
+import net.mehvahdjukaar.amendments.integration.ThinAirCompat;
 import net.mehvahdjukaar.moonlight.api.client.util.RotHlpr;
 import net.mehvahdjukaar.moonlight.api.item.IFirstPersonSpecialItemRenderer;
 import net.mehvahdjukaar.moonlight.api.item.IThirdPersonAnimationProvider;
@@ -202,7 +202,9 @@ public class LanternRendererExtension implements IThirdPersonAnimationProvider, 
         Minecraft mc = Minecraft.getInstance();
         ItemRenderer itemRenderer = mc.getItemRenderer();
         BlockState state = ((BlockItem) itemStack.getItem()).getBlock().defaultBlockState();
-        if (state.hasProperty(SafetyLanternBlock.AIR_QUALITY)) state = state.setValue(SafetyLanternBlock.AIR_QUALITY, AirQualityHelper.INSTANCE.getAirQualityAtLocation(entity));
+        if(CompatHandler.THIN_AIR){
+           state = ThinAirCompat.maybeSetAirQuality(state, entity, itemStack);
+        }
         if (state.hasProperty(LanternBlock.HANGING)) state = state.setValue(LanternBlock.HANGING, false);
         var model = mc.getBlockRenderer().getBlockModel(state);
         poseStack.translate(0.5, 0.5, 0.5);

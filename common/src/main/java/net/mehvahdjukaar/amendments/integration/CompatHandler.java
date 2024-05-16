@@ -19,6 +19,7 @@ public class CompatHandler {
     public static final boolean CONFIGURED = PlatHelper.isModLoaded("configured");
     public static final boolean ALEX_CAVES = PlatHelper.isModLoaded("alexscaves");
     public static final boolean RATS = PlatHelper.isModLoaded("rats");
+    public static final boolean THIN_AIR = PlatHelper.isModLoaded("thin_air");
 
     static {
         boolean fd = false;
