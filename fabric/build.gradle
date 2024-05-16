@@ -39,13 +39,14 @@ dependencies {
         exclude module: "fabric-api"
     }
 
-    modImplementation ("net.mehvahdjukaar:moonlight-fabric:${rootProject.moonlight_version}")
-    //modImplementation("curse.maven:selene-499980:5125476")
-
     //modImplementation ("net.mehvahdjukaar:moonlight-fabric:${moonlight_version}")
+    //modImplementation ("net.mehvahdjukaar:moonlight-fabric:${rootProject.moonlight_version}")
+    modImplementation("curse.maven:selene-499980:5306530")
 
-    modImplementation ("net.mehvahdjukaar:supplementaries-fabric:${supplementaries_version}")
-    //modCompileOnly ("net.mehvahdjukaar:suppsquared-fabric:${suppsquared_version}")
+    //modImplementation ("net.mehvahdjukaar:supplementaries-fabric:${supplementaries_version}")
+    modImplementation("curse.maven:supplementaries-412082:5147147")
+
+	//modCompileOnly ("net.mehvahdjukaar:suppsquared-fabric:${suppsquared_version}")
     modCompileOnly("curse.maven:farmers-delight-refabricated-993166:5215068")
 
 
@@ -65,7 +66,6 @@ dependencies {
     //modImplementation("curse.maven:terrablender-fabric-565956:5008701")
     //modImplementation("curse.maven:integrated-stronghold-815548:5178478")
     //modImplementation("curse.maven:integrated-api-817709:5241490")
-    modImplementation("curse.maven:cyanide-541676:4824161")
    // modImplementation("curse.maven:midnightlib-488090:4576371")
     //modImplementation("com.simibubi.create:create-fabric-${project.minecraft_version}:" +
       //      "${project.create_version}+mc${project.minecraft_version}")

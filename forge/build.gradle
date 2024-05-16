@@ -130,11 +130,14 @@ dependencies {
     annotationProcessor 'net.fabricmc:sponge-mixin:0.12.5+mixin.0.8.5'
 
     //modImplementation("net.mehvahdjukaar:moonlight-forge:${moonlight_version}")
-    modCompileOnly("net.mehvahdjukaar:supplementaries-forge:${supplementaries_version}")
-    //modCompileOnly("curse.maven:supplementaries-412082:5097848")
-    modImplementation("curse.maven:selene-499980:5254462")
-    modCompileOnly("net.mehvahdjukaar:suppsquared-forge:${suppsquared_version}")
-
+	modImplementation("curse.maven:selene-499980:5306528")
+	
+    //modCompileOnly("net.mehvahdjukaar:supplementaries-forge:${supplementaries_version}")
+	modCompileOnly("curse.maven:supplementaries-412082:5147148")
+	
+    //modCompileOnly("net.mehvahdjukaar:suppsquared-forge:${suppsquared_version}")
+	modCompileOnly("curse.maven:supplementaries-squared-838411:5130385")
+	
     modRuntimeOnly("einstein.jmc:JustMoreCakes:forge-1.20-1.12.1")
 
     modImplementation("curse.maven:embeddium-908741:5321172")
@@ -154,6 +157,11 @@ dependencies {
     modImplementation("curse.maven:spelunkery-790530:5043883")
     modImplementation("curse.maven:scholar-961802:5214379")
     modImplementation("curse.maven:map-atlases-forge-519759:5307805")
+	
+	//testing thin air compatibility
+	modRuntimeOnly("curse.maven:puzzles-lib-495476:5330447")
+	modRuntimeOnly("curse.maven:new-thin-air-878379:5068247")
+
 
     modImplementation ("maven.modrinth:dye-depot:1.0.0-forge")
 

@@ -2,6 +2,8 @@ package net.mehvahdjukaar.amendments.client.renderers;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
+import fuzs.thinair.api.v1.AirQualityHelper;
+import fuzs.thinair.world.level.block.SafetyLanternBlock;
 import net.mehvahdjukaar.amendments.configs.ClientConfigs;
 import net.mehvahdjukaar.moonlight.api.client.util.RotHlpr;
 import net.mehvahdjukaar.moonlight.api.item.IFirstPersonSpecialItemRenderer;
@@ -88,7 +90,7 @@ public class LanternRendererExtension implements IThirdPersonAnimationProvider, 
             poseStack.translate(-0.5, -0.5, -0.5);
             poseStack.translate(0, -3 / 16f, 0);
 
-            renderLanternModel(stack, poseStack, bufferSource, light);
+            renderLanternModel(entity, stack, poseStack, bufferSource, light);
 
             //ItemDisplayContext transform = leftHand ? ItemDisplayContext.THIRD_PERSON_LEFT_HAND : ItemDisplayContext.THIRD_PERSON_RIGHT_HAND;
             //Minecraft.getInstance().getEntityRenderDispatcher().getItemInHandRenderer().renderItem(entity, stack, transform,
@@ -154,7 +156,7 @@ public class LanternRendererExtension implements IThirdPersonAnimationProvider, 
             }
 
             poseStack.scale(lanternScale, lanternScale, lanternScale);
-            renderLanternModel(itemStack, poseStack, buffer, light);
+            renderLanternModel(player, itemStack, poseStack, buffer, light);
 
             poseStack.popPose();
 
@@ -196,11 +198,11 @@ public class LanternRendererExtension implements IThirdPersonAnimationProvider, 
         return false;
     }
 
-
-    private static void renderLanternModel(ItemStack itemStack, PoseStack poseStack, MultiBufferSource buffer, int light) {
+    private static void renderLanternModel(LivingEntity entity, ItemStack itemStack, PoseStack poseStack, MultiBufferSource buffer, int light) {
         Minecraft mc = Minecraft.getInstance();
         ItemRenderer itemRenderer = mc.getItemRenderer();
         BlockState state = ((BlockItem) itemStack.getItem()).getBlock().defaultBlockState();
+        if (state.hasProperty(SafetyLanternBlock.AIR_QUALITY)) state = state.setValue(SafetyLanternBlock.AIR_QUALITY, AirQualityHelper.INSTANCE.getAirQualityAtLocation(entity));
         if (state.hasProperty(LanternBlock.HANGING)) state = state.setValue(LanternBlock.HANGING, false);
         var model = mc.getBlockRenderer().getBlockModel(state);
         poseStack.translate(0.5, 0.5, 0.5);

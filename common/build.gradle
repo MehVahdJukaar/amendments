@@ -18,12 +18,16 @@ dependencies {
     annotationProcessor 'net.fabricmc:sponge-mixin:0.12.5+mixin.0.8.5'
 
     modImplementation ("net.mehvahdjukaar:moonlight:${moonlight_version}")
-    modCompileOnly ("net.mehvahdjukaar:supplementaries:${supplementaries_version}")
+	
+    //modCompileOnly ("net.mehvahdjukaar:supplementaries:${supplementaries_version}")
+	modCompileOnly("curse.maven:supplementaries-412082:5147148")
+	
     modImplementation("curse.maven:supplementaries-squared-838411:5130385")
     modImplementation("curse.maven:cave-enhancements-597562:4388535")
     modImplementation("com.lowdragmc.shimmer:Shimmer-common:1.19.2-0.1.14")
     modImplementation("curse.maven:farmers-delight-398521:5051242")
     modImplementation("curse.maven:scholar-961802:5214379")
+	modImplementation("curse.maven:new-thin-air-878379:5068247")
 
     modImplementation("curse.maven:quark-243121:5093415")
     modImplementation("curse.maven:zeta-968868:5078215")
