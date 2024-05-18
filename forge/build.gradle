@@ -130,7 +130,7 @@ dependencies {
     annotationProcessor 'net.fabricmc:sponge-mixin:0.12.5+mixin.0.8.5'
 
     //modImplementation("net.mehvahdjukaar:moonlight-forge:${moonlight_version}")
-	modImplementation("curse.maven:selene-499980:5306528")
+	modImplementation("curse.maven:selene-499980:5352122")
 	
     //modCompileOnly("net.mehvahdjukaar:supplementaries-forge:${supplementaries_version}")
 	modCompileOnly("curse.maven:supplementaries-412082:5147148")

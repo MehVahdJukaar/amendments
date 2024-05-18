@@ -2,6 +2,7 @@ package net.mehvahdjukaar.amendments.mixins.forge;
 
 import net.mehvahdjukaar.amendments.common.tile.LiquidCauldronBlockTile;
 import net.mehvahdjukaar.moonlight.api.block.ISoftFluidTankProvider;
+import net.mehvahdjukaar.moonlight.api.fluids.forge.SoftFluidStackImpl;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -21,7 +22,7 @@ import org.spongepowered.asm.mixin.Unique;
 public abstract class SelfCauldronMixin extends BlockEntity implements IFluidHandler, ISoftFluidTankProvider {
 
     @Unique
-    public final LazyOptional<IFluidHandler> cap = LazyOptional.of(() -> this);
+    public final LazyOptional<IFluidHandler> amendments$cap = LazyOptional.of(() -> this);
 
     public SelfCauldronMixin(BlockEntityType<?> type, BlockPos pos, BlockState blockState) {
         super(type, pos, blockState);
@@ -29,8 +30,8 @@ public abstract class SelfCauldronMixin extends BlockEntity implements IFluidHan
 
     @Override
     public @NotNull <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
-        if(cap == ForgeCapabilities.FLUID_HANDLER){
-            return ForgeCapabilities.FLUID_HANDLER.orEmpty(cap, this.cap);
+        if (cap == ForgeCapabilities.FLUID_HANDLER) {
+            return ForgeCapabilities.FLUID_HANDLER.orEmpty(cap, this.amendments$cap);
         }
         return super.getCapability(cap, side);
     }
@@ -42,32 +43,38 @@ public abstract class SelfCauldronMixin extends BlockEntity implements IFluidHan
 
     @Override
     public @NotNull FluidStack getFluidInTank(int i) {
-        this.getSoftFluidTank().getFluid();
-        return null;
+        return ((SoftFluidStackImpl) this.getSoftFluidTank().getFluid()).toForgeFluid();
     }
 
     @Override
     public int getTankCapacity(int i) {
-        return 0;
+        return SoftFluidStackImpl.bottlesToMB(getSoftFluidTank().getCapacity());
     }
 
     @Override
     public boolean isFluidValid(int i, @NotNull FluidStack fluidStack) {
-        return false;
+        return true;
     }
 
     @Override
     public int fill(FluidStack fluidStack, FluidAction fluidAction) {
-        return 0;
+        var tank = getSoftFluidTank();
+        var original = SoftFluidStackImpl.fromForgeFluid(fluidStack);
+        int filled = tank.addFluid(original, fluidAction.simulate() ? true : false);
+        int bottlesRemoved = SoftFluidStackImpl.fromForgeFluid(fluidStack).getCount() - original.getCount();
+        fluidStack.shrink(SoftFluidStackImpl.bottlesToMB(bottlesRemoved));
+        return filled;
     }
 
     @Override
     public @NotNull FluidStack drain(FluidStack fluidStack, FluidAction fluidAction) {
-        return null;
+        return drain(fluidStack.getAmount(), fluidAction);
     }
 
     @Override
     public @NotNull FluidStack drain(int i, FluidAction fluidAction) {
-        return null;
+        var tank = getSoftFluidTank();
+        var drained = tank.removeFluid(i, fluidAction.simulate() ? true : false);
+        return ((SoftFluidStackImpl) drained).toForgeFluid();
     }
 }

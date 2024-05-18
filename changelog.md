@@ -1,1 +1,1 @@
-added thin air compat for wall lanterns and lanterns in hand
+added fluid handler capability to cauldrons
