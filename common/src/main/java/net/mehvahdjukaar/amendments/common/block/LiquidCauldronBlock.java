@@ -11,8 +11,8 @@ import net.mehvahdjukaar.amendments.reg.ModTags;
 import net.mehvahdjukaar.moonlight.api.fluids.BuiltInSoftFluids;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidStack;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidTank;
+import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
 import net.mehvahdjukaar.moonlight.api.util.PotionNBTHelper;
-import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleOptions;
@@ -38,6 +38,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.level.gameevent.GameEvent;
@@ -47,11 +48,13 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
-import java.awt.*;
 import java.util.List;
 
 public class LiquidCauldronBlock extends ModCauldronBlock {
-    public static final IntegerProperty LEVEL = ModBlockProperties.LEVEL_1_4;
+    public static final int MAX_LEVEL = PlatHelper.getPlatform().isFabric() ? 3 : 4;
+    public static final IntegerProperty LEVEL = PlatHelper.getPlatform().isFabric() ?
+            BlockStateProperties.LEVEL_CAULDRON : ModBlockProperties.LEVEL_1_4;
+
     public static final IntegerProperty LIGHT_LEVEL = ModBlockProperties.LIGHT_LEVEL;
     public static final BooleanProperty BOILING = ModBlockProperties.BOILING;
 
@@ -81,7 +84,7 @@ public class LiquidCauldronBlock extends ModCauldronBlock {
     public void receiveStalactiteDrip(BlockState state, Level level, BlockPos pos, Fluid fluid) {
         if (!isFull(state) && level.getBlockEntity(pos) instanceof LiquidCauldronBlockTile te) {
             var sf = SoftFluidStack.fromFluid(fluid, 1, null);
-            if (!sf.isEmpty() && te.getSoftFluidTank().addFluid(sf)) {
+            if (!sf.isEmpty() && te.getSoftFluidTank().addFluid(sf, false) != 0) {
                 level.gameEvent(GameEvent.BLOCK_CHANGE, pos, GameEvent.Context.of(state));
                 level.levelEvent(1047, pos, 0);
             }
@@ -115,7 +118,7 @@ public class LiquidCauldronBlock extends ModCauldronBlock {
 
     @Override
     public boolean isFull(BlockState state) {
-        return state.getValue(LEVEL) == 4;
+        return state.getValue(LEVEL) == MAX_LEVEL;
     }
 
     @Override

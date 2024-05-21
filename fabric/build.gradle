@@ -39,9 +39,9 @@ dependencies {
         exclude module: "fabric-api"
     }
 
-    //modImplementation ("net.mehvahdjukaar:moonlight-fabric:${moonlight_version}")
+    modImplementation ("net.mehvahdjukaar:moonlight-fabric:${moonlight_version}")
     //modImplementation ("net.mehvahdjukaar:moonlight-fabric:${rootProject.moonlight_version}")
-    modImplementation("curse.maven:selene-499980:5306530")
+    //modImplementation("curse.maven:selene-499980:5306530")
 
     //modImplementation ("net.mehvahdjukaar:supplementaries-fabric:${supplementaries_version}")
     modImplementation("curse.maven:supplementaries-412082:5147147")

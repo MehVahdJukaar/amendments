@@ -109,7 +109,8 @@ public abstract class AbstractCandleSkullBlock extends AbstractCandleBlock imple
 
     @Override
     public List<ItemStack> getDrops(BlockState state, LootParams.Builder builder) {
-        if (builder.getOptionalParameter(LootContextParams.BLOCK_ENTITY) instanceof CandleSkullBlockTile tile) {
+        if (builder.getOptionalParameter(LootContextParams.BLOCK_ENTITY) instanceof CandleSkullBlockTile tile
+                && tile.getCandle().getBlock() instanceof CandleBlock) {
             List<ItemStack> loot = tile.getCandle().setValue(CANDLES, state.getValue(CANDLES)).getDrops(builder);
 
             BlockEntity skullTile = tile.getSkullTile();
@@ -162,8 +163,8 @@ public abstract class AbstractCandleSkullBlock extends AbstractCandleBlock imple
     //same as ILightUpBlock (todo: try to merge)
     @Override
     public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult pHit) {
-        if (Utils.mayBuild(player, pos)) {
-            ItemStack stack = player.getItemInHand(hand);
+        ItemStack stack = player.getItemInHand(hand);
+        if (Utils.mayPerformBlockAction(player, pos, stack)) {
             //add candles
             if (stack.is(ItemTags.CANDLES) && stack.getItem() instanceof BlockItem blockItem) {
                 int count = state.getValue(CANDLES);

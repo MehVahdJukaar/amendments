@@ -6,7 +6,7 @@
         "amendments:dye_bottle"
       ],
       "empty": "minecraft:glass_bottle",
-      "capacity": 1
+      "capacity": "BOTTLE"
     }
   ],
   "flowing_texture": "amendments:block/dye_flow",

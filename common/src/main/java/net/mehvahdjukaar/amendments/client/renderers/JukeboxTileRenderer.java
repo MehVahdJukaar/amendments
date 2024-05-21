@@ -28,6 +28,7 @@ public class JukeboxTileRenderer implements BlockEntityRenderer<JukeboxBlockEnti
     @Override
     public void render(JukeboxBlockEntity blockEntity, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
         var item = blockEntity.getFirstItem();
+    
         if (!item.isEmpty() && blockEntity.getBlockState().getValue(JukeboxBlock.HAS_RECORD)) {
             poseStack.translate(0.5, 15.25 / 16f, 0.5);
 

@@ -117,7 +117,7 @@ public class InteractEvents {
             if (CompatHandler.FLAN && override.altersWorld() && !FlanCompat.canPlace(player, hit.getBlockPos())) {
                 return InteractionResult.PASS;
             }
-            if (override.altersWorld() && !Utils.mayBuild(player, hit.getBlockPos())) {
+            if (override.altersWorld() && !Utils.mayPerformBlockAction(player, hit.getBlockPos(), stack)) {
                 return InteractionResult.PASS;
             }
             return override.tryPerformingAction(level, player, hand, stack, hit);
@@ -137,7 +137,7 @@ public class InteractEvents {
                     return InteractionResult.PASS;
                 }
                 //TODO: merge
-                if (override.altersWorld() && !Utils.mayBuild(player, hit.getBlockPos())) {
+                if (override.altersWorld() && !Utils.mayPerformBlockAction(player, hit.getBlockPos(), stack)) {
                     return InteractionResult.PASS;
                 }
                 InteractionResult result = override.tryPerformingAction(level, player, hand, stack, hit);

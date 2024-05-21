@@ -4,6 +4,7 @@ import net.mehvahdjukaar.amendments.common.block.WaterloggedLilyBlock;
 import net.mehvahdjukaar.amendments.common.tile.WaterloggedLilyBlockTile;
 import net.mehvahdjukaar.amendments.configs.CommonConfigs;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
+import net.mehvahdjukaar.moonlight.api.util.Utils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -29,8 +30,9 @@ public abstract class WaterLilyMixin extends Block {
     //TODO: use event?
     @Override
     public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
-        if (!player.mayBuild() || !CommonConfigs.LILY_PADS_ON.get()) return InteractionResult.PASS;
         ItemStack stack = player.getItemInHand(hand);
+        if (!Utils.mayPerformBlockAction(player, pos, stack) ||
+                !CommonConfigs.LILY_PADS_ON.get()) return InteractionResult.PASS;
         Item item = stack.getItem();
         if (!stack.isEmpty() && !(item instanceof PlaceOnWaterBlockItem) && !(stack.getItem() instanceof BoneMealItem)) {
             BlockPos below = pos.below();
@@ -38,7 +40,7 @@ public abstract class WaterLilyMixin extends Block {
 
                 level.setBlock(pos, Blocks.AIR.defaultBlockState(), 2);
                 level.setBlock(below, ModRegistry.WATERLILY_BLOCK.get().defaultBlockState()
-                        .setValue(WaterloggedLilyBlock.EXTENDED,true), 2);
+                        .setValue(WaterloggedLilyBlock.EXTENDED, true), 2);
                 level.scheduleTick(below, ModRegistry.WATERLILY_BLOCK.get(), 1);
                 if (level.getBlockEntity(below) instanceof WaterloggedLilyBlockTile te) {
                     te.setHeldBlock(state);

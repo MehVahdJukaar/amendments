@@ -43,7 +43,7 @@ public abstract class SelfCauldronMixin extends BlockEntity implements IFluidHan
 
     @Override
     public @NotNull FluidStack getFluidInTank(int i) {
-        return ((SoftFluidStackImpl) this.getSoftFluidTank().getFluid()).toForgeFluid();
+        return SoftFluidStackImpl.toForgeFluid(this.getSoftFluidTank().getFluid());
     }
 
     @Override
@@ -53,7 +53,7 @@ public abstract class SelfCauldronMixin extends BlockEntity implements IFluidHan
 
     @Override
     public boolean isFluidValid(int i, @NotNull FluidStack fluidStack) {
-        return true;
+        return getSoftFluidTank().isFluidCompatible(SoftFluidStackImpl.fromForgeFluid(fluidStack));
     }
 
     @Override
@@ -63,6 +63,7 @@ public abstract class SelfCauldronMixin extends BlockEntity implements IFluidHan
         int filled = tank.addFluid(original, fluidAction.simulate() ? true : false);
         int bottlesRemoved = SoftFluidStackImpl.fromForgeFluid(fluidStack).getCount() - original.getCount();
         fluidStack.shrink(SoftFluidStackImpl.bottlesToMB(bottlesRemoved));
+        this.setChanged();
         return filled;
     }
 
@@ -75,6 +76,7 @@ public abstract class SelfCauldronMixin extends BlockEntity implements IFluidHan
     public @NotNull FluidStack drain(int i, FluidAction fluidAction) {
         var tank = getSoftFluidTank();
         var drained = tank.removeFluid(i, fluidAction.simulate() ? true : false);
-        return ((SoftFluidStackImpl) drained).toForgeFluid();
+        this.setChanged();
+        return SoftFluidStackImpl.toForgeFluid(drained);
     }
 }

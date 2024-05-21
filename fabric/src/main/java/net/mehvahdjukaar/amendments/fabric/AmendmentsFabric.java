@@ -4,9 +4,11 @@ import com.google.common.collect.Lists;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.CommonLifecycleEvents;
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.event.player.UseItemCallback;
+import net.fabricmc.fabric.api.transfer.v1.fluid.FluidStorage;
+import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
+import net.fabricmc.fabric.api.transfer.v1.storage.Storage;
 import net.mehvahdjukaar.amendments.Amendments;
 import net.mehvahdjukaar.amendments.AmendmentsClient;
 import net.mehvahdjukaar.amendments.events.ModEvents;
@@ -14,7 +16,6 @@ import net.mehvahdjukaar.amendments.reg.ModConstants;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
 import net.minecraft.Util;
-import net.minecraft.core.MappedRegistry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.ai.village.poi.PoiTypes;
@@ -74,6 +75,11 @@ public class AmendmentsFabric implements ModInitializer {
             set.addAll(extraStates);
             holder.value().matchingStates = set;
             PoiTypes.registerBlockStates(holder, extraStates);
+        });
+
+        PlatHelper.addCommonSetup(() -> {
+            FluidStorage.SIDED.registerForBlockEntity((myTank, direction) -> (Storage<FluidVariant>) myTank,
+                    ModRegistry.LIQUID_CAULDRON_TILE.get());
         });
     }
 

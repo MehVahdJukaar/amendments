@@ -14,6 +14,7 @@ import net.mehvahdjukaar.moonlight.api.fluids.BuiltInSoftFluids;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluid;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidStack;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidTank;
+import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
 import net.mehvahdjukaar.moonlight.api.util.PotionNBTHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
@@ -128,18 +129,16 @@ public class LiquidCauldronBlockTile extends BlockEntity implements IExtraModelD
 
 
     public SoftFluidTank createCauldronLiquidTank( ) {
-        return new SoftFluidTank(4) {
-
+        return new SoftFluidTank(PlatHelper.getPlatform().isFabric() ? 3 : 4) {
             @Override
-            public boolean canAddSoftFluid(SoftFluidStack fluidStack) {
+            public boolean isFluidCompatible(SoftFluidStack fluidStack) {
                 if (fluidStack.is(BuiltInSoftFluids.WATER.get())) return false;
                 if (canMixPotions() && fluidStack.is(BuiltInSoftFluids.POTION.get()) && fluidStack.is(this.getFluidValue())) {
                     // just compares bottle types
-                    return this.getSpace() >= fluidStack.getCount() && this.fluidStack.getTag()
-                            .getString(PotionNBTHelper.POTION_TYPE_KEY).equals(
+                    return  this.fluidStack.getTag().getString(PotionNBTHelper.POTION_TYPE_KEY).equals(
                                     fluidStack.getTag().getString(PotionNBTHelper.POTION_TYPE_KEY));
                 }
-                return super.canAddSoftFluid(fluidStack);
+                return super.isFluidCompatible(fluidStack);
             }
 
             @Override
@@ -158,11 +157,12 @@ public class LiquidCauldronBlockTile extends BlockEntity implements IExtraModelD
         return new SoftFluidTank(3) {
 
             @Override
-            public boolean canAddSoftFluid(SoftFluidStack fluidStack) {
+            public boolean isFluidCompatible(SoftFluidStack fluidStack) {
                 if (fluidStack.is(ModRegistry.DYE_SOFT_FLUID.get()) && fluidStack.is(this.getFluidValue())) {
-                    return this.getSpace() >= fluidStack.getCount(); //discard nbt
-                } else return super.canAddSoftFluid(fluidStack);
+                    return true; //discard nbt
+                } else return super.isFluidCompatible(fluidStack);
             }
+
 
             @Override
             protected void addFluidOntoExisting(SoftFluidStack fluidStack) {

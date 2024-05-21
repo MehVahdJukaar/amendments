@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "level=1": {
+      "model": "amendments:block/liquid_cauldron_level1"
+    },
+    "level=2": {
+      "model": "amendments:block/dye_cauldron_level2"
+    },
+    "level=3": {
+      "model": "amendments:block/liquid_cauldron_full"
+    }
+  }
+}
