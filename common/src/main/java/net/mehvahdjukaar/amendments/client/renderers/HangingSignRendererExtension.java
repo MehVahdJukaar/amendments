@@ -123,7 +123,7 @@ public class HangingSignRendererExtension {
 
         Quaternionf pitch = new Quaternionf();
         if (extension.canSwing()) {
-            float rot = extension.animation.getAngle(partialTicks);
+            float rot = extension.getAnimation().getAngle(partialTicks);
 
             if (!wallSign && attached) {
                 //y swing

@@ -3,6 +3,7 @@ package net.mehvahdjukaar.amendments;
 import com.google.common.base.Suppliers;
 import dev.architectury.injectables.annotations.ExpectPlatform;
 import net.mehvahdjukaar.amendments.client.ClientResourceGenerator;
+import net.mehvahdjukaar.amendments.client.ItemHoldingAnimationsManager;
 import net.mehvahdjukaar.amendments.client.WallLanternModelsManager;
 import net.mehvahdjukaar.amendments.client.colors.BrewingStandColor;
 import net.mehvahdjukaar.amendments.client.colors.CrossbowColor;
@@ -138,8 +139,8 @@ public class AmendmentsClient {
         MenuScreens.register(ModRegistry.LECTERN_EDIT_MENU.get(), LecternBookEditScreen::new);
     }
 
-    public static void lateClientSetup() {
-        WallLanternModelsManager.addAnimations();
+    public static void afterTagSetup() {
+        ItemHoldingAnimationsManager.addAnimations();
     }
 
 

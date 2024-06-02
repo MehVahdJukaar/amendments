@@ -15,16 +15,10 @@ import org.joml.Vector3f;
 
 public abstract class SwayingBlockTile extends DynamicRenderedBlockTile {
 
-    public final SwingAnimation animation;
+    public SwingAnimation animation;
 
     protected SwayingBlockTile(BlockEntityType<?> tileEntityTypeIn, BlockPos pos, BlockState state) {
         super(tileEntityTypeIn, pos, state);
-
-        if (PlatHelper.getPhysicalSide().isClient()) {
-            animation = new PendulumAnimation(ClientConfigs.WALL_LANTERN_CONFIG, this::getRotationAxis);
-        } else {
-            animation = null;
-        }
     }
 
     @Override
@@ -51,11 +45,18 @@ public abstract class SwayingBlockTile extends DynamicRenderedBlockTile {
 
     public static void clientTick(Level pLevel, BlockPos pPos, BlockState pState, SwayingBlockTile tile) {
         if (tile.rendersFancy()) {
-            tile.animation.tick(pLevel, pPos, pState);
+            tile.getAnimation().tick(pLevel, pPos, pState);
         }
     }
 
     //rotation axis rotate 90 deg
     public abstract Vector3f getRotationAxis(BlockState state);
 
+    // Just cal from client
+    public SwingAnimation getAnimation() {
+        if (animation == null) {
+            animation = new PendulumAnimation(ClientConfigs.WALL_LANTERN_CONFIG, this::getRotationAxis);
+        }
+        return animation;
+    }
 }

@@ -35,10 +35,6 @@ public class WallLanternModelsManager {
     private static final Map<Block, ResourceLocation> SPECIAL_MOUNT_TEXTURES = new IdentityHashMap<>();
     private static final Map<Block, ResourceLocation> SPECIAL_LANTERN_MODELS = new IdentityHashMap<>();
 
-    private static final Set<Block> POSSIBLE_LANTERNS = new HashSet<>();
-    private static boolean initialized = false;
-    private static boolean animAdded = false;
-
     //early reload so we can register these models
     public static void refreshModels(ResourceManager manager) {
         reloadTextures(manager);
@@ -46,12 +42,8 @@ public class WallLanternModelsManager {
     }
 
     private static void reloadModels(ResourceManager manager) {
-        if (!initialized) {
-            populate();
-            initialized = true;
-        }
         SPECIAL_LANTERN_MODELS.clear();
-        for (Block l : POSSIBLE_LANTERNS) {
+        for (Block l : BlockScanner.getLanterns()) {
 
             ResourceLocation reg = Utils.getID(l);
             String namespace = (reg.getNamespace().equals("minecraft") || reg.getNamespace().equals(Amendments.MOD_ID)) ? "" : reg.getNamespace() + "/";
@@ -65,12 +57,8 @@ public class WallLanternModelsManager {
     }
 
     private static void reloadTextures(ResourceManager manager) {
-        if (!initialized) {
-            populate();
-            initialized = true;
-        }
         SPECIAL_MOUNT_TEXTURES.clear();
-        for (Block l : POSSIBLE_LANTERNS) {
+        for (Block l : BlockScanner.getLanterns()) {
 
             ResourceLocation reg = Utils.getID(l);
             String namespace = (reg.getNamespace().equals("minecraft") || reg.getNamespace().equals(Amendments.MOD_ID)) ? "" : reg.getNamespace() + "/";
@@ -88,15 +76,6 @@ public class WallLanternModelsManager {
                 }
             }
         }
-    }
-
-    private static void populate() {
-        ImmutableSet.Builder<Block> builder = ImmutableSet.builder();
-        for (Block i : BuiltInRegistries.BLOCK) {
-            if (WallLanternBlock.isValidBlock(i)) builder.add(i);
-        }
-        POSSIBLE_LANTERNS.clear();
-        POSSIBLE_LANTERNS.addAll(builder.build());
     }
 
     @Nullable
@@ -117,20 +96,6 @@ public class WallLanternModelsManager {
             return ClientHelper.getModel(Minecraft.getInstance().getModelManager(), special);
         }
         return blockModelShaper.getBlockModel(lantern);
-    }
-
-    public static Set<Item> getValidLanternItems() {
-        return POSSIBLE_LANTERNS.stream().map(Block::asItem)
-                .collect(Collectors.toSet());
-    }
-
-    public static void addAnimations() {
-        if (initialized && !animAdded && ClientConfigs.LANTERN_HOLDING.get()) {
-            animAdded = true;
-            var anim = new LanternRendererExtension();
-            POSSIBLE_LANTERNS.stream().map(Block::asItem).collect(Collectors.toSet())
-                    .forEach(item -> IThirdPersonSpecialItemRenderer.attachToItem(item, anim));
-        }
     }
 
 }

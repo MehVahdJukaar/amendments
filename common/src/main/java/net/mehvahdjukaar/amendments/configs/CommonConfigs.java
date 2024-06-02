@@ -151,7 +151,7 @@ public class CommonConfigs {
         WALL_LANTERN_HIGH_PRIORITY = builder.comment("Gives high priority to wall lantern placement. Enable to override other wall lanterns placements, disable if it causes issues with other mods that use lower priority block click events")
                 .define("high_priority", true);
 
-        List<String> modBlacklist = Arrays.asList("extlights", "betterendforge", "spelunkery", "galosphere", "tconstruct", "enigmaticlegacy", "beautify");
+        List<String> modBlacklist = Arrays.asList("bbb", "extlights", "betterendforge", "spelunkery", "galosphere", "tconstruct", "enigmaticlegacy", "beautify");
         WALL_LANTERN_BLACKLIST = builder.comment("Mod ids of mods that have lantern block that extend the base lantern class but don't look like one")
                 .define("mod_blacklist", modBlacklist);
         WALL_LANTERN_WHITELIST = builder.comment("Ids of blocks that are not detected as lanterns but should be")

@@ -87,7 +87,6 @@ public class LanternRendererExtension implements IThirdPersonAnimationProvider, 
 
             poseStack.scale(scale, scale, scale);
             poseStack.mulPose(RotHlpr.Z180);
-            poseStack.translate(-0.5, -0.5, -0.5);
             poseStack.translate(0, -3 / 16f, 0);
 
             renderLanternModel(entity, stack, poseStack, bufferSource, light);
@@ -156,6 +155,8 @@ public class LanternRendererExtension implements IThirdPersonAnimationProvider, 
             }
 
             poseStack.scale(lanternScale, lanternScale, lanternScale);
+
+            poseStack.translate(0.5, 0.5, 0.5);
             renderLanternModel(player, itemStack, poseStack, buffer, light);
 
             poseStack.popPose();
@@ -210,7 +211,6 @@ public class LanternRendererExtension implements IThirdPersonAnimationProvider, 
         }
         if (state.hasProperty(LanternBlock.HANGING)) state = state.setValue(LanternBlock.HANGING, false);
         var model = mc.getBlockRenderer().getBlockModel(state);
-        poseStack.translate(0.5, 0.5, 0.5);
         itemRenderer.render(itemStack, ItemDisplayContext.NONE, false, poseStack,
                 buffer, light, OverlayTexture.NO_OVERLAY, model);
 

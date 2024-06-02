@@ -55,7 +55,6 @@ public abstract class CompatFarmersDelightCanvasMixin extends SignRenderer {
                                       int packedLight, int packedOverlay, CallbackInfo ci,
                                       BlockState state, SignBlock sign, HangingSignRenderer.HangingSignModel model,
                                       DyeColor dye) {
-
         if ((ClientConfigs.SIGN_ATTACHMENT.get() || ClientConfigs.SWINGING_SIGNS.get()) && tile instanceof ExtendedHangingSign ext) {
 
             BlockState blockState = tile.getBlockState();

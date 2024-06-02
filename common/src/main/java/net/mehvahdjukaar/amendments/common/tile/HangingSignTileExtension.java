@@ -5,7 +5,6 @@ import net.mehvahdjukaar.amendments.common.PendulumAnimation;
 import net.mehvahdjukaar.amendments.common.SwingAnimation;
 import net.mehvahdjukaar.amendments.configs.ClientConfigs;
 import net.mehvahdjukaar.amendments.reg.ModBlockProperties;
-import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -33,7 +32,7 @@ public class HangingSignTileExtension {
 
     private boolean canSwing = true;
 
-    public final SwingAnimation animation;
+    private SwingAnimation animation;
 
     //no item handler here. we don't want hoppers and such anyway
     private ItemStack frontItem = ItemStack.EMPTY;
@@ -41,17 +40,11 @@ public class HangingSignTileExtension {
 
     public HangingSignTileExtension(BlockState state) {
         super();
-        //cheaty. will create on dedicated client on both server and client this as configs are loaded there
-        if (PlatHelper.getPhysicalSide().isClient()) {
-            animation = new PendulumAnimation(ClientConfigs.HANGING_SIGN_CONFIG, this::getRotationAxis);
-        } else {
-            animation = null;
-        }
         isCeiling = state.getBlock() instanceof CeilingHangingSignBlock;
-
     }
 
     public void clientTick(Level level, BlockPos pos, BlockState state) {
+        var animation = getAnimation();
         if (!canSwing) {
             animation.reset();
         } else {
@@ -143,7 +136,7 @@ public class HangingSignTileExtension {
     }
 
     public void updateAttachments(Level level, BlockPos pos, BlockState state) {
-        if (!isCeiling ) {
+        if (!isCeiling) {
             Direction selfFacing = state.getValue(WallHangingSignBlock.FACING);
 
             rightAttachment = ModBlockProperties.PostType.get(level.getBlockState(pos.relative(selfFacing.getClockWise())), true);
@@ -174,4 +167,11 @@ public class HangingSignTileExtension {
         return backItem;
     }
 
+    // Just call from client
+    public SwingAnimation getAnimation() {
+        if (animation == null) {
+            animation = new PendulumAnimation(ClientConfigs.HANGING_SIGN_CONFIG, this::getRotationAxis);
+        }
+        return animation;
+    }
 }

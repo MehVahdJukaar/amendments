@@ -8,7 +8,6 @@ import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
 import net.mehvahdjukaar.amendments.common.tile.LiquidCauldronBlockTile;
 import net.mehvahdjukaar.moonlight.api.block.ISoftFluidTankProvider;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidStack;
-import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidTank;
 import net.mehvahdjukaar.moonlight.api.fluids.fabric.SoftFluidStackImpl;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -51,7 +50,6 @@ public abstract class SelfCauldronMixin extends BlockEntity implements SingleSlo
                 this.setChanged();
             }
         });
-        SoftFluidTank
         return drained.getCount() * FluidConstants.BOTTLE;
     }
 

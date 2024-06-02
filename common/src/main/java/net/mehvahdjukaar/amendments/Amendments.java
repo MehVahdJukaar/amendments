@@ -1,5 +1,6 @@
 package net.mehvahdjukaar.amendments;
 
+import net.mehvahdjukaar.amendments.client.BlockScanner;
 import net.mehvahdjukaar.amendments.common.FlowerPotHandler;
 import net.mehvahdjukaar.amendments.common.network.ModNetwork;
 import net.mehvahdjukaar.amendments.configs.ClientConfigs;
@@ -62,6 +63,7 @@ public class Amendments {
 
         // make bell connections
 
+        // add wall lantern stand model override instead of texture one
         // mud slows down mobs
         //TODO: check bell ringing with rope
         //here we go. ideas part 2
@@ -89,8 +91,12 @@ public class Amendments {
         if (CompatHandler.SUPPLEMENTARIES) SuppCompat.setup();
     }
 
+
     private static void setupAsync() {
         FlowerPotHandler.setup();
+        if(PlatHelper.getPhysicalSide().isClient()){
+            BlockScanner.scanBlocks();
+        }
     }
 
     private static boolean hasRun = false;
@@ -104,7 +110,7 @@ public class Amendments {
                 registerFluidBehavior(f);
             }
         }
-        if (client) AmendmentsClient.lateClientSetup();
+        if (client) AmendmentsClient.afterTagSetup();
     }
 
     public static void registerFluidBehavior(SoftFluid f) {

@@ -196,14 +196,8 @@ public abstract class AbstractCandleSkullBlock extends AbstractCandleBlock imple
     }
 
     @Override
-    public boolean isLitUp(BlockState state, LevelAccessor level, BlockPos pos) {
-        return state.getValue(LIT);
-    }
-
-    @Deprecated(forRemoval = true)
-    @Override
-    public boolean isLitUp(BlockState state) {
-        return state.getValue(LIT);
+    public boolean isLitUp(BlockState state, BlockGetter level, BlockPos pos) {
+        return ILightable.super.isLitUp(state, level, pos);
     }
 
     @Override
