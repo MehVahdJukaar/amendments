@@ -46,7 +46,7 @@ public class WallLanternBlockTileRenderer implements BlockEntityRenderer<WallLan
         poseStack.translate(0.5, 0.875, 0.5);
         poseStack.mulPose(RotHlpr.rot(tile.getBlockState().getValue(WallLanternBlock.FACING)));
 
-        float angle = tile.animation.getAngle(partialTicks);
+        float angle = tile.getAnimation().getAngle(partialTicks);
 
         // animation
         poseStack.mulPose(Axis.ZP.rotationDegrees(angle));

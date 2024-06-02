@@ -1,5 +1,6 @@
 package net.mehvahdjukaar.amendments.client;
 
+import net.mehvahdjukaar.amendments.client.renderers.CandleHolderRendererExtension;
 import net.mehvahdjukaar.amendments.client.renderers.LanternRendererExtension;
 import net.mehvahdjukaar.amendments.client.renderers.TorchRendererExtension;
 import net.mehvahdjukaar.amendments.configs.ClientConfigs;
@@ -24,9 +25,16 @@ public class ItemHoldingAnimationsManager {
                     .collect(Collectors.toSet()).forEach(item ->
                             IThirdPersonSpecialItemRenderer.attachToItem(item, anim));
         }
-        if (false && ClientConfigs.TORCH_HOLDING.get()) {
+        if (ClientConfigs.TORCH_HOLDING.get()) {
             var anim = new TorchRendererExtension();
             BlockScanner.getTorches()
+                    .stream().map(Block::asItem).filter(i -> i != Items.AIR)
+                    .collect(Collectors.toSet()).forEach(item ->
+                            IThirdPersonSpecialItemRenderer.attachToItem(item, anim));
+        }
+        if(ClientConfigs.CANDLE_HOLDER_HOLDING.get()){
+            var anim = new CandleHolderRendererExtension();
+            BlockScanner.getCandleHolders()
                     .stream().map(Block::asItem).filter(i -> i != Items.AIR)
                     .collect(Collectors.toSet()).forEach(item ->
                             IThirdPersonSpecialItemRenderer.attachToItem(item, anim));

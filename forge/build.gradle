@@ -138,35 +138,35 @@ dependencies {
     //modCompileOnly("net.mehvahdjukaar:suppsquared-forge:${suppsquared_version}")
 	modCompileOnly("curse.maven:supplementaries-squared-838411:5130385")
 	
-    modRuntimeOnly("einstein.jmc:JustMoreCakes:forge-1.20-1.12.1")
+   // modRuntimeOnly("einstein.jmc:JustMoreCakes:forge-1.20-1.12.1")
 
-    modImplementation("curse.maven:embeddium-908741:5321172")
-    modImplementation("curse.maven:farmers-delight-398521:5051242")
+    modCompileOnly("curse.maven:embeddium-908741:5321172")
+    modCompileOnly("curse.maven:farmers-delight-398521:5051242")
    // modImplementation("curse.maven:polytone-958094:5308480")
-    modImplementation("curse.maven:etched-491890:5065299")
+    modCompileOnly("curse.maven:etched-491890:5065299")
     //modImplementation("curse.maven:aeroblender-879879:4789008")
     //modImplementation("curse.maven:terrablender-563928:5315142")
     //modImplementation("curse.maven:aether-255308:5296997")
     //modImplementation("curse.maven:aether-redux-867237:5339332")
-    modImplementation("curse.maven:quark-243121:5093415")
-    modImplementation("curse.maven:zeta-968868:5078215")
-    modImplementation("curse.maven:blueprint-382216:4594238")
+    modCompileOnly("curse.maven:quark-243121:5093415")
+    modCompileOnly("curse.maven:zeta-968868:5078215")
+    modCompileOnly("curse.maven:blueprint-382216:4594238")
     modCompileOnly ("curse.maven:configured-457570:5101367")
     modCompileOnly ("curse.maven:rats-323596:4802123")
-    modImplementation("curse.maven:skinned-lanterns-414154:4656953")
-    modImplementation("curse.maven:spelunkery-790530:5043883")
-    modImplementation("curse.maven:scholar-961802:5214379")
-    modImplementation("curse.maven:map-atlases-forge-519759:5307805")
+    modCompileOnly("curse.maven:skinned-lanterns-414154:4656953")
+    modCompileOnly("curse.maven:spelunkery-790530:5043883")
+    modCompileOnly("curse.maven:scholar-961802:5214379")
+    modCompileOnly("curse.maven:map-atlases-forge-519759:5307805")
 	
 	//testing thin air compatibility
-	modRuntimeOnly("curse.maven:puzzles-lib-495476:5330447")
-	modRuntimeOnly("curse.maven:new-thin-air-878379:5068247")
+    modCompileOnly("curse.maven:puzzles-lib-495476:5330447")
+    modCompileOnly("curse.maven:new-thin-air-878379:5068247")
 
 
-    modImplementation ("maven.modrinth:dye-depot:1.0.0-forge")
+    modCompileOnly ("maven.modrinth:dye-depot:1.0.0-forge")
 
-    modImplementation("curse.maven:alexs-caves-924854:4806837")
-    modImplementation("curse.maven:citadel-331936:4786380")
+    modCompileOnly("curse.maven:alexs-caves-924854:4806837")
+    modCompileOnly("curse.maven:citadel-331936:4786380")
 
 
     implementation 'org.jetbrains:annotations:22.0.0'

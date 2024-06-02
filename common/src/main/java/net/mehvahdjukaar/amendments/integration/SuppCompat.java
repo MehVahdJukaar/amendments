@@ -107,6 +107,14 @@ public class SuppCompat {
         return ModMaterials.getFlagMaterialForPatternItem(bannerPatternItem);
     }
 
+    public static boolean isSconce(Block block) {
+        return block instanceof SconceBlock && !(block instanceof SconceWallBlock);
+    }
+
+    public static boolean isCandleHolder(Block block) {
+        return block instanceof CandleHolderBlock;
+    }
+
 
     public static class FaucetCauldronConversion implements FaucetTarget.BlState {
 

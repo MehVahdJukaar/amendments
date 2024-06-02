@@ -240,7 +240,7 @@ public class WallLanternBlock extends WaterBlock implements EntityBlock {
     public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
         super.entityInside(state, level, pos, entity);
         if (level.isClientSide && !ClientConfigs.FAST_LANTERNS.get() && level.getBlockEntity(pos) instanceof WallLanternBlockTile tile) {
-            tile.animation.hitByEntity(entity, state, pos);
+            tile.getAnimation().hitByEntity(entity, state, pos);
         }
     }
 

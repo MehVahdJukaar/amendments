@@ -15,7 +15,7 @@ import org.joml.Vector3f;
 
 public abstract class SwayingBlockTile extends DynamicRenderedBlockTile {
 
-    public SwingAnimation animation;
+    private SwingAnimation animation;
 
     protected SwayingBlockTile(BlockEntityType<?> tileEntityTypeIn, BlockPos pos, BlockState state) {
         super(tileEntityTypeIn, pos, state);

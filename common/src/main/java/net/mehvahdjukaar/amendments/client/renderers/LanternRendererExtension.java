@@ -36,17 +36,28 @@ public class LanternRendererExtension implements IThirdPersonAnimationProvider, 
 
     @Override
     public <T extends LivingEntity> boolean poseRightArm(ItemStack itemStack, HumanoidModel<T> model, T t, HumanoidArm arm) {
-        if (!ClientConfigs.LANTERN_HOLDING.get()) return false;
         //model.rightArm.yRot = Mth.clamp(MthUtils.wrapRad(0F + model.head.yRot), -0.5f, 1);
-        model.rightArm.xRot = Mth.clamp(MthUtils.wrapRad(-1.2f + model.head.xRot), -2.4f, -0.5f);
+        boolean up = ClientConfigs.LANTERN_HOLDING_UP.get();
+        if (ClientConfigs.HOLDING_ANIMATION_FIXED.get()) {
+            model.rightArm.xRot = up ? -1.9f : -1;
+        } else {
+            float v = up ? -1.9f : -1.2f;
+            model.rightArm.xRot = Mth.clamp(MthUtils.wrapRad(v + model.head.xRot), -2.4f, -0.5f);
+        }
+
         return true;
     }
 
     @Override
     public <T extends LivingEntity> boolean poseLeftArm(ItemStack itemStack, HumanoidModel<T> model, T t, HumanoidArm arm) {
-        if (!ClientConfigs.LANTERN_HOLDING.get()) return false;
         //model.leftArm.yRot = Mth.clamp(MthUtils.wrapRad(0F + model.head.yRot), -1f, 0.5);
-        model.leftArm.xRot = Mth.clamp(MthUtils.wrapRad(-1.2f + model.head.xRot), -2.4f, -0.5f);
+        boolean up = ClientConfigs.LANTERN_HOLDING_UP.get();
+        if (ClientConfigs.HOLDING_ANIMATION_FIXED.get()) {
+            model.leftArm.xRot = up ? -1.9f : 1;
+        } else {
+            float v = up ? -1.9f : -1.2f;
+            model.leftArm.xRot = Mth.clamp(MthUtils.wrapRad(v + model.head.xRot), -2.4f, -0.5f);
+        }
         return true;
     }
 
@@ -56,11 +67,11 @@ public class LanternRendererExtension implements IThirdPersonAnimationProvider, 
             M parentModel, LivingEntity entity, ItemStack stack, HumanoidArm humanoidArm,
             PoseStack poseStack, MultiBufferSource bufferSource, int light) {
 
-        if (!stack.isEmpty() && ClientConfigs.LANTERN_HOLDING.get()) {
+        if (!stack.isEmpty()) {
 
             poseStack.pushPose();
 
-            boolean leftHand = humanoidArm == HumanoidArm.LEFT;
+            boolean left = humanoidArm == HumanoidArm.LEFT;
 
             //I don't even know why this needs to be here.
             // to offset shoulder joint IDK
@@ -70,12 +81,12 @@ public class LanternRendererExtension implements IThirdPersonAnimationProvider, 
             parentModel.translateToHand(humanoidArm, poseStack);
 
             //moveto hand
-            poseStack.translate(shoulderOffset + (leftHand ? 1 : -1) / 16.0F, 20 / 32f, 1 / 16f);
+            poseStack.translate(shoulderOffset + (left ? 1 : -1) / 16.0F, 20 / 32f, 1 / 16f);
 
 
             HumanoidModel<?> model = ((HumanoidModel<?>) parentModel);
 
-            if (leftHand) {
+            if (left) {
                 poseStack.mulPose(Axis.YP.rotationDegrees(model.leftArm.zRot * Mth.RAD_TO_DEG));
                 poseStack.mulPose(Axis.XP.rotationDegrees(-model.leftArm.xRot * Mth.RAD_TO_DEG));
             } else {
@@ -89,11 +100,7 @@ public class LanternRendererExtension implements IThirdPersonAnimationProvider, 
             poseStack.mulPose(RotHlpr.Z180);
             poseStack.translate(0, -3 / 16f, 0);
 
-            renderLanternModel(entity, stack, poseStack, bufferSource, light);
-
-            //ItemDisplayContext transform = leftHand ? ItemDisplayContext.THIRD_PERSON_LEFT_HAND : ItemDisplayContext.THIRD_PERSON_RIGHT_HAND;
-            //Minecraft.getInstance().getEntityRenderDispatcher().getItemInHandRenderer().renderItem(entity, stack, transform,
-            //        leftHand, poseStack, bufferSource, light);
+            renderLanternModel(entity, stack, poseStack, bufferSource, light, left);
 
             poseStack.popPose();
         }
@@ -139,25 +146,23 @@ public class LanternRendererExtension implements IThirdPersonAnimationProvider, 
             poseStack.translate(0.066 * f, -0.033, 0.024);
 
 
+            boolean left;
             if (arm == HumanoidArm.RIGHT) {
-
+                left = false;
                 rotationDiff = new Quaternionf(2.077E-1, -6.488E-1, 4.433E-1, 5.825E-1);
-                poseStack.translate(0.5, 0.5, 0.5);
-                poseStack.mulPose(rotationDiff);
-                poseStack.translate(-0.5, -0.5, -0.5);
-
             } else {
-
+                left = true;
                 rotationDiff = new Quaternionf(2.077E-1, 6.488E-1, -4.433E-1, 5.825E-1);
-                poseStack.translate(0.5, 0.5, 0.5);
-                poseStack.mulPose(rotationDiff);
-                poseStack.translate(-0.5, -0.5, -0.5);
             }
+            poseStack.translate(0.5, 0.5, 0.5);
+            poseStack.mulPose(rotationDiff);
+            poseStack.translate(-0.5, -0.5, -0.5);
+
 
             poseStack.scale(lanternScale, lanternScale, lanternScale);
 
             poseStack.translate(0.5, 0.5, 0.5);
-            renderLanternModel(player, itemStack, poseStack, buffer, light);
+            renderLanternModel(player, itemStack, poseStack, buffer, light, left);
 
             poseStack.popPose();
 
@@ -199,7 +204,8 @@ public class LanternRendererExtension implements IThirdPersonAnimationProvider, 
         return false;
     }
 
-    private static void renderLanternModel(LivingEntity entity, ItemStack itemStack, PoseStack poseStack, MultiBufferSource buffer, int light) {
+    private static void renderLanternModel(LivingEntity entity, ItemStack itemStack, PoseStack poseStack,
+                                           MultiBufferSource buffer, int light, boolean left) {
         Minecraft mc = Minecraft.getInstance();
         ItemRenderer itemRenderer = mc.getItemRenderer();
         BlockState state = ((BlockItem) itemStack.getItem()).getBlock().defaultBlockState();
@@ -211,11 +217,8 @@ public class LanternRendererExtension implements IThirdPersonAnimationProvider, 
         }
         if (state.hasProperty(LanternBlock.HANGING)) state = state.setValue(LanternBlock.HANGING, false);
         var model = mc.getBlockRenderer().getBlockModel(state);
-        itemRenderer.render(itemStack, ItemDisplayContext.NONE, false, poseStack,
+        itemRenderer.render(itemStack, ItemDisplayContext.NONE, left, poseStack,
                 buffer, light, OverlayTexture.NO_OVERLAY, model);
-
-        //  RenderUtil.renderBlock(0, poseStack, buffer, state, player.level(),
-        //        BlockPos.ZERO, Minecraft.getInstance().getBlockRenderer());
     }
 
 

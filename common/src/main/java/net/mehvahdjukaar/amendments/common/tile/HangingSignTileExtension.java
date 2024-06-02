@@ -44,7 +44,7 @@ public class HangingSignTileExtension {
     }
 
     public void clientTick(Level level, BlockPos pos, BlockState state) {
-        var animation = getAnimation();
+        var animation = getClientAnimation();
         if (!canSwing) {
             animation.reset();
         } else {
@@ -168,7 +168,7 @@ public class HangingSignTileExtension {
     }
 
     // Just call from client
-    public SwingAnimation getAnimation() {
+    public SwingAnimation getClientAnimation() {
         if (animation == null) {
             animation = new PendulumAnimation(ClientConfigs.HANGING_SIGN_CONFIG, this::getRotationAxis);
         }

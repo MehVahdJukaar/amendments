@@ -30,10 +30,13 @@ public class ClientConfigs {
 
     public static final Supplier<Boolean> FAST_LANTERNS;
     public static final Supplier<Boolean> LANTERN_HOLDING;
+    public static final Supplier<Boolean> LANTERN_HOLDING_UP;
     public static final Supplier<Double> LANTERN_HOLDING_SIZE;
     public static final Supplier<PendulumAnimation.Config> WALL_LANTERN_CONFIG;
 
     public static final Supplier<Boolean> TORCH_HOLDING;
+    public static final Supplier<Boolean> CANDLE_HOLDER_HOLDING;
+    public static final Supplier<Boolean> HOLDING_ANIMATION_FIXED;
 
     public static final Supplier<Boolean> COLORED_ARROWS;
     public static final Supplier<Boolean> FAST_HOOKS;
@@ -107,6 +110,8 @@ public class ClientConfigs {
                 .define("lantern_item_size", 10 / 16d, 0, 1);
         LANTERN_HOLDING = builder.comment("Gives a special animation to lanterns when held in hand")
                 .define("lantern_item_holding", true);
+        LANTERN_HOLDING_UP = builder.comment("Makes lantern holding animation have the arm angled more upwards. Looks better if you have dynamic lights on")
+                        .define("lantern_item_holding_up", false);
         builder.pop();
 
         builder.push("cauldron");
@@ -124,7 +129,11 @@ public class ClientConfigs {
         builder.push("misc");
 
         TORCH_HOLDING = builder.comment("Gives a special animation to torches when held in hand")
-                .define("torch_item_holding", false);
+                .define("torch_item_holding", true);
+        CANDLE_HOLDER_HOLDING = builder.comment("Gives a special animation to supplementaries candle holders when held in hand")
+                .define("handle_holder_item_holding", true);
+        HOLDING_ANIMATION_FIXED = builder.comment("Makes Torch and Lantern holding animation be fixed, not changing with player facing")
+                .define("fixed_holding_animations", false);
         BRIGHTEN_SIGN_TEXT_COLOR = builder.comment("A scalar multiplier that will be applied to sign text making it brighter, supposedly more legible")
                 .define("sign_text_color_multiplier", 1.2d, 0, 5);
 

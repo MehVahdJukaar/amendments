@@ -3,7 +3,6 @@ package net.mehvahdjukaar.amendments.client.renderers;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
-import net.mehvahdjukaar.amendments.common.ExtendedHangingSign;
 import net.mehvahdjukaar.amendments.common.tile.HangingSignTileExtension;
 import net.mehvahdjukaar.amendments.configs.ClientConfigs;
 import net.mehvahdjukaar.amendments.integration.CompatHandler;
@@ -123,7 +122,7 @@ public class HangingSignRendererExtension {
 
         Quaternionf pitch = new Quaternionf();
         if (extension.canSwing()) {
-            float rot = extension.getAnimation().getAngle(partialTicks);
+            float rot = extension.getClientAnimation().getAngle(partialTicks);
 
             if (!wallSign && attached) {
                 //y swing

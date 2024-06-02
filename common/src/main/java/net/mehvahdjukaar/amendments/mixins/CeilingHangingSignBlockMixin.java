@@ -59,7 +59,7 @@ public abstract class CeilingHangingSignBlockMixin extends Block implements Enti
         super.entityInside(state, level, pos, entity);
         if (level.isClientSide && ClientConfigs.SWINGING_SIGNS.get() &&
                 level.getBlockEntity(pos) instanceof ExtendedHangingSign tile && tile.getExtension().canSwing()) {
-            tile.getExtension().animation.hitByEntity(entity, state, pos);
+            tile.getExtension().getClientAnimation().hitByEntity(entity, state, pos);
         }
     }
 

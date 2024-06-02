@@ -1,2 +1,4 @@
-fixed cauldron on fabric having incorrect visuals
-fixed some things related to spectator mode
+- Added Torch Holding animations
+- Added Candle Holder Holding animations
+- Improved Lantern Holding animations with more configs
+- Fixed wall lantern and hanging sign swinging animation being initialized on server side
