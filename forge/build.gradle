@@ -139,6 +139,7 @@ dependencies {
 	modCompileOnly("curse.maven:supplementaries-squared-838411:5130385")
 	
    // modRuntimeOnly("einstein.jmc:JustMoreCakes:forge-1.20-1.12.1")
+    modImplementation("curse.maven:lucent-493280:4951434")
 
     modCompileOnly("curse.maven:embeddium-908741:5321172")
     modCompileOnly("curse.maven:farmers-delight-398521:5051242")

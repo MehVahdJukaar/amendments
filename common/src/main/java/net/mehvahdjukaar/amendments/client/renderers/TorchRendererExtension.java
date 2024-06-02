@@ -3,8 +3,7 @@ package net.mehvahdjukaar.amendments.client.renderers;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.mehvahdjukaar.amendments.configs.ClientConfigs;
-import net.mehvahdjukaar.amendments.integration.CompatHandler;
-import net.mehvahdjukaar.amendments.integration.ThinAirCompat;
+import net.mehvahdjukaar.moonlight.api.item.IFirstPersonSpecialItemRenderer;
 import net.mehvahdjukaar.moonlight.api.item.IThirdPersonAnimationProvider;
 import net.mehvahdjukaar.moonlight.api.item.IThirdPersonSpecialItemRenderer;
 import net.mehvahdjukaar.moonlight.api.util.math.MthUtils;
@@ -13,20 +12,24 @@ import net.minecraft.client.model.ArmedModel;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.HeadedModel;
 import net.minecraft.client.model.HumanoidModel;
+import net.minecraft.client.player.AbstractClientPlayer;
+import net.minecraft.client.renderer.ItemInHandRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.block.model.ItemTransform;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.util.Mth;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.LanternBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import org.joml.Vector3f;
 
-public class TorchRendererExtension implements IThirdPersonAnimationProvider, IThirdPersonSpecialItemRenderer {
+public class TorchRendererExtension implements IThirdPersonAnimationProvider, IThirdPersonSpecialItemRenderer, IFirstPersonSpecialItemRenderer {
 
     @Override
     public <T extends LivingEntity> boolean poseRightArm(ItemStack itemStack, HumanoidModel<T> model, T t, HumanoidArm arm) {
@@ -73,30 +76,48 @@ public class TorchRendererExtension implements IThirdPersonAnimationProvider, IT
 
             //TODO: add particle
 
-            renderLanternModel(entity, stack, poseStack, bufferSource, light, left);
+            renderTorchModel(entity, stack, poseStack, bufferSource, light, left);
             poseStack.popPose();
 
             //FlameParticle f = new FlameParticle(entity.level(), entity.getX(), entity.getY(), entity.getZ(), 0, 0, 0);
         }
     }
 
-    private static void renderLanternModel(LivingEntity entity, ItemStack itemStack, PoseStack poseStack,
-                                           MultiBufferSource buffer, int light, boolean left) {
+    private static void renderTorchModel(LivingEntity entity, ItemStack itemStack, PoseStack poseStack,
+                                         MultiBufferSource buffer, int light, boolean left) {
         Minecraft mc = Minecraft.getInstance();
         ItemRenderer itemRenderer = mc.getItemRenderer();
         BlockState state = ((BlockItem) itemStack.getItem()).getBlock().defaultBlockState();
-        if (CompatHandler.THIN_AIR) {
-            var newState = ThinAirCompat.maybeSetAirQuality(state, entity.getEyePosition(), entity.level());
-            if (newState != null) {
-                state = newState;
-            }
-        }
-        if (state.hasProperty(LanternBlock.HANGING)) state = state.setValue(LanternBlock.HANGING, false);
         var model = mc.getBlockRenderer().getBlockModel(state);
         itemRenderer.render(itemStack, ItemDisplayContext.NONE, left, poseStack,
                 buffer, light, OverlayTexture.NO_OVERLAY, model);
     }
 
 
+    @Override
+    public boolean renderFirstPersonItem(AbstractClientPlayer player, ItemStack stack, InteractionHand interactionHand,
+                                         HumanoidArm arm, PoseStack poseStack, float v, float v1, float v2,
+                                         float equipAnim, MultiBufferSource buffer, int light, ItemInHandRenderer itemInHandRenderer) {
+
+        boolean left = arm == HumanoidArm.LEFT;
+        float f = left ? -1.0F : 1.0F;
+        poseStack.pushPose();
+        poseStack.translate(f * 0.56F, -0.52F + equipAnim * -0.6F, -0.72F);
+
+        //same as generated item model
+        ItemTransform transform = new ItemTransform(
+                new Vector3f(0, -90, 25),
+                new Vector3f(0, 2.5f - 0.5f, 2f - 0.75f).mul(1 / 16f),
+                new Vector3f(0.68f, 0.68f, 0.68f));
+        transform.apply(left, poseStack);
+
+        //IDK why it's not in same position as other 2d items
+        poseStack.translate(f * 0.5 / 16f, 1.65 / 16f, -1 / 16f);
+
+        renderTorchModel(player, stack, poseStack, buffer, light, left);
+
+        poseStack.popPose();
+        return true;
+    }
 }
 

@@ -111,60 +111,56 @@ public class LanternRendererExtension implements IThirdPersonAnimationProvider, 
                                          PoseStack poseStack, float partialTicks, float pitch, float attackAnim, float equipAnim,
                                          MultiBufferSource buffer, int light, ItemInHandRenderer renderer) {
 
-        if (!player.isInvisible()) {
 
-            float lanternScale = 16 / 16f;
-            float f = arm == HumanoidArm.RIGHT ? 1.0F : -1.0F;
+        float lanternScale = 16 / 16f;
+        boolean left = arm == HumanoidArm.LEFT;
+        float f = left ? -1.0F : 1.0F;
 
-            //Quaternionf oldRotation = poseStack.last().pose().getUnnormalizedRotation(new Quaternionf());
+        //Quaternionf oldRotation = poseStack.last().pose().getUnnormalizedRotation(new Quaternionf());
 
+        poseStack.pushPose();
 
-            poseStack.pushPose();
-
-            poseStack.translate(-0.025 * f, 0.125, 0);
-
-
-            poseStack.mulPose(Axis.ZP.rotationDegrees(f * 10.0F));
-            //poseStack.mulPose(Axis.ZP.rotationDegrees(20));
-
-            renderer.renderPlayerArm(poseStack, buffer, light, equipAnim, attackAnim, arm);
-
-            //Quaternionf newRotation = poseStack.last().pose().getUnnormalizedRotation(new Quaternionf());
+        poseStack.translate(-0.025 * f, 0.125, 0);
 
 
-            Quaternionf rotationDiff;// = new Quaternionf(newRotation).conjugate().mul(oldRotation);
-            // restore old rotation
+        poseStack.mulPose(Axis.ZP.rotationDegrees(f * 10.0F));
+        //poseStack.mulPose(Axis.ZP.rotationDegrees(20));
 
-            // the two translations aren't the same but are darn close.
-            // I tried doing math but failed...
-            // this is so bad...
+        renderer.renderPlayerArm(poseStack, buffer, light, equipAnim, attackAnim, arm);
 
-            float t = 0 * (player.tickCount / 40f) % 1;
-
-            poseStack.translate(-0.5 - 0.25 * f, 0.15, -0.463);
-            //poseStack.translate(AmendmentsClient.x*f, AmendmentsClient.y, AmendmentsClient.z);
-            poseStack.translate(0.066 * f, -0.033, 0.024);
+        //Quaternionf newRotation = poseStack.last().pose().getUnnormalizedRotation(new Quaternionf());
 
 
-            boolean left;
-            if (arm == HumanoidArm.RIGHT) {
-                left = false;
-                rotationDiff = new Quaternionf(2.077E-1, -6.488E-1, 4.433E-1, 5.825E-1);
-            } else {
-                left = true;
-                rotationDiff = new Quaternionf(2.077E-1, 6.488E-1, -4.433E-1, 5.825E-1);
-            }
-            poseStack.translate(0.5, 0.5, 0.5);
-            poseStack.mulPose(rotationDiff);
-            poseStack.translate(-0.5, -0.5, -0.5);
+        Quaternionf rotationDiff;// = new Quaternionf(newRotation).conjugate().mul(oldRotation);
+        // restore old rotation
+
+        // the two translations aren't the same but are darn close.
+        // I tried doing math but failed...
+        // this is so bad...
+
+        //float t = 0 * (player.tickCount / 40f) % 1;
+
+        poseStack.translate(-0.5 - 0.25 * f, 0.15, -0.463);
+        //poseStack.translate(AmendmentsClient.x*f, AmendmentsClient.y, AmendmentsClient.z);
+        poseStack.translate(0.066 * f, -0.033, 0.024);
+
+        if (left) {
+            rotationDiff = new Quaternionf(2.077E-1, 6.488E-1, -4.433E-1, 5.825E-1);
+        } else {
+            rotationDiff = new Quaternionf(2.077E-1, -6.488E-1, 4.433E-1, 5.825E-1);
+        }
+
+        poseStack.translate(0.5, 0.5, 0.5);
+        poseStack.mulPose(rotationDiff);
+        poseStack.translate(-0.5, -0.5, -0.5);
 
 
-            poseStack.scale(lanternScale, lanternScale, lanternScale);
+        poseStack.scale(lanternScale, lanternScale, lanternScale);
 
-            poseStack.translate(0.5, 0.5, 0.5);
-            renderLanternModel(player, itemStack, poseStack, buffer, light, left);
+        poseStack.translate(0.5, 0.5, 0.5);
+        renderLanternModel(player, itemStack, poseStack, buffer, light, left);
 
-            poseStack.popPose();
+        poseStack.popPose();
 
             /*
 
@@ -199,9 +195,7 @@ public class LanternRendererExtension implements IThirdPersonAnimationProvider, 
 
             */
 
-            return true;
-        }
-        return false;
+        return true;
     }
 
     private static void renderLanternModel(LivingEntity entity, ItemStack itemStack, PoseStack poseStack,
