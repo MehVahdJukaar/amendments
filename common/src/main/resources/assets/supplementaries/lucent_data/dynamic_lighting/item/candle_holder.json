@@ -1,5 +1,5 @@
 {
   "id": "supplementaries:candle_holder",
   "light": 8,
-  "works_underwater": false
+  "works_underwater": true
 }

@@ -98,13 +98,6 @@ public class CandleHolderRendererExtension implements IThirdPersonAnimationProvi
     private static void renderFlame(LivingEntity entity, PoseStack poseStack, MultiBufferSource bufferSource) {
         var builder = bufferSource.getBuffer(RenderType.text(FLAME));
 
-        var p = new PoseStack();
-        Matrix4f mat = poseStack.last().pose();
-        Vector3f translation = mat.getTranslation(new Vector3f());
-
-        p.translate(0, 2 / 16f, 0);
-        p.translate(translation.x(), translation.y(), translation.z());
-
         int lu = LightTexture.FULL_BRIGHT & '\uffff';
         int lv = LightTexture.FULL_BRIGHT >> 16 & '\uffff';
 
@@ -113,9 +106,12 @@ public class CandleHolderRendererExtension implements IThirdPersonAnimationProvi
         float ss = (1.0F - t * t * 0.4F);
 
         float scale = ss * 2 / 16f;
-        p.scale(-scale, scale, -scale);
 
-        VertexUtil.addQuad(builder, p, -0.5f, -0.5f, 0.5f, 0.5f, lu, lv);
+        poseStack.translate(0, 3 / 16f, 0);
+        poseStack.last().pose().setRotationXYZ(0,0,0);
+        poseStack.scale(-scale, scale, -scale);
+
+        VertexUtil.addQuad(builder, poseStack, -0.5f, -0.5f, 0.5f, 0.5f, lu, lv);
     }
 
     private static void renderLanternModel(LivingEntity entity, ItemStack itemStack, PoseStack poseStack,

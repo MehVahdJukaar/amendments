@@ -1,1 +1,2 @@
-fixed an issue with dynamic pack
+fixed candle holder flame position
+added compat for RyoamicLights

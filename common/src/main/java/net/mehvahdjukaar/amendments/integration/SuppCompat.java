@@ -17,6 +17,7 @@ import net.mehvahdjukaar.supplementaries.common.utils.BlockUtil;
 import net.mehvahdjukaar.supplementaries.common.utils.MiscUtils;
 import net.mehvahdjukaar.supplementaries.configs.ClientConfigs;
 import net.mehvahdjukaar.supplementaries.integration.InspirationCompat;
+import net.mehvahdjukaar.supplementaries.reg.ModRegistry;
 import net.minecraft.client.resources.model.Material;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -108,6 +109,7 @@ public class SuppCompat {
     }
 
     public static boolean isSconce(Block block) {
+        if(block instanceof SconceLeverBlock)return true;
         return block instanceof SconceBlock && !(block instanceof SconceWallBlock);
     }
 
