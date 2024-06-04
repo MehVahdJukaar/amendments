@@ -89,14 +89,12 @@ public class Amendments {
             throw new IllegalStateException("Inverse potions config is null. How??");
         }
         if (CompatHandler.SUPPLEMENTARIES) SuppCompat.setup();
+
     }
 
 
     private static void setupAsync() {
         FlowerPotHandler.setup();
-        if(PlatHelper.getPhysicalSide().isClient()){
-            BlockScanner.scanBlocks();
-        }
     }
 
     private static boolean hasRun = false;

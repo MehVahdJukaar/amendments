@@ -14,11 +14,12 @@ import java.util.Set;
 
 public class BlockScanner {
 
-    private static Set<Block> lanterns;
-    private static Set<Block> torches;
-    private static Set<Block> candleHolders;
+    private static final Set<Block> lanterns;
+    private static final Set<Block> torches;
+    private static final Set<Block> candleHolders;
 
-    public static void scanBlocks() {
+    //statically initialized because its needed very early. Pls no concurrency issues
+    static  {
         ImmutableSet.Builder<Block> lanternBuilder = ImmutableSet.builder();
         ImmutableSet.Builder<Block> torchesBuilder = ImmutableSet.builder();
         ImmutableSet.Builder<Block> candleBuilder = ImmutableSet.builder();

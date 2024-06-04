@@ -134,7 +134,11 @@ public abstract class LecternBlockEntityMixin extends BlockEntity implements Con
     public void setChanged() {
         super.setChanged();
         if(level != null) {
-            resetBookState(null, level, worldPosition, getBlockState(), this.hasBook());
+            BlockState state = this.getBlockState();
+            if(state.getValue(LecternBlock.HAS_BOOK)!= this.hasBook()){
+                //set changed might be the only method called after say a hopper changes the content of this so we might beed to udpate the state
+                resetBookState(null, level, worldPosition, getBlockState(), this.hasBook());
+            }
         }
         //this.level.sendBlockUpdated(this.worldPosition, this.getBlockState(), this.getBlockState(), 3);
     }

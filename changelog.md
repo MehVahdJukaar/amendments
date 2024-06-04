@@ -1,5 +1,1 @@
-- Added torches first person block models
-- Added candle holders first person block models (including particle)
-- Added candle holders third person block models (including particle)
-- Candle holders will no longer appear lit when underwater
-- Added some compat with Lucent (supp candle holders)
+fixed an issue with dynamic pack
