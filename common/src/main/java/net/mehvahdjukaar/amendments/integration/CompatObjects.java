@@ -24,6 +24,7 @@ public class CompatObjects {
     public static final Supplier<Item> ETCHED_DISC = make("etched:etched_music_disc", BuiltInRegistries.ITEM);
 
     public static final Supplier<Item> CAKE_SLICE = make("farmersdelight:cake_slice", BuiltInRegistries.ITEM);
+    public static final Supplier<Item> SOUL_CANDLE_HOLDER = make("supplementaries:candle_holder_soul", BuiltInRegistries.ITEM);
 
     public static final Supplier<Block> SPECTACLE_CANDLE = make("cave_enhancements:spectacle_candle", BuiltInRegistries.BLOCK);
 

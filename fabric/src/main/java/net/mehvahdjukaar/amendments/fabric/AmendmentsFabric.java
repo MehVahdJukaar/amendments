@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.CommonLifecycleEvents;
+import net.fabricmc.fabric.api.event.player.AttackEntityCallback;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.event.player.UseItemCallback;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidStorage;
@@ -66,6 +67,8 @@ public class AmendmentsFabric implements ModInitializer {
         if (PlatHelper.getPhysicalSide().isClient()) {
             ItemTooltipCallback.EVENT.register(AmendmentsClient::onItemTooltip);
         }
+
+        AttackEntityCallback.EVENT.register(ModEvents::onAttackEntity);
 
         PlatHelper.addCommonSetup(() -> {
             var holder = BuiltInRegistries.POINT_OF_INTEREST_TYPE.getHolderOrThrow(PoiTypes.LEATHERWORKER);

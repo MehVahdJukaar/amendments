@@ -2,6 +2,7 @@ package net.mehvahdjukaar.amendments.client.renderers;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
+import net.mehvahdjukaar.amendments.integration.CompatObjects;
 import net.mehvahdjukaar.moonlight.api.client.util.VertexUtil;
 import net.mehvahdjukaar.moonlight.api.item.IFirstPersonSpecialItemRenderer;
 import net.mehvahdjukaar.moonlight.api.item.IThirdPersonAnimationProvider;
@@ -20,6 +21,7 @@ import net.minecraft.client.renderer.block.model.ItemTransform;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
@@ -86,7 +88,7 @@ public class CandleHolderRendererExtension implements IThirdPersonAnimationProvi
 
             if (!entity.isInWater()) {
 
-                renderFlame(entity, poseStack, bufferSource);
+                renderFlame(entity, poseStack, bufferSource, stack);
             }
 
             poseStack.popPose();
@@ -94,9 +96,11 @@ public class CandleHolderRendererExtension implements IThirdPersonAnimationProvi
     }
 
     private static final ResourceLocation FLAME = new ResourceLocation("textures/particle/flame.png");
+    private static final ResourceLocation FLAME_SOUL = new ResourceLocation("textures/particle/soul_fire_flame.png");
 
-    private static void renderFlame(LivingEntity entity, PoseStack poseStack, MultiBufferSource bufferSource) {
-        var builder = bufferSource.getBuffer(RenderType.text(FLAME));
+    private static void renderFlame(LivingEntity entity, PoseStack poseStack, MultiBufferSource bufferSource, ItemStack stack) {
+        boolean soul = stack.getItem() == CompatObjects.SOUL_CANDLE_HOLDER.get();
+        var builder = bufferSource.getBuffer(RenderType.text(soul ? FLAME_SOUL : FLAME));
 
         int lu = LightTexture.FULL_BRIGHT & '\uffff';
         int lv = LightTexture.FULL_BRIGHT >> 16 & '\uffff';
@@ -142,15 +146,26 @@ public class CandleHolderRendererExtension implements IThirdPersonAnimationProvi
 
         poseStack.pushPose();
 
+
+        //this should have been a special item renderer... if we dont render arm or item in weird places
+
+        float n = -0.4F * Mth.sin(Mth.sqrt(attackAnim) * 3.1415927F);
+        float m = 0.2F * Mth.sin(Mth.sqrt(attackAnim) * 6.2831855F);
+        float h = -0.2F * Mth.sin(attackAnim * 3.1415927F);
+
+        poseStack.translate( f * n, m, h);
+        renderer.applyItemArmTransform(poseStack, arm, equipAnim);
+        renderer.applyItemArmAttackTransform(poseStack, arm, attackAnim);
+
+
         poseStack.translate(0, 0.3125, 0);
-        poseStack.translate(f * 0.56F, -0.52F + equipAnim * -0.6F, -0.72F);
         poseStack.scale(-candleScale, candleScale, -candleScale);
 
         renderLanternModel(player, stack, poseStack, buffer, light, left);
 
         if (!player.isInWater()) {
             poseStack.translate(f * 0.03, 0, -0.04f);
-            renderFlame(player, poseStack, buffer);
+            renderFlame(player, poseStack, buffer, stack);
         }
 
         poseStack.popPose();

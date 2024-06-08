@@ -3,6 +3,7 @@ package net.mehvahdjukaar.amendments.client.renderers;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.mehvahdjukaar.amendments.configs.ClientConfigs;
+import net.mehvahdjukaar.moonlight.api.client.util.VertexUtil;
 import net.mehvahdjukaar.moonlight.api.item.IFirstPersonSpecialItemRenderer;
 import net.mehvahdjukaar.moonlight.api.item.IThirdPersonAnimationProvider;
 import net.mehvahdjukaar.moonlight.api.item.IThirdPersonSpecialItemRenderer;
@@ -14,10 +15,13 @@ import net.minecraft.client.model.HeadedModel;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.ItemInHandRenderer;
+import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.ItemTransform;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.HumanoidArm;
@@ -95,14 +99,25 @@ public class TorchRendererExtension implements IThirdPersonAnimationProvider, IT
 
 
     @Override
-    public boolean renderFirstPersonItem(AbstractClientPlayer player, ItemStack stack, InteractionHand interactionHand,
-                                         HumanoidArm arm, PoseStack poseStack, float v, float v1, float v2,
-                                         float equipAnim, MultiBufferSource buffer, int light, ItemInHandRenderer itemInHandRenderer) {
+    public boolean renderFirstPersonItem(AbstractClientPlayer player, ItemStack stack, InteractionHand hand, HumanoidArm arm,
+                                         PoseStack poseStack, float partialTicks, float pitch, float attackAnim, float equipAnim,
+                                         MultiBufferSource buffer, int light, ItemInHandRenderer renderer) {
 
         boolean left = arm == HumanoidArm.LEFT;
         float f = left ? -1.0F : 1.0F;
         poseStack.pushPose();
-        poseStack.translate(f * 0.56F, -0.52F + equipAnim * -0.6F, -0.72F);
+
+        //this should have been a special item renderer... if we dont render arm or item in weird places
+
+
+        float n = -0.4F * Mth.sin(Mth.sqrt(attackAnim) * 3.1415927F);
+        float m = 0.2F * Mth.sin(Mth.sqrt(attackAnim) * 6.2831855F);
+        float h = -0.2F * Mth.sin(attackAnim * 3.1415927F);
+
+        poseStack.translate( f * n, m, h);
+        renderer.applyItemArmTransform(poseStack, arm, equipAnim);
+        renderer.applyItemArmAttackTransform(poseStack, arm, attackAnim);
+
 
         //same as generated item model
         ItemTransform transform = new ItemTransform(

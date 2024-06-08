@@ -65,6 +65,8 @@ public class CommonConfigs {
     public static final Supplier<Boolean> LILY_PADS_ON;
     public static final Supplier<Boolean> LECTERN_STUFF;
 
+    public static final Supplier<Boolean> TORCH_FIRE;
+
 
     public static final ConfigSpec SPEC;
 
@@ -180,6 +182,13 @@ public class CommonConfigs {
 
         DYE_BLOCKS = builder.comment("Allows dying blocks by right clicking them with dye")
                 .define("dye_blocks", false);
+
+        builder.pop();
+
+        builder.push("torch");
+
+        TORCH_FIRE = builder.comment("Allows torches to set entities on fire")
+                .define("torch_fire", true);
 
         builder.pop();
 

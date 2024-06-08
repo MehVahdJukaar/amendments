@@ -1,0 +1,19 @@
+{
+  "replace": false,
+  "values": [
+    {
+      "id": "#supplementaries:sconces",
+      "required": false
+    },
+    {
+      "id": "#forge:torches",
+      "required": false
+    },
+    {
+      "id": "#forge:tools/flint_and_steel",
+      "required": false
+    },
+    "minecraft:torch",
+    "minecraft:soul_torch"
+  ]
+}
