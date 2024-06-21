@@ -47,7 +47,7 @@ public class InkButton extends AbstractWidget {
         if (Screen.hasShiftDown()) {
             this.type = (length + type - 1) % length;
         } else {
-            this.type = ++type % length;
+            this.type = (type + 1) % length;
         }
         this.refreshTooltip();
         this.clickCallback.run();

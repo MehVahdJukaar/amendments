@@ -66,6 +66,8 @@ public class CommonConfigs {
     public static final Supplier<Boolean> LECTERN_STUFF;
 
     public static final Supplier<Boolean> TORCH_FIRE;
+    public static final Supplier<Boolean> TORCH_FIRE_OFFHAND;
+    public static final Supplier<Integer> TORCH_FIRE_DURATION;
 
 
     public static final ConfigSpec SPEC;
@@ -189,6 +191,10 @@ public class CommonConfigs {
 
         TORCH_FIRE = builder.comment("Allows torches to set entities on fire")
                 .define("torch_fire", true);
+        TORCH_FIRE_OFFHAND = builder.comment("Allows torches to set entities on fire when held in offhand given you are attacking with a sword")
+                .define("torch_fire_offhand", false);
+        TORCH_FIRE_DURATION = builder.comment("Duration of the on fire effect applied by torches. In seconds")
+                .define("torch_fire_duration", 2, 1, 60);
 
         builder.pop();
 

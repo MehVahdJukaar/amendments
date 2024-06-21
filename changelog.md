@@ -1,2 +1,4 @@
-Entities hit by a torch or flint and steel will be set on fire
-fixed some random bugs
+- added soul fired compat for torch fire feature
+- torch fire now has more configs
+- fixed cauldron container dimension being inconsistent
+- dragon head will now have its eyes glowing as it should have been from the beginning...

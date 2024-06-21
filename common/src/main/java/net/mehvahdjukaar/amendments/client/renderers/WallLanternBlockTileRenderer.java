@@ -1,6 +1,7 @@
 package net.mehvahdjukaar.amendments.client.renderers;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import net.mehvahdjukaar.amendments.AmendmentsClient;
 import net.mehvahdjukaar.amendments.client.WallLanternModelsManager;
@@ -10,28 +11,40 @@ import net.mehvahdjukaar.amendments.integration.CompatHandler;
 import net.mehvahdjukaar.amendments.integration.ShimmerCompat;
 import net.mehvahdjukaar.moonlight.api.client.util.RenderUtil;
 import net.mehvahdjukaar.moonlight.api.client.util.RotHlpr;
+import net.minecraft.CrashReport;
+import net.minecraft.CrashReportCategory;
+import net.minecraft.ReportedException;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
+import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.entity.ItemRenderer;
+import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.Iterator;
+import java.util.List;
 
 
 public class WallLanternBlockTileRenderer implements BlockEntityRenderer<WallLanternBlockTile> {
     protected final BlockRenderDispatcher blockRenderer;
-    protected final ItemRenderer itemRenderer;
 
     public WallLanternBlockTileRenderer(BlockEntityRendererProvider.Context context) {
         this.blockRenderer = context.getBlockRenderDispatcher();
-        this.itemRenderer = context.getItemRenderer();
     }
 
     @Override
@@ -61,14 +74,16 @@ public class WallLanternBlockTileRenderer implements BlockEntityRenderer<WallLan
             ShimmerCompat.renderWithBloom(poseStack, (p, b) ->
                     RenderUtil.renderBlock(model, 0, p, b, lanternState, level, pos, blockRenderer));
         } else {
-            if (AmendmentsClient.hasFixedNormals()) {
+            //TODO:
+            if (false && AmendmentsClient.hasFixedNormals()) {
                 //this has better shading for diagonal planes but below is same as in block model
                 var vertexConsumer = bufferIn.getBuffer(ItemBlockRenderTypes.getRenderType(
                         Items.OBSIDIAN.getDefaultInstance(), true
                 ));
-                itemRenderer.renderModelLists(model,
+                /*
+                blockRenderer.renderBatched(model,
                         ItemStack.EMPTY,
-                        combinedLightIn, combinedOverlayIn, poseStack, vertexConsumer);
+                        combinedLightIn, combinedOverlayIn, poseStack, vertexConsumer);*/
             } else RenderUtil.renderBlock(model, 0, poseStack, bufferIn, lanternState, level, pos, blockRenderer);
         }
 
@@ -82,4 +97,5 @@ public class WallLanternBlockTileRenderer implements BlockEntityRenderer<WallLan
                        int combinedOverlayIn) {
         this.renderLantern(tile, tile.getHeldBlock(), partialTicks, matrixStackIn, bufferIn, combinedLightIn, combinedOverlayIn, false);
     }
+
 }

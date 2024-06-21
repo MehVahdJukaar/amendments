@@ -29,6 +29,8 @@ dependencies {
     modImplementation("curse.maven:scholar-961802:5214379")
 	modImplementation("curse.maven:new-thin-air-878379:5068247")
 
+    modImplementation("curse.maven:soul-fire-d-662413:5448803")
+
     modImplementation("curse.maven:quark-243121:5093415")
     modImplementation("curse.maven:zeta-968868:5078215")
 }

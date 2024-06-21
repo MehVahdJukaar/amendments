@@ -10,6 +10,10 @@
       "required": false
     },
     {
+      "id": "c:torches",
+      "required": false
+    },
+    {
       "id": "#forge:tools/flint_and_steel",
       "required": false
     },

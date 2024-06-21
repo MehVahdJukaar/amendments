@@ -29,8 +29,9 @@ public class QuillButton extends AbstractWidget {
         super(screen.width / 2 + 70, 20, 48, 144, Component.empty());
         this.refreshTooltip();
     }
+
     private void refreshTooltip() {
-        this.setTooltip(Tooltip.create(Component.translatable("gui.amendments.quill."+getType().name().toLowerCase(Locale.ROOT))));
+        this.setTooltip(Tooltip.create(Component.translatable("gui.amendments.quill." + getType().name().toLowerCase(Locale.ROOT))));
     }
 
     public QuillType getType() {
@@ -43,14 +44,14 @@ public class QuillButton extends AbstractWidget {
         if (Screen.hasShiftDown()) {
             this.type = (length + type - 1) % length;
         } else {
-            this.type = ++type % length;
+            this.type = (type + 1) % length;
         }
         this.refreshTooltip();
     }
 
     @ForgeOverride
     public void onClick(double mouseX, double mouseY, int button) {
-        type += button==0 ? 1 : -1;
+        type += button == 0 ? 1 : -1;
         this.type = type % QuillType.values().length;
         this.refreshTooltip();
     }

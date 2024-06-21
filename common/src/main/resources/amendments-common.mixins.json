@@ -25,9 +25,9 @@
     "LecternBlockEntityMixin",
     "LecternBlockMixin",
     "PotionTooltipMixin",
+    "SkullBlockMixin",
     "VineMixin",
     "WallHangingSignBlockMixin",
-    "SkullBlockMixin",
     "WaterLilyMixin"
   ],
   "client": [
@@ -35,7 +35,8 @@
     "DisplayCacheMixin",
     "HangingSignRendererMixin",
     "SignRendererAccessor",
-    "SignRendererMixin"
+    "SignRendererMixin",
+    "SkullBlockRendererMixin"
   ],
   "plugin": "net.mehvahdjukaar.amendments.mixins.MixinPlugin",
   "injectors": {
