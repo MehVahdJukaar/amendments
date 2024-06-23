@@ -30,7 +30,7 @@ public class SkullBlockRendererMixin {
     @Unique
     private static final ResourceLocation DRAGON_EYES = new ResourceLocation("textures/entity/enderdragon/dragon_eyes.png");
 
-    @Inject(method = "renderSkull", at = @At(value = "INVOKE", shift = At.Shift.BEFORE,
+    @Inject(method = "renderSkull", at = @At(value = "INVOKE", shift = At.Shift.AFTER,
             target = "Lnet/minecraft/client/model/SkullModelBase;renderToBuffer(Lcom/mojang/blaze3d/vertex/PoseStack;Lcom/mojang/blaze3d/vertex/VertexConsumer;IIFFFF)V"))
     private static void amendments$addDragonEyes(Direction direction, float yRot, float mouthAnimation,
                                                       PoseStack poseStack, MultiBufferSource bufferSource,
@@ -39,8 +39,10 @@ public class SkullBlockRendererMixin {
 
         if (model instanceof DragonHeadModel) {
             var vertexConsumer = bufferSource.getBuffer(RenderType.eyes(DRAGON_EYES));
+            poseStack.pushPose();
             model.renderToBuffer(poseStack, vertexConsumer, LightTexture.FULL_SKY, OverlayTexture.NO_OVERLAY,
                     1.0F, 1.0F, 1.0F, 1.0F);
+            poseStack.popPose();
 
         }
     }
@@ -50,7 +52,7 @@ public class SkullBlockRendererMixin {
     private static RenderType amendments$overrideRenderType(ResourceLocation location, Operation<RenderType> original,
                                                                  SkullBlock.Type skullType, @Nullable GameProfile gameProfile) {
         if (skullType == SkullBlock.Types.DRAGON) {
-            return RenderType.entityCutoutNoCull(location);
+           return RenderType.entityCutoutNoCull(location);
         }
         return original.call(location);
     }

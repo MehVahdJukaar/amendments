@@ -16,10 +16,12 @@ public class DummyContainer implements CraftingContainer {
     private final NonNullList<ItemStack> stacks;
     private final int dimension;
 
-    private DummyContainer(Collection<ItemStack> items) {
+    private DummyContainer(List<ItemStack> items) {
         this.dimension = Mth.ceil(Math.sqrt(items.size()));
         this.stacks = NonNullList.withSize(dimension * dimension, ItemStack.EMPTY);
-        this.stacks.addAll(items);
+        for(int i = 0; i < items.size(); i++){
+            this.stacks.set(i, items.get(i));
+        }
     }
 
     public static DummyContainer surround(ItemStack dye, ItemStack toRecolor) {
@@ -39,7 +41,7 @@ public class DummyContainer implements CraftingContainer {
         return new DummyContainer(List.of(items));
     }
 
-    public static DummyContainer of(Collection<ItemStack> items) {
+    public static DummyContainer of(List<ItemStack> items) {
         return new DummyContainer(items);
     }
 

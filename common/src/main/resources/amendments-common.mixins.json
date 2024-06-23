@@ -25,6 +25,7 @@
     "LecternBlockEntityMixin",
     "LecternBlockMixin",
     "PotionTooltipMixin",
+    "SkullBlockEntityMixin",
     "SkullBlockMixin",
     "VineMixin",
     "WallHangingSignBlockMixin",

@@ -1,4 +1,3 @@
-- added soul fired compat for torch fire feature
-- torch fire now has more configs
-- fixed cauldron container dimension being inconsistent
-- dragon head will now have its eyes glowing as it should have been from the beginning...
+- fixed dragon heads not rendering well
+- dragon heads will have a bigger boudning box, fixing a vanilla bug where they dont render when when on the edge of the screen (forge only)
+- fixed an issue with dye cauldrons
