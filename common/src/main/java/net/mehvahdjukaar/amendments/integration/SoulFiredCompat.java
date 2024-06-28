@@ -1,5 +1,6 @@
 package net.mehvahdjukaar.amendments.integration;
 
+import com.jozufozu.flywheel.vanilla.BellInstance;
 import it.crystalnest.soul_fire_d.api.FireManager;
 import net.mehvahdjukaar.moonlight.api.util.Utils;
 import net.minecraft.resources.ResourceLocation;
@@ -19,7 +20,7 @@ public class SoulFiredCompat {
 
         String path = id.getPath();
         for (var f : fires) {
-            if (f.getPath().contains(path)) {
+            if (path.contains(f.getPath())) {
                 return f;
             }
         }

@@ -2,13 +2,13 @@ package net.mehvahdjukaar.amendments.common;
 
 import net.minecraft.util.StringRepresentable;
 
-public interface IBellConnections {
+public interface IBellConnection {
 
-    BellConnection amendments$getConnected();
+    Type amendments$getConnection();
 
-    void amendments$setConnected(BellConnection connected);
+    void amendments$setConnected(Type connected);
 
-    enum BellConnection implements StringRepresentable {
+    enum Type implements StringRepresentable {
         NONE, CHAIN, ROPE;
 
         public boolean isRope() {

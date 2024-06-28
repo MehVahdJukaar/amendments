@@ -31,8 +31,9 @@ public class AbstractCauldronBlockMixin extends Block {
     // why is this not an event? because it's better for compatibility
     @ModifyReturnValue(method = "use", at = @At("RETURN"))
     public InteractionResult use(InteractionResult original,
-                                 @Local BlockState state, @Local Level level, @Local BlockPos pos, @Local Player player,
-                                 @Local InteractionHand hand, @Local ItemStack stack) {
+                                 @Local(argsOnly = true) BlockState state, @Local(argsOnly = true) Level level,
+                                 @Local(argsOnly = true) BlockPos pos, @Local(argsOnly = true) Player player,
+                                 @Local(argsOnly = true) InteractionHand hand, @Local ItemStack stack) {
         // do something
         if (original == InteractionResult.PASS && this == Blocks.CAULDRON && CommonConfigs.LIQUID_CAULDRON.get()) {
             return CauldronConversion.convert(state, pos, level, player, hand, stack, false);

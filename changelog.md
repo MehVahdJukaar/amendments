@@ -1,3 +1,1 @@
-- fixed dragon heads not rendering well
-- dragon heads will have a bigger boudning box, fixing a vanilla bug where they dont render when when on the edge of the screen (forge only)
-- fixed an issue with dye cauldrons
+fixed a dupe with cauldron crafting

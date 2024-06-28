@@ -55,8 +55,8 @@ public class CauldronConversion implements BlockUse {
     public static InteractionResult convert(BlockState state, BlockPos pos, Level level, Player player, InteractionHand hand,
                                             ItemStack stack, boolean checkCauldronInteractions) {
         BlockState newState = getNewState(pos, level, stack, checkCauldronInteractions);
-        if (newState != null) {
-            level.setBlockAndUpdate(pos, newState);
+        if (newState != null && level.setBlockAndUpdate(pos, newState)) {
+
             if (level.getBlockEntity(pos) instanceof LiquidCauldronBlockTile te) {
                 if (te.handleInteraction(player, hand)) {
                     return InteractionResult.sidedSuccess(level.isClientSide);

@@ -163,6 +163,7 @@ dependencies {
 	//testing thin air compatibility
     modCompileOnly("curse.maven:puzzles-lib-495476:5330447")
     modCompileOnly("curse.maven:new-thin-air-878379:5068247")
+    modImplementation("com.jozufozu.flywheel:flywheel-forge-${flywheel_version}")
 
 
     modCompileOnly ("maven.modrinth:dye-depot:1.0.0-forge")

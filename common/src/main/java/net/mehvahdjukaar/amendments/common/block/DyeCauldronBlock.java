@@ -92,9 +92,11 @@ public class DyeCauldronBlock extends ModCauldronBlock {
                 //try recoloring
                 var crafted = RecipeUtils.craftWithFluidAndDye(level, tank.getFluid(), stack);
                 if (crafted != null) {
-                    this.doCraftItem(level, pos, player, hand, te, fluid, stack, crafted.getFirst(), crafted.getSecond(),
-                            CommonConfigs.DYE_RECIPES_PER_LAYER.get());
-                    return InteractionResult.sidedSuccess(level.isClientSide);
+                    if (this.doCraftItem(level, pos, player, hand, fluid, stack, crafted.getFirst(), crafted.getSecond(),
+                            CommonConfigs.DYE_RECIPES_PER_LAYER.get())) {
+                        te.setChanged();
+                        return InteractionResult.sidedSuccess(level.isClientSide);
+                    }
                 }
             }
         }

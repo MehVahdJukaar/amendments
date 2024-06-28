@@ -1,6 +1,6 @@
 package net.mehvahdjukaar.amendments.mixins;
 
-import net.mehvahdjukaar.amendments.common.IBellConnections;
+import net.mehvahdjukaar.amendments.common.IBellConnection;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
@@ -13,22 +13,22 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 
 @Mixin(BellBlockEntity.class)
-public abstract class BellTileEntityMixin extends BlockEntity implements IBellConnections {
+public abstract class BellTileEntityMixin extends BlockEntity implements IBellConnection {
 
     @Unique
-    public BellConnection amendments$connection = BellConnection.NONE;
+    public Type amendments$connection = Type.NONE;
 
     protected BellTileEntityMixin(BlockEntityType<?> pType, BlockPos pWorldPosition, BlockState pBlockState) {
         super(pType, pWorldPosition, pBlockState);
     }
 
     @Override
-    public BellConnection amendments$getConnected() {
+    public Type amendments$getConnection() {
         return amendments$connection;
     }
 
     @Override
-    public void amendments$setConnected(BellConnection con) {
+    public void amendments$setConnected(Type con) {
         this.amendments$connection = con;
     }
 
@@ -44,8 +44,8 @@ public abstract class BellTileEntityMixin extends BlockEntity implements IBellCo
     public void load(CompoundTag compound) {
         super.load(compound);
         if (compound.contains("Connection")) {
-            this.amendments$connection = IBellConnections.BellConnection.values()[compound.getInt("Connection")];
-        }else this.amendments$connection = BellConnection.NONE;
+            this.amendments$connection = Type.values()[compound.getInt("Connection")];
+        }else this.amendments$connection = Type.NONE;
     }
 
     @Override

@@ -19,6 +19,7 @@ import net.mehvahdjukaar.amendments.common.item.DyeBottleItem;
 import net.mehvahdjukaar.amendments.configs.ClientConfigs;
 import net.mehvahdjukaar.amendments.integration.CompatHandler;
 import net.mehvahdjukaar.amendments.integration.CompatObjects;
+import net.mehvahdjukaar.amendments.integration.FlywheelCompat;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.moonlight.api.client.model.NestedModelLoader;
 import net.mehvahdjukaar.moonlight.api.misc.EventCalled;
@@ -118,6 +119,8 @@ public class AmendmentsClient {
         ClientHelper.addEntityRenderersRegistration(AmendmentsClient::registerEntityRenderers);
         ClientHelper.addItemColorsRegistration(AmendmentsClient::registerItemColors);
         ClientHelper.addParticleRegistration(AmendmentsClient::registerParticles);
+
+        if(CompatHandler.FLYWHEEL) FlywheelCompat.init();
     }
 
 

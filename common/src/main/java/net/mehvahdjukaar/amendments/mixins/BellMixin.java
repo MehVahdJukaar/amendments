@@ -1,6 +1,6 @@
 package net.mehvahdjukaar.amendments.mixins;
 
-import net.mehvahdjukaar.amendments.common.IBellConnections;
+import net.mehvahdjukaar.amendments.common.IBellConnection;
 import net.mehvahdjukaar.amendments.integration.CompatHandler;
 import net.mehvahdjukaar.amendments.integration.SuppCompat;
 import net.minecraft.core.BlockPos;
@@ -16,6 +16,7 @@ import net.minecraft.world.level.block.RotatedPillarBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
@@ -29,15 +30,16 @@ public abstract class BellMixin extends Block {
 
 
     //for bells
-    public boolean tryConnect(BlockPos pos, BlockState facingState, LevelAccessor world) {
+    @Unique
+    public boolean amendments$tryConnect(BlockPos pos, BlockState facingState, LevelAccessor world) {
         BlockEntity te = world.getBlockEntity(pos);
-        if (te instanceof IBellConnections) {
-            IBellConnections.BellConnection connection = IBellConnections.BellConnection.NONE;
+        if (te instanceof IBellConnection bc) {
+            IBellConnection.Type connection = IBellConnection.Type.NONE;
             if (facingState.getBlock() instanceof ChainBlock && facingState.getValue(RotatedPillarBlock.AXIS) == Direction.Axis.Y)
-                connection = IBellConnections.BellConnection.CHAIN;
+                connection = IBellConnection.Type.CHAIN;
             else if (CompatHandler.SUPPLEMENTARIES && SuppCompat.isRope(facingState.getBlock()))
-                connection = IBellConnections.BellConnection.ROPE;
-            ((IBellConnections) te).amendments$setConnected(connection);
+                connection = IBellConnection.Type.ROPE;
+            bc.amendments$setConnected(connection);
             te.setChanged();
             return true;
         }
@@ -48,7 +50,7 @@ public abstract class BellMixin extends Block {
     public void updateShape(BlockState stateIn, Direction facing, BlockState facingState, LevelAccessor worldIn,
                             BlockPos currentPos, BlockPos facingPos, CallbackInfoReturnable<BlockState> info) {
         try {
-            if (facing == Direction.DOWN && this.tryConnect(currentPos, facingState, worldIn)) {
+            if (facing == Direction.DOWN && this.amendments$tryConnect(currentPos, facingState, worldIn)) {
                 if (worldIn instanceof Level level)
                     level.sendBlockUpdated(currentPos, stateIn, stateIn, Block.UPDATE_CLIENTS);
 
@@ -60,6 +62,6 @@ public abstract class BellMixin extends Block {
     @Override
     public void setPlacedBy(Level worldIn, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack) {
         super.setPlacedBy(worldIn, pos, state, placer, stack);
-        this.tryConnect(pos, worldIn.getBlockState(pos.below()), worldIn);
+        this.amendments$tryConnect(pos, worldIn.getBlockState(pos.below()), worldIn);
     }
 }

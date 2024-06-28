@@ -153,26 +153,25 @@ public abstract class ModCauldronBlock extends AbstractCauldronBlock implements 
 
     protected abstract void handleEntityInside(BlockState state, Level level, BlockPos pos, Entity entity);
 
-    public void doCraftItem(Level level, BlockPos pos, Player player, InteractionHand hand, LiquidCauldronBlockTile te,
-                            SoftFluidStack fluid, ItemStack itemStack, ItemStack crafted,
-                            float layerPerItem, int itemCountMultiplier) {
+    public boolean doCraftItem(Level level, BlockPos pos, Player player, InteractionHand hand,
+                               SoftFluidStack fluid, ItemStack itemStack, ItemStack crafted,
+                               float layerPerItem, int itemCountMultiplier) {
+
+        int maxRecolorable = (int) (crafted.getCount() * itemCountMultiplier * fluid.getCount() / layerPerItem);
+        int amountToRecolor = Math.min(maxRecolorable, itemStack.getCount());
+        if (amountToRecolor <= 0) return false;
+        crafted.setCount(amountToRecolor);
+
         level.playSound(player, pos, SoundEvents.BUCKET_EMPTY, SoundSource.BLOCKS, 1.0F, 1.3f);
 
         if (player instanceof ServerPlayer serverPlayer) {
             player.awardStat(Stats.ITEM_USED.get(itemStack.getItem()));
             CriteriaTriggers.ITEM_USED_ON_BLOCK.trigger(serverPlayer, pos, itemStack);
-        } else return;
-
-
-        int maxRecolorable = (int) (crafted.getCount() * itemCountMultiplier * fluid.getCount() / layerPerItem);
-        int amountToRecolor = Math.min(maxRecolorable, itemStack.getCount());
-        crafted.setCount(amountToRecolor);
-
+        } else return true;
 
         if (!player.isCreative()) {
             itemStack.shrink(amountToRecolor);
             fluid.shrink(Mth.ceil((layerPerItem * amountToRecolor / (float) itemCountMultiplier)));
-            te.setChanged();
         }
 
         if (itemStack.isEmpty()) {
@@ -182,6 +181,7 @@ public abstract class ModCauldronBlock extends AbstractCauldronBlock implements 
                 player.drop(crafted, false);
             }
         }
+        return true;
     }
 
     public abstract BlockState updateStateOnFluidChange(BlockState state, Level level, BlockPos pos, SoftFluidStack fluid);

@@ -5,18 +5,12 @@ import net.mehvahdjukaar.amendments.common.item.DyeBottleItem;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluid;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidStack;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.player.StackedContents;
-import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.DyeItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class RecipeUtils {
 
@@ -50,9 +44,12 @@ public class RecipeUtils {
                     return Pair.of(crafted, (float) capacity);
                 }
                 if (try9x9) {
-                    ItemStack crafted9 = simulateCrafting(level, p.getFirst(), playerItem, true);
-                    if (crafted9 != null) {
-                        return Pair.of(crafted9, (float) capacity);
+                    ItemStack crafted8 = simulateCrafting(level, p.getFirst(), playerItem, true);
+                    if (crafted8 != null) {
+                        int actualCapacity = 8 / crafted8.getCount();
+                        if (actualCapacity > 0) {
+                            return Pair.of(crafted8, (float) actualCapacity);
+                        }
                     }
                 }
             }
@@ -62,7 +59,7 @@ public class RecipeUtils {
 
 
     public static ItemStack simulateCrafting(Level level, ItemStack dye, ItemStack playerItem, boolean surround) {
-        DummyContainer container =  surround ? DummyContainer.surround(dye.copy(), playerItem.copy()) :
+        DummyContainer container = surround ? DummyContainer.surround(dye.copy(), playerItem.copy()) :
                 DummyContainer.of(dye.copy(), playerItem.copy());
         var recipes = level.getRecipeManager().getRecipesFor(RecipeType.CRAFTING, container, level);
         for (var r : recipes) {

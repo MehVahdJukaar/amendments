@@ -44,3 +44,9 @@ issueTrackerURL = "${mod_github}/issues"
     versionRange = "[1.20-2.8.0,)"
     ordering = "NONE"
     side = "BOTH"
+
+[[dependencies.amendments]]
+    modId = "flywheel"
+    mandatory = false
+    versionRange = "(0,)"
+    ordering = "AFTER"

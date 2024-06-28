@@ -109,8 +109,10 @@ public class LiquidCauldronBlock extends ModCauldronBlock {
             if (crafted != null) {
 
                 int mult = fluid.is(BuiltInSoftFluids.POTION.get()) ? CommonConfigs.POTION_RECIPES_PER_LAYER.get() : 1;
-                this.doCraftItem(level, pos, player, hand, te, fluid, stack, crafted.getFirst(), crafted.getSecond(), mult);
-                return InteractionResult.sidedSuccess(level.isClientSide);
+                if (this.doCraftItem(level, pos, player, hand, fluid, stack, crafted.getFirst(), crafted.getSecond(), mult)) {
+                    te.setChanged();
+                    return InteractionResult.sidedSuccess(level.isClientSide);
+                }
             }
         }
         return InteractionResult.PASS;
