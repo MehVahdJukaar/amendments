@@ -1,6 +1,7 @@
 package net.mehvahdjukaar.amendments.client.model;
 
 import net.mehvahdjukaar.amendments.AmendmentsClient;
+import net.mehvahdjukaar.amendments.common.block.ModCauldronBlock;
 import net.mehvahdjukaar.amendments.common.tile.LiquidCauldronBlockTile;
 import net.mehvahdjukaar.amendments.configs.ClientConfigs;
 import net.mehvahdjukaar.moonlight.api.client.model.BakedQuadsTransformer;
@@ -51,29 +52,35 @@ public class CauldronBakedModel implements CustomBakedModel {
             List<BakedQuad> liquidQuads = fluid.getQuads(state, direction, randomSource);
 
             SoftFluid fluid = extraModelData.get(LiquidCauldronBlockTile.FLUID);
+            Boolean glowing = extraModelData.get(LiquidCauldronBlockTile.GLOWING);
+            if (glowing == null) glowing = false;
             BakedQuadsTransformer transformer = BakedQuadsTransformer.create();
-            // has custom fluid
+            // has custom fluid. Fluid might not be received immediately so might be empty for a split second
             if (fluid != null && !fluid.isEmptyFluid()) {
                 ResourceLocation stillTexture = fluid.getStillTexture();
                 if (ClientConfigs.POTION_TEXTURE.get() && fluid == BuiltInSoftFluids.POTION.get()) {
                     stillTexture = AmendmentsClient.POTION_TEXTURE;
-                }else if(fluid == BuiltInSoftFluids.MUSHROOM_STEW.get()){
+                } else if (fluid == BuiltInSoftFluids.MUSHROOM_STEW.get()) {
                     stillTexture = AmendmentsClient.MUSHROOM_STEW;
-                }else if(fluid == BuiltInSoftFluids.BEETROOT_SOUP.get()){
+                } else if (fluid == BuiltInSoftFluids.BEETROOT_SOUP.get()) {
                     stillTexture = AmendmentsClient.BEETROOT_SOUP;
-                }else if(fluid == BuiltInSoftFluids.RABBIT_STEW.get()){
+                } else if (fluid == BuiltInSoftFluids.RABBIT_STEW.get()) {
                     stillTexture = AmendmentsClient.RABBIT_STEW;
-                } else if(fluid == BuiltInSoftFluids.SUS_STEW.get()){
+                } else if (fluid == BuiltInSoftFluids.SUS_STEW.get()) {
                     stillTexture = AmendmentsClient.SUS_STEW;
                 }
                 TextureAtlasSprite sprite = ClientHelper.getBlockMaterial(stillTexture).sprite();
                 transformer.applyingAmbientOcclusion(false)
-                        .applyingEmissivity(fluid.getEmissivity())
+                        .applyingEmissivity(Math.max(glowing ? 14 : 0, fluid.getEmissivity()))
                         .applyingSprite(sprite);
-            } else {
+
+                quads.addAll(transformer.transformAll(liquidQuads));
+
+            } else if(!(state.getBlock() instanceof ModCauldronBlock)){
                 transformer.applyingAmbientOcclusion(false);
+                quads.addAll(transformer.transformAll(liquidQuads));
             }
-            quads.addAll(transformer.transformAll(liquidQuads));
+
         }
         return quads;
     }

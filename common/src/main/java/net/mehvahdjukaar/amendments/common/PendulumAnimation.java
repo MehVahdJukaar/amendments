@@ -19,7 +19,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class PendulumAnimation extends SwingAnimation {
-    private static final RandomSource RAND = RandomSource.create();
+    private static final RandomSource RAND = RandomSource.createNewThreadLocalInstance();
 
     private final Supplier<Config> config;
     private float angularVel;

@@ -1,7 +1,8 @@
 package net.mehvahdjukaar.amendments.common.block;
 
+import net.mehvahdjukaar.amendments.common.network.ModNetwork;
+import net.mehvahdjukaar.amendments.common.network.PlaySplashParticlesPacket;
 import net.mehvahdjukaar.amendments.common.tile.LiquidCauldronBlockTile;
-import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidStack;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
@@ -63,67 +64,12 @@ public abstract class ModCauldronBlock extends AbstractCauldronBlock implements 
     @Override
     public void fallOn(Level level, BlockState state, BlockPos pos, Entity entity, float fallDistance) {
         if (isEntityInsideContent(state, pos, entity)) {
-            if (level.isClientSide && level.getBlockEntity(pos) instanceof LiquidCauldronBlockTile tile) {
-                int color = tile.getSoftFluidTank().getCachedParticleColor(level, pos);
-                int light = tile.getSoftFluidTank().getFluidValue().getEmissivity();
-                playSplashAnimation(level, pos, entity, getContentHeight(state), color, light);
+            if (!level.isClientSide) {
+                playSplashEffects(entity, this.getContentHeight(state));
             }
             super.fallOn(level, state, pos, entity, 0);
         } else super.fallOn(level, state, pos, entity, fallDistance);
     }
-
-    public static void playSplashAnimation(Level level, BlockPos pos, Entity e, double waterLevel, int color, int light) {
-        Entity feetEntity = e.isVehicle() && e.getControllingPassenger() != null ? e.getControllingPassenger() : e;
-        float offset = feetEntity == e ? 0.2F : 0.9F;
-        Vec3 movement = feetEntity.getDeltaMovement();
-        RandomSource rand = level.random;
-        float speed = Math.min(1.0F, (float) Math.sqrt(movement.x * movement.x * 0.2 + movement.y * movement.y + movement.z * movement.z * 0.2) * offset);
-        if (speed < 0.25F) {
-            level.playLocalSound(e.getX(), e.getY(), e.getZ(),
-                    e.getSwimSplashSound(), e.getSoundSource(),
-                    speed, 1.0F + (rand.nextFloat() - rand.nextFloat()) * 0.4F, false);
-        } else {
-            level.playLocalSound(e.getX(), e.getY(), e.getZ(),
-                    e.getSwimHighSpeedSplashSound(), e.getSoundSource(),
-                    speed, 1.0F + (rand.nextFloat() - rand.nextFloat()) * 0.4F, false);
-        }
-
-        double surface = pos.getY() + waterLevel;
-
-        float radius = 1.5f;
-        float width = e.getBbWidth();
-
-        spawnSplashParticles(level, e, pos, rand, surface, color, light,
-                ModRegistry.BOILING_PARTICLE.get(), radius, width);
-
-        spawnSplashParticles(level, e, pos, rand, surface, color, light,
-                ModRegistry.SPLASH_PARTICLE.get(), radius, width);
-
-        e.gameEvent(GameEvent.SPLASH);
-    }
-
-    private static void spawnSplashParticles(Level level, Entity e, BlockPos pos,
-                                             RandomSource rand, double surface,
-                                             int color, int light,
-                                             ParticleOptions particleOptions,
-                                             float radius, float width) {
-        float mx = pos.getX() + 0.125f;
-        float Mx = pos.getX() + 1 - 0.125f;
-        float mz = pos.getZ() + 0.125f;
-        float Mz = pos.getZ() + 1 - 0.125f;
-
-        double z;
-        double x;
-        for (int i = 0; i < 1.0F + width * 20.0F; ++i) {
-            x = e.getX() + (rand.nextDouble() - 0.5) * width * radius;
-            z = e.getZ() + (rand.nextDouble() - 0.5) * width * radius;
-            if (x >= mx && x <= Mx && z >= mz && z <= Mz) {
-                level.addParticle(particleOptions,
-                        x, surface, z, color, surface, light);
-            }
-        }
-    }
-
 
     public static void playExtinguishSound(Level level, BlockPos pos, Entity entity) {
         level.playSound(null, pos, SoundEvents.GENERIC_EXTINGUISH_FIRE, entity.getSoundSource(),
@@ -194,6 +140,40 @@ public abstract class ModCauldronBlock extends AbstractCauldronBlock implements 
             double z = pos.getZ() + 0.1875D + (rand.nextFloat() * 0.625D);
             level.addParticle(type, x, y, z, r, g, b);
         }
+    }
+
+
+    public static void playSplashEffects(Entity entity, double waterHeight) {
+
+        // also send game event
+        entity.gameEvent(GameEvent.SPLASH);
+
+
+        Level level = entity.level();
+        Entity feetEntity = entity.isVehicle() && entity.getControllingPassenger() != null ? entity.getControllingPassenger() : entity;
+        float offset = feetEntity == entity ? 0.2F : 0.9F;
+        Vec3 movement = feetEntity.getDeltaMovement();
+        float speed = Math.min(1.0F, (float) Math.sqrt(movement.x * movement.x * 0.2 + movement.y * movement.y + movement.z * movement.z * 0.2) * offset);
+
+        BlockPos pos = BlockPos.containing(entity.position());
+        Vec3 hitPos = new Vec3(entity.getX(), pos.getY() + waterHeight, entity.getZ());
+
+        RandomSource rand = level.random;
+        // same logic as normal water splash sounds (just on server side)
+        if (speed < 0.25F) {
+            level.playSound(null, hitPos.x(), hitPos.y(), hitPos.z(),
+                    entity.getSwimSplashSound(), entity.getSoundSource(),
+                    speed, 1.0F + (rand.nextFloat() - rand.nextFloat()) * 0.4F);
+        } else {
+            level.playSound(null, hitPos.x(), hitPos.y(), hitPos.z(),
+                    entity.getSwimHighSpeedSplashSound(), entity.getSoundSource(),
+                    speed, 1.0F + (rand.nextFloat() - rand.nextFloat()) * 0.4F);
+        }
+
+
+        var particlePacket = new PlaySplashParticlesPacket(hitPos, speed, feetEntity.getBbWidth());
+
+        ModNetwork.CHANNEL.sentToAllClientPlayersTrackingEntityAndSelf(entity, particlePacket);
     }
 
 }

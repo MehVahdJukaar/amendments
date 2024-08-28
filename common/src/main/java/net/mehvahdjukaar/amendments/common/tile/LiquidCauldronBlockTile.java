@@ -16,7 +16,6 @@ import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidStack;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidTank;
 import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
 import net.mehvahdjukaar.moonlight.api.util.PotionNBTHelper;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
@@ -29,8 +28,10 @@ import net.minecraft.world.level.block.state.BlockState;
 
 public class LiquidCauldronBlockTile extends BlockEntity implements IExtraModelDataProvider, ISoftFluidTankProvider {
     public static final ModelDataKey<SoftFluid> FLUID = new ModelDataKey<>(SoftFluid.class);
+    public static final ModelDataKey<Boolean> GLOWING = new ModelDataKey<>(Boolean.class);
 
     private final SoftFluidTank fluidTank;
+    private boolean hasGlowInk = false;
 
     public SoftFluidTank makeTank(BlockState blockState) {
         return blockState.getBlock() instanceof DyeCauldronBlock ?
@@ -53,6 +54,7 @@ public class LiquidCauldronBlockTile extends BlockEntity implements IExtraModelD
     @Override
     public void addExtraModelData(ExtraModelData.Builder builder) {
         builder.with(FLUID, fluidTank.getFluidValue());
+        builder.with(GLOWING, hasGlowInk);
     }
 
     @Override
@@ -70,12 +72,14 @@ public class LiquidCauldronBlockTile extends BlockEntity implements IExtraModelD
                 this.requestModelReload();
             }
         }
+        this.hasGlowInk = compound.getBoolean("glow_ink");
     }
 
     @Override
     public void saveAdditional(CompoundTag tag) {
         super.saveAdditional(tag);
         this.fluidTank.save(tag);
+        if (this.hasGlowInk) tag.putBoolean("glow_ink", true);
     }
 
     @Override
@@ -92,6 +96,7 @@ public class LiquidCauldronBlockTile extends BlockEntity implements IExtraModelD
     public void setChanged() {
         if (this.level == null) return;
         //TODO: only call after you finished updating your tile so others can react properly (faucets)
+        //this seems like a terrible idea
         this.level.updateNeighborsAt(worldPosition, this.getBlockState().getBlock());
 
         //update state based on fluid
@@ -128,15 +133,15 @@ public class LiquidCauldronBlockTile extends BlockEntity implements IExtraModelD
     }
 
 
-    public SoftFluidTank createCauldronLiquidTank( ) {
+    public SoftFluidTank createCauldronLiquidTank() {
         return new SoftFluidTank(PlatHelper.getPlatform().isFabric() ? 3 : 4) {
             @Override
             public boolean isFluidCompatible(SoftFluidStack fluidStack) {
                 if (fluidStack.is(BuiltInSoftFluids.WATER.get())) return false;
                 if (canMixPotions() && fluidStack.is(BuiltInSoftFluids.POTION.get()) && fluidStack.is(this.getFluidValue())) {
                     // just compares bottle types
-                    return  this.fluidStack.getTag().getString(PotionNBTHelper.POTION_TYPE_KEY).equals(
-                                    fluidStack.getTag().getString(PotionNBTHelper.POTION_TYPE_KEY));
+                    return this.fluidStack.getTag().getString(PotionNBTHelper.POTION_TYPE_KEY).equals(
+                            fluidStack.getTag().getString(PotionNBTHelper.POTION_TYPE_KEY));
                 }
                 return super.isFluidCompatible(fluidStack);
             }
@@ -172,5 +177,14 @@ public class LiquidCauldronBlockTile extends BlockEntity implements IExtraModelD
                 super.addFluidOntoExisting(fluidStack);
             }
         };
+    }
+
+    public boolean isGlowing() {
+        return hasGlowInk;
+    }
+
+    public void setGlowing(boolean b) {
+        this.hasGlowInk = b;
+        this.setChanged();
     }
 }

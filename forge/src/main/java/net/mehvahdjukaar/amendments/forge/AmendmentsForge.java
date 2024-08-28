@@ -19,6 +19,7 @@ import net.minecraft.world.entity.ai.village.poi.PoiTypes;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TagsUpdatedEvent;
+import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
@@ -85,7 +86,9 @@ public class AmendmentsForge {
         }
     }
 
-    @SubscribeEvent
+    //TODO: use ivingDamageEvent.Post (in 1.21)
+    //runs after other damage events in case this were to be cancelled
+    @SubscribeEvent(priority = EventPriority.LOW)
     public void onEntityHurt(AttackEntityEvent event) {
         if (!event.isCanceled()) {
             ModEvents.onAttackEntity(event.getEntity(), event.getEntity().level(),

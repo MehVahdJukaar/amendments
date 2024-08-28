@@ -60,10 +60,12 @@ public abstract class SelfCauldronMixin extends BlockEntity implements IFluidHan
     public int fill(FluidStack fluidStack, FluidAction fluidAction) {
         var tank = getSoftFluidTank();
         var original = SoftFluidStackImpl.fromForgeFluid(fluidStack);
-        int filled = tank.addFluid(original, fluidAction.simulate() ? true : false);
-        int bottlesRemoved = SoftFluidStackImpl.fromForgeFluid(fluidStack).getCount() - original.getCount();
-        fluidStack.shrink(SoftFluidStackImpl.bottlesToMB(bottlesRemoved));
-        this.setChanged();
+        int filled = tank.addFluid(original, fluidAction.simulate());
+        if(!fluidAction.simulate()) {
+            int bottlesRemoved = SoftFluidStackImpl.fromForgeFluid(fluidStack).getCount() - original.getCount();
+            fluidStack.shrink(SoftFluidStackImpl.bottlesToMB(bottlesRemoved));
+            this.setChanged();
+        }
         return filled;
     }
 
@@ -75,8 +77,8 @@ public abstract class SelfCauldronMixin extends BlockEntity implements IFluidHan
     @Override
     public @NotNull FluidStack drain(int i, FluidAction fluidAction) {
         var tank = getSoftFluidTank();
-        var drained = tank.removeFluid(i, fluidAction.simulate() ? true : false);
-        this.setChanged();
+        var drained = tank.removeFluid(i, fluidAction.simulate());
+        if (!fluidAction.simulate()) this.setChanged();
         return SoftFluidStackImpl.toForgeFluid(drained);
     }
 }

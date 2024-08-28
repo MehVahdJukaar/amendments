@@ -138,7 +138,7 @@ public class ClientResourceGenerator extends DynClientResourcesGenerator {
             }
             if (hangingSignMaterial == null) {
                 Amendments.LOGGER.error("Hanging sign material for wood {} was null. " +
-                        "This is likely due to some mod not registering their wood type properly by not adding it to the vanilla texture map", w);
+                        "This is likely due to some mod not registering their wood type properly by not adding it to the vanilla texture map. Sheets.getHangingSignMaterial is NOT Nullable, i shouldn't even have this check.", w);
                 continue;
             }
             try (TextureImage vanillaTexture = TextureImage.open(manager,

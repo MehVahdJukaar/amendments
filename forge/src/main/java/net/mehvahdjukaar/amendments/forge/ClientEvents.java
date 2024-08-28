@@ -5,6 +5,7 @@ import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
 import net.minecraft.world.inventory.LecternMenu;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.BushBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.client.event.ScreenEvent;
@@ -25,6 +26,7 @@ public class ClientEvents {
     public static void e(InputEvent.Key event) {
         if (!PlatHelper.isDev()) return;
    float f = 0.01f;
+
         if (event.getKey() == GLFW.GLFW_KEY_J) {
             AmendmentsClient.x += (event.getModifiers() == GLFW.GLFW_MOD_SHIFT) ? f : -f;
         }

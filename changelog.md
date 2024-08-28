@@ -1,1 +1,5 @@
-fixed a dupe with cauldron crafting
+- you can now add glow ink to cauldrons to make them glow
+- fixed a crash when crafting soup on fabric
+- fixed cauldron splash particles and sounds not workin on servers for other players
+- added more unique disc textures
+- improved carpet stairs block rotation logic

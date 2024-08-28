@@ -1,5 +1,7 @@
 package net.mehvahdjukaar.amendments.common.block;
 
+import net.mehvahdjukaar.amendments.common.network.ModNetwork;
+import net.mehvahdjukaar.amendments.common.network.PlaySplashParticlesPacket;
 import net.mehvahdjukaar.amendments.common.recipe.DummyContainer;
 import net.mehvahdjukaar.amendments.common.tile.LiquidCauldronBlockTile;
 import net.mehvahdjukaar.amendments.reg.ModBlockProperties;
@@ -83,9 +85,8 @@ public class BoilingWaterCauldronBlock extends LayeredCauldronBlock {
     @Override
     public void fallOn(Level level, BlockState state, BlockPos pos, Entity entity, float fallDistance) {
         if (this.isEntityInsideContent(state, pos, entity)) {
-            if (level.isClientSide) {
-                LiquidCauldronBlock.playSplashAnimation(level, pos, entity, getContentHeight(state),
-                        getWaterColor(state, level, pos, 1), 0);
+            if (!level.isClientSide) {
+                ModCauldronBlock.playSplashEffects(entity, this.getContentHeight(state));
             }
             super.fallOn(level, state, pos, entity, 0);
         } else super.fallOn(level, state, pos, entity, fallDistance);
@@ -132,8 +133,9 @@ public class BoilingWaterCauldronBlock extends LayeredCauldronBlock {
             if (newState != null) {
                 level.setBlockAndUpdate(pos, newState);
                 if (level.getBlockEntity(pos) instanceof LiquidCauldronBlockTile te) {
-                    int lev = state.getValue(LEVEL);
-                    int newLev = lev == 3 ? 4 : lev;
+                    int lev = state.getValue(LEVEL); //water cauldron block
+                    // yes this can give 1 bottle free on forge. not an issue since water is free anyway
+                    int newLev = lev == 3 ? te.getSoftFluidTank().getCapacity() : lev;
                     te.getSoftFluidTank().setFluid(fluid.getFirst().copyWithCount(newLev));
                     te.setChanged();
                     level.playSound(null, pos,

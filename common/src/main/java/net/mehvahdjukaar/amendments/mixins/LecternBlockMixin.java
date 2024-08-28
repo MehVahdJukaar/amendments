@@ -20,11 +20,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class LecternBlockMixin {
 
     @Inject(method = "openScreen", at = @At("HEAD"), cancellable = true)
-    public void openCustomMenu(Level level, BlockPos pos, Player player, CallbackInfo ci){
+    public void amendments$openCustomMenu(Level level, BlockPos pos, Player player, CallbackInfo ci) {
         BlockEntity blockEntity = level.getBlockEntity(pos);
         if (blockEntity instanceof LecternBlockEntity be && be.getBook().getItem() instanceof WritableBookItem
-        && CommonConfigs.LECTERN_STUFF.get()) {
-            PlatHelper.openCustomMenu((ServerPlayer) player,be,pos);
+                && CommonConfigs.LECTERN_STUFF.get()) {
+            PlatHelper.openCustomMenu((ServerPlayer) player, be, pos);
             player.awardStat(Stats.INTERACT_WITH_LECTERN);
             ci.cancel();
         }

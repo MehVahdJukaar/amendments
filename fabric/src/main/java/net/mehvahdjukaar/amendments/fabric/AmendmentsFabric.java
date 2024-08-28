@@ -3,7 +3,10 @@ package net.mehvahdjukaar.amendments.fabric;
 import com.google.common.collect.Lists;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback;
+import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
+import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.lifecycle.v1.CommonLifecycleEvents;
+import net.fabricmc.fabric.api.event.player.AttackBlockCallback;
 import net.fabricmc.fabric.api.event.player.AttackEntityCallback;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.event.player.UseItemCallback;
@@ -46,6 +49,7 @@ public class AmendmentsFabric implements ModInitializer {
         list.add(ModConstants.WALL_LANTERN_NAME);
         list.add(ModConstants.FALLING_LANTERN_NAME);
     });
+    private static final ResourceLocation LOW_PRIORITY = Amendments.res("low");
 
     public static ResourceLocation shouldRemap(String namespace, String path) {
         if (Amendments.OLD_MODS.contains(namespace)) {
@@ -68,7 +72,8 @@ public class AmendmentsFabric implements ModInitializer {
             ItemTooltipCallback.EVENT.register(AmendmentsClient::onItemTooltip);
         }
 
-        AttackEntityCallback.EVENT.register(ModEvents::onAttackEntity);
+        AttackEntityCallback.EVENT.addPhaseOrdering(Event.DEFAULT_PHASE, LOW_PRIORITY);
+        AttackEntityCallback.EVENT.register(LOW_PRIORITY,ModEvents::onAttackEntity);
 
         PlatHelper.addCommonSetup(() -> {
             var holder = BuiltInRegistries.POINT_OF_INTEREST_TYPE.getHolderOrThrow(PoiTypes.LEATHERWORKER);

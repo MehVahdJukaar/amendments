@@ -6,6 +6,7 @@ import net.mehvahdjukaar.amendments.reg.ModBlockProperties;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.moonlight.api.block.IBlockHolder;
 import net.mehvahdjukaar.moonlight.api.block.IRecolorable;
+import net.mehvahdjukaar.moonlight.api.block.IRotatable;
 import net.mehvahdjukaar.moonlight.api.block.ModStairBlock;
 import net.mehvahdjukaar.moonlight.api.misc.ForgeOverride;
 import net.mehvahdjukaar.moonlight.api.platform.ForgeHelper;
@@ -25,6 +26,7 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
+import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -39,15 +41,17 @@ import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.IntStream;
 
-public class CarpetStairBlock extends ModStairBlock implements EntityBlock, IRecolorable {
+public class CarpetStairBlock extends ModStairBlock implements EntityBlock, IRecolorable, IRotatable {
 
     public static final IntegerProperty LIGHT_LEVEL = ModBlockProperties.LIGHT_LEVEL;
     public static final BooleanProperty SOLID = ModBlockProperties.SOLID;
@@ -282,5 +286,20 @@ public class CarpetStairBlock extends ModStairBlock implements EntityBlock, IRec
             return BlocksColorAPI.isDefaultColor(c.getBlock());
         }
         return false;
+    }
+
+    @Override
+    public Optional<BlockState> getRotatedState(BlockState blockState, LevelAccessor levelAccessor, BlockPos blockPos, Rotation rotation, Direction direction, @Nullable Vec3 vec3) {
+        return direction.getAxis().isVertical() ? Optional.of(rotate(blockState, rotation)) : Optional.empty();
+    }
+
+    @Override
+    public void onRotated(BlockState newState, BlockState oldState, LevelAccessor world, BlockPos pos, Rotation rotation, Direction axis, @Nullable Vec3 hit) {
+        if (world.getBlockEntity(pos) instanceof CarpetedBlockTile tile) {
+            BlockState held = tile.getHeldBlock();
+            BlockState newHeld = held.rotate(rotation);
+            tile.setHeldBlock(newHeld);
+            tile.setChanged();
+        }
     }
 }

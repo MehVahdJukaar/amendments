@@ -159,7 +159,7 @@ public class CommonConfigs {
         WALL_LANTERN_BLACKLIST = builder.comment("Mod ids of mods that have lantern block that extend the base lantern class but don't look like one")
                 .define("mod_blacklist", modBlacklist);
         WALL_LANTERN_WHITELIST = builder.comment("Ids of blocks that are not detected as lanterns but should be")
-                .define("id_whitelist", List.of(""));
+                .define("id_whitelist", List.of("enlightened_end:xenon_lantern"));
         FALLING_LANTERNS = builder.comment("Allows ceiling lanterns to fall if their support is broken." +
                         "Additionally if they fall from high enough they will break creating a fire where they land")
                 .define("falling_lanterns", FallingLanternEntity.FallMode.ON);
