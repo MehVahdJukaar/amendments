@@ -3,3 +3,4 @@
 - fixed cauldron splash particles and sounds not workin on servers for other players
 - added more unique disc textures
 - improved carpet stairs block rotation logic
+- fixed cauldron fluid capability consuming fluid when using simulate action

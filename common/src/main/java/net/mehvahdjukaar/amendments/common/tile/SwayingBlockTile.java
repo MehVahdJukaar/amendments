@@ -28,7 +28,7 @@ public abstract class SwayingBlockTile extends DynamicRenderedBlockTile {
 
     @Override
     public void onFancyChanged(boolean newFancy) {
-        if (!newFancy) this.animation.reset();
+        if (!newFancy) this.getAnimation().reset();
     }
 
 
