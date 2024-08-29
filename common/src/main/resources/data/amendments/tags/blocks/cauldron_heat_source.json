@@ -8,6 +8,22 @@
     "minecraft:lava",
     "minecraft:magma_block",
     "#minecraft:campfires",
-    "#minecraft:fire"
+    "#minecraft:fire",
+    {"id":"botania:blaze_block","required":false},
+    {"id":"create:blaze_burner","required":false},
+    {"id":"malum:block_of_blazing_quartz","required":false},
+    {"id":"malum:ether","required":false},
+    {"id":"malum:iridescent_ether","required":false},
+    {"id":"malum:ether_torch","required":false},
+    {"id":"malum:iridescent_ether_torch","required":false},
+    {"id":"malum:wall_ether_torch","required":false},
+    {"id":"malum:iridescent_wall_ether_torch","required":false},
+    {"id":"malum:tainted_ether_brazier","required":false},
+    {"id":"malum:tainted_iridescent_ether_brazier","required":false},
+    {"id":"malum:twisted_ether_brazier","required":false},
+    {"id":"malum:twisted_iridescent_ether_brazier","required":false},
+    {"id":"create:lit_blaze_burner","required":false},
+    {"id":"spectrum:blazing_crystal","required":false},
+    {"id":"spectrum:wet_lava_sponge","required":false}
   ]
 }
