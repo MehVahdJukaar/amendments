@@ -1,7 +1,9 @@
 package net.mehvahdjukaar.amendments.mixins;
 
 import net.mehvahdjukaar.amendments.common.IBellConnection;
+import net.mehvahdjukaar.moonlight.api.misc.ForgeOverride;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.level.block.entity.BellBlockEntity;
@@ -33,18 +35,18 @@ public abstract class BellTileEntityMixin extends BlockEntity implements IBellCo
     }
 
     @Override
-    public void saveAdditional(CompoundTag compound) {
-        super.saveAdditional(compound);
+    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+        super.saveAdditional(tag, registries);
         if (this.amendments$connection != null) {
-            compound.putInt("Connection", this.amendments$connection.ordinal());
+            tag.putInt("Connection", this.amendments$connection.ordinal());
         }
     }
 
     @Override
-    public void load(CompoundTag compound) {
-        super.load(compound);
-        if (compound.contains("Connection")) {
-            this.amendments$connection = Type.values()[compound.getInt("Connection")];
+    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+        super.loadAdditional(tag, registries);
+        if (tag.contains("Connection")) {
+            this.amendments$connection = Type.values()[tag.getInt("Connection")];
         }else this.amendments$connection = Type.NONE;
     }
 
@@ -54,11 +56,11 @@ public abstract class BellTileEntityMixin extends BlockEntity implements IBellCo
     }
 
     @Override
-    public CompoundTag getUpdateTag() {
-        return this.saveWithoutMetadata();
+    public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
+        return this.saveWithoutMetadata(registries);
     }
 
-    //@Override
+    @ForgeOverride
     public AABB getRenderBoundingBox() {
         return new AABB(this.worldPosition);
     }

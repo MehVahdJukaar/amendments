@@ -18,7 +18,7 @@ public abstract class SkullBlockEntityMixin extends BlockEntity {
 
     @ForgeOverride
     public AABB getRenderBoundingBox() {
-        return new AABB(worldPosition.offset(-1, 0, -1), worldPosition.offset(1, 1, 1));
+        return AABB.encapsulatingFullBlocks(worldPosition.offset(-1, 0, -1), worldPosition.offset(1, 1, 1));
     }
 
 }

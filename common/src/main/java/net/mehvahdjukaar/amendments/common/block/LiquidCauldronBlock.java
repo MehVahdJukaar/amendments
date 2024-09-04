@@ -8,6 +8,7 @@ import net.mehvahdjukaar.amendments.integration.CompatHandler;
 import net.mehvahdjukaar.amendments.reg.ModBlockProperties;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.amendments.reg.ModTags;
+import net.mehvahdjukaar.moonlight.api.MoonlightRegistry;
 import net.mehvahdjukaar.moonlight.api.block.ILightable;
 import net.mehvahdjukaar.moonlight.api.fluids.BuiltInSoftFluids;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidStack;
@@ -16,6 +17,8 @@ import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
 import net.mehvahdjukaar.moonlight.api.util.PotionBottleType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.Holder;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
@@ -34,6 +37,7 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
@@ -163,9 +167,9 @@ public class LiquidCauldronBlock extends ModCauldronBlock {
         if (entity.mayInteract(level, pos) && level.getBlockEntity(pos) instanceof LiquidCauldronBlockTile tile) {
 
             SoftFluidStack fluid = tile.getSoftFluidTank().getFluid();
-            PotionNBTHelper.Type potType = getPotType(fluid);
+            PotionBottleType potType = getPotType(fluid);
             if (entity instanceof LivingEntity living) {
-                if (potType != null && potType != PotionNBTHelper.Type.REGULAR &&
+                if (potType != null && potType != PotionBottleType.REGULAR &&
                         applyPotionFluidEffects(level, pos, living, fluid)) {
                     tile.consumeOneLayer();
                 }
@@ -192,13 +196,13 @@ public class LiquidCauldronBlock extends ModCauldronBlock {
     }
 
     private boolean applyPotionFluidEffects(Level level, BlockPos pos, LivingEntity living, SoftFluidStack stack) {
-        List<MobEffectInstance> effects = PotionUtils.getAllEffects(stack.getTag());
+        List<MobEffectInstance> effects = getPotionEffects(stack);
         boolean success = false;
         for (MobEffectInstance effect : effects) {
-            MobEffect ef = effect.getEffect();
+            Holder<MobEffect> ef = effect.getEffect();
             if (living.hasEffect(ef)) continue;
-            if (ef.isInstantenous()) {
-                ef.applyInstantenousEffect(null, null, living,
+            if (ef.value().isInstantenous()) {
+                ef.value().applyInstantenousEffect(null, null, living,
                         effect.getAmplifier(), 1.0D);
             } else {
                 living.addEffect(new MobEffectInstance(effect));
@@ -226,15 +230,15 @@ public class LiquidCauldronBlock extends ModCauldronBlock {
 
             if (level.random.nextInt(4) == 0) {
                 SoftFluidStack fluid = tank.getFluid();
-                PotionNBTHelper.Type type = getPotType(fluid);
+                PotionBottleType type = getPotType(fluid);
                 double height = getContentHeight(state);
                 if (type != null) {
                     if (getPotionEffects(fluid).size() >= CommonConfigs.POTION_MIXING_LIMIT.get()) {
                         addSurfaceParticles(ParticleTypes.SMOKE, level, pos, 2, height, rand, 0, 0, 0);
                     }
-                    if (type != PotionNBTHelper.Type.REGULAR) {
+                    if (type != PotionBottleType.REGULAR) {
 
-                        ParticleOptions particle = type == PotionNBTHelper.Type.SPLASH ?
+                        ParticleOptions particle = type == PotionBottleType.SPLASH ?
                                 ParticleTypes.AMBIENT_ENTITY_EFFECT : ParticleTypes.ENTITY_EFFECT;
 
                         int color = tank.getCachedParticleColor(level, pos);
@@ -264,14 +268,15 @@ public class LiquidCauldronBlock extends ModCauldronBlock {
 
     @Nullable
     private PotionBottleType getPotType(SoftFluidStack stack) {
-        if (stack.is(BuiltInSoftFluids.POTION.get()) && stack.hasTag()) {
-            return PotionBottleType.get(stack.getTag());
+        if (stack.is(BuiltInSoftFluids.POTION.get())) {
+            return stack.getOrDefault(MoonlightRegistry.BOTTLE_TYPE.get(), PotionBottleType.REGULAR);
         }
         return null;
     }
 
     private List<MobEffectInstance> getPotionEffects(SoftFluidStack stack) {
-        return PotionUtils.getAllEffects(stack.getTag());
+        return stack.getOrDefault(DataComponents.POTION_CONTENTS, PotionContents.EMPTY)
+                .getAllEffects(stack.getTag());
     }
 
 
@@ -349,7 +354,7 @@ public class LiquidCauldronBlock extends ModCauldronBlock {
         }
         //fizzle
         var inverse = CommonConfigs.INVERSE_POTIONS.get();
-        var effects = potionEffects.stream().map(MobEffectInstance::getEffect).toList();
+        var effects = potionEffects.stream().map(e->e.getEffect().value()).toList();
         for (var effect : effects) {
             var inv = inverse.get(effect);
             if (inv != null && effects.contains(inv)) {

@@ -4,10 +4,12 @@ import net.mehvahdjukaar.amendments.common.block.AbstractCandleSkullBlock;
 import net.mehvahdjukaar.amendments.common.tile.CandleSkullBlockTile;
 import net.mehvahdjukaar.moonlight.api.misc.OptionalMixin;
 import net.mehvahdjukaar.moonlight.api.set.BlocksColorAPI;
+import net.mehvahdjukaar.moonlight.api.util.math.ColorUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.util.FastColor;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.BlockGetter;
@@ -21,6 +23,7 @@ import org.violetmoon.quark.addons.oddities.module.MatrixEnchantingModule;
 import org.violetmoon.quark.addons.oddities.util.Influence;
 import org.violetmoon.quark.api.IEnchantmentInfluencer;
 
+import java.awt.image.PackedColorModel;
 import java.util.List;
 
 @OptionalMixin("org.violetmoon.quark.api.IEnchantmentInfluencer")
@@ -46,7 +49,7 @@ public abstract class CompatQuarkSelfCandleSkullMixin implements IEnchantmentInf
     @Override
     public float[] getEnchantmentInfluenceColor(BlockGetter world, BlockPos pos, BlockState state) {
         DyeColor color = amendments$getColor(state, world, pos);
-        return color == null ? null : color.getTextureDiffuseColors();
+        return color == null ? null : ColorUtils.pack(color.getTextureDiffuseColor());
     }
 
     @Nullable

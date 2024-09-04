@@ -210,16 +210,16 @@ public class CommonConfigs {
 
     private static Map<MobEffect, MobEffect> getInverseEffects() {
         Map<MobEffect, MobEffect> map = new HashMap<>();
-        map.put(MobEffects.DIG_SPEED, MobEffects.DIG_SLOWDOWN);
-        map.put(MobEffects.DIG_SLOWDOWN, MobEffects.DIG_SPEED);
-        map.put(MobEffects.MOVEMENT_SPEED, MobEffects.MOVEMENT_SLOWDOWN);
-        map.put(MobEffects.MOVEMENT_SLOWDOWN, MobEffects.MOVEMENT_SPEED);
-        map.put(MobEffects.DAMAGE_BOOST, MobEffects.WEAKNESS);
-        map.put(MobEffects.WEAKNESS, MobEffects.DAMAGE_BOOST);
-        map.put(MobEffects.HARM, MobEffects.HEAL);
-        map.put(MobEffects.HEAL, MobEffects.HARM);
-        map.put(MobEffects.LUCK, MobEffects.UNLUCK);
-        map.put(MobEffects.UNLUCK, MobEffects.LUCK);
+        map.put(MobEffects.DIG_SPEED.value(), MobEffects.DIG_SLOWDOWN.value());
+        map.put(MobEffects.DIG_SLOWDOWN.value(), MobEffects.DIG_SPEED.value());
+        map.put(MobEffects.MOVEMENT_SPEED.value(), MobEffects.MOVEMENT_SLOWDOWN.value());
+        map.put(MobEffects.MOVEMENT_SLOWDOWN.value(), MobEffects.MOVEMENT_SPEED.value());
+        map.put(MobEffects.DAMAGE_BOOST.value(), MobEffects.WEAKNESS.value());
+        map.put(MobEffects.WEAKNESS.value(), MobEffects.DAMAGE_BOOST.value());
+        map.put(MobEffects.HARM.value(), MobEffects.HEAL.value());
+        map.put(MobEffects.HEAL.value(), MobEffects.HARM.value());
+        map.put(MobEffects.LUCK.value(), MobEffects.UNLUCK.value());
+        map.put(MobEffects.UNLUCK.value(), MobEffects.LUCK.value());
         return map;
     }
 

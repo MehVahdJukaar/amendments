@@ -90,8 +90,8 @@ class DyeBehavior implements ItemUseOnBlock {
             Block newBlock = BlocksColorAPI.changeColor(state.getBlock(), color);
             if (newBlock != null && !state.is(newBlock) && BlocksColorAPI.isDefaultColor(state.getBlock())) {
                 BlockState newState = newBlock.withPropertiesOf(state);
-                if (newState.shouldSpawnParticlesOnBreak()) // why is this here?
-                    level.setBlockAndUpdate(pos, newState);
+                //if (newState.shouldSpawnParticlesOnBreak()) // why is this here?
+                level.setBlockAndUpdate(pos, newState);
                 return true;
             }
         }
