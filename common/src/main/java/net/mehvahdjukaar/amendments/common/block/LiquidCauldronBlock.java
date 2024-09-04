@@ -1,7 +1,5 @@
 package net.mehvahdjukaar.amendments.common.block;
 
-import net.mehvahdjukaar.amendments.common.network.ModNetwork;
-import net.mehvahdjukaar.amendments.common.network.PlaySplashParticlesPacket;
 import net.mehvahdjukaar.amendments.common.recipe.RecipeUtils;
 import net.mehvahdjukaar.amendments.common.tile.LiquidCauldronBlockTile;
 import net.mehvahdjukaar.amendments.configs.CommonConfigs;
@@ -10,6 +8,7 @@ import net.mehvahdjukaar.amendments.integration.CompatHandler;
 import net.mehvahdjukaar.amendments.reg.ModBlockProperties;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.amendments.reg.ModTags;
+import net.mehvahdjukaar.moonlight.api.block.ILightable;
 import net.mehvahdjukaar.moonlight.api.fluids.BuiltInSoftFluids;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidStack;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidTank;
@@ -40,6 +39,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.CampfireBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -137,15 +137,23 @@ public class LiquidCauldronBlock extends ModCauldronBlock {
         var s = super.updateShape(state, direction, neighborState, level, currentPos, neighborPos);
         if (direction == Direction.DOWN) {
             if (level.getBlockEntity(currentPos) instanceof LiquidCauldronBlockTile te) {
-                boolean isFire = shouldBoil(neighborState, te.getSoftFluidTank().getFluid());
+                boolean isFire = shouldBoil(neighborState, te.getSoftFluidTank().getFluid(), level, neighborPos);
                 s = s.setValue(BOILING, isFire);
             }
         }
         return s;
     }
 
-    public static boolean shouldBoil(BlockState belowState, SoftFluidStack fluid) {
-        return belowState.is(ModTags.HEAT_SOURCES) && fluid.is(ModTags.CAN_BOIL);
+    public static boolean shouldBoil(BlockState belowState, SoftFluidStack fluid, LevelAccessor level, BlockPos pos) {
+        if (!belowState.is(ModTags.HEAT_SOURCES) || !fluid.is(ModTags.CAN_BOIL)) return false;
+
+        if (belowState.hasProperty(CampfireBlock.LIT)) {
+            return belowState.getValue(CampfireBlock.LIT);
+        }
+        if (belowState.getBlock() instanceof ILightable il) {
+            return il.isLitUp(belowState, level, pos);
+        }
+        return true;
     }
 
     @Override

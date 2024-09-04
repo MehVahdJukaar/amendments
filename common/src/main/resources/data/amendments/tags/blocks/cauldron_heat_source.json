@@ -5,6 +5,10 @@
       "id": "#farmersdelight:heat_sources",
       "required": false
     },
+    {"id":"supplementaries:fire_pit","required":false},
+    {"id":"supplementaries:blaze_rod","required":false},
+    {"id":"create:blaze_burner","required":false},
+    {"id":"supplementaries:lumisene","required":false},
     "minecraft:lava",
     "minecraft:magma_block",
     "#minecraft:campfires",

@@ -4,3 +4,4 @@
 - added more unique disc textures
 - improved carpet stairs block rotation logic
 - fixed cauldron fluid capability consuming fluid when using simulate action
+- fixed cauldrons not accounting for unlit campfires. Added more blocks to cauldron heat sources tag
