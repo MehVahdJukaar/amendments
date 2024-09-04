@@ -8,3 +8,6 @@
 - wall lanterns and hanging sing animation will now properly be synced on servers
 - fixed dye bottle recipe not preserving the item nbt
 - added config to tweak held torch and candle sizes
+- fixed quark matrix enchant compat for skull candles not working
+- campfires will no longer emit smoke particles when having a cauldron above
+- added config to further limit campfire smoke through blocks

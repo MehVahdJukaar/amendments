@@ -41,6 +41,7 @@ public class ClientConfigs {
     public static final Supplier<Double> CANDLE_HOLDING_SIZE;
 
     public static final Supplier<Boolean> HOLDING_ANIMATION_FIXED;
+    public static final Supplier<Boolean> CAMPFIRE_SMOKE;
 
     public static final Supplier<Boolean> COLORED_ARROWS;
     public static final Supplier<Boolean> FAST_HOOKS;
@@ -148,6 +149,8 @@ public class ClientConfigs {
         BRIGHTEN_SIGN_TEXT_COLOR = builder.comment("A scalar multiplier that will be applied to sign text making it brighter, supposedly more legible")
                 .define("sign_text_color_multiplier", 1.2d, 0, 5);
 
+        CAMPFIRE_SMOKE = builder.comment("Prevents campfire smoke from rendering if there is a solid block above it")
+                .define("campfire_smoke_through_blocks", false);
         builder.pop();
 
         builder.onChange(ClientConfigs::onChange);
