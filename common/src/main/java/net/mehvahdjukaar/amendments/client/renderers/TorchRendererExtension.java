@@ -3,6 +3,9 @@ package net.mehvahdjukaar.amendments.client.renderers;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.mehvahdjukaar.amendments.configs.ClientConfigs;
+import net.mehvahdjukaar.amendments.integration.CompatHandler;
+import net.mehvahdjukaar.amendments.integration.CompatObjects;
+import net.mehvahdjukaar.amendments.integration.SuppCompat;
 import net.mehvahdjukaar.moonlight.api.client.util.VertexUtil;
 import net.mehvahdjukaar.moonlight.api.item.IFirstPersonSpecialItemRenderer;
 import net.mehvahdjukaar.moonlight.api.item.IThirdPersonAnimationProvider;
@@ -28,6 +31,7 @@ import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
@@ -91,7 +95,11 @@ public class TorchRendererExtension implements IThirdPersonAnimationProvider, IT
                                          MultiBufferSource buffer, int light, boolean left) {
         Minecraft mc = Minecraft.getInstance();
         ItemRenderer itemRenderer = mc.getItemRenderer();
-        BlockState state = ((BlockItem) itemStack.getItem()).getBlock().defaultBlockState();
+        Item item = itemStack.getItem();
+        if(item == CompatObjects.SCONCE_LEVER.get()){
+            item = CompatObjects.SCONCE.get();
+        }
+        BlockState state = ((BlockItem) item).getBlock().defaultBlockState();
         var model = mc.getBlockRenderer().getBlockModel(state);
         itemRenderer.render(itemStack, ItemDisplayContext.NONE, left, poseStack,
                 buffer, light, OverlayTexture.NO_OVERLAY, model);
@@ -128,6 +136,10 @@ public class TorchRendererExtension implements IThirdPersonAnimationProvider, IT
 
         //IDK why it's not in same position as other 2d items
         poseStack.translate(f * 0.5 / 16f, 1.65 / 16f, -1 / 16f);
+
+        float scale = (float) (double) ClientConfigs.TORCH_HOLDING_SIZE.get();
+
+        poseStack.scale(scale, scale, scale);
 
         renderTorchModel(player, stack, poseStack, buffer, light, left);
 

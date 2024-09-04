@@ -2,7 +2,7 @@ package net.mehvahdjukaar.amendments.client.gui;
 
 import net.mehvahdjukaar.amendments.common.LecternEditMenu;
 import net.mehvahdjukaar.amendments.common.network.ModNetwork;
-import net.mehvahdjukaar.amendments.common.network.SyncLecternBookMessage;
+import net.mehvahdjukaar.amendments.common.network.ServerBoundSyncLecternBookMessage;
 import net.minecraft.SharedConstants;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.inventory.BookEditScreen;
@@ -69,7 +69,7 @@ public class LecternBookEditScreen extends BookEditScreen implements MenuAccess<
             this.eraseEmptyTrailingPages();
             this.updateLocalCopy(publish);
 
-            ModNetwork.CHANNEL.sendToServer(new SyncLecternBookMessage(menu.getPos(),
+            ModNetwork.CHANNEL.sendToServer(new ServerBoundSyncLecternBookMessage(menu.getPos(),
                     this.pages, publish ? Optional.of(this.title.trim()) : Optional.empty(),
                     takeBook));
         }

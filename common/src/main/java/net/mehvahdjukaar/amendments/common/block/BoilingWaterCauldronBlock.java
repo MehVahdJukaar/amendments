@@ -1,7 +1,5 @@
 package net.mehvahdjukaar.amendments.common.block;
 
-import net.mehvahdjukaar.amendments.common.network.ModNetwork;
-import net.mehvahdjukaar.amendments.common.network.PlaySplashParticlesPacket;
 import net.mehvahdjukaar.amendments.common.recipe.DummyContainer;
 import net.mehvahdjukaar.amendments.common.tile.LiquidCauldronBlockTile;
 import net.mehvahdjukaar.amendments.reg.ModBlockProperties;

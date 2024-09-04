@@ -92,9 +92,11 @@ public class CauldronConversion implements BlockUse {
             if (fluid.is(ModRegistry.DYE_SOFT_FLUID.get())) {
                 newState = ModRegistry.DYE_CAULDRON.get().defaultBlockState();
             } else {
+                BlockPos belowPos = pos.below();
                 newState = ModRegistry.LIQUID_CAULDRON.get().defaultBlockState()
                         .setValue(LiquidCauldronBlock.BOILING,
-                                LiquidCauldronBlock.shouldBoil(level.getBlockState(pos.below()), fluid));
+                                LiquidCauldronBlock.shouldBoil(level.getBlockState(belowPos), fluid,
+                                        level, belowPos));
             }
             return newState;
         }

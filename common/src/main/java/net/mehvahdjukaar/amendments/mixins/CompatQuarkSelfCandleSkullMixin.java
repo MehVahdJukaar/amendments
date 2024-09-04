@@ -23,7 +23,7 @@ import org.violetmoon.quark.api.IEnchantmentInfluencer;
 
 import java.util.List;
 
-@OptionalMixin("vazkii.quark.api.IEnchantmentInfluencer")
+@OptionalMixin("org.violetmoon.quark.api.IEnchantmentInfluencer")
 @Mixin(AbstractCandleSkullBlock.class)
 public abstract class CompatQuarkSelfCandleSkullMixin implements IEnchantmentInfluencer {
 

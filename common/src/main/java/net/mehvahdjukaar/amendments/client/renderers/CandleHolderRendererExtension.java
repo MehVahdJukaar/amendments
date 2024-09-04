@@ -2,6 +2,7 @@ package net.mehvahdjukaar.amendments.client.renderers;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
+import net.mehvahdjukaar.amendments.configs.ClientConfigs;
 import net.mehvahdjukaar.amendments.integration.CompatObjects;
 import net.mehvahdjukaar.moonlight.api.client.util.VertexUtil;
 import net.mehvahdjukaar.moonlight.api.item.IFirstPersonSpecialItemRenderer;
@@ -139,8 +140,6 @@ public class CandleHolderRendererExtension implements IThirdPersonAnimationProvi
                                          PoseStack poseStack, float partialTicks, float pitch, float attackAnim, float equipAnim,
                                          MultiBufferSource buffer, int light, ItemInHandRenderer renderer) {
 
-        float candleScale = 10 / 16f;
-
         boolean left = arm == HumanoidArm.LEFT;
         float f = left ? -1.0F : 1.0F;
 
@@ -159,7 +158,10 @@ public class CandleHolderRendererExtension implements IThirdPersonAnimationProvi
 
 
         poseStack.translate(0, 0.3125, 0);
-        poseStack.scale(-candleScale, candleScale, -candleScale);
+
+        float scale = (float) (double) ClientConfigs.CANDLE_HOLDING_SIZE.get();
+
+        poseStack.scale(-scale, scale, -scale);
 
         renderLanternModel(player, stack, poseStack, buffer, light, left);
 

@@ -2,13 +2,10 @@ package net.mehvahdjukaar.amendments.common.network;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.mehvahdjukaar.amendments.Amendments;
 import net.mehvahdjukaar.amendments.common.block.BoilingWaterCauldronBlock;
 import net.mehvahdjukaar.amendments.common.block.ModCauldronBlock;
 import net.mehvahdjukaar.amendments.common.tile.LiquidCauldronBlockTile;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
-import net.mehvahdjukaar.moonlight.api.platform.ClientHelper;
-import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
 import net.mehvahdjukaar.moonlight.api.platform.network.ChannelHandler;
 import net.mehvahdjukaar.moonlight.api.platform.network.Message;
 import net.minecraft.client.Minecraft;
@@ -17,16 +14,14 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.Vec3;
 
 // we must send everything because when packet is received item entity might have been killed already
-public record PlaySplashParticlesPacket(Vec3 hitPos, double speed, float width) implements Message {
+public record ClientBoundPlaySplashParticlesMessage(Vec3 hitPos, double speed, float width) implements Message {
 
-    public PlaySplashParticlesPacket(FriendlyByteBuf buffer) {
+    public ClientBoundPlaySplashParticlesMessage(FriendlyByteBuf buffer) {
         this(new Vec3(buffer.readDouble(), buffer.readDouble(), buffer.readDouble()),
                 buffer.readDouble(), buffer.readFloat());
     }
