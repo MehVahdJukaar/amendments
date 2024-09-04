@@ -7,6 +7,7 @@ import net.mehvahdjukaar.amendments.configs.ClientConfigs;
 import net.mehvahdjukaar.amendments.reg.ModBlockProperties;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
@@ -68,7 +69,7 @@ public class HangingSignTileExtension {
         return leftAttachment;
     }
 
-    public void saveAdditional(CompoundTag tag) {
+    public void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         if (!isCeiling) {
             if (leftAttachment != null) {
                 tag.putByte("left_attachment", (byte) leftAttachment.ordinal());
@@ -81,14 +82,14 @@ public class HangingSignTileExtension {
             tag.putBoolean("can_swing", false);
         }
         if (!frontItem.isEmpty()) {
-            tag.put("front_item", frontItem.save(new CompoundTag()));
+            tag.put("front_item", frontItem.save(registries));
         }
         if (!backItem.isEmpty()) {
-            tag.put("back_item", backItem.save(new CompoundTag()));
+            tag.put("back_item", backItem.save(registries));
         }
     }
 
-    public void load(CompoundTag tag) {
+    public void load(CompoundTag tag, HolderLookup.Provider registries) {
         if (!isCeiling) {
             if (tag.contains("left_attachment")) {
                 leftAttachment = ModBlockProperties.PostType.values()[tag.getByte("left_attachment")];
@@ -101,10 +102,10 @@ public class HangingSignTileExtension {
             canSwing = tag.getBoolean("can_swing");
         } else canSwing = true;
         if (tag.contains("front_item")) {
-            this.setFrontItem(ItemStack.of(tag.getCompound("front_item")));
+            this.setFrontItem(ItemStack.parseOptional(registries, tag.getCompound("front_item")));
         } else setFrontItem(ItemStack.EMPTY);
         if (tag.contains("back_item")) {
-            this.setBackItem(ItemStack.of(tag.getCompound("back_item")));
+            this.setBackItem(ItemStack.parseOptional(registries, tag.getCompound("back_item")));
         } else setBackItem(ItemStack.EMPTY);
     }
 

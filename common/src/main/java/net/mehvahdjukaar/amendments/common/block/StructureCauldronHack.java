@@ -5,16 +5,19 @@ import net.mehvahdjukaar.amendments.Amendments;
 import net.mehvahdjukaar.amendments.common.item.DyeBottleItem;
 import net.mehvahdjukaar.amendments.common.tile.LiquidCauldronBlockTile;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
+import net.mehvahdjukaar.moonlight.api.MoonlightRegistry;
 import net.mehvahdjukaar.moonlight.api.fluids.BuiltInSoftFluids;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidStack;
 import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
 import net.mehvahdjukaar.moonlight.api.platform.RegHelper;
+import net.mehvahdjukaar.moonlight.api.util.PotionBottleType;
 import net.mehvahdjukaar.moonlight.api.util.Utils;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.alchemy.Potion;
+import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -71,7 +74,8 @@ public class StructureCauldronHack extends Block implements EntityBlock {
     }
 
     private static final Supplier<List<Potion>> HARMFUL_POTS = Suppliers.memoize(() ->
-            BuiltInRegistries.POTION.stream().filter(p -> p.getEffects().stream().noneMatch(e -> e.getEffect().isBeneficial())).toList());
+            BuiltInRegistries.POTION.stream().filter(p -> p.getEffects().stream().noneMatch(e -> e.getEffect()
+                    .value().isBeneficial())).toList());
 
     private static class Tile extends BlockEntity {
         public Tile(BlockPos pos, BlockState blockState) {
@@ -87,14 +91,17 @@ public class StructureCauldronHack extends Block implements EntityBlock {
 
                     var list = HARMFUL_POTS.get();
                     var pot = list.get(level.random.nextInt(list.size()));
-                    CompoundTag tag = new CompoundTag();
-                    tag.putString("Potion", BuiltInRegistries.POTION.getKey(pot).toString());
+                    SoftFluidStack fluidStack = SoftFluidStack.of(
+                            BuiltInSoftFluids.POTION.getHolder(),
+                            level.random.nextIntBetweenInclusive(1, 4));
+                    fluidStack.set(DataComponents.POTION_CONTENTS,
+                            new PotionContents(BuiltInRegistries.POTION.wrapAsHolder(pot)));
+
                     if (level.random.nextFloat() < 0.4) {
-                        PotionNBTHelper.Type.SPLASH.applyToTag(tag);
+                        fluidStack.set(MoonlightRegistry.BOTTLE_TYPE.get(), PotionBottleType.SPLASH);
                     }
-                    te.getSoftFluidTank().setFluid(SoftFluidStack.of(
-                            BuiltInSoftFluids.POTION.getHolder(), level.random.nextIntBetweenInclusive(1, 4), tag
-                    ));
+
+                    te.getSoftFluidTank().setFluid(fluidStack);
                     te.setChanged();
                 }
             } else {

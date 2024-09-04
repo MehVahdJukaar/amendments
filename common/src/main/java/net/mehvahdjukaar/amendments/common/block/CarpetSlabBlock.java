@@ -8,6 +8,7 @@ import net.mehvahdjukaar.moonlight.api.block.IRecolorable;
 import net.mehvahdjukaar.moonlight.api.misc.ForgeOverride;
 import net.mehvahdjukaar.moonlight.api.platform.ForgeHelper;
 import net.mehvahdjukaar.moonlight.api.set.BlocksColorAPI;
+import net.mehvahdjukaar.moonlight.api.util.Utils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerPlayer;
@@ -50,7 +51,7 @@ public class CarpetSlabBlock extends SlabBlock implements EntityBlock, IRecolora
     protected static final VoxelShape BOTTOM_AABB = Block.box(0.0, 0.0, 0.0, 16.0, 9.0, 16.0);
 
     public CarpetSlabBlock(Block block) {
-        super(Properties.copy(block)
+        super(Utils.copyPropertySafe(block)
                 .lightLevel(state ->  state.getValue(LIGHT_LEVEL)));
         this.registerDefaultState(this.defaultBlockState().setValue(SOLID, true).setValue(LIGHT_LEVEL, 0));
     }

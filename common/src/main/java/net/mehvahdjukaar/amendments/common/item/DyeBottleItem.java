@@ -106,7 +106,6 @@ public class DyeBottleItem extends Item {
 
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
-        super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
         CompoundTag tag = stack.getOrCreateTag();
         int col = tag.getInt(COLOR_TAG);
         DyeColor color = COLOR_TO_DIFFUSE.inverse().get(col);
@@ -115,7 +114,7 @@ public class DyeBottleItem extends Item {
         } else {
             list.add(Component.translatable("item.color", String.format(Locale.ROOT, "#%06X", col)).withStyle(ChatFormatting.GRAY));
         }
-        super.appendHoverText(stack, level, list, isAdvanced);
+        super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
     }
 
     @Override

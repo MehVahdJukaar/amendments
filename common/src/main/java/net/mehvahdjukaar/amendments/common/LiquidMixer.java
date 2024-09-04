@@ -1,33 +1,38 @@
 package net.mehvahdjukaar.amendments.common;
 
 import net.mehvahdjukaar.amendments.common.item.DyeBottleItem;
-import net.mehvahdjukaar.moonlight.api.fluids.BuiltInSoftFluids;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidStack;
-import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidTank;
+import net.minecraft.core.Holder;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.item.alchemy.PotionContents;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class LiquidMixer {
 
-    public static void mixPotions(SoftFluidStack tankFluid, SoftFluidStack newFluid) {
-        var tankTag = tankFluid.getComponents();
-        var newTag = newFluid.getComponents();
-        if (tankTag == null || newTag == null) return;
-        int oldCount = tankFluid.getCount();
-        int newCount = oldCount + newFluid.getCount();
+    public static SoftFluidStack mixPotions(SoftFluidStack firstFluid, SoftFluidStack secondFluid) {
+        var tankFluidContent = firstFluid.getOrDefault(DataComponents.POTION_CONTENTS, PotionContents.EMPTY);
+        var newFluidContent = secondFluid.getOrDefault(DataComponents.POTION_CONTENTS, PotionContents.EMPTY);
+        if (!tankFluidContent.hasEffects() || !newFluidContent.hasEffects()) return firstFluid;
+        int oldCount = firstFluid.getCount();
+        int newCount = oldCount + secondFluid.getCount();
         List<MobEffectInstance> combinedEffects = new ArrayList<>();
-        List<MobEffectInstance> existingEffects = PotionUtils.getAllEffects(tankTag);
-        List<MobEffectInstance> newEffects = PotionUtils.getAllEffects(newFluid.getTag());
-        if (newEffects.equals(existingEffects)) return;
+
+        List<MobEffectInstance> existingEffects = new ArrayList<>();
+        tankFluidContent.getAllEffects().forEach(existingEffects::add);
+
+        List<MobEffectInstance> newEffects = new ArrayList<>();
+        newFluidContent.getAllEffects().forEach(newEffects::add);
+
+        if (newEffects.equals(existingEffects)) return firstFluid;
 
         float oldMult = oldCount / (float) newCount;
         float newMult = 1 - oldMult;
@@ -35,7 +40,7 @@ public class LiquidMixer {
         combineEffects(combinedEffects, newEffects, newMult);
         //merge similar. assumes there are no triple effects. if we merge each time there shouldnt
 
-        Map<MobEffect, MobEffectInstance> mergedMap = combinedEffects.stream()
+        Map<Holder<MobEffect>, MobEffectInstance> mergedMap = combinedEffects.stream()
                 .collect(Collectors.toMap(
                         MobEffectInstance::getEffect,
                         effectInstance -> effectInstance,
@@ -43,9 +48,14 @@ public class LiquidMixer {
 
         mergedMap.entrySet().removeIf(e -> e.getValue().getDuration() <= 0 || e.getValue().getAmplifier() < 0);
 
-        tankTag.putInt("CustomPotionColor", PotionUtils.getColor(mergedMap.values()));
-        tankTag.remove("Potion"); //remove normal potion
-        saveEffects(tankTag, mergedMap.values());
+        int customPotionColor = PotionContents.getColor(mergedMap.values());
+        PotionContents mergedContents = new PotionContents(Optional.empty(),
+                Optional.of(customPotionColor), mergedMap.values().stream().toList());
+
+        SoftFluidStack returnStack = firstFluid.copy();
+        returnStack.set(DataComponents.POTION_CONTENTS, mergedContents);
+
+        return returnStack;
     }
 
     @NotNull
@@ -54,21 +64,13 @@ public class LiquidMixer {
                 (e.getAmplifier() + e1.getAmplifier()) / 2);
     }
 
-    public static void saveEffects(CompoundTag tag, Collection<MobEffectInstance> effects) {
-        ListTag listTag = new ListTag();
-        for (MobEffectInstance mobEffectInstance : effects) {
-            listTag.add(mobEffectInstance.save(new CompoundTag()));
-        }
-        tag.put("CustomPotionEffects", listTag);
-    }
-
     private static void combineEffects(List<MobEffectInstance> combinedEffects,
                                        List<MobEffectInstance> current, float mult) {
         for (var e : current) {
-            MobEffect effect = e.getEffect();
+            Holder<MobEffect> effect = e.getEffect();
 
             MobEffectInstance newInstance;
-            if (effect.isInstantenous()) {
+            if (effect.value().isInstantenous()) {
                 newInstance = new MobEffectInstance(effect, e.getDuration(), (int) (e.getAmplifier() * mult));
             } else {
                 newInstance = new MobEffectInstance(effect, (int) (e.getDuration() * mult), e.getAmplifier());

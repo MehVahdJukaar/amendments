@@ -11,6 +11,7 @@ import net.mehvahdjukaar.moonlight.api.client.model.ModelDataKey;
 import net.mehvahdjukaar.moonlight.api.platform.ForgeHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderGetter;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
@@ -45,10 +46,10 @@ public class CarpetedBlockTile extends MimicBlockTile {
     }
 
     @Override
-    public void load(CompoundTag compound) {
-        super.load(compound);
+    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+        super.loadAdditional(tag, registries);
         HolderGetter<Block> holderGetter = this.level != null ? this.level.holderLookup(Registries.BLOCK) : BuiltInRegistries.BLOCK.asLookup();
-        this.setCarpet(NbtUtils.readBlockState(holderGetter, compound.getCompound("Carpet")));
+        this.setCarpet(NbtUtils.readBlockState(holderGetter, tag.getCompound("Carpet")));
     }
 
     public void setCarpet(BlockState carpet) {
@@ -60,8 +61,8 @@ public class CarpetedBlockTile extends MimicBlockTile {
     }
 
     @Override
-    public void saveAdditional(CompoundTag tag) {
-        super.saveAdditional(tag);
+    public void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+        super.saveAdditional(tag, registries);
         tag.put("Carpet", NbtUtils.writeBlockState(carpet));
     }
 

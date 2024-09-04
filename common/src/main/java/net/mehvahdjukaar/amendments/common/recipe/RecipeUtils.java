@@ -15,10 +15,6 @@ import net.minecraft.world.level.Level;
 public class RecipeUtils {
 
     public static Pair<ItemStack, Float> craftWithFluidAndDye(Level level, SoftFluidStack fluid, ItemStack toRecolor) {
-        CompoundTag tag = fluid.getTag();
-        if (tag == null) return null;
-
-
         var c = RecipeUtils.craftWithFluid(level, fluid, toRecolor, true);
         if (c != null) return c;
 

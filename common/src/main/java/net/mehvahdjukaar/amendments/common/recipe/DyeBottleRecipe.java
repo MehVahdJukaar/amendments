@@ -6,12 +6,14 @@ import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.moonlight.api.set.BlocksColorAPI;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.component.DyedItemColor;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
 
@@ -69,15 +71,18 @@ public class DyeBottleRecipe extends CustomRecipe {
         if (leather.is(ItemTags.DYEABLE)) {
             result = leather.copy();
 
-            if(l.hasCustomColor(leather)) {
-                l.setColor(result, DyeBottleItem.mixColor(DyeBottleItem.getColor(dyeBottle), l.getColor(leather), 1, 1));
+            var colorComponent = leather.get(DataComponents.DYED_COLOR);
+            if(colorComponent != null) {
+                int mixedColor = DyeBottleItem.mixColor(DyeBottleItem.getColor(dyeBottle),
+                        colorComponent.rgb(), 1, 1);
+                result.set(DataComponents.DYED_COLOR, new DyedItemColor(mixedColor, true));
             }else{
-                l.setColor(result, DyeBottleItem.getColor(dyeBottle));
+                result.set(DataComponents.DYED_COLOR,new DyedItemColor( DyeBottleItem.getColor(dyeBottle), true));
             }
         } else {
             result = BlocksColorAPI.changeColor(leather.getItem(),
                     DyeBottleItem.getClosestDye(dyeBottle)).getDefaultInstance();
-            result.setTag(leather.getTag());
+            result.applyComponents(leather.getComponents());
         }
         return result;
     }
