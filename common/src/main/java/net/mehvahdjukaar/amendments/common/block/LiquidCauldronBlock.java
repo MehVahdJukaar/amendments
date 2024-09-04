@@ -13,7 +13,7 @@ import net.mehvahdjukaar.moonlight.api.fluids.BuiltInSoftFluids;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidStack;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidTank;
 import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
-import net.mehvahdjukaar.moonlight.api.util.PotionNBTHelper;
+import net.mehvahdjukaar.moonlight.api.util.PotionBottleType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleOptions;
@@ -34,7 +34,6 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.alchemy.PotionUtils;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
@@ -264,9 +263,9 @@ public class LiquidCauldronBlock extends ModCauldronBlock {
     }
 
     @Nullable
-    private PotionNBTHelper.Type getPotType(SoftFluidStack stack) {
+    private PotionBottleType getPotType(SoftFluidStack stack) {
         if (stack.is(BuiltInSoftFluids.POTION.get()) && stack.hasTag()) {
-            return PotionNBTHelper.getPotionType(stack.getTag());
+            return PotionBottleType.get(stack.getTag());
         }
         return null;
     }

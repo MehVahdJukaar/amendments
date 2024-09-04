@@ -7,7 +7,28 @@ plugins {
 }
 
 architectury {
-    minecraft = rootProject.minecraft_version
+    minecraft = minecraft_version
+}
+
+static def listGameVersions(String string1, String string2) {
+    // Extract the base version and the starting and ending patch numbers
+    String baseVersion = string1
+    int startPatch = 0
+    int endPatch = Integer.parseInt(string2.split('\\.')[2])
+
+    // Initialize an array to hold the generated versions
+    def versions = []
+
+    // Add the base version (string1) to the array
+    versions << baseVersion
+
+    // Generate and add the patch versions
+    for (int i = startPatch + 1; i <= endPatch; i++) {
+        versions << "${baseVersion}.${i}"
+    }
+
+    // Return the generated versions
+    return versions
 }
 
 subprojects {
@@ -21,12 +42,12 @@ subprojects {
     }
 
     dependencies {
-        minecraft "com.mojang:minecraft:${rootProject.minecraft_version}"
+        minecraft "com.mojang:minecraft:${minecraft_version}"
         mappings loom.layered() {
-            it.parchment("org.parchmentmc.data:parchment-${rootProject.parchment_version}")
             it.officialMojangMappings {
                 setNameSyntheticMembers(false)
             }
+            it.parchment("org.parchmentmc.data:parchment-${parchment_version}")
         }
     }
 
@@ -36,22 +57,25 @@ subprojects {
     var changelogFile = rootProject.file("changelog.md")
     var changelogText = changelogFile.exists() ? changelogFile.text : ""
 
+    var versions = listGameVersions(minecraft_min_version, minecraft_version)
+
     if (env.MODRINTH_TOKEN) {
         modrinth {
-            projectId = "amendments"
+            projectId = "fast-paintings"
             uploadFile = tasks.remapJar
-            gameVersions = [minecraft_version]
-            loaders = [modLoader]
+            gameVersions = versions
+            if (modLoader == "forge") {
+                loaders = ["neoforge"]
+            } else loaders = [modLoader]
             changelog = changelogText
-
+            versionNumber = modLoader +"_"+ mod_version
+            versionType = release_type
             if (modLoader == "fabric") {
                 dependencies {
                     required.project "fabric-api"
-                    required.project "moonlight"
                 }
             } else {
                 dependencies {
-                    required.project "moonlight"
                 }
             }
         }
@@ -63,29 +87,23 @@ subprojects {
             project {
                 id = project_id
                 changelog = changelogText
-                releaseType = 'release'
-                addGameVersion minecraft_version
-                addGameVersion modLoader.capitalize()
+                releaseType = release_type
+                for (var ver : versions){
+                    addGameVersion ver
+                }
+
+
+                if (modLoader == "neoforge") {
+                    addGameVersion("NeoForge")
+                } else addGameVersion modLoader.capitalize()
 
                 mainArtifact(tasks.remapJar)
 
                 if (modLoader == "fabric") {
                     relations {
                         requiredDependency "fabric-api"
-                        requiredDependency "selene"
-                        optionalDependency "supplementaries"
                     }
                 } else {
-                    relations {
-                        requiredDependency "selene"
-                        optionalDependency "supplementaries"
-                        optionalDependency "blueprint"
-                        optionalDependency "alexs-caves"
-                        optionalDependency "shimmer"
-                        optionalDependency "farmers-delight"
-                        optionalDependency "configured"
-                        optionalDependency "flan"
-                    }
                 }
             }
         }
@@ -109,12 +127,18 @@ allprojects {
         }
 
         mavenLocal()
+        mavenCentral()
 
         maven { url "https://maven.parchmentmc.org" }
 
         maven {
             url = "https://www.cursemaven.com"
             allowInsecureProtocol = true
+        }
+
+        maven {
+            name = "TerraformersMC"
+            url = "https://maven.terraformersmc.com/releases"
         }
 
         maven {
@@ -136,14 +160,64 @@ allprojects {
             url = "https://api.modrinth.com/maven"
         }
 
+        maven {
+            url = "https://maven.blamejared.com/"
+        }
+
     }
 
     tasks.withType(JavaCompile) {
         options.encoding = "UTF-8"
-        options.release = 17
+        options.release = rootProject.java_version.toInteger()
     }
 
     java {
         withSourcesJar()
     }
 }
+
+
+ext{
+    replaceProperties = [
+            minecraft_version    : minecraft_version,
+            minecraft_min_version: minecraft_min_version,
+            minecraft_max_version: minecraft_max_version,
+            pack_format_number   : pack_format_number,
+
+            mod_id               : mod_id,
+            mod_name             : mod_name,
+            mod_version          : mod_version,
+            mod_license          : mod_license,
+            mod_authors          : mod_authors,
+            mod_description      : mod_description,
+            mod_credits          : mod_credits,
+            mod_homepage         : mod_homepage,
+            mod_github           : mod_github,
+
+            neo_version          : neo_version,
+            neo_version_range    : neo_version_range,
+            loader_version_range : loader_version_range,
+    ]
+}
+
+
+task buildAndPublishAll {
+    dependsOn ':clean'
+    dependsOn ':build'
+    dependsOn ':neoforge:curseforge'
+    dependsOn ':neoforge:modrinth'
+    dependsOn ':fabric:curseforge'
+    dependsOn ':fabric:modrinth'
+}
+
+buildAndPublishAll.group = 'build'
+buildAndPublishAll.description = 'Runs clean, build, and publish forge and fabric'
+
+task buildAndPublishAllM {
+    dependsOn buildAndPublishAll
+    dependsOn ':publishToMavenLocal'
+}
+
+buildAndPublishAllM.group = 'build'
+buildAndPublishAllM.description = 'Runs clean, build, publish forge and fabric and uploads to maven local'
+

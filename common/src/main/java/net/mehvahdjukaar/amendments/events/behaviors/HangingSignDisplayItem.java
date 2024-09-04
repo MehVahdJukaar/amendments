@@ -23,8 +23,10 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.BlockHitResult;
 
+@Deprecated(forRemoval = true)
 public class HangingSignDisplayItem implements BlockUse {
 
+    //TODO: change
     // just here because im too lazy to move to static class. we arent using the block use anymore
     public static final HangingSignDisplayItem INSTANCE = new HangingSignDisplayItem();
 

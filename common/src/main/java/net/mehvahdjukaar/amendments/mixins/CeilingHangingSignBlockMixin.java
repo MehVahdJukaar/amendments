@@ -9,6 +9,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -79,11 +80,15 @@ public abstract class CeilingHangingSignBlockMixin extends Block implements Enti
         };
     }
 
-    @Inject(method = "use", at = @At("HEAD"), cancellable = true)
-    public void amendments$use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit, CallbackInfoReturnable<InteractionResult> cir) {
+    @Inject(method = "useItemOn", at = @At("HEAD"), cancellable = true)
+    public void amendments$use(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player,
+                               InteractionHand hand, BlockHitResult hit, CallbackInfoReturnable<ItemInteractionResult> cir) {
         var ret = HangingSignDisplayItem.INSTANCE.tryPerformingAction(state, pos, level, player,
                 hand, player.getItemInHand(hand), hit);
-        if (ret != InteractionResult.PASS) cir.setReturnValue(ret);
+        if (ret != InteractionResult.PASS){
+            //TODO: change
+            cir.setReturnValue(ItemInteractionResult.sidedSuccess(level.isClientSide));
+        }
     }
 
     @Override

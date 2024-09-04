@@ -22,85 +22,31 @@ configurations {
 dependencies {
     modImplementation "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"
     modApi "net.fabricmc.fabric-api:fabric-api:${rootProject.fabric_api_version}"
-    // Remove the next line if you don't want to depend on the API
-    //modApi "dev.architectury:architectury-fabric:${rootProject.architectury_version}"
 
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionFabric")) { transitive false }
 
-    include(implementation(annotationProcessor("io.github.llamalad7:mixinextras-fabric:${mixin_extras_version}")))
-    annotationProcessor 'net.fabricmc:sponge-mixin:0.12.5+mixin.0.8.5'
+    modImplementation("net.mehvahdjukaar:moonlight-fabric:${moonlight_version}")
 
-    modCompileOnly("me.shedaniel.cloth:cloth-config-fabric:${project.cloth_version}") {
-        exclude group: 'net.fabricmc.fabric-api'
-    }
     modCompileOnly "com.terraformersmc:modmenu:4.0.6", {
         exclude module: "fabric-api"
     }
 
     modImplementation ("net.mehvahdjukaar:moonlight-fabric:${moonlight_version}")
-    //modImplementation ("net.mehvahdjukaar:moonlight-fabric:${rootProject.moonlight_version}")
-    //modImplementation("curse.maven:selene-499980:5306530")
 
-    //modImplementation ("net.mehvahdjukaar:supplementaries-fabric:${supplementaries_version}")
-    modImplementation("curse.maven:supplementaries-412082:5147147")
-
-	//modCompileOnly ("net.mehvahdjukaar:suppsquared-fabric:${suppsquared_version}")
+    modCompileOnly("curse.maven:supplementaries-412082:5147147")
     modCompileOnly("curse.maven:farmers-delight-refabricated-993166:5215068")
-    modImplementation("curse.maven:spelunkery-790530:5043881")
+    modCompileOnly("curse.maven:spelunkery-790530:5043881")
 
-    //modImplementation("curse.maven:spectrum-556967:5080474")
-    //modImplementation("curse.maven:revelationary-656526:5062851")
-    // modImplementation("curse.maven:patchouli-fabric-393236:4966124")
-    //modImplementation("curse.maven:owo-lib-532610:4749199")
-    //modImplementation("curse.maven:minecells-618790:5010215")
-    //modImplementation("curse.maven:better-archeology-835687:5088426")
-    //modImplementation("curse.maven:yungs-api-fabric-421649:5070642")
-    //modImplementation("curse.maven:ad-astra-635042:5097605")
-    //modImplementation("curse.maven:resourceful-lib-570073:5093330")
-    //modImplementation("curse.maven:resourceful-config-714059:5020442")
-    //modImplementation("curse.maven:botarium-704113:5066855")
-    //modImplementation("curse.maven:blockus-312289:5067058")
-    //modImplementation("curse.maven:regions-unexplored-659110:5012053")
-    //modImplementation("curse.maven:terrablender-fabric-565956:5008701")
-    //modImplementation("curse.maven:integrated-stronghold-815548:5178478")
-    //modImplementation("curse.maven:integrated-api-817709:5241490")
-   // modImplementation("curse.maven:midnightlib-488090:4576371")
-    //modImplementation("com.simibubi.create:create-fabric-${project.minecraft_version}:" +
-      //      "${project.create_version}+mc${project.minecraft_version}")
-
-//    modImplementation("com.tterrag.registrate_fabric:Registrate:MC1.20.1-${project.registrate_version}")
 }
 
 
 
 processResources {
-    // input variables of this task:
-    var replaceProperties = [
-            minecraft_version    : minecraft_version,
-            minecraft_min_version: minecraft_min_version,
-            minecraft_max_version: minecraft_max_version,
-
-            mod_id               : mod_id,
-            mod_name             : mod_name,
-            mod_version          : mod_version,
-            mod_license          : mod_license,
-            mod_authors          : mod_authors,
-            mod_description      : mod_description,
-            mod_credits          : mod_credits,
-            mod_homepage         : mod_homepage,
-            mod_github           : mod_github,
-            required_moonlight_version : required_moonlight_version
-
-    ]
-    // setting them as input
-    inputs.properties replaceProperties
-
     filesMatching("fabric.mod.json") {
-        expand replaceProperties + [project: project]
+        expand rootProject.ext.replaceProperties + [project: project]
     }
 }
-
 
 shadowJar {
     exclude "architectury.common.json"
@@ -135,7 +81,7 @@ components.java {
 publishing {
     publications {
         mavenFabric(MavenPublication) {
-            artifactId = rootProject.mod_id + "-" + project.name
+            artifactId = mod_id + "-" + project.name
             from components.java
         }
     }
@@ -147,16 +93,7 @@ publishing {
             url = "https://www.cursemaven.com"
             allowInsecureProtocol = true
         }
-        maven {
-            name = "TerraformersMC"
-            url = "https://maven.terraformersmc.com/releases"
-        }
-        maven {
-            url = "https://maven.shedaniel.me"
-        }
     }
 }
 repositories {
-    maven { url "https://maven.shedaniel.me/" }
-    maven { url "https://maven.terraformersmc.com/releases" }
 }

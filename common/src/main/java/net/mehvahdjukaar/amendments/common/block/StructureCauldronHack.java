@@ -9,7 +9,6 @@ import net.mehvahdjukaar.moonlight.api.fluids.BuiltInSoftFluids;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidStack;
 import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
 import net.mehvahdjukaar.moonlight.api.platform.RegHelper;
-import net.mehvahdjukaar.moonlight.api.util.PotionNBTHelper;
 import net.mehvahdjukaar.moonlight.api.util.Utils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -71,7 +70,7 @@ public class StructureCauldronHack extends Block implements EntityBlock {
         return Utils.getTicker(pBlockEntityType, TILE.get(), Tile::tick);
     }
 
-    private static Supplier<List<Potion>> HARMFUL_POTS = Suppliers.memoize(() ->
+    private static final Supplier<List<Potion>> HARMFUL_POTS = Suppliers.memoize(() ->
             BuiltInRegistries.POTION.stream().filter(p -> p.getEffects().stream().noneMatch(e -> e.getEffect().isBeneficial())).toList());
 
     private static class Tile extends BlockEntity {

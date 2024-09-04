@@ -2,15 +2,19 @@ package net.mehvahdjukaar.amendments.common.network;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import net.mehvahdjukaar.amendments.Amendments;
 import net.mehvahdjukaar.amendments.common.LecternEditMenu;
-import net.mehvahdjukaar.moonlight.api.platform.network.ChannelHandler;
 import net.mehvahdjukaar.moonlight.api.platform.network.Message;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.FilteredText;
 import net.minecraft.server.network.TextFilter;
@@ -31,6 +35,11 @@ import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 
 public class ServerBoundSyncLecternBookMessage implements Message {
+
+
+    public static final TypeAndCodec<RegistryFriendlyByteBuf, ServerBoundSyncLecternBookMessage> TYPE = Message.makeType(
+            Amendments.res("server_bound_sync_lectern_book"), ServerBoundSyncLecternBookMessage::new);
+
 
     private final List<String> pages;
     private final Optional<String> title;
@@ -53,7 +62,7 @@ public class ServerBoundSyncLecternBookMessage implements Message {
     }
 
     @Override
-    public void writeToBuffer(FriendlyByteBuf buffer) {
+    public void write(RegistryFriendlyByteBuf buffer) {
         buffer.writeBlockPos(this.pos);
         buffer.writeCollection(this.pages, (friendlyByteBuf, string) -> {
             friendlyByteBuf.writeUtf(string, 8192);
@@ -65,9 +74,9 @@ public class ServerBoundSyncLecternBookMessage implements Message {
     }
 
     @Override
-    public void handle(ChannelHandler.Context context) {
+    public void handle(Context context) {
 
-        ServerPlayer player = (ServerPlayer) context.getSender();
+        ServerPlayer player = (ServerPlayer) context.getPlayer();
         Level level = player.level();
         if (level.getBlockEntity(pos) instanceof LecternBlockEntity be) {
             ItemStack book = be.getBook();
@@ -104,14 +113,13 @@ public class ServerBoundSyncLecternBookMessage implements Message {
 
     }
 
-    private void signBook(LecternBlockEntity be, ServerPlayer player, ItemStack itemstack, FilteredText title, List<FilteredText> pages) {
+    private void signBook(LecternBlockEntity be, ServerPlayer player, ItemStack itemstack, FilteredText title, List<FilteredText> pages,
+                          HolderLookup.Provider registries) {
         ItemStack newStack = new ItemStack(Items.WRITTEN_BOOK);
-        CompoundTag compoundtag = itemstack.getTag();
-        if (compoundtag != null) {
-            newStack.setTag(compoundtag.copy());
-        }
+        newStack.applyComponents(itemstack.getComponents());
 
-        newStack.addTagElement("author", StringTag.valueOf(player.getName().getString()));
+        var book = newStack.get(DataComponents.WRITTEN_BOOK_CONTENT);
+        var author = StringTag.valueOf(player.getName().getString());
         if (player.isTextFilteringEnabled()) {
             newStack.addTagElement("title", StringTag.valueOf(title.filteredOrEmpty()));
         } else {
@@ -120,7 +128,7 @@ public class ServerBoundSyncLecternBookMessage implements Message {
         }
 
         this.updateBookPages(be, player, pages, (string) ->
-                Component.Serializer.toJson(Component.literal(string)), newStack);
+                Component.Serializer.toJson(Component.literal(string), registries), newStack);
     }
 
     private void updateBookPages(LecternBlockEntity be, ServerPlayer player, List<FilteredText> pages, UnaryOperator<String> unaryOperator, ItemStack book) {
@@ -159,5 +167,10 @@ public class ServerBoundSyncLecternBookMessage implements Message {
                 m.clickMenuButton(player, 3);
             }
         }
+    }
+
+    @Override
+    public Type<? extends CustomPacketPayload> type() {
+        return TYPE.type();
     }
 }

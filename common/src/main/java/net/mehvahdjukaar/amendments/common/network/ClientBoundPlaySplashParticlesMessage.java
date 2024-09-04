@@ -2,17 +2,19 @@ package net.mehvahdjukaar.amendments.common.network;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.mehvahdjukaar.amendments.Amendments;
 import net.mehvahdjukaar.amendments.common.block.BoilingWaterCauldronBlock;
 import net.mehvahdjukaar.amendments.common.block.ModCauldronBlock;
 import net.mehvahdjukaar.amendments.common.tile.LiquidCauldronBlockTile;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
-import net.mehvahdjukaar.moonlight.api.platform.network.ChannelHandler;
 import net.mehvahdjukaar.moonlight.api.platform.network.Message;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
@@ -21,22 +23,22 @@ import net.minecraft.world.phys.Vec3;
 // we must send everything because when packet is received item entity might have been killed already
 public record ClientBoundPlaySplashParticlesMessage(Vec3 hitPos, double speed, float width) implements Message {
 
+    public static final TypeAndCodec<RegistryFriendlyByteBuf, ClientBoundPlaySplashParticlesMessage> TYPE = Message.makeType(
+            Amendments.res("client_bound_play_splash_particles"), ClientBoundPlaySplashParticlesMessage::new);
+
     public ClientBoundPlaySplashParticlesMessage(FriendlyByteBuf buffer) {
-        this(new Vec3(buffer.readDouble(), buffer.readDouble(), buffer.readDouble()),
-                buffer.readDouble(), buffer.readFloat());
+        this(buffer.readVec3(), buffer.readDouble(), buffer.readFloat());
     }
 
     @Override
-    public void writeToBuffer(FriendlyByteBuf friendlyByteBuf) {
-        friendlyByteBuf.writeDouble(this.hitPos.x);
-        friendlyByteBuf.writeDouble(this.hitPos.y);
-        friendlyByteBuf.writeDouble(this.hitPos.z);
-        friendlyByteBuf.writeDouble(this.speed);
-        friendlyByteBuf.writeFloat(this.width);
+    public void write(RegistryFriendlyByteBuf buf) {
+        buf.writeVec3(this.hitPos);
+        buf.writeDouble(this.speed);
+        buf.writeFloat(this.width);
     }
 
     @Override
-    public void handle(ChannelHandler.Context context) {
+    public void handle(Context context) {
         doOnClient();
     }
 
@@ -95,4 +97,8 @@ public record ClientBoundPlaySplashParticlesMessage(Vec3 hitPos, double speed, f
         }
     }
 
+    @Override
+    public Type<? extends CustomPacketPayload> type() {
+        return TYPE.type();
+    }
 }

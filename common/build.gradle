@@ -1,40 +1,33 @@
 architectury {
-    common(rootProject.enabled_platforms.split(","))
+    common(enabled_platforms.split(",")){
+        //it.platformPackage("neoforge", "forge")
+    }
 }
-
 loom {
-    accessWidenerPath = file("src/main/resources/amendments.accesswidener")
+    accessWidenerPath = file("src/main/resources/${mod_id}.accesswidener")
 }
 
 dependencies {
     // We depend on fabric loader here to use the fabric @Environment annotations and get the mixin dependencies
     // Do NOT use other classes from fabric loader
-    modImplementation "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"
-
-    implementation(annotationProcessor("io.github.llamalad7:mixinextras-common:${mixin_extras_version}"))
-    implementation("io.github.llamalad7:mixinextras-forge:${mixin_extras_version}")
-    modCompileOnly("curse.maven:flan-404578:5290167")
-
-    modCompileOnly("com.jozufozu.flywheel:flywheel-forge-${flywheel_version}")
-
-    annotationProcessor 'net.fabricmc:sponge-mixin:0.12.5+mixin.0.8.5'
+    modImplementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
 
     modImplementation ("net.mehvahdjukaar:moonlight:${moonlight_version}")
-	
-    //modCompileOnly ("net.mehvahdjukaar:supplementaries:${supplementaries_version}")
-	modCompileOnly("curse.maven:supplementaries-412082:5147148")
-	
-    modImplementation("curse.maven:supplementaries-squared-838411:5130385")
-    modImplementation("curse.maven:cave-enhancements-597562:4388535")
-    modImplementation("com.lowdragmc.shimmer:Shimmer-common:1.19.2-0.1.14")
-    modImplementation("curse.maven:farmers-delight-398521:5051242")
-    modImplementation("curse.maven:scholar-961802:5214379")
-	modImplementation("curse.maven:new-thin-air-878379:5068247")
 
-    modImplementation("curse.maven:soul-fire-d-662413:5448803")
 
-    modImplementation("curse.maven:quark-243121:5093415")
-    modImplementation("curse.maven:zeta-968868:5078215")
+    modCompileOnly("curse.maven:supplementaries-412082:5147148")
+    modCompileOnly("curse.maven:flan-404578:5290167")
+    modCompileOnly("com.jozufozu.flywheel:flywheel-forge-${flywheel_version}")
+    modCompileOnly("curse.maven:supplementaries-squared-838411:5130385")
+    modCompileOnly("curse.maven:cave-enhancements-597562:4388535")
+    modCompileOnly("com.lowdragmc.shimmer:Shimmer-common:1.19.2-0.1.14")
+    modCompileOnly("curse.maven:farmers-delight-398521:5051242")
+    modCompileOnly("curse.maven:scholar-961802:5214379")
+    modCompileOnly("curse.maven:new-thin-air-878379:5068247")
+    modCompileOnly("curse.maven:soul-fire-d-662413:5448803")
+    modCompileOnly("curse.maven:quark-243121:5093415")
+    modCompileOnly("curse.maven:zeta-968868:5078215")
+
 }
 
 publishing {

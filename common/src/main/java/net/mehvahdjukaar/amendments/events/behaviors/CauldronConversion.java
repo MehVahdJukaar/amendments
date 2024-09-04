@@ -11,7 +11,7 @@ import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidStack;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidTank;
 import net.mehvahdjukaar.moonlight.api.util.DispenserHelper;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.BlockSource;
+import net.minecraft.core.dispenser.BlockSource;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -112,9 +112,9 @@ public class CauldronConversion implements BlockUse {
         @Override
         protected InteractionResultHolder<ItemStack> customBehavior(BlockSource source, ItemStack stack) {
             //this.setSuccessful(false);
-            ServerLevel level = source.getLevel();
-            BlockState originalState = source.getBlockState();
-            BlockPos pos = source.getPos().relative(originalState.getValue(DispenserBlock.FACING));
+            ServerLevel level = source.level();
+            BlockState originalState = source.state();
+            BlockPos pos = source.pos().relative(originalState.getValue(DispenserBlock.FACING));
             if (!originalState.is(Blocks.CAULDRON)) return InteractionResultHolder.pass(stack);
 
             BlockState newState = getNewState(pos, level, stack);

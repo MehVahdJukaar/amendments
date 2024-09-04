@@ -1,6 +1,5 @@
 package net.mehvahdjukaar.amendments;
 
-import net.mehvahdjukaar.amendments.client.BlockScanner;
 import net.mehvahdjukaar.amendments.common.FlowerPotHandler;
 import net.mehvahdjukaar.amendments.common.network.ModNetwork;
 import net.mehvahdjukaar.amendments.configs.ClientConfigs;
@@ -44,7 +43,7 @@ public class Amendments {
     public static final List<String> OLD_MODS = List.of("supplementaries", "carpeted", "betterlily", "betterjukebox");
 
     public static ResourceLocation res(String name) {
-        return new ResourceLocation(MOD_ID, name);
+        return ResourceLocation.fromNamespaceAndPath(MOD_ID, name);
     }
 
     public static void init() {

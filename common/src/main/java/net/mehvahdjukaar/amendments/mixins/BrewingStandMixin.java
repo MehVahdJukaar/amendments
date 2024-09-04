@@ -1,6 +1,7 @@
 package net.mehvahdjukaar.amendments.mixins;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
@@ -31,8 +32,8 @@ public abstract class BrewingStandMixin extends BlockEntity {
         }
     }
 
-    @Inject(method = "load", at = @At("TAIL"))
-    public void amendments$refreshModel(CompoundTag tag, CallbackInfo ci){
+    @Inject(method = "loadAdditional", at = @At("TAIL"))
+    public void amendments$refreshModel(CompoundTag tag, HolderLookup.Provider registries, CallbackInfo ci){
         if(level != null && level.isClientSide){
             //this for some reason marks block for re-render
             level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
@@ -45,9 +46,9 @@ public abstract class BrewingStandMixin extends BlockEntity {
         return ClientboundBlockEntityDataPacket.create(this);
     }
 
-    @Override
-    public CompoundTag getUpdateTag() {
-        return this.saveWithoutMetadata();
-    }
 
+    @Override
+    public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
+        return this.saveWithoutMetadata(registries);
+    }
 }

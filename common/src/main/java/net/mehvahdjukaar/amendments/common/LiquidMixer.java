@@ -8,8 +8,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.alchemy.PotionUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -21,8 +19,8 @@ import java.util.stream.Collectors;
 public class LiquidMixer {
 
     public static void mixPotions(SoftFluidStack tankFluid, SoftFluidStack newFluid) {
-        CompoundTag tankTag = tankFluid.getTag();
-        CompoundTag newTag = newFluid.getTag();
+        var tankTag = tankFluid.getComponents();
+        var newTag = newFluid.getComponents();
         if (tankTag == null || newTag == null) return;
         int oldCount = tankFluid.getCount();
         int newCount = oldCount + newFluid.getCount();

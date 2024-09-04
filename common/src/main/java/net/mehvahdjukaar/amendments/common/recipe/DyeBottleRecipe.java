@@ -4,30 +4,29 @@ package net.mehvahdjukaar.amendments.common.recipe;
 import net.mehvahdjukaar.amendments.common.item.DyeBottleItem;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.moonlight.api.set.BlocksColorAPI;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.world.inventory.CraftingContainer;
-import net.minecraft.world.item.DyeableLeatherItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.ArmorDyeRecipe;
-import net.minecraft.world.item.crafting.CraftingBookCategory;
-import net.minecraft.world.item.crafting.CustomRecipe;
-import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
 
 public class DyeBottleRecipe extends CustomRecipe {
 
-    public DyeBottleRecipe(ResourceLocation resourceLocation, CraftingBookCategory category) {
-        super(resourceLocation, category);
+
+    public DyeBottleRecipe(CraftingBookCategory category) {
+        super(category);
     }
 
     @Override
-    public boolean matches(CraftingContainer craftingContainer, Level level) {
+    public boolean matches(CraftingInput input, Level level) {
         boolean hasDyableItem = false;
-
         ItemStack dyeBottle = ItemStack.EMPTY;
-        for (ItemStack itemstack : craftingContainer.getItems()) {
+        for (ItemStack itemstack : input.items()) {
             if (!itemstack.isEmpty()) {
                 Item item = itemstack.getItem();
                 if (item == ModRegistry.DYE_BOTTLE_ITEM.get()) {
@@ -37,10 +36,10 @@ public class DyeBottleRecipe extends CustomRecipe {
             }
         }
         if (dyeBottle.isEmpty()) return false;
-        for (var itemstack : craftingContainer.getItems()) {
+        for (var itemstack : input.items()) {
             if (!itemstack.isEmpty()) {
                 Item item = itemstack.getItem();
-                if (item instanceof DyeableLeatherItem ||
+                if (itemstack.is(ItemTags.DYEABLE) ||
                             (BlocksColorAPI.changeColor(item,
                                     DyeBottleItem.getClosestDye(dyeBottle)) != null)) {
                         if (hasDyableItem) return false;
@@ -52,10 +51,10 @@ public class DyeBottleRecipe extends CustomRecipe {
     }
 
     @Override
-    public ItemStack assemble(CraftingContainer craftingContainer, RegistryAccess registryAccess) {
+    public ItemStack assemble(CraftingInput input, HolderLookup.Provider registries) {
         ItemStack leather = ItemStack.EMPTY;
         ItemStack dyeBottle = ItemStack.EMPTY;
-        for (ItemStack itemstack : craftingContainer.getItems()) {
+        for (ItemStack itemstack : input.items()) {
             if (!itemstack.isEmpty()) {
                 Item item = itemstack.getItem();
                 if (item == ModRegistry.DYE_BOTTLE_ITEM.get()) {
@@ -67,7 +66,7 @@ public class DyeBottleRecipe extends CustomRecipe {
         }
         ItemStack result;
 
-        if (leather.getItem() instanceof DyeableLeatherItem l) {
+        if (leather.is(ItemTags.DYEABLE)) {
             result = leather.copy();
 
             if(l.hasCustomColor(leather)) {

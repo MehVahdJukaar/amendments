@@ -50,7 +50,7 @@ import java.util.stream.Collectors;
 public class AmendmentsClient {
 
 
-    public static final ResourceLocation SIGN_SHEET = new ResourceLocation("textures/atlas/signs.png");
+    public static final ResourceLocation SIGN_SHEET = ResourceLocation.withDefaultNamespace("textures/atlas/signs.png");
 
     public static final Material CANVAS_SIGH_MATERIAL = new Material(SIGN_SHEET,
             Amendments.res("entity/signs/hanging/farmersdelight/extension_canvas"));

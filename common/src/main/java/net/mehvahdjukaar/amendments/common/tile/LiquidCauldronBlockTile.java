@@ -15,8 +15,8 @@ import net.mehvahdjukaar.moonlight.api.fluids.SoftFluid;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidStack;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidTank;
 import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
-import net.mehvahdjukaar.moonlight.api.util.PotionNBTHelper;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.InteractionHand;
@@ -63,21 +63,21 @@ public class LiquidCauldronBlockTile extends BlockEntity implements IExtraModelD
     }
 
     @Override
-    public void load(CompoundTag compound) {
-        super.load(compound);
-        this.fluidTank.load(compound);
+    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+        super.loadAdditional(tag, registries);
+        this.fluidTank.load(tag);
         if (this.level != null) {
             if (this.level.isClientSide) {
                 fluidTank.refreshTintCache();
                 this.requestModelReload();
             }
         }
-        this.hasGlowInk = compound.getBoolean("glow_ink");
+        this.hasGlowInk = tag.getBoolean("glow_ink");
     }
 
     @Override
-    public void saveAdditional(CompoundTag tag) {
-        super.saveAdditional(tag);
+    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+        super.saveAdditional(tag, registries);
         this.fluidTank.save(tag);
         if (this.hasGlowInk) tag.putBoolean("glow_ink", true);
     }
@@ -88,8 +88,8 @@ public class LiquidCauldronBlockTile extends BlockEntity implements IExtraModelD
     }
 
     @Override
-    public CompoundTag getUpdateTag() {
-        return this.saveWithoutMetadata();
+    public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
+        return this.saveWithoutMetadata(registries);
     }
 
     @Override

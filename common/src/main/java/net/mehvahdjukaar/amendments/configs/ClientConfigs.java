@@ -4,8 +4,8 @@ import net.mehvahdjukaar.amendments.Amendments;
 import net.mehvahdjukaar.amendments.common.PendulumAnimation;
 import net.mehvahdjukaar.moonlight.api.ModSharedVariables;
 import net.mehvahdjukaar.moonlight.api.platform.configs.ConfigBuilder;
-import net.mehvahdjukaar.moonlight.api.platform.configs.ConfigSpec;
 import net.mehvahdjukaar.moonlight.api.platform.configs.ConfigType;
+import net.mehvahdjukaar.moonlight.api.platform.configs.ModConfigHolder;
 
 import java.util.function.Supplier;
 
@@ -51,7 +51,7 @@ public class ClientConfigs {
     private static float signColorMult = 1.2f;
     private static float hsScale = 1;
 
-    public static final ConfigSpec SPEC;
+    public static final ModConfigHolder SPEC;
 
     static {
         ConfigBuilder builder = ConfigBuilder.create(Amendments.MOD_ID, ConfigType.CLIENT);
