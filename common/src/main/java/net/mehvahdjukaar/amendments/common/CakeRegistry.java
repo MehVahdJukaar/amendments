@@ -18,7 +18,7 @@ public class CakeRegistry extends BlockTypeRegistry<CakeRegistry.CakeType> {
 
     public static final CakeRegistry INSTANCE = new CakeRegistry();
 
-    public static final CakeType VANILLA = new CakeType(new ResourceLocation("cake"), Blocks.CAKE);
+    public static final CakeType VANILLA = new CakeType(ResourceLocation.withDefaultNamespace("cake"), Blocks.CAKE);
 
     private CakeRegistry() {
         super(CakeType.class, "cake");

@@ -119,7 +119,7 @@ public class DoubleCakeBlock extends DirectionalCakeBlock {
     }
 
     @Override
-    public ItemStack getCloneItemStack(BlockGetter level, BlockPos pos, BlockState state) {
+    public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state) {
         return mimic.getBlock().getCloneItemStack(level, pos, state);
     }
 

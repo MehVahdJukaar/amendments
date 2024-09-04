@@ -68,7 +68,7 @@ public class ClientResourceGenerator extends DynClientResourcesGenerator {
         generateHangingSignAssets(manager);
 
         if (ClientConfigs.COLORED_ARROWS.get()) {
-            this.dynamicPack.addItemModel(new ResourceLocation("crossbow_arrow"), JsonParser.parseString(
+            this.dynamicPack.addItemModel(ResourceLocation.withDefaultNamespace("crossbow_arrow"), JsonParser.parseString(
                     """ 
                             {
                                 "parent": "item/crossbow",
@@ -81,13 +81,13 @@ public class ClientResourceGenerator extends DynClientResourcesGenerator {
         }
 
         if (ClientConfigs.JUKEBOX_MODEL.get()) {
-            this.dynamicPack.addItemModel(new ResourceLocation("jukebox"), JsonParser.parseString(
+            this.dynamicPack.addItemModel(ResourceLocation.withDefaultNamespace("jukebox"), JsonParser.parseString(
                     """ 
                             {
                               "parent": "amendments:block/jukebox"
                             }
                             """));
-            this.dynamicPack.addBlockState(new ResourceLocation("jukebox"), JsonParser.parseString(
+            this.dynamicPack.addBlockState(ResourceLocation.withDefaultNamespace("jukebox"), JsonParser.parseString(
                     """ 
                             {
                               "variants": {
@@ -157,7 +157,7 @@ public class ClientResourceGenerator extends DynClientResourcesGenerator {
         if (CompatHandler.FARMERS_DELIGHT) {
             //hanging sign extension textures
             try (TextureImage vanillaTexture = TextureImage.open(manager,
-                    new ResourceLocation("farmersdelight:entity/signs/hanging/canvas"))) {
+                    ResourceLocation.fromNamespaceAndPath("farmersdelight","entity/signs/hanging/canvas"))) {
                 TextureImage flipped = vanillaTexture.createRotated(Rotation.CLOCKWISE_90);
                 TextureImage newIm = flipped.createResized(0.5f, 0.25f);
                 newIm.clear();

@@ -44,9 +44,9 @@ public class BoilingWaterCauldronBlock extends LayeredCauldronBlock {
 
     public static final BooleanProperty BOILING = ModBlockProperties.BOILING;
 
-    public BoilingWaterCauldronBlock(Properties properties, Predicate<Biome.Precipitation> fillPredicate,
-                                     Map<Item, CauldronInteraction> interactions) {
-        super(properties, fillPredicate, interactions);
+    public BoilingWaterCauldronBlock(Properties properties, Biome.Precipitation fillPredicate,
+                                     CauldronInteraction.InteractionMap interactions) {
+        super(fillPredicate, interactions, properties);
         this.registerDefaultState(this.defaultBlockState().setValue(BOILING, false));
     }
 

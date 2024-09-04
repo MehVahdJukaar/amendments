@@ -62,7 +62,7 @@ public class CeilingBannerBlock extends AbstractBannerBlock {
 
     private boolean canAttach(BlockState state, BlockState above) {
         if(CompatHandler.SUPPLEMENTARIES){
-            if(SuppCompat.canBannerAttachToRope(state, above))return true;
+            return SuppCompat.canBannerAttachToRope(state, above);
         }
         return false;
     }

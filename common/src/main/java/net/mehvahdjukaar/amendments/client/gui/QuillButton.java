@@ -61,11 +61,6 @@ public class QuillButton extends AbstractWidget {
         return super.isValidClickButton(button) || button == 1;
     }
 
-    @Override
-    protected ClientTooltipPositioner createTooltipPositioner() {
-        return DefaultTooltipPositioner.INSTANCE;
-
-    }
 
     @Override
     protected void renderWidget(GuiGraphics guiGraphics, int i, int j, float f) {

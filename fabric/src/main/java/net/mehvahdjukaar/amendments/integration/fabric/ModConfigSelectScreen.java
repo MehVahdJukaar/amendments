@@ -16,7 +16,7 @@ public class ModConfigSelectScreen extends FabricConfigListScreen {
 
     public ModConfigSelectScreen(Screen parent) {
         super(Amendments.MOD_ID, Items.OAK_HANGING_SIGN.getDefaultInstance(),
-                Component.literal("§6Amendments Configs"), new ResourceLocation("textures/block/deepslate_tiles.png"),
+                Component.literal("§6Amendments Configs"), ResourceLocation.withDefaultNamespace("textures/block/deepslate_tiles.png"),
                 parent, ClientConfigs.SPEC, CommonConfigs.SPEC);
     }
 

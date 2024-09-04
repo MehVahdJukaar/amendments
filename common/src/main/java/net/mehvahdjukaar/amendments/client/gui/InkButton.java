@@ -63,12 +63,6 @@ public class InkButton extends AbstractWidget {
         return super.isValidClickButton(button) || button == 1;
     }
 
-    @Override
-    protected ClientTooltipPositioner createTooltipPositioner() {
-        return DefaultTooltipPositioner.INSTANCE;
-
-    }
-
     public ChatFormatting getChatFormatting() {
         return switch (this.getType()) {
             case LIGHT_PURPLE -> ChatFormatting.LIGHT_PURPLE;

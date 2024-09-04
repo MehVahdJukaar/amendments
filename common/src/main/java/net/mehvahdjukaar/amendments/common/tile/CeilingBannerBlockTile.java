@@ -4,6 +4,7 @@ import com.mojang.datafixers.util.Pair;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.chat.Component;
@@ -15,16 +16,15 @@ import net.minecraft.world.level.block.entity.BannerBlockEntity;
 import net.minecraft.world.level.block.entity.BannerPattern;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.function.Supplier;
 
 
 public class CeilingBannerBlockTile extends BlockEntity implements Nameable {
     @Nullable
     private Component name;
-    @Nullable
     private DyeColor baseColor;
     @Nullable
     private ListTag itemPatterns;
@@ -56,22 +56,22 @@ public class CeilingBannerBlockTile extends BlockEntity implements Nameable {
     }
 
     @Override
-    public void saveAdditional(CompoundTag tag) {
-        super.saveAdditional(tag);
+    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+        super.saveAdditional(tag, registries);
         if (this.itemPatterns != null) {
             tag.put("Patterns", this.itemPatterns);
         }
 
         if (this.name != null) {
-            tag.putString("CustomName", Component.Serializer.toJson(this.name));
+            tag.putString("CustomName", Component.Serializer.toJson(this.name, registries));
         }
     }
 
     @Override
-    public void load(CompoundTag pTag) {
-        super.load(pTag);
-        if (pTag.contains("CustomName", 8)) {
-            this.name = Component.Serializer.fromJson(pTag.getString("CustomName"));
+    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+        super.loadAdditional(tag, registries);
+        if (tag.contains("CustomName", 8)) {
+            this.name = Component.Serializer.fromJson(tag.getString("CustomName"), registries);
         }
 
         if (this.hasLevel()) {
@@ -80,7 +80,7 @@ public class CeilingBannerBlockTile extends BlockEntity implements Nameable {
             this.baseColor = null;
         }
 
-        this.itemPatterns = pTag.getList("Patterns", 10);
+        this.itemPatterns = tag.getList("Patterns", 10);
         this.patterns = null;
     }
 
@@ -91,8 +91,8 @@ public class CeilingBannerBlockTile extends BlockEntity implements Nameable {
     }
 
     @Override
-    public CompoundTag getUpdateTag() {
-        return this.saveWithoutMetadata();
+    public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
+        return this.saveWithoutMetadata(registries);
     }
 
     public List<Pair<Holder<BannerPattern>, DyeColor>> getPatterns() {
@@ -102,11 +102,8 @@ public class CeilingBannerBlockTile extends BlockEntity implements Nameable {
         return this.patterns;
     }
 
-    public DyeColor getBaseColor(Supplier<BlockState> blockStateSupplier) {
-        if (this.baseColor == null) {
-            this.baseColor = ((AbstractBannerBlock) blockStateSupplier.get().getBlock()).getColor();
-        }
-
+    @NotNull
+    public DyeColor getBaseColor() {
         return this.baseColor;
     }
 }

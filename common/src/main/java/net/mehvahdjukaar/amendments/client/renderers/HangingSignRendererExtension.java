@@ -30,6 +30,7 @@ import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.Material;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Style;
+import net.minecraft.util.FastColor;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.item.BannerPatternItem;
 import net.minecraft.world.item.ItemDisplayContext;
@@ -288,10 +289,10 @@ public class HangingSignRendererExtension {
             poseStack.scale(scale, -scale, -1);
             VertexConsumer consumer = renderMaterial.buffer(bufferSource, RenderType::entityNoOutline);
 
-            float[] color = sign.getColor().getTextureDiffuseColors();
-            int b = (int) (color[2] * 255);
-            int g = (int) (color[1] * 255);
-            int r = (int) (color[0] * 255);
+            int color = sign.getColor().getTextureDiffuseColor();
+            int b = FastColor.ARGB32.blue(color);
+            int g = FastColor.ARGB32.green(color);
+            int r = FastColor.ARGB32.red(color);
             int light = packedLight;
             if (sign.hasGlowingText()) {
                 light = LightTexture.FULL_BRIGHT;

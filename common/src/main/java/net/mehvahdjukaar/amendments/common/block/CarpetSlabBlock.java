@@ -127,7 +127,7 @@ public class CarpetSlabBlock extends SlabBlock implements EntityBlock, IRecolora
     }
 
     @ForgeOverride
-    public ItemStack getCloneItemStack(BlockState state, HitResult target, BlockGetter level, BlockPos pos, Player player) {
+    public ItemStack getCloneItemStack(BlockState state, HitResult target, LevelReader level, BlockPos pos, Player player) {
         if (level.getBlockEntity(pos) instanceof CarpetedBlockTile tile) {
             if (target instanceof BlockHitResult hs && hs.getDirection() == Direction.UP) {
                 return tile.getHeldBlock(1).getBlock().getCloneItemStack(level, pos, state);
@@ -139,7 +139,7 @@ public class CarpetSlabBlock extends SlabBlock implements EntityBlock, IRecolora
     }
 
     @Override
-    public ItemStack getCloneItemStack(BlockGetter level, BlockPos pos, BlockState state) {
+    public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state) {
         if (level.getBlockEntity(pos) instanceof CarpetedBlockTile tile) {
             BlockState mimic = tile.getHeldBlock();
             return mimic.getBlock().getCloneItemStack(level, pos, state);

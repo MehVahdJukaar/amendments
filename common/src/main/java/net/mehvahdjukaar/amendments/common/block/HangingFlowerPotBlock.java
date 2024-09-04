@@ -146,7 +146,7 @@ public class HangingFlowerPotBlock extends Block implements EntityBlock {
     }
 
     @Override
-    public boolean isPathfindable(BlockState state, BlockGetter worldIn, BlockPos pos, PathComputationType type) {
+    protected boolean isPathfindable(BlockState state, PathComputationType pathComputationType) {
         return false;
     }
 
@@ -157,10 +157,10 @@ public class HangingFlowerPotBlock extends Block implements EntityBlock {
     }
 
     @Override
-    public ItemStack getCloneItemStack(BlockGetter level, BlockPos pos, BlockState state) {
+    public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state) {
         if (level.getBlockEntity(pos) instanceof HangingFlowerPotBlockTile te) {
             if (te.getHeldBlock().getBlock() instanceof FlowerPotBlock b) {
-                Block flower = b.getContent();
+                Block flower = b.getPotted();
                 if (flower == Blocks.AIR) return new ItemStack(Blocks.FLOWER_POT, 1);
                 return new ItemStack(flower);
             }
@@ -172,7 +172,7 @@ public class HangingFlowerPotBlock extends Block implements EntityBlock {
     public List<ItemStack> getDrops(BlockState state, LootParams.Builder builder) {
         if (builder.getOptionalParameter(LootContextParams.BLOCK_ENTITY) instanceof HangingFlowerPotBlockTile tile) {
             if (tile.getHeldBlock().getBlock() instanceof FlowerPotBlock flowerPotBlock)
-                return Arrays.asList(new ItemStack(flowerPotBlock.getContent()), new ItemStack(Items.FLOWER_POT));
+                return Arrays.asList(new ItemStack(flowerPotBlock.getPotted()), new ItemStack(Items.FLOWER_POT));
         }
         return super.getDrops(state, builder);
     }

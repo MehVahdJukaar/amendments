@@ -1,6 +1,8 @@
 package net.mehvahdjukaar.amendments.mixins;
 
 import net.mehvahdjukaar.amendments.common.block.BoilingWaterCauldronBlock;
+import net.minecraft.core.cauldron.CauldronInteraction;
+import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LayeredCauldronBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -16,7 +18,7 @@ import java.util.function.Predicate;
 public class BlocksMixin {
     @Redirect(method = "<clinit>", at = @At(
             value = "NEW",
-            target = "(Lnet/minecraft/world/level/block/state/BlockBehaviour$Properties;Ljava/util/function/Predicate;Ljava/util/Map;)Lnet/minecraft/world/level/block/LayeredCauldronBlock;",
+            target = "(Lnet/minecraft/world/level/biome/Biome$Precipitation;Lnet/minecraft/core/cauldron/CauldronInteraction$InteractionMap;Lnet/minecraft/world/level/block/state/BlockBehaviour$Properties;)Lnet/minecraft/world/level/block/LayeredCauldronBlock;",
             ordinal = 0
     ),
             slice = @Slice(
@@ -26,9 +28,8 @@ public class BlocksMixin {
                     )
             )
     )
-    private static LayeredCauldronBlock amendments$overrideCauldron(BlockBehaviour.Properties properties,
-                                                                    Predicate fillPredicate, Map interactions) {
-        return new BoilingWaterCauldronBlock(properties, fillPredicate, interactions);
+    private static LayeredCauldronBlock amendments$overrideCauldron(Biome.Precipitation precipitation, CauldronInteraction.InteractionMap interactions, BlockBehaviour.Properties properties) {
+        return new BoilingWaterCauldronBlock(properties, precipitation, interactions);
     }
 }
 

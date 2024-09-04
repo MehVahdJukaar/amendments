@@ -70,7 +70,7 @@ public class WallLanternModelsManager {
                     JsonElement bsElement = RPUtils.deserializeJson(stream);
 
                     String texture = RPUtils.findFirstResourceInJsonRecursive(bsElement);
-                    if (!texture.isEmpty()) SPECIAL_MOUNT_TEXTURES.put(l, new ResourceLocation(texture));
+                    if (!texture.isEmpty()) SPECIAL_MOUNT_TEXTURES.put(l, ResourceLocation.tryParse(texture));
 
                 } catch (Exception ignored) {
                 }

@@ -4,8 +4,6 @@ import com.github.alexmodguy.alexscaves.client.particle.ACParticleRegistry;
 import com.github.alexmodguy.alexscaves.server.block.ACBlockRegistry;
 import com.github.alexmodguy.alexscaves.server.block.fluid.ACFluidRegistry;
 import com.github.alexmodguy.alexscaves.server.misc.ACSoundRegistry;
-import com.github.alexthe666.citadel.server.block.LecternBooks;
-import com.github.alexthe666.rats.registry.RatsCauldronRegistry;
 import net.mehvahdjukaar.amendments.common.block.LiquidCauldronBlock;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluid;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidRegistry;
@@ -17,19 +15,17 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.LecternBlock;
 import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.fluids.FluidType;
-import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
-import org.checkerframework.checker.units.qual.A;
+import net.neoforged.fml.util.ObfuscationReflectionHelper;
+import net.neoforged.neoforge.fluids.FluidType;
 
 import java.lang.reflect.Method;
 
 public class AlexCavesCompatImpl {
 
     public static DataObjectReference<SoftFluid> ACID = new DataObjectReference<>(
-            new ResourceLocation("alexscaves:acid"), SoftFluidRegistry.KEY);
+            ResourceLocation.fromNamespaceAndPath("alexscaves","acid"), SoftFluidRegistry.KEY);
 
     public static final Method SET_H = ObfuscationReflectionHelper.findMethod(
             Entity.class, "setFluidTypeHeight",

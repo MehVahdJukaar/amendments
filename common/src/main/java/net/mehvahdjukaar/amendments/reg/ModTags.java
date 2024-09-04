@@ -45,7 +45,7 @@ public class ModTags {
     }
 
     private static TagKey<Block> suppTag(String name) {
-        return TagKey.create(Registries.BLOCK, new ResourceLocation("supplementaries", name));
+        return TagKey.create(Registries.BLOCK, ResourceLocation.fromNamespaceAndPath("supplementaries", name));
     }
 
 }

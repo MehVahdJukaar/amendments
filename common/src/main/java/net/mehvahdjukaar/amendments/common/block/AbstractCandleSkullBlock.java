@@ -31,6 +31,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
@@ -97,7 +98,7 @@ public abstract class AbstractCandleSkullBlock extends AbstractCandleBlock imple
     }
 
     @Override
-    public boolean isPathfindable(BlockState pState, BlockGetter pLevel, BlockPos pPos, PathComputationType pType) {
+    protected boolean isPathfindable(BlockState state, PathComputationType pathComputationType) {
         return false;
     }
 
@@ -131,7 +132,7 @@ public abstract class AbstractCandleSkullBlock extends AbstractCandleBlock imple
 
     //crappy for fabric
     @Override
-    public ItemStack getCloneItemStack(BlockGetter level, BlockPos pos, BlockState state) {
+    public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state) {
         if (level.getBlockEntity(pos) instanceof CandleSkullBlockTile tile) {
             return tile.getSkullItem();
         }
@@ -140,7 +141,7 @@ public abstract class AbstractCandleSkullBlock extends AbstractCandleBlock imple
 
     //@Override
     @ForgeOverride
-    public ItemStack getCloneItemStack(BlockState state, HitResult hitResult, BlockGetter world, BlockPos pos, Player player) {
+    public ItemStack getCloneItemStack(BlockState state, HitResult hitResult, LevelReader world, BlockPos pos, Player player) {
         if (world.getBlockEntity(pos) instanceof CandleSkullBlockTile tile) {
             double y = hitResult.getLocation().y;
             boolean up = y % ((int) y) > 0.5d;
@@ -152,10 +153,10 @@ public abstract class AbstractCandleSkullBlock extends AbstractCandleBlock imple
     @Override
     public VoxelShape getShape(BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
         return switch (pState.getValue(CANDLES)) {
-            default -> ONE_AABB;
             case 2 -> TWO_AABB;
             case 3 -> THREE_AABB;
             case 4 -> FOUR_AABB;
+            default -> ONE_AABB;
         };
     }
 
@@ -201,7 +202,7 @@ public abstract class AbstractCandleSkullBlock extends AbstractCandleBlock imple
 
     @Override
     public boolean isLitUp(BlockState state, BlockGetter level, BlockPos pos) {
-        return ILightable.super.isLitUp(state, level, pos);
+        return state.getValue(LIT);
     }
 
     @Override

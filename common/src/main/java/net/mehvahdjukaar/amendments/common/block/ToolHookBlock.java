@@ -42,10 +42,10 @@ public class ToolHookBlock extends Block implements EntityBlock {
     @Override
     public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return switch (state.getValue(FACING)) {
-            default -> EAST_AABB;
             case WEST -> WEST_AABB;
             case SOUTH -> SOUTH_AABB;
             case NORTH -> NORTH_AABB;
+            default -> EAST_AABB;
         };
     }
 
@@ -109,7 +109,7 @@ public class ToolHookBlock extends Block implements EntityBlock {
     }
 
     @ForgeOverride
-    public ItemStack getCloneItemStack(BlockState state, HitResult target, BlockGetter world, BlockPos pos, Player player) {
+    public ItemStack getCloneItemStack(BlockState state, HitResult target, LevelReader world, BlockPos pos, Player player) {
         if (world.getBlockEntity(pos) instanceof ItemDisplayTile tile) {
             ItemStack i = tile.getDisplayedItem();
             if (!i.isEmpty()) return i;

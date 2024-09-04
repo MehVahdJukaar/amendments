@@ -35,7 +35,7 @@ public class CompatObjects {
 
 
     private static <T> Supplier<@Nullable T> make(String name, Registry<T> registry) {
-        return Suppliers.memoize(() -> registry.getOptional(new ResourceLocation(name)).orElse(null));
+        return Suppliers.memoize(() -> registry.getOptional(ResourceLocation.tryParse(name)).orElse(null));
     }
 
 }

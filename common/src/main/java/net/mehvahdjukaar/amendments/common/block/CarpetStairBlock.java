@@ -11,6 +11,7 @@ import net.mehvahdjukaar.moonlight.api.block.ModStairBlock;
 import net.mehvahdjukaar.moonlight.api.misc.ForgeOverride;
 import net.mehvahdjukaar.moonlight.api.platform.ForgeHelper;
 import net.mehvahdjukaar.moonlight.api.set.BlocksColorAPI;
+import net.mehvahdjukaar.moonlight.api.util.Utils;
 import net.mehvahdjukaar.moonlight.api.util.math.MthUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -57,7 +58,7 @@ public class CarpetStairBlock extends ModStairBlock implements EntityBlock, IRec
     public static final BooleanProperty SOLID = ModBlockProperties.SOLID;
 
     public CarpetStairBlock(Block block) {
-        super(() -> block, Properties.copy(block)
+        super(() -> block, Utils.copyPropertySafe(block)
                 .lightLevel(state -> Math.max(0, state.getValue(LIGHT_LEVEL))));
         this.registerDefaultState(this.defaultBlockState().setValue(SOLID, true).setValue(LIGHT_LEVEL, 0));
     }
@@ -78,10 +79,10 @@ public class CarpetStairBlock extends ModStairBlock implements EntityBlock, IRec
 
     private static VoxelShape makeStairShape(int bitfield) {
         Direction dir = switch (bitfield % 4) {
-            default -> Direction.NORTH;
             case 1 -> Direction.EAST;
             case 2 -> Direction.WEST;
             case 3 -> Direction.SOUTH;
+            default -> Direction.NORTH;
         };
 
         VoxelShape voxelShape = MthUtils.rotateVoxelShape(BOTTOM_AABB, dir);
@@ -198,7 +199,7 @@ public class CarpetStairBlock extends ModStairBlock implements EntityBlock, IRec
 
     @ForgeOverride
     //@Override
-    public ItemStack getCloneItemStack(BlockState state, HitResult target, BlockGetter level, BlockPos pos, Player player) {
+    public ItemStack getCloneItemStack(BlockState state, HitResult target, LevelReader level, BlockPos pos, Player player) {
         if (level.getBlockEntity(pos) instanceof CarpetedBlockTile tile) {
             if (target instanceof BlockHitResult hs && hs.getDirection() == Direction.UP) {
                 return tile.getHeldBlock(1).getBlock().getCloneItemStack(level, pos, state);
@@ -210,7 +211,7 @@ public class CarpetStairBlock extends ModStairBlock implements EntityBlock, IRec
     }
 
     @Override
-    public ItemStack getCloneItemStack(BlockGetter level, BlockPos pos, BlockState state) {
+    public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state) {
         if (level.getBlockEntity(pos) instanceof CarpetedBlockTile tile) {
             BlockState mimic = tile.getHeldBlock();
             return mimic.getBlock().getCloneItemStack(level, pos, state);

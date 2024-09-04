@@ -96,8 +96,8 @@ public class CandleHolderRendererExtension implements IThirdPersonAnimationProvi
         }
     }
 
-    private static final ResourceLocation FLAME = new ResourceLocation("textures/particle/flame.png");
-    private static final ResourceLocation FLAME_SOUL = new ResourceLocation("textures/particle/soul_fire_flame.png");
+    private static final ResourceLocation FLAME = ResourceLocation.withDefaultNamespace("textures/particle/flame.png");
+    private static final ResourceLocation FLAME_SOUL = ResourceLocation.withDefaultNamespace("textures/particle/soul_fire_flame.png");
 
     private static void renderFlame(LivingEntity entity, PoseStack poseStack, MultiBufferSource bufferSource, ItemStack stack) {
         boolean soul = stack.getItem() == CompatObjects.SOUL_CANDLE_HOLDER.get();

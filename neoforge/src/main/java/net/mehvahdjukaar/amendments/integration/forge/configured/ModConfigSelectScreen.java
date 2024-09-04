@@ -17,7 +17,7 @@ public class ModConfigSelectScreen extends CustomConfigSelectScreen {
 
     public ModConfigSelectScreen(Screen parent) {
         super(Amendments.MOD_ID, Items.OAK_HANGING_SIGN.getDefaultInstance(),
-                "§6Amendments Configured", new ResourceLocation("textures/block/deepslate_tiles.png"),
+                "§6Amendments Configured", ResourceLocation.withDefaultNamespace("textures/block/deepslate_tiles.png"),
                 parent, ModConfigScreen::new, ClientConfigs.SPEC, CommonConfigs.SPEC);
     }
 

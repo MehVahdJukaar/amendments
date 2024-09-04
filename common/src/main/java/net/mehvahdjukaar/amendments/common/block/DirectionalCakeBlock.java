@@ -95,6 +95,11 @@ public class DirectionalCakeBlock extends CakeBlock implements SimpleWaterlogged
 
     }
 
+    @Override
+    protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
+        return super.useWithoutItem(state, level, pos, player, hitResult);
+    }
+
     protected InteractionResult useGeneric(BlockState state, Level level, BlockPos pos, Player player,
                                            InteractionHand handIn, BlockHitResult hit, boolean canEat) {
         ItemStack itemstack = player.getItemInHand(handIn);

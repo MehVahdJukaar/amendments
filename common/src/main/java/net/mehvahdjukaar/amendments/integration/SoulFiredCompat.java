@@ -24,6 +24,6 @@ public class SoulFiredCompat {
                 return f;
             }
         }
-        return FireManager.ensure(new ResourceLocation("fire"));
+        return FireManager.ensure(ResourceLocation.withDefaultNamespace("fire"));
     }
 }

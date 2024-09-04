@@ -35,8 +35,7 @@ public class DyeBottleItem extends Item {
     public static final String COLOR_TAG = "color";
 
     protected static final HashBiMap<DyeColor, Integer> COLOR_TO_DIFFUSE = Arrays.stream(DyeColor.values())
-            .collect(Collectors.toMap(Function.identity(), color ->
-                            ColorUtils.pack(color.getTextureDiffuseColors()),
+            .collect(Collectors.toMap(Function.identity(), DyeColor::getTextureDiffuseColor,
                     (color, color2) -> color2, HashBiMap::create));
 
     public DyeBottleItem(Properties properties) {
@@ -106,7 +105,8 @@ public class DyeBottleItem extends Item {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> list, TooltipFlag isAdvanced) {
+    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
+        super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
         CompoundTag tag = stack.getOrCreateTag();
         int col = tag.getInt(COLOR_TAG);
         DyeColor color = COLOR_TO_DIFFUSE.inverse().get(col);

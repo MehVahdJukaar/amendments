@@ -20,10 +20,10 @@ public class CauldronModelLoader implements CustomModelLoader {
         } else {
             translucent = false;
         }
-        return (modelBaker, spriteGetter, transform, location) -> {
+        return (modelBaker, spriteGetter, transform) -> {
 
-            var c = CustomModelLoader.parseModel(cauldron, modelBaker, spriteGetter, transform, location);
-            var f = CustomModelLoader.parseModel(fluid, modelBaker, spriteGetter, transform, location);
+            var c = CustomModelLoader.parseModel(cauldron, modelBaker, spriteGetter, transform);
+            var f = CustomModelLoader.parseModel(fluid, modelBaker, spriteGetter, transform);
             return new CauldronBakedModel(c, f, transform, translucent);
         };
     }

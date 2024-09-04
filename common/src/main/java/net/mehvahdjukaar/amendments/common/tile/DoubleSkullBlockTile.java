@@ -55,7 +55,7 @@ public class DoubleSkullBlockTile extends EnhancedSkullBlockTile {
         this.innerTileUp = this.loadInnerTile("SkullUp", this.innerTileUp, tag);
         Block b = null;
         if (tag.contains("CandleAbove")) {
-            ResourceLocation candle = new ResourceLocation(tag.getString("CandleAbove"));
+            ResourceLocation candle = ResourceLocation.tryParse(tag.getString("CandleAbove"));
             var o = BuiltInRegistries.BLOCK.getOptional(candle);
             if (o.isPresent()) b = o.get();
         }

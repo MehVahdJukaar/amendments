@@ -2,6 +2,7 @@ package net.mehvahdjukaar.amendments.common.tile;
 
 import net.mehvahdjukaar.moonlight.api.util.Utils;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
@@ -26,21 +27,21 @@ public class EnhancedSkullBlockTile extends BlockEntity {
     }
 
     @Override
-    public void saveAdditional(CompoundTag tag) {
-        super.saveAdditional(tag);
-        this.saveInnerTile("Skull", this.innerTile, tag);
+    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+        super.saveAdditional(tag, registries);
+        this.saveInnerTile("Skull", this.innerTile, tag, registries);
     }
 
     @Override
-    public void load(CompoundTag tag) {
-        super.load(tag);
+    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+        super.loadAdditional(tag, registries);
         this.innerTile = loadInnerTile("Skull", this.innerTile, tag);
     }
 
-    protected void saveInnerTile(String tagName, @Nullable SkullBlockEntity tile, CompoundTag tag) {
+    protected void saveInnerTile(String tagName, @Nullable SkullBlockEntity tile, CompoundTag tag, HolderLookup.Provider registries) {
         if (tile != null) {
             tag.put(tagName + "State", NbtUtils.writeBlockState(tile.getBlockState()));
-            tag.put(tagName, tile.saveWithFullMetadata());
+            tag.put(tagName, tile.saveWithFullMetadata(registries));
         }
     }
 
@@ -67,8 +68,8 @@ public class EnhancedSkullBlockTile extends BlockEntity {
     }
 
     @Override
-    public CompoundTag getUpdateTag() {
-        return this.saveWithoutMetadata();
+    public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
+        return this.saveWithoutMetadata(registries);
     }
 
     public ItemStack getSkullItem() {

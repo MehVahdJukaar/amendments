@@ -61,7 +61,8 @@ public class CeilingBannerBlockTileRenderer implements BlockEntityRenderer<Ceili
             float f2 = ((float) Math.floorMod((long) (blockpos.getX() * 7 + blockpos.getY() * 9 + blockpos.getZ() * 13) + i, 100L) + partialTick) / 100.0F;
             this.flag.xRot = (-0.0125F + 0.01F * Mth.cos(((float) Math.PI * 2F) * f2)) * (float) Math.PI;
             this.flag.y = -32.0F;
-            BannerRenderer.renderPatterns(poseStack, multiBufferSource, light, pPackedOverlay, this.flag, ModelBakery.BANNER_BASE, true, list);
+            BannerRenderer.renderPatterns(poseStack, multiBufferSource, light, pPackedOverlay, this.flag,
+                    ModelBakery.BANNER_BASE,  true, tile.getBaseColor(), list);
             poseStack.popPose();
             poseStack.popPose();
         }

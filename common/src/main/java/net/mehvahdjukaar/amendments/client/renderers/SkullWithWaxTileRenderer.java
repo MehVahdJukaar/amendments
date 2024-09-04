@@ -92,7 +92,7 @@ public abstract class SkullWithWaxTileRenderer<T extends EnhancedSkullBlockTile>
         RenderType overlayTexture = RenderType.entityCutoutNoCullZOffset(texture);
         VertexConsumer vertexconsumer = buffer.getBuffer(overlayTexture);
         this.overlay.setupAnim(0, -yaw, 0.0F);
-        this.overlay.renderToBuffer(poseStack, vertexconsumer, pCombinedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+        this.overlay.renderToBuffer(poseStack, vertexconsumer, pCombinedLight, OverlayTexture.NO_OVERLAY);
 
         poseStack.popPose();
     }

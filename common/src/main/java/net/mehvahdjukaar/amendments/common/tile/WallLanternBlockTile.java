@@ -13,6 +13,7 @@ import net.mehvahdjukaar.moonlight.api.client.model.ModelDataKey;
 import net.mehvahdjukaar.moonlight.api.platform.ForgeHelper;
 import net.mehvahdjukaar.moonlight.api.util.Utils;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.world.level.block.Blocks;
@@ -60,17 +61,17 @@ public class WallLanternBlockTile extends SwayingBlockTile implements IBlockHold
     }
 
     @Override
-    public void load(CompoundTag compound) {
-        super.load(compound);
-        this.setHeldBlock(Utils.readBlockState(compound.getCompound("Lantern"), level));
-        this.isRedstoneLantern = compound.getBoolean("IsRedstone");
+    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+        super.loadAdditional(tag, registries);
+        this.setHeldBlock(Utils.readBlockState(tag.getCompound("Lantern"), level));
+        this.isRedstoneLantern = tag.getBoolean("IsRedstone");
     }
 
     @Override
-    public void saveAdditional(CompoundTag compound) {
-        super.saveAdditional(compound);
-        compound.put("Lantern", NbtUtils.writeBlockState(mimic));
-        compound.putBoolean("IsRedstone", this.isRedstoneLantern);
+    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+        super.saveAdditional(tag, registries);
+        tag.put("Lantern", NbtUtils.writeBlockState(mimic));
+        tag.putBoolean("IsRedstone", this.isRedstoneLantern);
     }
 
     @Override
