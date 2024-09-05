@@ -6,6 +6,7 @@
     "#minecraft:campfires",
     "#minecraft:fire",
     {"id":"supplementaries:fire_pit","required":false},
+    {"id":"supplementaries:lumisene","required":false},
     {"id":"supplementaries:blaze_rod","required":false},
     {"id":"botania:blaze_block","required":false},
     {"id":"create:blaze_burner","required":false},
