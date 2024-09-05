@@ -1,20 +1,15 @@
 {
   "replace": false,
   "values": [
-    {
-      "id": "#farmersdelight:heat_sources",
-      "required": false
-    },
-    {"id":"supplementaries:fire_pit","required":false},
-    {"id":"supplementaries:blaze_rod","required":false},
-    {"id":"create:blaze_burner","required":false},
-    {"id":"supplementaries:lumisene","required":false},
     "minecraft:lava",
     "minecraft:magma_block",
     "#minecraft:campfires",
     "#minecraft:fire",
+    {"id":"supplementaries:fire_pit","required":false},
+    {"id":"supplementaries:blaze_rod","required":false},
     {"id":"botania:blaze_block","required":false},
     {"id":"create:blaze_burner","required":false},
+    {"id":"create:lit_blaze_burner","required":false},
     {"id":"malum:block_of_blazing_quartz","required":false},
     {"id":"malum:ether","required":false},
     {"id":"malum:iridescent_ether","required":false},
@@ -26,8 +21,8 @@
     {"id":"malum:tainted_iridescent_ether_brazier","required":false},
     {"id":"malum:twisted_ether_brazier","required":false},
     {"id":"malum:twisted_iridescent_ether_brazier","required":false},
-    {"id":"create:lit_blaze_burner","required":false},
     {"id":"spectrum:blazing_crystal","required":false},
-    {"id":"spectrum:wet_lava_sponge","required":false}
+    {"id":"spectrum:wet_lava_sponge","required":false},
+    {"id": "#farmersdelight:heat_sources","required":false}
   ]
 }
