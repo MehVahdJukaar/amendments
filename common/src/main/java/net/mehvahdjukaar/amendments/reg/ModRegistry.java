@@ -121,7 +121,7 @@ public class ModRegistry {
 
     //lilypad
     public static final Supplier<Block> WATERLILY_BLOCK = regBlock(WATER_LILY_NAME,
-            () -> new WaterloggedLilyBlock(BlockBehaviour.Properties.copy(Blocks.LILY_PAD).instabreak()
+            () -> new WaterloggedLilyBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.LILY_PAD).instabreak()
                     .sound(SoundType.LILY_PAD).noOcclusion())
     );
 
@@ -131,10 +131,10 @@ public class ModRegistry {
 
     //cauldron
     public static final Supplier<LiquidCauldronBlock> LIQUID_CAULDRON = regBlock(LIQUID_CAULDRON_NAME,
-            () -> new LiquidCauldronBlock(BlockBehaviour.Properties.copy(Blocks.CAULDRON))
+            () -> new LiquidCauldronBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.CAULDRON))
     );
     public static final Supplier<Block> DYE_CAULDRON = regBlock(DYE_CAULDRON_NAME,
-            () -> new DyeCauldronBlock(BlockBehaviour.Properties.copy(Blocks.CAULDRON))
+            () -> new DyeCauldronBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.CAULDRON))
     );
 
     public static final Supplier<BlockEntityType<LiquidCauldronBlockTile>> LIQUID_CAULDRON_TILE = regTile(LIQUID_CAULDRON_NAME,
@@ -143,7 +143,7 @@ public class ModRegistry {
 
     //hanging flower pot
     public static final Supplier<Block> HANGING_FLOWER_POT = regBlock(HANGING_FLOWER_POT_NAME,
-            () -> new HangingFlowerPotBlock(BlockBehaviour.Properties.copy(Blocks.FLOWER_POT)));
+            () -> new HangingFlowerPotBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.FLOWER_POT)));
 
     public static final Supplier<BlockEntityType<HangingFlowerPotBlockTile>> HANGING_FLOWER_POT_TILE = regTile(
             HANGING_FLOWER_POT_NAME, () -> PlatHelper.newBlockEntityType(
@@ -191,7 +191,7 @@ public class ModRegistry {
 
     //wall lantern
     public static final Supplier<WallLanternBlock> WALL_LANTERN = regBlock(WALL_LANTERN_NAME, () -> {
-        var p = BlockBehaviour.Properties.copy(Blocks.LANTERN)
+        var p = BlockBehaviour.Properties.ofFullCopy(Blocks.LANTERN)
                 .pushReaction(PushReaction.DESTROY)
                 .lightLevel((state) -> 15)
                 .noLootTable();
@@ -210,7 +210,7 @@ public class ModRegistry {
 
     //tool hook
     public static final Supplier<ToolHookBlock> TOOL_HOOK = regBlock(TOOL_HOOK_NAME, () -> {
-        var p = BlockBehaviour.Properties.copy(Blocks.TRIPWIRE_HOOK).dropsLike(Blocks.TRIPWIRE_HOOK);
+        var p = BlockBehaviour.Properties.ofFullCopy(Blocks.TRIPWIRE_HOOK).dropsLike(Blocks.TRIPWIRE_HOOK);
         return new ToolHookBlock(p);
     });
 
@@ -221,7 +221,7 @@ public class ModRegistry {
 
     //stackable skulls
     public static final Supplier<Block> SKULL_PILE = regBlock(SKULL_PILE_NAME, () -> {
-        var p = BlockBehaviour.Properties.copy(Blocks.SKELETON_SKULL).sound(SoundType.BONE_BLOCK);
+        var p = BlockBehaviour.Properties.ofFullCopy(Blocks.SKELETON_SKULL).sound(SoundType.BONE_BLOCK);
 
         return new DoubleSkullBlock(p);
     });
@@ -232,19 +232,19 @@ public class ModRegistry {
 
     //skulls candles
     public static final Supplier<Block> SKULL_CANDLE = regBlock(SKULL_CANDLE_NAME, () ->
-            new FloorCandleSkullBlock(BlockBehaviour.Properties.copy(Blocks.SKELETON_SKULL).sound(SoundType.BONE_BLOCK)));
+            new FloorCandleSkullBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.SKELETON_SKULL).sound(SoundType.BONE_BLOCK)));
 
     public static final Supplier<Block> SKULL_CANDLE_WALL = regBlock(SKULL_CANDLE_NAME + "_wall", () ->
-            new WallCandleSkullBlock(BlockBehaviour.Properties.copy(SKULL_CANDLE.get())));
+            new WallCandleSkullBlock(BlockBehaviour.Properties.ofFullCopy(SKULL_CANDLE.get())));
 
 
     //needed for tag so it can repel piglins
     public static final Supplier<Block> SKULL_CANDLE_SOUL = regBlock(SKULL_CANDLE_SOUL_NAME, () ->
-            new FloorCandleSkullBlock(BlockBehaviour.Properties.copy(SKULL_CANDLE.get()),
+            new FloorCandleSkullBlock(BlockBehaviour.Properties.ofFullCopy(SKULL_CANDLE.get()),
                     CompatHandler.BUZZIER_BEES ? CompatObjects.SMALL_SOUL_FLAME : () -> ParticleTypes.SOUL_FIRE_FLAME));
 
     public static final Supplier<Block> SKULL_CANDLE_SOUL_WALL = regBlock(SKULL_CANDLE_SOUL_NAME + "_wall", () ->
-            new WallCandleSkullBlock(BlockBehaviour.Properties.copy(SKULL_CANDLE.get()),
+            new WallCandleSkullBlock(BlockBehaviour.Properties.ofFullCopy(SKULL_CANDLE.get()),
                     CompatHandler.BUZZIER_BEES ? CompatObjects.SMALL_SOUL_FLAME : () -> ParticleTypes.SOUL_FIRE_FLAME));
 
 
