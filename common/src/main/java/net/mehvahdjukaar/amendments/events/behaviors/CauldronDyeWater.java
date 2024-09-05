@@ -16,6 +16,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LayeredCauldronBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.BlockHitResult;
 
 public class CauldronDyeWater implements BlockUse {
@@ -40,6 +41,7 @@ public class CauldronDyeWater implements BlockUse {
                 Integer l = state.getValue(LayeredCauldronBlock.LEVEL);
                 level.setBlockAndUpdate(pos, ModRegistry.DYE_CAULDRON.get().defaultBlockState().setValue(DyeCauldronBlock.LEVEL, l));
                 if (level.getBlockEntity(pos) instanceof LiquidCauldronBlockTile te) {
+                    level.gameEvent(player, GameEvent.BLOCK_CHANGE, pos);
                     te.getSoftFluidTank().setFluid(DyeBottleItem.toFluidStack(dye.getDyeColor(), l));
                 }
 

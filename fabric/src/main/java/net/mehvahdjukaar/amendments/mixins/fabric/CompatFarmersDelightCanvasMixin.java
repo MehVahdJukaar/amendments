@@ -1,7 +1,6 @@
 package net.mehvahdjukaar.amendments.mixins.fabric;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.mehvahdjukaar.amendments.AmendmentsClient;
 import net.mehvahdjukaar.amendments.client.renderers.HangingSignRendererExtension;
 import net.mehvahdjukaar.amendments.common.ExtendedHangingSign;
@@ -59,7 +58,7 @@ public abstract class CompatFarmersDelightCanvasMixin extends SignRenderer {
 
             BlockState blockState = tile.getBlockState();
 
-            HangingSignRendererExtension.render(tile, ext.getExtension(), partialTick,
+            HangingSignRendererExtension.render(tile, ext.amendments$getExtension(), partialTick,
                     poseStack, bufferSource, packedLight, packedOverlay,
                     blockState, model, amendments$barModel, amendments$chains,
 

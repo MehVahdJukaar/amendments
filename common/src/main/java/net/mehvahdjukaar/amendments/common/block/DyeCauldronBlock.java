@@ -112,6 +112,7 @@ public class DyeCauldronBlock extends ModCauldronBlock {
                 if (sheep.getColor() != dye) {
                     sheep.setColor(dye);
                     te.consumeOneLayer();
+                    level.gameEvent(entity, GameEvent.BLOCK_CHANGE, pos);
                 }
             }
         }

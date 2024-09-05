@@ -42,10 +42,10 @@ public class ToolHookBlock extends Block implements EntityBlock {
     @Override
     public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return switch (state.getValue(FACING)) {
-            default -> EAST_AABB;
             case WEST -> WEST_AABB;
             case SOUTH -> SOUTH_AABB;
             case NORTH -> NORTH_AABB;
+            default -> EAST_AABB;
         };
     }
 

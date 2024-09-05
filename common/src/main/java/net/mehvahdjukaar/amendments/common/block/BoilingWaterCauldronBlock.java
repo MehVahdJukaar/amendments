@@ -31,6 +31,7 @@ import net.minecraft.world.level.block.LayeredCauldronBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.AABB;
 
 import java.util.ArrayList;
@@ -137,6 +138,7 @@ public class BoilingWaterCauldronBlock extends LayeredCauldronBlock {
                     int newLev = lev == 3 ? te.getSoftFluidTank().getCapacity() : lev;
                     te.getSoftFluidTank().setFluid(fluid.getFirst().copyWithCount(newLev));
                     te.setChanged();
+                    level.gameEvent(entity, GameEvent.BLOCK_CHANGE, pos);
                     level.playSound(null, pos,
                             SoundEvents.BREWING_STAND_BREW,
                             SoundSource.BLOCKS, 0.9f, 0.6F);

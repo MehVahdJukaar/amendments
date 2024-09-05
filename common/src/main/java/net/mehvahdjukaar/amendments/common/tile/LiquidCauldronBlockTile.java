@@ -24,6 +24,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.gameevent.GameEvent;
 
 
 public class LiquidCauldronBlockTile extends BlockEntity implements IExtraModelDataProvider, ISoftFluidTankProvider {
@@ -121,6 +122,7 @@ public class LiquidCauldronBlockTile extends BlockEntity implements IExtraModelD
     public boolean handleInteraction(Player player, InteractionHand hand) {
         //interact with fluid holder
         if (this.fluidTank.interactWithPlayer(player, hand, level, worldPosition)) {
+            level.gameEvent(player, GameEvent.BLOCK_CHANGE, worldPosition);
             this.setChanged();
             return true;
         }

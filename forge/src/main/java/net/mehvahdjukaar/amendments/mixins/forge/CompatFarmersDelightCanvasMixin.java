@@ -59,7 +59,7 @@ public abstract class CompatFarmersDelightCanvasMixin extends SignRenderer {
 
             BlockState blockState = tile.getBlockState();
 
-            HangingSignRendererExtension.render(tile, ext.getExtension(), partialTick,
+            HangingSignRendererExtension.render(tile, ext.amendments$getExtension(), partialTick,
                     poseStack, bufferSource, packedLight, packedOverlay,
                     blockState, model, amendments$barModel, amendments$chains,
 

@@ -41,7 +41,7 @@ public abstract class HangingSignBlockEntityMixin extends BlockEntity implements
     }
 
     @Override
-    public HangingSignTileExtension getExtension() {
+    public HangingSignTileExtension amendments$getExtension() {
         return supplementaries$extension;
     }
 }

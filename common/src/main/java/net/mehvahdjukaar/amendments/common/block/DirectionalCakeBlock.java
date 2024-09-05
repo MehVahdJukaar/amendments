@@ -97,6 +97,7 @@ public class DirectionalCakeBlock extends CakeBlock implements SimpleWaterlogged
 
     protected InteractionResult useGeneric(BlockState state, Level level, BlockPos pos, Player player,
                                            InteractionHand handIn, BlockHitResult hit, boolean canEat) {
+
         ItemStack itemstack = player.getItemInHand(handIn);
         Item item = itemstack.getItem();
 
@@ -128,26 +129,28 @@ public class DirectionalCakeBlock extends CakeBlock implements SimpleWaterlogged
         return hit.getDirection().getAxis() != Direction.Axis.Y ? hit.getDirection() : player.getDirection().getOpposite();
     }
 
-    public InteractionResult eatSliceD(LevelAccessor world, BlockPos pos, BlockState state, Player player, Direction dir) {
+    public InteractionResult eatSliceD(LevelAccessor level, BlockPos pos, BlockState state, Player player, Direction dir) {
         if (!player.canEat(false)) {
             return InteractionResult.PASS;
         } else {
             player.awardStat(Stats.EAT_CAKE_SLICE);
+            level.gameEvent(player, GameEvent.EAT, pos);
             player.getFoodData().eat(2, 0.1F);
-            if (!world.isClientSide()) {
-                this.removeSlice(state, pos, world, dir);
+            if (!level.isClientSide()) {
+                this.removeSlice(state, pos, level, player, dir);
             }
-            return InteractionResult.sidedSuccess(world.isClientSide());
+            return InteractionResult.sidedSuccess(level.isClientSide());
         }
     }
 
-    public void removeSlice(BlockState state, BlockPos pos, LevelAccessor world, Direction dir) {
+    public void removeSlice(BlockState state, BlockPos pos, LevelAccessor level, Player player, Direction dir) {
         int i = state.getValue(BITES);
         if (i < 6) {
             if (i == 0 && CommonConfigs.DIRECTIONAL_CAKE.get()) state = state.setValue(FACING, dir);
-            world.setBlock(pos, state.setValue(BITES, i + 1), 3);
+            level.setBlock(pos, state.setValue(BITES, i + 1), 3);
         } else {
-            world.removeBlock(pos, false);
+            level.removeBlock(pos, false);
+            level.gameEvent(player, GameEvent.BLOCK_DESTROY, pos);
         }
     }
 

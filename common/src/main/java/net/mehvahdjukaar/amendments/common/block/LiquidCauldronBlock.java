@@ -169,6 +169,7 @@ public class LiquidCauldronBlock extends ModCauldronBlock {
                 if (potType != null && potType != PotionNBTHelper.Type.REGULAR &&
                         applyPotionFluidEffects(level, pos, living, fluid)) {
                     tile.consumeOneLayer();
+                    level.gameEvent(entity, GameEvent.BLOCK_CHANGE, pos);
                 }
 
                 if (CompatHandler.ALEX_CAVES) {
@@ -183,6 +184,7 @@ public class LiquidCauldronBlock extends ModCauldronBlock {
                 ModCauldronBlock.playSplashEffects(entity, getContentHeight(state));
 
                 tile.setGlowing(true);
+                level.gameEvent(entity, GameEvent.BLOCK_CHANGE, pos);
                 ie.getItem().shrink(1);
                 if (ie.getItem().isEmpty()) {
                     ie.discard();

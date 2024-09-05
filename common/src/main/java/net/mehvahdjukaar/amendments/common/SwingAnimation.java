@@ -32,4 +32,30 @@ public abstract class SwingAnimation {
     public abstract void setAngle(float angle);
 
     public abstract void reset();
+
+    public static SwingAnimation EMPTY = new SwingAnimation(null) {
+
+        @Override
+        public void tick(Level pLevel, BlockPos pPos, BlockState pState) {
+        }
+
+        @Override
+        public boolean hitByEntity(Entity entity, BlockState state, BlockPos pos) {
+            return false;
+        }
+
+        @Override
+        public float getAngle(float partialTicks) {
+            return 0;
+        }
+
+        @Override
+        public void setAngle(float angle) {
+        }
+
+        @Override
+        public void reset() {
+
+        }
+    };
 }

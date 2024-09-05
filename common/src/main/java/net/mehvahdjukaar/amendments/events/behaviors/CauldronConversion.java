@@ -26,6 +26,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.CauldronBlock;
 import net.minecraft.world.level.block.DispenserBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.Nullable;
 
@@ -124,6 +125,7 @@ public class CauldronConversion implements BlockUse {
                     SoftFluidTank tank = te.getSoftFluidTank();
                     ItemStack returnStack = tank.interactWithItem(stack, level, pos, false);
                     if (returnStack != null) {
+                        level.gameEvent(null, GameEvent.BLOCK_CHANGE, pos);
                         return InteractionResultHolder.success(returnStack);
                     } else {
                         level.setBlockAndUpdate(pos, originalState);
