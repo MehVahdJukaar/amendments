@@ -7,6 +7,7 @@ import net.mehvahdjukaar.moonlight.api.map.ExpandedMapData;
 import net.mehvahdjukaar.moonlight.api.set.BlocksColorAPI;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
@@ -48,7 +49,7 @@ public class CeilingBannerBlock extends AbstractBannerBlock {
 
     @Override
     public List<ItemStack> getDrops(BlockState blockState, LootParams.Builder builder) {
-        return BannerBlock.byColor(this.getColor()).getDrops(blockState, builder);
+        return BannerBlock.byColor(this.getColor()).defaultBlockState().getDrops(builder);
     }
 
     @Override
@@ -61,7 +62,7 @@ public class CeilingBannerBlock extends AbstractBannerBlock {
     }
 
     private boolean canAttach(BlockState state, BlockState above) {
-        if(CompatHandler.SUPPLEMENTARIES){
+        if (CompatHandler.SUPPLEMENTARIES) {
             return SuppCompat.canBannerAttachToRope(state, above);
         }
         return false;
@@ -116,7 +117,8 @@ public class CeilingBannerBlock extends AbstractBannerBlock {
 
     @Override
     public void setPlacedBy(Level pLevel, BlockPos pPos, BlockState pState, @Nullable LivingEntity pPlacer, ItemStack pStack) {
-        if (pStack.hasCustomHoverName()) {
+        //TODO: checl
+        if (pStack.get(DataComponents.CUSTOM_NAME)) {
             if (pLevel.getBlockEntity(pPos) instanceof CeilingBannerBlockTile tile) {
                 tile.setCustomName(pStack.getHoverName());
             }
@@ -141,6 +143,7 @@ public class CeilingBannerBlock extends AbstractBannerBlock {
     }
 
     private String descriptionId;
+
     @Override
     public String getDescriptionId() {
         if (this.descriptionId == null) {

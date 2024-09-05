@@ -7,6 +7,7 @@ import net.mehvahdjukaar.amendments.AmendmentsClient;
 import net.mehvahdjukaar.amendments.common.IBetterJukebox;
 import net.mehvahdjukaar.amendments.configs.ClientConfigs;
 import net.mehvahdjukaar.amendments.integration.CompatObjects;
+import net.mehvahdjukaar.amendments.integration.EtchedCompat;
 import net.mehvahdjukaar.moonlight.api.client.util.RotHlpr;
 import net.mehvahdjukaar.moonlight.api.client.util.VertexUtil;
 import net.minecraft.client.renderer.LevelRenderer;
@@ -27,7 +28,7 @@ public class JukeboxTileRenderer implements BlockEntityRenderer<JukeboxBlockEnti
 
     @Override
     public void render(JukeboxBlockEntity blockEntity, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
-        var item = blockEntity.getFirstItem();
+        var item = blockEntity.getTheItem();
     
         if (!item.isEmpty() && blockEntity.getBlockState().getValue(JukeboxBlock.HAS_RECORD)) {
             poseStack.translate(0.5, 15.25 / 16f, 0.5);
@@ -44,11 +45,10 @@ public class JukeboxTileRenderer implements BlockEntityRenderer<JukeboxBlockEnti
             int lu = upLight & '\uffff';
             int lv = upLight >> 16 & '\uffff';
 
-            CompoundTag tag = item.getTag();
 
             // etched shit
-            if (tag != null && item.getItem() == CompatObjects.ETCHED_DISC.get()) {
-                int color = tag.getInt("DiscColor");
+            if (item.getItem() == CompatObjects.ETCHED_DISC.get()) {
+                int color = EtchedCompat.getDiscColor(item);
                 if (color != 5329233) {
                     builder = AmendmentsClient.TINTED_RECORD.buffer(bufferSource, RenderType::entityCutout);
                     drawColoredQuad(poseStack, builder, lu, lv, color);
@@ -57,8 +57,8 @@ public class JukeboxTileRenderer implements BlockEntityRenderer<JukeboxBlockEnti
                     VertexUtil.addQuad(builder, poseStack, -0.5f, -0.5f, 0.5f, 0.5f, lu, lv);
                 }
 
-                CompoundTag label = tag.getCompound("LabelColor");
-                int pattern = tag.getInt("Pattern");
+                CompoundTag label = EtchedCompat.getLabelColor(item);
+                int pattern = EtchedCompat.getPattern(item);
                 if (!label.isEmpty() && pattern < 6) {
                     builder = AmendmentsClient.RECORD_PATTERNS.get(pattern).buffer(bufferSource, RenderType::entityCutout);
                     int primaryColor = label.getInt("Primary");

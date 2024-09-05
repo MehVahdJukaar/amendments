@@ -35,7 +35,7 @@ public class EnhancedSkullBlockTile extends BlockEntity {
     @Override
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
-        this.innerTile = loadInnerTile("Skull", this.innerTile, tag);
+        this.innerTile = loadInnerTile("Skull", this.innerTile, tag, registries);
     }
 
     protected void saveInnerTile(String tagName, @Nullable SkullBlockEntity tile, CompoundTag tag, HolderLookup.Provider registries) {
@@ -46,15 +46,16 @@ public class EnhancedSkullBlockTile extends BlockEntity {
     }
 
     @Nullable
-    protected SkullBlockEntity loadInnerTile(String tagName, @Nullable SkullBlockEntity tile, CompoundTag tag) {
+    protected SkullBlockEntity loadInnerTile(String tagName, @Nullable SkullBlockEntity tile, CompoundTag tag,
+                                             HolderLookup.Provider registries) {
         if (tag.contains(tagName)) {
             BlockState state = Utils.readBlockState(tag.getCompound(tagName + "State"), this.level);
             CompoundTag tileTag = tag.getCompound(tagName);
             if (tile == null) {
-                BlockEntity newTile = BlockEntity.loadStatic(this.getBlockPos(), state, tileTag);
+                BlockEntity newTile = BlockEntity.loadStatic(this.getBlockPos(), state, tileTag, registries);
                 if (newTile instanceof SkullBlockEntity skullTile) return skullTile;
             } else {
-                tile.load(tileTag);
+                tile.loadWithComponents(tileTag, registries);
                 return tile;
             }
         }
@@ -81,8 +82,10 @@ public class EnhancedSkullBlockTile extends BlockEntity {
 
     public void initialize(SkullBlockEntity oldTile, ItemStack stack, Player player, InteractionHand hand) {
         // this.setOwner(oldTile.getOwnerProfile());
+        var registries = player.level().registryAccess();
         this.innerTile = (SkullBlockEntity) oldTile.getType().create(this.getBlockPos(), oldTile.getBlockState());
-        if (this.innerTile != null) this.innerTile.load(oldTile.saveWithoutMetadata());
+        if (this.innerTile != null) this.innerTile.loadWithComponents(oldTile
+                .saveWithoutMetadata(registries), registries);
     }
 
     @Nullable

@@ -107,7 +107,7 @@ public class CandleHolderRendererExtension implements IThirdPersonAnimationProvi
         int lv = LightTexture.FULL_BRIGHT >> 16 & '\uffff';
 
         float period = 20;
-        float t = ((entity.tickCount + Minecraft.getInstance().getFrameTime()) % period) / period;
+        float t = ((entity.tickCount + Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(false)) % period) / period;
         float ss = (1.0F - t * t * 0.4F);
 
         float scale = ss * 2 / 16f;
