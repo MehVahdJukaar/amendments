@@ -3,6 +3,7 @@ package net.mehvahdjukaar.amendments.common.network;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.mehvahdjukaar.amendments.Amendments;
+import net.mehvahdjukaar.amendments.common.ISwingingTile;
 import net.mehvahdjukaar.amendments.common.tile.SwayingBlockTile;
 import net.mehvahdjukaar.moonlight.api.platform.network.Message;
 import net.minecraft.client.Minecraft;
@@ -38,8 +39,8 @@ public record ClientBoundEntityHitSwayingBlockMessage(BlockPos pos, int entity) 
         ClientLevel level = Minecraft.getInstance().level;
         if (level != null) {
             Entity e = level.getEntity(entity);
-            if (level.getBlockEntity(pos) instanceof SwayingBlockTile tile && e != null) {
-                tile.getAnimation().hitByEntity(e, level.getBlockState(pos), pos);
+            if (level.getBlockEntity(pos) instanceof ISwingingTile tile && e != null) {
+                tile.amendments$getAnimation().hitByEntity(e, level.getBlockState(pos), pos);
             }
         }
     }

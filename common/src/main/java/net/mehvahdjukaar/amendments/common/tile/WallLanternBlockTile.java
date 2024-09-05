@@ -1,6 +1,9 @@
 package net.mehvahdjukaar.amendments.common.tile;
 
+import net.mehvahdjukaar.amendments.common.SwayingAnimation;
+import net.mehvahdjukaar.amendments.common.SwingAnimation;
 import net.mehvahdjukaar.amendments.common.block.WallLanternBlock;
+import net.mehvahdjukaar.amendments.configs.ClientConfigs;
 import net.mehvahdjukaar.amendments.integration.CompatHandler;
 import net.mehvahdjukaar.amendments.integration.ThinAirCompat;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
@@ -39,6 +42,11 @@ public class WallLanternBlockTile extends SwayingBlockTile implements IBlockHold
 
     public WallLanternBlockTile(BlockPos pos, BlockState state) {
         super(ModRegistry.WALL_LANTERN_TILE.get(), pos, state);
+    }
+
+    @Override
+    public boolean isNeverFancy() {
+        return ClientConfigs.FAST_LANTERNS.get();
     }
 
     public boolean isRedstoneLantern() {
@@ -129,6 +137,5 @@ public class WallLanternBlockTile extends SwayingBlockTile implements IBlockHold
     public void setOwner(@Nullable UUID owner) {
         this.owner = owner;
     }
-
 
 }

@@ -63,15 +63,15 @@ public class DoubleCakeBlock extends DirectionalCakeBlock {
     @Override
     public VoxelShape getShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
         return switch (state.getValue(FACING)) {
-            default -> SHAPES_WEST[state.getValue(BITES)];
             case EAST -> SHAPES_EAST[state.getValue(BITES)];
             case SOUTH -> SHAPES_SOUTH[state.getValue(BITES)];
             case NORTH -> SHAPES_NORTH[state.getValue(BITES)];
+            default -> SHAPES_WEST[state.getValue(BITES)];
         };
     }
 
     @Override
-    public void removeSlice(BlockState state, BlockPos pos, LevelAccessor level, Direction dir) {
+    public void removeSlice(BlockState state, BlockPos pos, LevelAccessor level, Player player, Direction dir) {
         int i = state.getValue(BITES);
         if (i < 6) {
             if (i == 0 && CommonConfigs.DIRECTIONAL_CAKE.get()) state = state.setValue(FACING, dir);
@@ -134,7 +134,7 @@ public class DoubleCakeBlock extends DirectionalCakeBlock {
             level.setBlockAndUpdate(pos, state);
             if (res.consumesAction()) {
                 if (!level.isClientSide()) {
-                    this.removeSlice(state, pos, level, getHitDir(player, hit));
+                    this.removeSlice(state, pos, level, player, getHitDir(player, hit));
                 }
                 return res;
             }

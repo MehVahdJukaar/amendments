@@ -45,7 +45,7 @@ public class HangingSignDisplayItem implements BlockUse {
         if (!isEnabled()) return InteractionResult.PASS;
         if (level.getBlockEntity(pos) instanceof ExtendedHangingSign e) {
             SignBlockEntity be = ((SignBlockEntity) e);
-            HangingSignTileExtension ext = e.getExtension();
+            HangingSignTileExtension ext = e.amendments$getExtension();
             if (!be.isWaxed()) {
                 boolean front = be.isFacingFrontText(player);
 

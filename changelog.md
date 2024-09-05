@@ -1,13 +1,4 @@
-- you can now add glow ink to cauldrons to make them glow
-- fixed a crash when crafting soup on fabric
-- fixed cauldron splash particles and sounds not workin on servers for other players
-- added more unique disc textures
-- improved carpet stairs block rotation logic
-- fixed cauldron fluid capability consuming fluid when using simulate action
-- fixed cauldrons not accounting for unlit campfires. Added more blocks to cauldron heat sources tag
-- wall lanterns and hanging sing animation will now properly be synced on servers
-- fixed dye bottle recipe not preserving the item nbt
-- added config to tweak held torch and candle sizes
-- fixed quark matrix enchant compat for skull candles not working
-- campfires will no longer emit smoke particles when having a cauldron above
-- added config to further limit campfire smoke through blocks
+- hitting a lantern or sign will now emit a game event detectable by sculk
+- fixed an issue with swinging animation on servers
+- all cauldron interaction will now properly emit a game event
+- double cake and directional cakes will also emit game events

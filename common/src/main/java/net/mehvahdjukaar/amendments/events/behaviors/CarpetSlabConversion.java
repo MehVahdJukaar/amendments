@@ -18,6 +18,7 @@ import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.SlabBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.SlabType;
+import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.BlockHitResult;
 
 public class CarpetSlabConversion implements ItemUseOnBlock {
@@ -59,7 +60,7 @@ public class CarpetSlabConversion implements ItemUseOnBlock {
 
                 InteractionResult result = InteractEvents.replaceSimilarBlock(ModRegistry.CARPET_SLAB.get(),
                         player, stack, pos, level, slabState, carpet.getSoundType(),
-                        false,false, SlabBlock.TYPE, SlabBlock.WATERLOGGED);
+                        false,true, SlabBlock.TYPE, SlabBlock.WATERLOGGED);
 
                 if (result.consumesAction()) {
                     if (level.getBlockEntity(pos) instanceof CarpetedBlockTile tile) {

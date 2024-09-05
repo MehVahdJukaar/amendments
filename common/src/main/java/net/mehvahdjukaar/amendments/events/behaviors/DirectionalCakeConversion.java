@@ -15,6 +15,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.CakeBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
@@ -34,7 +35,7 @@ class DirectionalCakeConversion implements BlockUse {
 
     @Override
     public boolean appliesToBlock(Block block) {
-        return block == net.minecraft.world.level.block.Blocks.CAKE || (block.builtInRegistryHolder().is(BlockTags.CANDLE_CAKES) && Utils.getID(block).getNamespace().equals("minecraft"));
+        return block == Blocks.CAKE || (block.builtInRegistryHolder().is(BlockTags.CANDLE_CAKES) && Utils.getID(block).getNamespace().equals("minecraft"));
     }
 
     @Override
@@ -45,7 +46,7 @@ class DirectionalCakeConversion implements BlockUse {
         if (state.is(BlockTags.CANDLE_CAKES) && stack.is(ItemTags.CANDLES)) {
             return InteractionResult.PASS;
         }
-        if (state.is(net.minecraft.world.level.block.Blocks.CAKE) && (stack.is(ItemTags.CANDLES) || player.getDirection() == Direction.EAST || state.getValue(CakeBlock.BITES) != 0)) {
+        if (state.is(Blocks.CAKE) && (stack.is(ItemTags.CANDLES) || player.getDirection() == Direction.EAST || state.getValue(CakeBlock.BITES) != 0)) {
             return InteractionResult.PASS;
         }
         if (!(CommonConfigs.DOUBLE_CAKES.get() && stack.is(Items.CAKE))) {

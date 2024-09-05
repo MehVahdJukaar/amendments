@@ -89,6 +89,7 @@ public abstract class ModCauldronBlock extends AbstractCauldronBlock implements 
                 if (entity.mayInteract(level, pos)) {
                     if (level.getBlockEntity(pos) instanceof LiquidCauldronBlockTile te) {
                         te.consumeOneLayer();
+                        level.gameEvent(entity, GameEvent.BLOCK_CHANGE, pos);
                     }
                 }
             }

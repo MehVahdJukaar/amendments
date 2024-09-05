@@ -173,8 +173,8 @@ public class InteractEvents {
             return switch (ret) {
                 case CONSUME -> InteractionResultHolder.consume(stack);
                 case SUCCESS -> InteractionResultHolder.success(stack);
-                default -> InteractionResultHolder.pass(stack);
                 case FAIL -> InteractionResultHolder.fail(stack);
+                default -> InteractionResultHolder.pass(stack);
             };
         }
         return InteractionResultHolder.pass(stack);

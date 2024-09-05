@@ -4,7 +4,6 @@ import net.mehvahdjukaar.amendments.common.network.ClientBoundEntityHitSwayingBl
 import net.mehvahdjukaar.amendments.common.network.ModNetwork;
 import net.mehvahdjukaar.amendments.common.tile.SwayingBlockTile;
 import net.mehvahdjukaar.amendments.common.tile.WallLanternBlockTile;
-import net.mehvahdjukaar.amendments.configs.ClientConfigs;
 import net.mehvahdjukaar.amendments.configs.CommonConfigs;
 import net.mehvahdjukaar.amendments.integration.CompatHandler;
 import net.mehvahdjukaar.amendments.integration.SuppCompat;
@@ -43,10 +42,12 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.*;
+import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.pathfinder.PathComputationType;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
@@ -241,12 +242,14 @@ public class WallLanternBlock extends WaterBlock implements EntityBlock {
     @Override
     public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
         super.entityInside(state, level, pos, entity);
-        if (ClientConfigs.FAST_LANTERNS.get()) return;
         if (level.isClientSide) {
             if (level.getBlockEntity(pos) instanceof WallLanternBlockTile tile) {
-                tile.getAnimation().hitByEntity(entity, state, pos);
+                tile.amendments$getAnimation().hitByEntity(entity, state, pos);
             }
         } else  {
+            if (entity.xo != entity.getX() || entity.zo != entity.getZ() || entity.yo != entity.getY()) {
+                level.gameEvent(entity, GameEvent.BLOCK_ACTIVATE, pos);
+            }
             NetworkHelper.sentToAllClientPlayersTrackingEntity(entity, new ClientBoundEntityHitSwayingBlockMessage(pos, entity.getId()));
         }
     }

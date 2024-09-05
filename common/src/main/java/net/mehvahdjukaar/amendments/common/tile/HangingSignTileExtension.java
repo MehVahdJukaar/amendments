@@ -1,6 +1,7 @@
 package net.mehvahdjukaar.amendments.common.tile;
 
 import net.mehvahdjukaar.amendments.Amendments;
+import net.mehvahdjukaar.amendments.common.ISwingingTile;
 import net.mehvahdjukaar.amendments.common.PendulumAnimation;
 import net.mehvahdjukaar.amendments.common.SwingAnimation;
 import net.mehvahdjukaar.amendments.configs.ClientConfigs;
@@ -170,8 +171,10 @@ public class HangingSignTileExtension {
 
     // Just call from client
     public SwingAnimation getClientAnimation() {
+        if (!ClientConfigs.SWINGING_SIGNS.get()) return SwingAnimation.EMPTY;
         if (animation == null) {
-            animation = new PendulumAnimation(ClientConfigs.HANGING_SIGN_CONFIG, this::getRotationAxis);
+            animation = new PendulumAnimation(ClientConfigs.HANGING_SIGN_CONFIG,
+                    this::getRotationAxis);
         }
         return animation;
     }

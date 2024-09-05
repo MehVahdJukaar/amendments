@@ -15,7 +15,6 @@ import net.minecraft.client.renderer.blockentity.HangingSignRenderer;
 import net.minecraft.client.renderer.blockentity.SignRenderer;
 import net.minecraft.client.resources.model.Material;
 import net.minecraft.world.level.block.SignBlock;
-import net.minecraft.world.level.block.entity.HangingSignBlockEntity;
 import net.minecraft.world.level.block.entity.SignBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.WoodType;
@@ -61,7 +60,7 @@ public abstract class HangingSignRendererMixin extends SignRenderer {
             HangingSignRenderer.HangingSignModel model = this.hangingSignModels.get(woodType);
 
             boolean translucent = woodType.name().equals("rats:pirat");
-            HangingSignRendererExtension.render(tile, hs.getExtension(),
+            HangingSignRendererExtension.render(tile, hs.amendments$getExtension(),
                     partialTick, poseStack, bufferSource, packedLight, packedOverlay,
                     blockState, model, amendments$barModel, amendments$chains,
                     this.getSignMaterial(woodType),

@@ -1,5 +1,6 @@
 package net.mehvahdjukaar.amendments.common;
 
+import net.mehvahdjukaar.amendments.configs.ClientConfigs;
 import net.mehvahdjukaar.moonlight.api.block.WaterBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundSource;

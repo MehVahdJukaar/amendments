@@ -19,10 +19,12 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.CeilingHangingSignBlock;
 import net.minecraft.world.level.block.EntityBlock;
+import net.minecraft.world.level.block.WallHangingSignBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.BlockHitResult;
@@ -35,7 +37,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import java.util.ArrayList;
 import java.util.List;
 
-@Mixin(CeilingHangingSignBlock.class)
+@Mixin(targets = {"net.minecraft.world.level.block.WallHangingSignBlock", "net.minecraft.world.level.block.CeilingHangingSignBlock"})
 public abstract class CeilingHangingSignBlockMixin extends Block implements EntityBlock {
 
     protected CeilingHangingSignBlockMixin(Properties properties) {
@@ -45,7 +47,7 @@ public abstract class CeilingHangingSignBlockMixin extends Block implements Enti
     @Inject(method = "updateShape", at = @At("HEAD"))
     public void amendments$updateExtension(BlockState state, Direction direction, BlockState neighborState, LevelAccessor level, BlockPos currentPos, BlockPos neighborPos, CallbackInfoReturnable<BlockState> cir) {
         if (level.getBlockEntity(currentPos) instanceof ExtendedHangingSign tile) {
-            tile.getExtension().updateShape(state, direction, neighborState, level, currentPos, neighborPos);
+            tile.amendments$getExtension().updateShape(state, direction, neighborState, level, currentPos, neighborPos);
         }
     }
 
@@ -53,18 +55,20 @@ public abstract class CeilingHangingSignBlockMixin extends Block implements Enti
     public void setPlacedBy(Level level, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
         super.setPlacedBy(level, pos, state, placer, stack);
         if (level.getBlockEntity(pos) instanceof ExtendedHangingSign tile) {
-            tile.getExtension().updateAttachments(level, pos, state);
+            tile.amendments$getExtension().updateAttachments(level, pos, state);
         }
     }
 
     @Override
     public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
         super.entityInside(state, level, pos, entity);
-        if (ClientConfigs.SWINGING_SIGNS.get() &&
-                level.getBlockEntity(pos) instanceof ExtendedHangingSign tile && tile.getExtension().canSwing()) {
+        if (level.getBlockEntity(pos) instanceof ExtendedHangingSign tile && tile.amendments$getExtension().canSwing()) {
             if (level.isClientSide) {
-                tile.getExtension().getClientAnimation().hitByEntity(entity, state, pos);
-            }else{
+                tile.amendments$getExtension().getClientAnimation().hitByEntity(entity, state, pos);
+            } else {
+                if (entity.xo != entity.getX() || entity.zo != entity.getZ() || entity.yo != entity.getY()) {
+                    level.gameEvent(entity, GameEvent.BLOCK_ACTIVATE, pos);
+                }
                 ModNetwork.CHANNEL.sentToAllClientPlayersTrackingEntity(entity, new ClientBoundEntityHitSwayingBlockMessage(pos, entity.getId()));
             }
         }
@@ -75,7 +79,7 @@ public abstract class CeilingHangingSignBlockMixin extends Block implements Enti
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level pLevel, BlockState pState, BlockEntityType<T> pBlockEntityType) {
         return !pLevel.isClientSide ? null : (level, blockPos, blockState, blockEntity) -> {
             if (ClientConfigs.SWINGING_SIGNS.get() && blockEntity instanceof ExtendedHangingSign te) {
-                te.getExtension().clientTick(level, blockPos, blockState);
+                te.amendments$getExtension().clientTick(level, blockPos, blockState);
             }
         };
     }
@@ -95,9 +99,9 @@ public abstract class CeilingHangingSignBlockMixin extends Block implements Enti
     public List<ItemStack> getDrops(BlockState state, LootParams.Builder params) {
         var list = new ArrayList<>(super.getDrops(state, params));
         if (params.getOptionalParameter(LootContextParams.BLOCK_ENTITY) instanceof ExtendedHangingSign tile) {
-            ItemStack backItem = tile.getExtension().getBackItem();
+            ItemStack backItem = tile.amendments$getExtension().getBackItem();
             if (!backItem.isEmpty()) list.add(backItem);
-            ItemStack frontItem = tile.getExtension().getFrontItem();
+            ItemStack frontItem = tile.amendments$getExtension().getFrontItem();
             if (!frontItem.isEmpty()) list.add(frontItem);
         }
         return list;
