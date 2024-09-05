@@ -73,7 +73,7 @@ public class CommonConfigs {
     public static final ModConfigHolder SPEC;
 
     static {
-        ConfigBuilder builder = ConfigBuilder.create(Amendments.MOD_ID, ConfigType.COMMON);
+        ConfigBuilder builder = ConfigBuilder.create(Amendments.MOD_ID, ConfigType.COMMON_SYNCED);
 
         builder.push("lectern");
         LECTERN_STUFF = builder.comment("Improved lectern screen allowing to edit font of a book while on it")
@@ -203,9 +203,8 @@ public class CommonConfigs {
                 .define("better_lilypads", true);
         builder.pop();
 
-        builder.setSynced();
-        SPEC = builder.buildAndRegister();
-        SPEC.loadFromFile();
+        SPEC = builder.build();
+        SPEC.forceLoad();
     }
 
     private static Map<MobEffect, MobEffect> getInverseEffects() {

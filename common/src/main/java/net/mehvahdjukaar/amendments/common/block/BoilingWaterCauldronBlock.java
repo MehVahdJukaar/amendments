@@ -1,6 +1,8 @@
 package net.mehvahdjukaar.amendments.common.block;
 
-import net.mehvahdjukaar.amendments.common.recipe.DummyContainer;
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.mehvahdjukaar.amendments.common.recipe.CauldronRecipeInput;
 import net.mehvahdjukaar.amendments.common.tile.LiquidCauldronBlockTile;
 import net.mehvahdjukaar.amendments.reg.ModBlockProperties;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
@@ -18,9 +20,9 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.inventory.CraftingContainer;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.Level;
@@ -36,19 +38,30 @@ import net.minecraft.world.phys.AABB;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.function.Predicate;
 
 import static net.mehvahdjukaar.amendments.events.behaviors.CauldronConversion.getNewState;
 
 public class BoilingWaterCauldronBlock extends LayeredCauldronBlock {
+    public static final MapCodec<BoilingWaterCauldronBlock> CODEC = RecordCodecBuilder.mapCodec((i) -> i.group(
+            Biome.Precipitation.CODEC.fieldOf("precipitation").forGetter((c) -> c.precipitationType),
+            CauldronInteraction.CODEC.fieldOf("interactions").forGetter((c) -> c.interactions),
+            propertiesCodec()).apply(i, BoilingWaterCauldronBlock::new));
 
     public static final BooleanProperty BOILING = ModBlockProperties.BOILING;
+    private final Biome.Precipitation precipitationType;
 
-    public BoilingWaterCauldronBlock(Properties properties, Biome.Precipitation fillPredicate,
-                                     CauldronInteraction.InteractionMap interactions) {
-        super(fillPredicate, interactions, properties);
+    public BoilingWaterCauldronBlock(Biome.Precipitation precipitationType,
+                                     CauldronInteraction.InteractionMap interactions,
+                                     Properties properties) {
+        super(precipitationType, interactions, properties);
+        this.precipitationType = precipitationType;
         this.registerDefaultState(this.defaultBlockState().setValue(BOILING, false));
+    }
+
+    @SuppressWarnings("all")
+    @Override
+    public MapCodec codec() {
+        return CODEC;
     }
 
     @Override
@@ -122,10 +135,10 @@ public class BoilingWaterCauldronBlock extends LayeredCauldronBlock {
 
         ingredients.add(Items.BOWL.getDefaultInstance());
 
-        CraftingContainer container = DummyContainer.of(ingredients);
+        CraftingInput container = CauldronRecipeInput.of(ingredients);
         var recipes = level.getRecipeManager().getRecipesFor(RecipeType.CRAFTING, container, level);
         for (var r : recipes) {
-            ItemStack result = r.assemble(container, level.registryAccess());
+            ItemStack result = r.value().assemble(container, level.registryAccess());
             if (result.isEmpty()) continue;
             var fluid = SoftFluidStack.fromItem(result);
             if (fluid == null) continue;
@@ -156,7 +169,7 @@ public class BoilingWaterCauldronBlock extends LayeredCauldronBlock {
             while (iter.hasNext()) {
                 ItemEntity e = iter.next();
                 ItemStack itemEntityItem = e.getItem();
-                if (ItemStack.isSameItemSameTags(itemEntityItem, v)) {
+                if (ItemStack.isSameItemSameComponents(itemEntityItem, v)) {
                     itemEntityItem.shrink(1);
                     if (itemEntityItem.isEmpty()) {
                         e.discard();

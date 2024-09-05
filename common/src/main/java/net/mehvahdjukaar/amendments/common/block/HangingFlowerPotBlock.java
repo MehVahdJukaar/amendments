@@ -110,9 +110,7 @@ public class HangingFlowerPotBlock extends Block implements EntityBlock {
                         playPlantSound(level, pos, player);
 
                         player.awardStat(Stats.POT_FLOWER);
-                        if (!player.getAbilities().instabuild) {
-                            itemstack.shrink(1);
-                        }
+                        itemstack.consume(1, player);
                     } else {
                         //drop item
                         ItemStack flowerItem = pot.getCloneItemStack(level, pos, state);

@@ -1,6 +1,8 @@
 package net.mehvahdjukaar.amendments.common.block;
 
 
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.mehvahdjukaar.amendments.common.tile.CarpetedBlockTile;
 import net.mehvahdjukaar.amendments.reg.ModBlockProperties;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
@@ -11,10 +13,10 @@ import net.mehvahdjukaar.moonlight.api.block.ModStairBlock;
 import net.mehvahdjukaar.moonlight.api.misc.ForgeOverride;
 import net.mehvahdjukaar.moonlight.api.platform.ForgeHelper;
 import net.mehvahdjukaar.moonlight.api.set.BlocksColorAPI;
-import net.mehvahdjukaar.moonlight.api.util.Utils;
 import net.mehvahdjukaar.moonlight.api.util.math.MthUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
@@ -53,15 +55,13 @@ import java.util.Optional;
 import java.util.stream.IntStream;
 
 public class CarpetStairBlock extends ModStairBlock implements EntityBlock, IRecolorable, IRotatable {
+    public static final MapCodec<CarpetStairBlock> CODEC = RecordCodecBuilder.mapCodec((i) -> i.group(
+            BuiltInRegistries.BLOCK.byNameCodec().fieldOf("base_block")
+                    .forGetter(CarpetStairBlock::getBaseBlock), propertiesCodec()
+    ).apply(i, CarpetStairBlock::new));
 
     public static final IntegerProperty LIGHT_LEVEL = ModBlockProperties.LIGHT_LEVEL;
     public static final BooleanProperty SOLID = ModBlockProperties.SOLID;
-
-    public CarpetStairBlock(Block block) {
-        super(() -> block, Utils.copyPropertySafe(block)
-                .lightLevel(state -> Math.max(0, state.getValue(LIGHT_LEVEL))));
-        this.registerDefaultState(this.defaultBlockState().setValue(SOLID, true).setValue(LIGHT_LEVEL, 0));
-    }
 
     protected static final VoxelShape BOTTOM_AABB = Block.box(0.0, 0.0, -1.0, 16.0, 9.0, 16.0);
     protected static final VoxelShape OCTET_NPN = Block.box(0.0, 8.0, 0.0, 9.0, 17.0, 9.0);
@@ -73,7 +73,7 @@ public class CarpetStairBlock extends ModStairBlock implements EntityBlock, IRec
 
     private static VoxelShape[] makeShapes() {
         return IntStream.range(0, 16)
-                .mapToObj(CarpetStairBlock::makeStairShape)
+                .mapToObj(net.mehvahdjukaar.amendments.common.block.CarpetStairBlock::makeStairShape)
                 .toArray(VoxelShape[]::new);
     }
 
@@ -99,6 +99,17 @@ public class CarpetStairBlock extends ModStairBlock implements EntityBlock, IRec
             voxelShape = Shapes.or(voxelShape, OCTET_PPP);
         }
         return voxelShape;
+    }
+
+    public CarpetStairBlock(Block block, Properties properties) {
+        super(() -> block, properties
+                .lightLevel(state -> Math.max(0, state.getValue(LIGHT_LEVEL))));
+        this.registerDefaultState(this.defaultBlockState().setValue(SOLID, true).setValue(LIGHT_LEVEL, 0));
+    }
+
+    @Override
+    public MapCodec<? extends CarpetStairBlock> codec() {
+        return CODEC;
     }
 
     @Override

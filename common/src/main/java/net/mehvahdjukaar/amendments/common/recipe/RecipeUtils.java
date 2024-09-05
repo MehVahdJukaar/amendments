@@ -4,11 +4,11 @@ import com.mojang.datafixers.util.Pair;
 import net.mehvahdjukaar.amendments.common.item.DyeBottleItem;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluid;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidStack;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.DyeItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 
@@ -55,13 +55,14 @@ public class RecipeUtils {
 
 
     public static ItemStack simulateCrafting(Level level, ItemStack dye, ItemStack playerItem, boolean surround) {
-        DummyContainer container = surround ? DummyContainer.surround(dye.copy(), playerItem.copy()) :
-                DummyContainer.of(dye.copy(), playerItem.copy());
+        CraftingInput container = surround ? CauldronRecipeInput.surround(dye.copy(), playerItem.copy()) :
+                CauldronRecipeInput.of(dye.copy(), playerItem.copy());
         var recipes = level.getRecipeManager().getRecipesFor(RecipeType.CRAFTING, container, level);
         for (var r : recipes) {
-            ItemStack recolored = r.assemble(container, level.registryAccess());
+            var recipe = r.value();
+            ItemStack recolored = recipe.assemble(container, level.registryAccess());
             if (!recolored.isEmpty() && !playerItem.equals(recolored)) {
-                var remainingItems = r.getRemainingItems(container);
+                var remainingItems = recipe.getRemainingItems(container);
                 remainingItems.remove(Items.GLASS_BOTTLE.getDefaultInstance());
                 if (remainingItems.stream().noneMatch(i -> !i.isEmpty() && !i.is(Items.GLASS_BOTTLE))) {
                     return recolored;

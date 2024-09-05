@@ -179,9 +179,8 @@ public abstract class AbstractCandleSkullBlock extends AbstractCandleBlock imple
 
                     SoundType sound = blockItem.getBlock().defaultBlockState().getSoundType();
                     level.playSound(player, pos, sound.getPlaceSound(), SoundSource.BLOCKS, (sound.getVolume() + 1.0F) / 2.0F, sound.getPitch() * 0.8F);
-                    if (!player.getAbilities().instabuild) {
-                        stack.shrink(1);
-                    }
+                    stack.consume(1, player);
+
                     if (player instanceof ServerPlayer serverPlayer) {
                         CriteriaTriggers.ITEM_USED_ON_BLOCK.trigger(serverPlayer, pos, stack);
                     }

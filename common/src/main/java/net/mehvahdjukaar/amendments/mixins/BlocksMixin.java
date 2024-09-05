@@ -29,7 +29,7 @@ public class BlocksMixin {
             )
     )
     private static LayeredCauldronBlock amendments$overrideCauldron(Biome.Precipitation precipitation, CauldronInteraction.InteractionMap interactions, BlockBehaviour.Properties properties) {
-        return new BoilingWaterCauldronBlock(properties, precipitation, interactions);
+        return new BoilingWaterCauldronBlock(precipitation, interactions, properties);
     }
 }
 

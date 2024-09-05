@@ -108,7 +108,7 @@ public class StructureCauldronHack extends Block implements EntityBlock {
                 level.setBlockAndUpdate(pos, ModRegistry.DYE_CAULDRON.get().defaultBlockState());
                 if (level.getBlockEntity(pos) instanceof LiquidCauldronBlockTile te) {
                     var dye = DyeColor.byId(level.random.nextInt(DyeColor.values().length));
-                    var fluid = DyeBottleItem.toFluidStack(dye, 3);
+                    var fluid = DyeBottleItem.createFluidStack(dye, 3);
                     te.getSoftFluidTank().setFluid(fluid);
                     te.setChanged();
                 }

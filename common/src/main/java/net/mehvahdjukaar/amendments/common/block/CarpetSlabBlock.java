@@ -1,6 +1,7 @@
 package net.mehvahdjukaar.amendments.common.block;
 
 
+import com.mojang.serialization.MapCodec;
 import net.mehvahdjukaar.amendments.common.tile.CarpetedBlockTile;
 import net.mehvahdjukaar.amendments.reg.ModBlockProperties;
 import net.mehvahdjukaar.moonlight.api.block.IBlockHolder;
@@ -45,15 +46,20 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class CarpetSlabBlock extends SlabBlock implements EntityBlock, IRecolorable {
+    public static final MapCodec<CarpetSlabBlock> CODEC = simpleCodec(CarpetSlabBlock::new);
 
     public static final IntegerProperty LIGHT_LEVEL = ModBlockProperties.LIGHT_LEVEL;
     public static final BooleanProperty SOLID = ModBlockProperties.SOLID;
     protected static final VoxelShape BOTTOM_AABB = Block.box(0.0, 0.0, 0.0, 16.0, 9.0, 16.0);
 
-    public CarpetSlabBlock(Block block) {
-        super(Utils.copyPropertySafe(block)
-                .lightLevel(state ->  state.getValue(LIGHT_LEVEL)));
+    public CarpetSlabBlock(Properties properties) {
+        super(properties.lightLevel(state ->  state.getValue(LIGHT_LEVEL)));
         this.registerDefaultState(this.defaultBlockState().setValue(SOLID, true).setValue(LIGHT_LEVEL, 0));
+    }
+
+    @Override
+    public MapCodec<? extends CarpetSlabBlock> codec() {
+        return CODEC;
     }
 
     @Override

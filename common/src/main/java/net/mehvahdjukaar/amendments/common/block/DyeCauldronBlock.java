@@ -139,10 +139,7 @@ public class DyeCauldronBlock extends ModCauldronBlock {
         level.playSound(player, pos, SoundEvents.DYE_USE, SoundSource.BLOCKS, 1.0F, 1.0F);
         level.playSound(player, pos, SoundEvents.BUCKET_EMPTY, SoundSource.BLOCKS, 1.0F, 1.3f);
 
-
-        if (!player.isCreative()) {
-            stack.shrink(1);
-        }
+        stack.consume(1, player);
     }
 
     public static InteractionResult addDye(Level level, LiquidCauldronBlockTile tile, ItemStack stack, Player player, DyeItem dyeItem) {
@@ -150,12 +147,15 @@ public class DyeCauldronBlock extends ModCauldronBlock {
         if (!level.isClientSide()) {
             int count = fluid.getCount();
             if (count == 3) fluid.setCount(2); //hack!!
-            SoftFluidStack dummyStack = DyeBottleItem.toFluidStack(dyeItem.getDyeColor(), 1);
+            SoftFluidStack dummyStack = DyeBottleItem.createFluidStack(dyeItem.getDyeColor(), 1);
 
-            LiquidMixer.mixDye(fluid, dummyStack);
+            var mixed = LiquidMixer.mixDye(fluid, dummyStack);
+            if (mixed != null) {
+                mixed.setCount(count);
+                tile.getSoftFluidTank().setFluid(mixed);
+                tile.setChanged();
+            } else fluid.setCount(count);
 
-            fluid.setCount(count);
-            tile.setChanged();
         }
 
         playDyeSoundAndConsume(tile.getBlockState(), tile.getBlockPos(), level, player, stack);

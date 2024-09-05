@@ -25,6 +25,7 @@ import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
@@ -113,13 +114,11 @@ public class DirectionalCakeBlock extends CakeBlock implements SimpleWaterlogged
 
         if (itemstack.is(ItemTags.CANDLES) && state.getValue(BITES) == 0 && state.is(ModRegistry.DIRECTIONAL_CAKE.get())) {
             Block block = Block.byItem(item);
-            if (block instanceof CandleBlock) {
-                if (!player.isCreative()) {
-                    itemstack.shrink(1);
-                }
+            if (block instanceof CandleBlock cb) {
+                itemstack.consume(1, player);
 
                 level.playSound(null, pos, SoundEvents.CAKE_ADD_CANDLE, SoundSource.BLOCKS, 1.0F, 1.0F);
-                level.setBlockAndUpdate(pos, CandleCakeBlock.byCandle(block));
+                level.setBlockAndUpdate(pos, CandleCakeBlock.byCandle(cb));
                 level.gameEvent(player, GameEvent.BLOCK_CHANGE, pos);
                 player.awardStat(Stats.ITEM_USED.get(item));
                 return InteractionResult.SUCCESS;
@@ -160,7 +159,7 @@ public class DirectionalCakeBlock extends CakeBlock implements SimpleWaterlogged
     }
 
     @Override
-    public ItemStack getCloneItemStack(BlockGetter level, BlockPos pos, BlockState state) {
+    public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state) {
         return new ItemStack(Items.CAKE);
     }
 

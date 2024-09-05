@@ -1,5 +1,7 @@
 package net.mehvahdjukaar.amendments.common.block;
 
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import net.mehvahdjukaar.amendments.common.CakeRegistry;
 import net.mehvahdjukaar.amendments.configs.CommonConfigs;
 import net.mehvahdjukaar.amendments.integration.CompatHandler;
@@ -29,6 +31,8 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import java.util.Arrays;
 
 public class DoubleCakeBlock extends DirectionalCakeBlock {
+    public static final Codec<DoubleCakeBlock> CODEC = simpleCodec(DoubleCakeBlock::new);
+
     protected static final VoxelShape[] SHAPES_NORTH = new VoxelShape[]{
             Shapes.or(box(2, 8, 2, 14, 16, 14),
                     box(1, 0, 1, 15, 8, 15)),
@@ -58,6 +62,12 @@ public class DoubleCakeBlock extends DirectionalCakeBlock {
     public DoubleCakeBlock(CakeRegistry.CakeType type) {
         super(type);
         this.mimic = type.cake.defaultBlockState();
+    }
+
+    @SuppressWarnings("all")
+    @Override
+    public MapCodec codec() {
+        return CODEC;
     }
 
     @Override

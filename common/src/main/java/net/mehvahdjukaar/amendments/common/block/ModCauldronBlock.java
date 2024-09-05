@@ -1,7 +1,7 @@
 package net.mehvahdjukaar.amendments.common.block;
 
-import net.mehvahdjukaar.amendments.common.network.ModNetwork;
 import net.mehvahdjukaar.amendments.common.network.ClientBoundPlaySplashParticlesMessage;
+import net.mehvahdjukaar.amendments.common.network.ModNetwork;
 import net.mehvahdjukaar.amendments.common.tile.LiquidCauldronBlockTile;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidStack;
 import net.minecraft.advancements.CriteriaTriggers;
@@ -116,10 +116,8 @@ public abstract class ModCauldronBlock extends AbstractCauldronBlock implements 
             CriteriaTriggers.ITEM_USED_ON_BLOCK.trigger(serverPlayer, pos, itemStack);
         } else return true;
 
-        if (!player.isCreative()) {
-            itemStack.shrink(amountToRecolor);
-            fluid.shrink(Mth.ceil((layerPerItem * amountToRecolor / (float) itemCountMultiplier)));
-        }
+        itemStack.consume(amountToRecolor, player);
+        fluid.consume(Mth.ceil((layerPerItem * amountToRecolor / (float) itemCountMultiplier)), player);
 
         if (itemStack.isEmpty()) {
             player.setItemInHand(hand, crafted);

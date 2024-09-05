@@ -3,11 +3,10 @@ package net.mehvahdjukaar.amendments.common.item;
 import com.google.common.collect.HashBiMap;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidStack;
-import net.mehvahdjukaar.moonlight.api.util.math.ColorUtils;
 import net.mehvahdjukaar.moonlight.api.util.math.colors.LABColor;
 import net.mehvahdjukaar.moonlight.api.util.math.colors.RGBColor;
 import net.minecraft.ChatFormatting;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -20,9 +19,8 @@ import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.level.Level;
+import net.minecraft.world.item.component.DyedItemColor;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.List;
@@ -32,7 +30,8 @@ import java.util.stream.Collectors;
 
 public class DyeBottleItem extends Item {
 
-    public static final String COLOR_TAG = "color";
+    private static final DyedItemColor DEFAULT_COLOR = new DyedItemColor(getDyeInt(DyeColor.WHITE), false);
+    public static final DyedItemColor RED_COLOR = new DyedItemColor(getDyeInt(DyeColor.RED), false);
 
     protected static final HashBiMap<DyeColor, Integer> COLOR_TO_DIFFUSE = Arrays.stream(DyeColor.values())
             .collect(Collectors.toMap(Function.identity(), DyeColor::getTextureDiffuseColor,
@@ -42,23 +41,15 @@ public class DyeBottleItem extends Item {
         super(properties);
     }
 
-    public static int getColor(ItemStack stack) {
-        CompoundTag compoundTag = stack.getTag();
-        if (compoundTag != null) {
-            return compoundTag.getInt(COLOR_TAG);
-        }
-        return 0;
-    }
-
-    public static SoftFluidStack toFluidStack(DyeColor color, int amount) {
-        CompoundTag tag = new CompoundTag();
-        tag.putInt(COLOR_TAG, getDyeInt(color));
-        return SoftFluidStack.of(ModRegistry.DYE_SOFT_FLUID.getHolder(), amount, tag);
+    public static SoftFluidStack createFluidStack(DyeColor color, int amount) {
+        SoftFluidStack stack = SoftFluidStack.of(ModRegistry.DYE_SOFT_FLUID.getHolder(), amount);
+        stack.set(DataComponents.DYED_COLOR, new DyedItemColor(getDyeInt(color), true));
+        return stack;
     }
 
     public static ItemStack fromFluidStack(SoftFluidStack stack) {
         ItemStack item = new ItemStack(ModRegistry.DYE_BOTTLE_ITEM.get());
-        item.getOrCreateTag().putInt(COLOR_TAG, stack.getTag().getInt(COLOR_TAG));
+        item.set(DataComponents.DYED_COLOR, stack.getOrDefault(DataComponents.DYED_COLOR, DEFAULT_COLOR));
         return item;
     }
 
@@ -67,6 +58,7 @@ public class DyeBottleItem extends Item {
                 .mixWith(new RGBColor(newColor).asHCL(), (float) newAmount / (oldAmount + newAmount))
                 .asRGB().toInt();
     }
+
     @SuppressWarnings("ConstantConditions")
     @NotNull
     private static Integer getDyeInt(DyeColor color) {
@@ -74,11 +66,11 @@ public class DyeBottleItem extends Item {
     }
 
     public static DyeColor getClosestDye(SoftFluidStack stack) {
-        return getClosestDye(stack.getTag().getInt(COLOR_TAG));
+        return getClosestDye(stack.getOrDefault(DataComponents.DYED_COLOR, DEFAULT_COLOR).rgb());
     }
 
     public static DyeColor getClosestDye(ItemStack stack) {
-        return getClosestDye(stack.getOrCreateTag().getInt(COLOR_TAG));
+        return getClosestDye(stack.get(DataComponents.DYED_COLOR).rgb());
     }
 
     public static DyeColor getClosestDye(int tintColor) {
@@ -98,23 +90,21 @@ public class DyeBottleItem extends Item {
     }
 
     @Override
-    public ItemStack getDefaultInstance() {
-        ItemStack stack = super.getDefaultInstance();
-        stack.getOrCreateTag().putInt(COLOR_TAG, getDyeInt(DyeColor.RED));
-        return stack;
-    }
+    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> list, TooltipFlag tooltipFlag) {
+        super.appendHoverText(stack, context, list, tooltipFlag);
 
-    @Override
-    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
-        CompoundTag tag = stack.getOrCreateTag();
-        int col = tag.getInt(COLOR_TAG);
-        DyeColor color = COLOR_TO_DIFFUSE.inverse().get(col);
-        if (color != null) {
-            list.add(Component.translatable("item.amendments.dye_bottle." + color.getName()).withStyle(ChatFormatting.GRAY));
+        DyedItemColor color = stack.get(DataComponents.DYED_COLOR);
+        if (color == null) return;
+        DyeColor dye = COLOR_TO_DIFFUSE.inverse().get(color.rgb());
+        if (dye != null) {
+            list.add(Component.translatable("item.amendments.dye_bottle." + dye.getName()).withStyle(ChatFormatting.GRAY));
         } else {
-            list.add(Component.translatable("item.color", String.format(Locale.ROOT, "#%06X", col)).withStyle(ChatFormatting.GRAY));
+            if (tooltipFlag.isAdvanced()) {
+                list.add(Component.translatable("item.color", String.format(Locale.ROOT, "#%06X", color.rgb())).withStyle(ChatFormatting.GRAY));
+            } else {
+                list.add(Component.translatable("item.dyed").withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
+            }
         }
-        super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
     }
 
     @Override

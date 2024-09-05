@@ -205,9 +205,7 @@ public class InteractEvents {
 
         if (sound == null) sound = newState.getSoundType();
         level.playSound(player, pos, sound.getPlaceSound(), SoundSource.BLOCKS, (sound.getVolume() + 1.0F) / 2.0F, sound.getPitch() * 0.8F);
-        if (player == null || !player.getAbilities().instabuild) {
-            stack.shrink(1);
-        }
+        stack.consume(1, player);
 
         return InteractionResult.sidedSuccess(level.isClientSide);
     }

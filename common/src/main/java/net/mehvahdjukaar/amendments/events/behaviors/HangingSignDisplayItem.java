@@ -81,10 +81,7 @@ public class HangingSignDisplayItem implements BlockUse {
             } else {
                 ext.setBackItem(stack.copyWithCount(1));
             }
-            if (!player.isCreative()) {
-                stack.shrink(1);
-            }
-
+            stack.consume(1, player);
 
             //hack so we can set dye
             setMessagesAndUpdate(be, front, "item");

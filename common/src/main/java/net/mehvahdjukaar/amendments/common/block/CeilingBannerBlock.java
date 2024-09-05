@@ -1,5 +1,7 @@
 package net.mehvahdjukaar.amendments.common.block;
 
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.mehvahdjukaar.amendments.common.tile.CeilingBannerBlockTile;
 import net.mehvahdjukaar.amendments.integration.CompatHandler;
 import net.mehvahdjukaar.amendments.integration.SuppCompat;
@@ -37,6 +39,11 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class CeilingBannerBlock extends AbstractBannerBlock {
+    public static final MapCodec<CeilingBannerBlock> CODEC = RecordCodecBuilder.mapCodec((i) -> i.group(
+            DyeColor.CODEC.fieldOf("color").forGetter(AbstractBannerBlock::getColor),
+            propertiesCodec()
+    ).apply(i, CeilingBannerBlock::new));
+
     public static final BooleanProperty ATTACHED = BlockStateProperties.ATTACHED;
     public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
     private static final VoxelShape SHAPE_X = Block.box(7.0D, 0.0D, 0.0D, 9.0D, 16.0D, 16.0D);
@@ -45,6 +52,11 @@ public class CeilingBannerBlock extends AbstractBannerBlock {
     public CeilingBannerBlock(DyeColor color, Properties properties) {
         super(color, properties);
         this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(ATTACHED, false));
+    }
+
+    @Override
+    protected MapCodec<? extends CeilingBannerBlock> codec() {
+        return CODEC;
     }
 
     @Override

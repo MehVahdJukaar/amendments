@@ -24,6 +24,7 @@ import net.mehvahdjukaar.moonlight.api.platform.RegHelper;
 import net.mehvahdjukaar.moonlight.api.set.BlockSetAPI;
 import net.mehvahdjukaar.moonlight.api.set.BlocksColorAPI;
 import net.minecraft.Util;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -116,6 +117,7 @@ public class ModRegistry {
 
     public static final Supplier<Item> DYE_BOTTLE_ITEM = regItem(DYE_BOTTLE_NAME,
             () -> new DyeBottleItem(new Item.Properties()
+                    .component(DataComponents.DYED_COLOR, DyeBottleItem.RED_COLOR)
                     .stacksTo(1)
                     .craftRemainder(Items.GLASS_BOTTLE)));
 

@@ -7,7 +7,6 @@ accessible method net/minecraft/client/renderer/blockentity/SignRenderer getText
 #book edit
 extendable method net/minecraft/client/gui/screens/inventory/BookEditScreen saveChanges (Z)V
 accessible field net/minecraft/client/gui/screens/inventory/BookEditScreen isModified Z
-extendable method net/minecraft/client/gui/screens/inventory/BookEditScreen updateLocalCopy (Z)V
 extendable method net/minecraft/client/gui/screens/inventory/BookEditScreen eraseEmptyTrailingPages ()V
 extendable method net/minecraft/client/gui/screens/inventory/BookEditScreen pageBack ()V
 extendable method net/minecraft/client/gui/screens/inventory/BookEditScreen pageForward ()V
@@ -42,11 +41,6 @@ accessible field net/minecraft/world/entity/Entity wasTouchingWater Z
 # pot fabric
 
 accessible field net/minecraft/world/level/block/FlowerPotBlock POTTED_BY_CONTENT Ljava/util/Map;
-
-# fabric remappig
-accessible class net/minecraft/resources/ResourceLocation$Dummy
-
-accessible field net/minecraft/world/level/block/AbstractCauldronBlock interactions Ljava/util/Map;
 
 accessible field net/minecraft/world/entity/ai/village/poi/PoiType matchingStates Ljava/util/Set;
 mutable field net/minecraft/world/entity/ai/village/poi/PoiType matchingStates Ljava/util/Set;

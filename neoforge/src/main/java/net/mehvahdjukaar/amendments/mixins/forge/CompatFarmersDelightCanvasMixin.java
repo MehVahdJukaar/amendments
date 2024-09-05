@@ -13,6 +13,7 @@ import net.minecraft.client.renderer.blockentity.HangingSignRenderer;
 import net.minecraft.client.renderer.blockentity.SignRenderer;
 import net.minecraft.client.resources.model.Material;
 import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.item.component.DyedItemColor;
 import net.minecraft.world.level.block.SignBlock;
 import net.minecraft.world.level.block.entity.SignBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -56,7 +57,6 @@ public abstract class CompatFarmersDelightCanvasMixin extends SignRenderer {
                                       BlockState state, SignBlock sign, HangingSignRenderer.HangingSignModel model,
                                       DyeColor dye) {
         if ((ClientConfigs.SIGN_ATTACHMENT.get() || ClientConfigs.SWINGING_SIGNS.get()) && tile instanceof ExtendedHangingSign ext) {
-
             BlockState blockState = tile.getBlockState();
 
             HangingSignRendererExtension.render(tile, ext.amendments$getExtension(), partialTick,

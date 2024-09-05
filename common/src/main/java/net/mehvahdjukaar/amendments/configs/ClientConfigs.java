@@ -154,8 +154,8 @@ public class ClientConfigs {
         builder.pop();
 
         builder.onChange(ClientConfigs::onChange);
-        SPEC = builder.buildAndRegister();
-        SPEC.loadFromFile();
+        SPEC = builder.build();
+        SPEC.forceLoad();
 
         ModSharedVariables.registerDouble("color_multiplier", () -> (double) signColorMult);
     }

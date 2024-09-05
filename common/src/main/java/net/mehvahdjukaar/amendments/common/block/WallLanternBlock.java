@@ -1,5 +1,6 @@
 package net.mehvahdjukaar.amendments.common.block;
 
+import com.mojang.serialization.MapCodec;
 import net.mehvahdjukaar.amendments.common.network.ClientBoundEntityHitSwayingBlockMessage;
 import net.mehvahdjukaar.amendments.common.network.ModNetwork;
 import net.mehvahdjukaar.amendments.common.tile.SwayingBlockTile;
@@ -69,6 +70,11 @@ public class WallLanternBlock extends WaterBlock implements EntityBlock {
         super(properties.lightLevel(s -> s.getValue(LIT) ? s.getValue(LIGHT_LEVEL) : 0));
         this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH)
                 .setValue(LIGHT_LEVEL, 15).setValue(WATERLOGGED, false).setValue(LIT, true));
+    }
+
+    @Override
+    protected MapCodec<? extends Block> codec() {
+        return super.codec();
     }
 
     @Override

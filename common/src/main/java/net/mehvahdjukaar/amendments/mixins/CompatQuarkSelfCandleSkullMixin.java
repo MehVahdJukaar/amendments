@@ -49,7 +49,7 @@ public abstract class CompatQuarkSelfCandleSkullMixin implements IEnchantmentInf
     @Override
     public float[] getEnchantmentInfluenceColor(BlockGetter world, BlockPos pos, BlockState state) {
         DyeColor color = amendments$getColor(state, world, pos);
-        return color == null ? null : ColorUtils.pack(color.getTextureDiffuseColor());
+        return color == null ? null : ColorUtils.unpack(color.getTextureDiffuseColor());
     }
 
     @Nullable

@@ -15,7 +15,6 @@ import net.mehvahdjukaar.amendments.client.particles.BoilingParticle;
 import net.mehvahdjukaar.amendments.client.particles.ColoredSplashParticle;
 import net.mehvahdjukaar.amendments.client.renderers.*;
 import net.mehvahdjukaar.amendments.common.block.BoilingWaterCauldronBlock;
-import net.mehvahdjukaar.amendments.common.item.DyeBottleItem;
 import net.mehvahdjukaar.amendments.configs.ClientConfigs;
 import net.mehvahdjukaar.amendments.integration.CompatHandler;
 import net.mehvahdjukaar.amendments.integration.CompatObjects;
@@ -32,6 +31,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.FallingBlockRenderer;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.resources.model.Material;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -120,7 +120,7 @@ public class AmendmentsClient {
         ClientHelper.addItemColorsRegistration(AmendmentsClient::registerItemColors);
         ClientHelper.addParticleRegistration(AmendmentsClient::registerParticles);
 
-        if(CompatHandler.FLYWHEEL) FlywheelCompat.init();
+        if (CompatHandler.FLYWHEEL) FlywheelCompat.init();
     }
 
 
@@ -150,7 +150,7 @@ public class AmendmentsClient {
     @EventCalled
     private static void registerItemColors(ClientHelper.ItemColorEvent event) {
         event.register((itemStack, i) -> i > 0 ? -1 :
-                DyeBottleItem.getColor(itemStack), ModRegistry.DYE_BOTTLE_ITEM.get());
+                itemStack.get(DataComponents.DYED_COLOR).rgb(), ModRegistry.DYE_BOTTLE_ITEM.get());
 
         event.register(new CrossbowColor(), Items.CROSSBOW);
     }
@@ -205,7 +205,7 @@ public class AmendmentsClient {
     @EventCalled
     private static void registerBlockColors(ClientHelper.BlockColorEvent event) {
         List<Block> mimics = new ArrayList<>();
-        mimics.addAll(List.of( ModRegistry.CARPET_STAIRS.get(), ModRegistry.CARPET_SLAB.get(),
+        mimics.addAll(List.of(ModRegistry.CARPET_STAIRS.get(), ModRegistry.CARPET_SLAB.get(),
                 ModRegistry.WALL_LANTERN.get(), ModRegistry.HANGING_FLOWER_POT.get(),
                 ModRegistry.WATERLILY_BLOCK.get()));
         mimics.addAll(ModRegistry.DOUBLE_CAKES.values());
@@ -217,12 +217,10 @@ public class AmendmentsClient {
     }
 
 
-
-
     public static Map<Item, Material> getAllRecords() {
         if (RECORD_MATERIALS.isEmpty()) {
             for (var i : BuiltInRegistries.ITEM) {
-                if (i instanceof RecordItem) {
+                if (i.components().get(DataComponents.JUKEBOX_PLAYABLE) != null) {
                     RECORD_MATERIALS.put(i, new Material(TextureAtlas.LOCATION_BLOCKS,
                             Amendments.res("block/music_discs/" + Utils.getID(i).toString()
                                     .replace("minecraft:", "")
@@ -273,7 +271,7 @@ public class AmendmentsClient {
     }
 
     @ExpectPlatform
-    public static boolean hasFixedNormals(){
+    public static boolean hasFixedNormals() {
         throw new AssertionError();
     }
 

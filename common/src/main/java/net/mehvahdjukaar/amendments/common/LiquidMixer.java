@@ -4,11 +4,12 @@ import net.mehvahdjukaar.amendments.common.item.DyeBottleItem;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidStack;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.item.alchemy.PotionContents;
+import net.minecraft.world.item.component.DyedItemColor;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,10 +19,11 @@ import java.util.stream.Collectors;
 
 public class LiquidMixer {
 
+    @Nullable
     public static SoftFluidStack mixPotions(SoftFluidStack firstFluid, SoftFluidStack secondFluid) {
         var tankFluidContent = firstFluid.getOrDefault(DataComponents.POTION_CONTENTS, PotionContents.EMPTY);
         var newFluidContent = secondFluid.getOrDefault(DataComponents.POTION_CONTENTS, PotionContents.EMPTY);
-        if (!tankFluidContent.hasEffects() || !newFluidContent.hasEffects()) return firstFluid;
+        if (!tankFluidContent.hasEffects() || !newFluidContent.hasEffects()) return null;
         int oldCount = firstFluid.getCount();
         int newCount = oldCount + secondFluid.getCount();
         List<MobEffectInstance> combinedEffects = new ArrayList<>();
@@ -32,7 +34,7 @@ public class LiquidMixer {
         List<MobEffectInstance> newEffects = new ArrayList<>();
         newFluidContent.getAllEffects().forEach(newEffects::add);
 
-        if (newEffects.equals(existingEffects)) return firstFluid;
+        if (newEffects.equals(existingEffects)) return null;
 
         float oldMult = oldCount / (float) newCount;
         float newMult = 1 - oldMult;
@@ -80,19 +82,20 @@ public class LiquidMixer {
     }
 
 
-    public static void mixDye(SoftFluidStack tankFluid, SoftFluidStack newFluid) {
-        CompoundTag tankTag = tankFluid.getTag();
-        CompoundTag newTag = newFluid.getTag();
-        if (tankTag == null || newTag == null) return;
+    @Nullable
+    public static SoftFluidStack mixDye(SoftFluidStack firstFluid, SoftFluidStack secondFluid) {
+        DyedItemColor firstColor = firstFluid.get(DataComponents.DYED_COLOR);
+        DyedItemColor secondColor = secondFluid.get(DataComponents.DYED_COLOR);
+        if (firstColor == null || secondColor == null) return null;
 
-        int oldColor = tankTag.getInt(DyeBottleItem.COLOR_TAG);
-        int newColor = newTag.getInt(DyeBottleItem.COLOR_TAG);
-        int oldAmount = tankFluid.getCount();
-        int newAmount = newFluid.getCount();
-        CompoundTag combinedTag = new CompoundTag();
-        combinedTag.putInt(DyeBottleItem.COLOR_TAG, DyeBottleItem.mixColor(oldColor, newColor, oldAmount, newAmount));
+        int oldAmount = firstFluid.getCount();
+        int newAmount = secondFluid.getCount();
+        int newColor = DyeBottleItem.mixColor(firstColor.rgb(), secondColor.rgb(), oldAmount, newAmount);
 
-        tankFluid.setTag(combinedTag);
+        SoftFluidStack returnStack = firstFluid.copy();
+        returnStack.set(DataComponents.DYED_COLOR, new DyedItemColor(newColor, true));
+
+        return returnStack;
     }
 
 }

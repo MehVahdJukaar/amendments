@@ -154,8 +154,10 @@ public class LiquidCauldronBlockTile extends BlockEntity implements IExtraModelD
             protected void addFluidOntoExisting(SoftFluidStack incoming) {
                 if (canMixPotions() && incoming.is(BuiltInSoftFluids.POTION.get())) {
                     SoftFluidStack newStack = LiquidMixer.mixPotions(this.fluidStack, incoming);
-                    this.setFluid(newStack);
-                    needsColorRefresh = true;
+                    if (newStack != null) {
+                        this.setFluid(newStack);
+                        needsColorRefresh = true;
+                    }
                 }
                 super.addFluidOntoExisting(incoming);
             }
@@ -176,7 +178,11 @@ public class LiquidCauldronBlockTile extends BlockEntity implements IExtraModelD
             @Override
             protected void addFluidOntoExisting(SoftFluidStack fluidStack) {
                 if (fluidStack.is(ModRegistry.DYE_SOFT_FLUID.get())) {
-                    LiquidMixer.mixDye(this.fluidStack, fluidStack);
+                    var mixed = LiquidMixer.mixDye(this.fluidStack, fluidStack);
+                    if (mixed != null) {
+                        this.setFluid(mixed);
+                        needsColorRefresh = true;
+                    }
                 }
                 super.addFluidOntoExisting(fluidStack);
             }
