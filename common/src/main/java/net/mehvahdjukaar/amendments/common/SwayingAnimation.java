@@ -69,6 +69,11 @@ public class SwayingAnimation extends SwingAnimation {
     }
 
     @Override
+    public void setAngle(float angle) {
+        this.angle = angle;
+    }
+
+    @Override
     public void reset() {
         animationCounter = 800;
     }

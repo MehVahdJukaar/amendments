@@ -1,5 +1,7 @@
 package net.mehvahdjukaar.amendments.common.block;
 
+import net.mehvahdjukaar.amendments.common.network.ClientBoundEntityHitSwayingBlockMessage;
+import net.mehvahdjukaar.amendments.common.network.ModNetwork;
 import net.mehvahdjukaar.amendments.common.tile.SwayingBlockTile;
 import net.mehvahdjukaar.amendments.common.tile.WallLanternBlockTile;
 import net.mehvahdjukaar.amendments.configs.ClientConfigs;
@@ -46,7 +48,6 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraft.world.ticks.TickPriority;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -186,7 +187,7 @@ public class WallLanternBlock extends WaterBlock implements EntityBlock {
                 BlockState lantern = te.getHeldBlock();
                 if (ThinAirCompat.isAirLantern(lantern)) {
                     te.setHeldBlock(lantern); //this automatically updates it
-                    if(te.getHeldBlock() != lantern){
+                    if (te.getHeldBlock() != lantern) {
                         level.sendBlockUpdated(pos, state, state, 3);
                     }
                 }
@@ -239,8 +240,13 @@ public class WallLanternBlock extends WaterBlock implements EntityBlock {
     @Override
     public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
         super.entityInside(state, level, pos, entity);
-        if (level.isClientSide && !ClientConfigs.FAST_LANTERNS.get() && level.getBlockEntity(pos) instanceof WallLanternBlockTile tile) {
-            tile.getAnimation().hitByEntity(entity, state, pos);
+        if (ClientConfigs.FAST_LANTERNS.get()) return;
+        if (level.isClientSide) {
+            if (level.getBlockEntity(pos) instanceof WallLanternBlockTile tile) {
+                tile.getAnimation().hitByEntity(entity, state, pos);
+            }
+        } else  {
+            ModNetwork.CHANNEL.sentToAllClientPlayersTrackingEntity(entity, new ClientBoundEntityHitSwayingBlockMessage(pos, entity.getId()));
         }
     }
 

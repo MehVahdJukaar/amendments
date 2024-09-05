@@ -30,21 +30,21 @@ import java.util.function.Consumer;
 import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 
-public class SyncLecternBookMessage implements Message {
+public class ServerBoundSyncLecternBookMessage implements Message {
 
     private final List<String> pages;
     private final Optional<String> title;
     private final BlockPos pos;
     private final boolean takeBook;
 
-    public SyncLecternBookMessage(BlockPos pos, List<String> list, Optional<String> optional, boolean takeBook) {
+    public ServerBoundSyncLecternBookMessage(BlockPos pos, List<String> list, Optional<String> optional, boolean takeBook) {
         this.pos = pos;
         this.pages = ImmutableList.copyOf(list);
         this.title = optional;
         this.takeBook = takeBook;
     }
 
-    public SyncLecternBookMessage(FriendlyByteBuf buffer) {
+    public ServerBoundSyncLecternBookMessage(FriendlyByteBuf buffer) {
         this.pos = buffer.readBlockPos();
         this.pages = buffer.readCollection(FriendlyByteBuf.limitValue(Lists::newArrayListWithCapacity, 200),
                 b -> b.readUtf(8192));

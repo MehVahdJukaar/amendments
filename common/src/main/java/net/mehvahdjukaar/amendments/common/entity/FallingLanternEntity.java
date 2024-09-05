@@ -50,9 +50,9 @@ public class FallingLanternEntity extends ImprovedFallingBlockEntity {
             level.levelEvent(null, LevelEvent.PARTICLES_DESTROY_BLOCK, pos, Block.getId(state));
             if (state.getLightEmission() != 0) {
 
-                if(CompatHandler.SUPPLEMENTARIES){
+                if (CompatHandler.SUPPLEMENTARIES) {
                     SuppCompat.createMiniExplosion(level, pos, true);
-                }else if(level.getBlockState(pos).isAir()){
+                } else if (level.getBlockState(pos).isAir()) {
                     if (BaseFireBlock.canBePlacedAt(level, pos, Direction.DOWN)) {
                         level.setBlockAndUpdate(pos, BaseFireBlock.getState(level, pos));
                     }

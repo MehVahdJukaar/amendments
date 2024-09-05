@@ -1,7 +1,5 @@
 package net.mehvahdjukaar.amendments.common.block;
 
-import net.mehvahdjukaar.amendments.common.network.ModNetwork;
-import net.mehvahdjukaar.amendments.common.network.PlaySplashParticlesPacket;
 import net.mehvahdjukaar.amendments.common.recipe.DummyContainer;
 import net.mehvahdjukaar.amendments.common.tile.LiquidCauldronBlockTile;
 import net.mehvahdjukaar.amendments.reg.ModBlockProperties;
@@ -76,7 +74,8 @@ public class BoilingWaterCauldronBlock extends LayeredCauldronBlock {
     public BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor level, BlockPos currentPos, BlockPos neighborPos) {
         var s = super.updateShape(state, direction, neighborState, level, currentPos, neighborPos);
         if (direction == Direction.DOWN) {
-            boolean isFire = LiquidCauldronBlock.shouldBoil(neighborState, SoftFluidStack.of(BuiltInSoftFluids.WATER.getHolder()));
+            boolean isFire = LiquidCauldronBlock.shouldBoil(neighborState, SoftFluidStack.of(BuiltInSoftFluids.WATER.getHolder()),
+                    level, neighborPos);
             s = s.setValue(BOILING, isFire);
         }
         return s;

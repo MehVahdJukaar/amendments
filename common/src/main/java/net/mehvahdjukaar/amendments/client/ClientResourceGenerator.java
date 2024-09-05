@@ -259,7 +259,7 @@ public class ClientResourceGenerator extends DynClientResourcesGenerator {
                             s -> s.replace("vanilla", dcId.getPath()),
                             s -> s.replace("double_cake", dcId.getPath()));
                 } catch (Exception e) {
-                    Amendments.LOGGER.error("Failed to generate model for double cake {},", t, e);
+                    Amendments.LOGGER.error("Failed to generate model for double cake {},", t);
                 }
             }
         }

@@ -45,6 +45,11 @@ public class PendulumAnimation extends SwingAnimation {
     }
 
     @Override
+    public void setAngle(float angle) {
+        this.angle = Mth.DEG_TO_RAD * angle;
+    }
+
+    @Override
     public void reset() {
         angle = 0;
         prevAngle = 0;

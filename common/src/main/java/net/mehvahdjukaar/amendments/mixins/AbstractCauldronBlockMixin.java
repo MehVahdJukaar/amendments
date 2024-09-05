@@ -40,8 +40,9 @@ public class AbstractCauldronBlockMixin extends Block {
         }
         BlockState newState = level.getBlockState(pos);
         if (newState.getBlock() instanceof BoilingWaterCauldronBlock) {
-            boolean isFire = LiquidCauldronBlock.shouldBoil(level.getBlockState(pos.below()),
-                    SoftFluidStack.of(BuiltInSoftFluids.WATER.getHolder()));
+            BlockPos belowPos = pos.below();
+            boolean isFire = LiquidCauldronBlock.shouldBoil(level.getBlockState(belowPos),
+                    SoftFluidStack.of(BuiltInSoftFluids.WATER.getHolder()), level, belowPos);
             if (isFire) {
                 level.setBlockAndUpdate(pos, newState.setValue(BoilingWaterCauldronBlock.BOILING, true));
             }

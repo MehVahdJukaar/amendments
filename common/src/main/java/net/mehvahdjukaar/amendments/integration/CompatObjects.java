@@ -17,7 +17,7 @@ public class CompatObjects {
 
     public static final Supplier<Block> SOUL_CANDLE = make("buzzier_bees:soul_candle", BuiltInRegistries.BLOCK);
     public static final Supplier<Block> ENDER_CANDLE = make("buzzier_bees:ender_candle", BuiltInRegistries.BLOCK);
-    public static final Supplier<Block> CUPRIC_CANDLE = make("buzzier_bees:cupric_candle", BuiltInRegistries.BLOCK);
+    public static final Supplier<Block> CUPRIC_CANDLE = make("caves_and_chasms:cupric_candle", BuiltInRegistries.BLOCK);
 
     public static final Supplier<Item> SPECTACLE_CANDLE_ITEM = make("cave_enhancements:spectacle_candle", BuiltInRegistries.ITEM);
 
@@ -25,6 +25,9 @@ public class CompatObjects {
 
     public static final Supplier<Item> CAKE_SLICE = make("farmersdelight:cake_slice", BuiltInRegistries.ITEM);
     public static final Supplier<Item> SOUL_CANDLE_HOLDER = make("supplementaries:candle_holder_soul", BuiltInRegistries.ITEM);
+
+    public static final Supplier<Item> SCONCE_LEVER = make("supplementaries:sconce_lever", BuiltInRegistries.ITEM);
+    public static final Supplier<Item> SCONCE = make("supplementaries:sconce", BuiltInRegistries.ITEM);
 
     public static final Supplier<Block> SPECTACLE_CANDLE = make("cave_enhancements:spectacle_candle", BuiltInRegistries.BLOCK);
 

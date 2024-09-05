@@ -1,7 +1,7 @@
 package net.mehvahdjukaar.amendments.common.block;
 
 import net.mehvahdjukaar.amendments.common.network.ModNetwork;
-import net.mehvahdjukaar.amendments.common.network.PlaySplashParticlesPacket;
+import net.mehvahdjukaar.amendments.common.network.ClientBoundPlaySplashParticlesMessage;
 import net.mehvahdjukaar.amendments.common.tile.LiquidCauldronBlockTile;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidStack;
 import net.minecraft.advancements.CriteriaTriggers;
@@ -171,7 +171,7 @@ public abstract class ModCauldronBlock extends AbstractCauldronBlock implements 
         }
 
 
-        var particlePacket = new PlaySplashParticlesPacket(hitPos, speed, feetEntity.getBbWidth());
+        var particlePacket = new ClientBoundPlaySplashParticlesMessage(hitPos, speed, feetEntity.getBbWidth());
 
         ModNetwork.CHANNEL.sentToAllClientPlayersTrackingEntityAndSelf(entity, particlePacket);
     }

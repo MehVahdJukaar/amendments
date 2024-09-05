@@ -78,6 +78,7 @@ public class DyeBottleRecipe extends CustomRecipe {
         } else {
             result = BlocksColorAPI.changeColor(leather.getItem(),
                     DyeBottleItem.getClosestDye(dyeBottle)).getDefaultInstance();
+            result.setTag(leather.getTag());
         }
         return result;
     }

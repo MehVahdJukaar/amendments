@@ -1,6 +1,8 @@
 package net.mehvahdjukaar.amendments.mixins;
 
 import net.mehvahdjukaar.amendments.common.ExtendedHangingSign;
+import net.mehvahdjukaar.amendments.common.network.ClientBoundEntityHitSwayingBlockMessage;
+import net.mehvahdjukaar.amendments.common.network.ModNetwork;
 import net.mehvahdjukaar.amendments.configs.ClientConfigs;
 import net.mehvahdjukaar.amendments.events.behaviors.HangingSignDisplayItem;
 import net.mehvahdjukaar.amendments.reg.ModBlockProperties;
@@ -73,9 +75,13 @@ public abstract class WallHangingSignBlockMixin extends Block implements EntityB
     @Override
     public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
         super.entityInside(state, level, pos, entity);
-        if (level.isClientSide && ClientConfigs.SWINGING_SIGNS.get() &&
+        if (ClientConfigs.SWINGING_SIGNS.get() &&
                 level.getBlockEntity(pos) instanceof ExtendedHangingSign tile && tile.getExtension().canSwing()) {
-            tile.getExtension().getClientAnimation().hitByEntity(entity, state, pos);
+            if (level.isClientSide) {
+                tile.getExtension().getClientAnimation().hitByEntity(entity, state, pos);
+            } else {
+                ModNetwork.CHANNEL.sentToAllClientPlayersTrackingEntity(entity, new ClientBoundEntityHitSwayingBlockMessage(pos, entity.getId()));
+            }
         }
     }
 
