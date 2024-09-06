@@ -75,16 +75,6 @@ public class AmendmentsFabric implements ModInitializer {
         AttackEntityCallback.EVENT.register(LOW_PRIORITY,ModEvents::onAttackEntity);
 
         PlatHelper.addCommonSetup(() -> {
-            var holder = BuiltInRegistries.POINT_OF_INTEREST_TYPE.getHolderOrThrow(PoiTypes.LEATHERWORKER);
-            var set = new HashSet<>(holder.value().matchingStates);
-            Set<BlockState> extraStates = Stream.of(ModRegistry.LIQUID_CAULDRON.get(), ModRegistry.DYE_CAULDRON.get()).flatMap(
-                    (block) -> block.getStateDefinition().getPossibleStates().stream()).collect(Collectors.toSet());
-            set.addAll(extraStates);
-            holder.value().matchingStates = set;
-            PoiTypes.registerBlockStates(holder, extraStates);
-        });
-
-        PlatHelper.addCommonSetup(() -> {
             FluidStorage.SIDED.registerForBlockEntity((myTank, direction) -> (Storage<FluidVariant>) myTank,
                     ModRegistry.LIQUID_CAULDRON_TILE.get());
         });

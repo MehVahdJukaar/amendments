@@ -14,6 +14,7 @@ dependencies {
 
     modImplementation ("net.mehvahdjukaar:moonlight:${moonlight_version}")
 
+    modImplementation("curse.maven:farmers-delight-398521:5566383")
 
     modCompileOnly("curse.maven:supplementaries-412082:5147148")
     modCompileOnly("curse.maven:flan-404578:5290167")

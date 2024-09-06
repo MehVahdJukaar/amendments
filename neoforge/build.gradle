@@ -98,6 +98,7 @@ dependencies {
     modImplementation("net.mehvahdjukaar:moonlight-neoforge:${moonlight_version}")
 
     modCompileOnly("curse.maven:supplementaries-412082:5458843")
+    modImplementation("curse.maven:farmers-delight-398521:5566383")
     modCompileOnly("curse.maven:supplementaries-squared-838411:5130385")
     modCompileOnly("curse.maven:lucent-493280:4951434")
     modCompileOnly("curse.maven:embeddium-908741:5321172")

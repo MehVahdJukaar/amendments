@@ -11,6 +11,7 @@ import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidStack;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -18,6 +19,7 @@ import net.minecraft.world.level.block.AbstractCauldronBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 
@@ -29,15 +31,15 @@ public class AbstractCauldronBlockMixin extends Block {
     }
 
     // why is this not an event? because it's better for compatibility
-    @ModifyReturnValue(method = "use", at = @At("RETURN"))
-    public InteractionResult use(InteractionResult original,
-                                 @Local(argsOnly = true) BlockState state, @Local(argsOnly = true) Level level,
-                                 @Local(argsOnly = true) BlockPos pos, @Local(argsOnly = true) Player player,
-                                 @Local(argsOnly = true) InteractionHand hand, @Local ItemStack stack) {
+    @ModifyReturnValue(method = "useItemOn", at = @At("RETURN"))
+    public ItemInteractionResult use(ItemInteractionResult original, ItemStack stack, BlockState state,
+                                     Level level, BlockPos pos, Player player,
+                                     InteractionHand hand, BlockHitResult hitResult) {
         // do something
-        if (original == InteractionResult.PASS && this == Blocks.CAULDRON && CommonConfigs.LIQUID_CAULDRON.get()) {
+        if (original == ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION && this == Blocks.CAULDRON && CommonConfigs.LIQUID_CAULDRON.get()) {
             return CauldronConversion.convert(state, pos, level, player, hand, stack, false);
         }
+        //why is this here?
         BlockState newState = level.getBlockState(pos);
         if (newState.getBlock() instanceof BoilingWaterCauldronBlock) {
             BlockPos belowPos = pos.below();

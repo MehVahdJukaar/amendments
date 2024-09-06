@@ -1,4 +1,4 @@
-package net.mehvahdjukaar.amendments.mixins.forge;
+package net.mehvahdjukaar.amendments.mixins.neoforge;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.mehvahdjukaar.amendments.AmendmentsClient;
@@ -13,7 +13,6 @@ import net.minecraft.client.renderer.blockentity.HangingSignRenderer;
 import net.minecraft.client.renderer.blockentity.SignRenderer;
 import net.minecraft.client.resources.model.Material;
 import net.minecraft.world.item.DyeColor;
-import net.minecraft.world.item.component.DyedItemColor;
 import net.minecraft.world.level.block.SignBlock;
 import net.minecraft.world.level.block.entity.SignBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;

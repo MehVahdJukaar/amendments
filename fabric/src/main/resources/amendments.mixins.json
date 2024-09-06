@@ -4,7 +4,6 @@
   "compatibilityLevel": "JAVA_17",
   "package": "net.mehvahdjukaar.amendments.mixins.fabric",
   "mixins": [
-    "IHateFabricMixin",
     "SelfCauldronMixin"
   ],
   "client": [

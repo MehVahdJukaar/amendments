@@ -69,7 +69,7 @@ public abstract class CeilingHangingSignBlockMixin extends Block implements Enti
                 if (entity.xo != entity.getX() || entity.zo != entity.getZ() || entity.yo != entity.getY()) {
                     level.gameEvent(entity, GameEvent.BLOCK_ACTIVATE, pos);
                 }
-                NetworkHelper.sentToAllClientPlayersTrackingEntity(entity, new ClientBoundEntityHitSwayingBlockMessage(pos, entity.getId()));
+                NetworkHelper.sendToAllClientPlayersTrackingEntity(entity, new ClientBoundEntityHitSwayingBlockMessage(pos, entity.getId()));
             }
         }
     }

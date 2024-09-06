@@ -5,7 +5,9 @@ import net.mehvahdjukaar.amendments.common.network.ModNetwork;
 import net.mehvahdjukaar.amendments.common.network.ServerBoundSyncLecternBookMessage;
 import net.mehvahdjukaar.moonlight.api.platform.network.NetworkHelper;
 import net.minecraft.SharedConstants;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.inventory.BookEditScreen;
 import net.minecraft.client.gui.screens.inventory.BookViewScreen;
 import net.minecraft.client.gui.screens.inventory.MenuAccess;
@@ -13,12 +15,14 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
+import net.minecraft.util.StringUtil;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerListener;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.component.WritableBookContent;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -31,11 +35,10 @@ public class LecternBookEditScreen extends BookEditScreen implements MenuAccess<
         @Override
         public void slotChanged(AbstractContainerMenu containerToSend, int dataSlotIndex, ItemStack stack) {
             book = stack;
-            CompoundTag compoundTag = book.get(DataComponents.WRITTEN_BOOK_CONTENT);
-            if (compoundTag != null) {
-                pages.clear();
-                Objects.requireNonNull(pages);
-                BookViewScreen.loadPages(compoundTag, pages::add);
+
+            WritableBookContent writableBookContent = book.get(DataComponents.WRITABLE_BOOK_CONTENT);
+            if (writableBookContent != null) {
+                writableBookContent.getPages(Minecraft.getInstance().isTextFilteringEnabled()).forEach(pages::add);
                 clearDisplayCache();
             }
         }
@@ -69,7 +72,7 @@ public class LecternBookEditScreen extends BookEditScreen implements MenuAccess<
     public void saveChanges(boolean publish, boolean takeBook) {
         if (this.isModified) {
             this.eraseEmptyTrailingPages();
-            this.updateLocalCopy(publish);
+            this.updateLocalCopy();
 
             NetworkHelper.sendToServer(new ServerBoundSyncLecternBookMessage(menu.getPos(),
                     this.pages, publish ? Optional.of(this.title.trim()) : Optional.empty(),
@@ -201,7 +204,7 @@ public class LecternBookEditScreen extends BookEditScreen implements MenuAccess<
 
     @Override
     public boolean charTyped(char codePoint, int modifiers) {
-        if (!isSigning && SharedConstants.isAllowedChatCharacter(codePoint)) {
+        if (!isSigning && StringUtil.isAllowedChatCharacter(codePoint)) {
             this.page.insertStyledText(Character.toString(codePoint), ink.getChatFormatting(), quill.getChatFormatting());
             this.clearDisplayCache();
             return true;

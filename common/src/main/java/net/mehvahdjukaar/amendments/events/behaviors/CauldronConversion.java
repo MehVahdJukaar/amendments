@@ -16,6 +16,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -30,6 +31,8 @@ import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.Nullable;
 
+//TODO:
+@Deprecated(forRemoval = true)
 public class CauldronConversion implements BlockUse {
 
     //block use as it has way too many items that could trigger
@@ -48,26 +51,26 @@ public class CauldronConversion implements BlockUse {
     @Override
     public InteractionResult tryPerformingAction(BlockState state, BlockPos pos, Level level, Player player, InteractionHand hand, ItemStack stack, BlockHitResult hit) {
         if (player.isSecondaryUseActive()) return InteractionResult.PASS;
-        return convert(state, pos, level, player, hand, stack, true);
+        return null;// convert(state, pos, level, player, hand, stack, true);
     }
 
 
     //caled by mixin
-    public static InteractionResult convert(BlockState state, BlockPos pos, Level level, Player player, InteractionHand hand,
-                                            ItemStack stack, boolean checkCauldronInteractions) {
+    public static ItemInteractionResult convert(BlockState state, BlockPos pos, Level level, Player player, InteractionHand hand,
+                                                ItemStack stack, boolean checkCauldronInteractions) {
         BlockState newState = getNewState(pos, level, stack, checkCauldronInteractions);
         if (newState != null && level.setBlockAndUpdate(pos, newState)) {
 
             if (level.getBlockEntity(pos) instanceof LiquidCauldronBlockTile te) {
                 if (te.interactWithPlayerItem(player, hand, stack)) {
-                    return InteractionResult.sidedSuccess(level.isClientSide);
+                    return ItemInteractionResult.sidedSuccess(level.isClientSide);
                 } else {
                     level.setBlockAndUpdate(pos, state);
-                    return InteractionResult.PASS;
+                    return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
                 }
             }
         }
-        return InteractionResult.PASS;
+        return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
     }
 
     public static BlockState getNewState(BlockPos pos, Level level, ItemStack stack) {

@@ -50,6 +50,7 @@ public class CauldronBakedModel implements CustomBakedModel {
         }
         if (!hasTranslucent || isTranslucentLayer) {
             List<BakedQuad> liquidQuads = fluid.getQuads(state, direction, randomSource);
+            if (liquidQuads.isEmpty()) return quads;
 
             SoftFluid fluid = extraModelData.get(LiquidCauldronBlockTile.FLUID);
             Boolean glowing = extraModelData.get(LiquidCauldronBlockTile.GLOWING);
@@ -76,7 +77,7 @@ public class CauldronBakedModel implements CustomBakedModel {
 
                 quads.addAll(transformer.transformAll(liquidQuads));
 
-            } else if(!(state.getBlock() instanceof ModCauldronBlock)){
+            } else if (!(state.getBlock() instanceof ModCauldronBlock)) {
                 transformer.applyingAmbientOcclusion(false);
                 quads.addAll(transformer.transformAll(liquidQuads));
             }

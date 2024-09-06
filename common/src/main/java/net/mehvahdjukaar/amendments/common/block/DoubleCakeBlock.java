@@ -10,18 +10,13 @@ import net.mehvahdjukaar.moonlight.api.platform.ForgeHelper;
 import net.mehvahdjukaar.moonlight.api.util.math.MthUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.tags.ItemTags;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.*;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -127,26 +122,6 @@ public class DoubleCakeBlock extends DirectionalCakeBlock {
     @Override
     public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state) {
         return mimic.getBlock().getCloneItemStack(level, pos, state);
-    }
-
-
-    @Override
-    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand handIn, BlockHitResult hit) {
-        //hack
-        if (!player.getItemInHand(handIn).is(ItemTags.CANDLES)) {
-            BlockState newState = type.cake.withPropertiesOf(state);
-            level.setBlock(pos, newState, Block.UPDATE_INVISIBLE);
-            var res = newState.use(level, player, handIn, hit);
-            level.setBlockAndUpdate(pos, state);
-            if (res.consumesAction()) {
-                if (!level.isClientSide()) {
-                    this.removeSlice(state, pos, level, player, getHitDir(player, hit));
-                }
-                return res;
-            }
-        }
-
-        return super.use(state, level, pos, player, handIn, hit);
     }
 
 }

@@ -1,4 +1,4 @@
-package net.mehvahdjukaar.amendments.mixins.forge;
+package net.mehvahdjukaar.amendments.mixins.neoforge;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.mehvahdjukaar.amendments.configs.ClientConfigs;

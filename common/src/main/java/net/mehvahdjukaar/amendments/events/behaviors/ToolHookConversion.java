@@ -41,7 +41,7 @@ public class ToolHookConversion implements BlockUse {
                         withPropertiesOf(state));
 
                 if (level.getBlockEntity(pos) instanceof ToolHookBlockTile tile) {
-                    return tile.interactWithPlayerItem(player, hand, stack);
+                    return tile.interactWithPlayerItem(player, hand, stack).result();
                 }
             }
         }

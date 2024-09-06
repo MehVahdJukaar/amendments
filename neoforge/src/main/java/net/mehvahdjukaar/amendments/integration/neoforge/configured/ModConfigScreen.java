@@ -1,4 +1,4 @@
-package net.mehvahdjukaar.amendments.integration.forge.configured;
+package net.mehvahdjukaar.amendments.integration.neoforge.configured;
 
 
 import com.mrcrayfish.configured.api.IModConfig;
@@ -6,7 +6,6 @@ import net.mehvahdjukaar.moonlight.api.integration.configured.CustomConfigScreen
 import net.mehvahdjukaar.moonlight.api.integration.configured.CustomConfigSelectScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.ItemLike;
@@ -37,15 +36,13 @@ public class ModConfigScreen extends CustomConfigScreen {
         addIcon("hanging sign", Items.SPRUCE_HANGING_SIGN);
     }
 
-
-    public ModConfigScreen(CustomConfigSelectScreen parent, IModConfig config) {
-        super(parent, config);
+    protected ModConfigScreen(String modId, ItemStack icon, Component title, Screen parent, IModConfig config) {
+        super(modId, icon, title, parent, config);
         this.icons.putAll(CUSTOM_ICONS);
     }
 
-    public ModConfigScreen(String modId, ItemStack mainIcon, ResourceLocation background, Component title,
-                           Screen parent, IModConfig config) {
-        super(modId, mainIcon, background, title, parent, config);
+    public ModConfigScreen(CustomConfigSelectScreen customConfigSelectScreen, IModConfig iModConfig) {
+        super(customConfigSelectScreen, iModConfig);
         this.icons.putAll(CUSTOM_ICONS);
     }
 
@@ -56,18 +53,11 @@ public class ModConfigScreen extends CustomConfigScreen {
 
     @Override
     public void onSave() {
-        //sync stuff
-        if (this.config.getFileName().contains("common")) {
-            //TODO: fix. this work but shouldnt be needed and might break servers
-            //TODO: configured should have something for this
-            //ConfigUtils.clientRequestServerConfigReload();
-        }
     }
 
     @Override
-    public CustomConfigScreen createSubScreen(Component title) {
-        return new ModConfigScreen(this.modId, this.mainIcon, this.background, title, this, this.config);
+    public Factory getSubScreenFactory() {
+        return ModConfigScreen::new;
     }
-
 
 }

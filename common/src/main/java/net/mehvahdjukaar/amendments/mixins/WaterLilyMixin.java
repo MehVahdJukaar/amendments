@@ -8,6 +8,7 @@ import net.mehvahdjukaar.moonlight.api.util.Utils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BoneMealItem;
 import net.minecraft.world.item.Item;
@@ -29,10 +30,9 @@ public abstract class WaterLilyMixin extends Block {
 
     //TODO: use event?
     @Override
-    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
-        ItemStack stack = player.getItemInHand(hand);
+    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
         if (!Utils.mayPerformBlockAction(player, pos, stack) ||
-                !CommonConfigs.LILY_PADS_ON.get()) return InteractionResult.PASS;
+                !CommonConfigs.LILY_PADS_ON.get()) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         Item item = stack.getItem();
         if (!stack.isEmpty() && !(item instanceof PlaceOnWaterBlockItem) && !(stack.getItem() instanceof BoneMealItem)) {
             BlockPos below = pos.below();
@@ -47,6 +47,6 @@ public abstract class WaterLilyMixin extends Block {
                 }
             }
         }
-        return InteractionResult.PASS;
+        return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
     }
 }

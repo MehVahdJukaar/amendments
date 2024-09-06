@@ -20,7 +20,7 @@ public class CauldronRecipeInput {
                 toRecolor,
                 toRecolor,
                 toRecolor);
-        return of(items);
+        return CraftingInput.of(3,3,items);
     }
 
     public static CraftingInput of(ItemStack... items) {
@@ -28,8 +28,7 @@ public class CauldronRecipeInput {
     }
 
     public static CraftingInput of(List<ItemStack> items) {
-        int dimension = Mth.ceil(Math.sqrt(items.size()));
-        return CraftingInput.of(dimension, dimension, items);
+        return CraftingInput.of(1, items.size(), items);
     }
 
 }

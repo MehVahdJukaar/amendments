@@ -56,7 +56,7 @@ class DirectionalCakeConversion implements BlockUse {
             BlockHitResult raytrace = new BlockHitResult(
                     new Vec3(pos.getX(), pos.getY(), pos.getZ()), hit.getDirection(), pos, false);
 
-            var r = newState.use(world, player, hand, raytrace);
+            var r = newState.useWithoutItem(world, player, raytrace);
             if (world instanceof ServerLevel serverLevel) {
                 if (r.consumesAction()) {
                     //prevents dropping cake

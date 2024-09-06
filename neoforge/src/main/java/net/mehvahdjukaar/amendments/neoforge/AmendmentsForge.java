@@ -1,38 +1,28 @@
-package net.mehvahdjukaar.amendments.forge;
+package net.mehvahdjukaar.amendments.neoforge;
 
 import net.mehvahdjukaar.amendments.Amendments;
 import net.mehvahdjukaar.amendments.common.block.StructureCauldronHack;
 import net.mehvahdjukaar.amendments.configs.ClientConfigs;
 import net.mehvahdjukaar.amendments.events.ModEvents;
 import net.mehvahdjukaar.amendments.integration.CompatHandler;
-import net.mehvahdjukaar.amendments.integration.forge.BlueprintIntegration;
-import net.mehvahdjukaar.amendments.integration.forge.configured.ModConfigSelectScreen;
+import net.mehvahdjukaar.amendments.integration.neoforge.BlueprintIntegration;
+import net.mehvahdjukaar.amendments.integration.neoforge.configured.ModConfigSelectScreen;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
+import net.mehvahdjukaar.moonlight.api.fluids.neoforge.SoftFluidTankFluidHandlerWrapper;
 import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
 import net.mehvahdjukaar.moonlight.api.platform.RegHelper;
-import net.mehvahdjukaar.moonlight.neoforge.MoonlightForge;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.ai.village.poi.PoiType;
-import net.minecraft.world.entity.ai.village.poi.PoiTypes;
-import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.TagsUpdatedEvent;
 import net.neoforged.neoforge.event.entity.player.AttackEntityEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
-import net.neoforged.neoforge.registries.RegisterEvent;
-
-import java.util.HashSet;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static net.mehvahdjukaar.amendments.Amendments.MOD_ID;
 
@@ -46,7 +36,7 @@ public class AmendmentsForge {
         RegHelper.startRegisteringFor(bus);
 
         Amendments.init();
-        bus.addListener(AmendmentsForge::onRegisterPOI);
+        bus.addListener(AmendmentsForge::registerCapabilities);
         NeoForge.EVENT_BUS.register(this);
         if (PlatHelper.getPhysicalSide().isClient()) {
             NeoForge.EVENT_BUS.register(ClientEvents.class);
@@ -61,19 +51,12 @@ public class AmendmentsForge {
         }
     }
 
-    public static void onRegisterPOI(RegisterEvent event) {
-        if (event.getRegistryKey() == Registries.POINT_OF_INTEREST_TYPE) {
-            Set<BlockState> extraStates = Stream.of(ModRegistry.LIQUID_CAULDRON.get(), ModRegistry.DYE_CAULDRON.get()).flatMap(
-                    (block) -> block.getStateDefinition().getPossibleStates().stream()).collect(Collectors.toSet());
-            var holder = BuiltInRegistries.POINT_OF_INTEREST_TYPE.getHolderOrThrow(PoiTypes.LEATHERWORKER);
-            PoiType value = holder.value();
-            var set = new HashSet<>(value.matchingStates);
-            set.addAll(extraStates);
-            PoiType poiType = new PoiType(set, value.maxTickets(), value.validRange());
-
-            event.register(ResourceLocation.withDefaultNamespace("leatherworker"), poiType);
-
-        }
+    private static void registerCapabilities(RegisterCapabilitiesEvent event) {
+        event.registerBlockEntity(
+                Capabilities.FluidHandler.BLOCK,
+                ModRegistry.LIQUID_CAULDRON_TILE.get(),
+                (myBlockEntity, side) -> SoftFluidTankFluidHandlerWrapper.wrap(myBlockEntity)
+        );
     }
 
     @SubscribeEvent(priority = EventPriority.LOW)

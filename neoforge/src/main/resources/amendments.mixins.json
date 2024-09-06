@@ -2,9 +2,8 @@
   "minVersion": "0.8",
   "required": true,
   "compatibilityLevel": "JAVA_17",
-  "package": "net.mehvahdjukaar.amendments.mixins.forge",
+  "package": "net.mehvahdjukaar.amendments.mixins.neoforge",
   "mixins": [
-    "SelfCauldronMixin"
   ],
   "client": [
     "CompatFarmersDelightCanvasMixin",

@@ -95,43 +95,24 @@ public class DirectionalCakeBlock extends CakeBlock implements SimpleWaterlogged
     }
 
     @Override
-    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand handIn, BlockHitResult hit) {
-        return useGeneric(state, level, pos, player, handIn, hit, true);
-
-    }
-
-    @Override
-    protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
-        return super.useWithoutItem(state, level, pos, player, hitResult);
-    }
-
-    protected InteractionResult useGeneric(BlockState state, Level level, BlockPos pos, Player player,
-                                           InteractionHand handIn, BlockHitResult hit, boolean canEat) {
-
-        ItemStack itemstack = player.getItemInHand(handIn);
-        Item item = itemstack.getItem();
-
-        if (CompatHandler.FARMERS_DELIGHT && this.type == CakeRegistry.VANILLA) {
-            InteractionResult res = FarmersDelightCompat.onCakeInteract(state, pos, level, itemstack);
-            if (res.consumesAction()) return res;
-        }
-
-        if (itemstack.is(ItemTags.CANDLES) && state.getValue(BITES) == 0 && state.is(ModRegistry.DIRECTIONAL_CAKE.get())) {
-            Block block = Block.byItem(item);
-            if (block instanceof CandleBlock cb) {
-                itemstack.consume(1, player);
-
-                level.playSound(null, pos, SoundEvents.CAKE_ADD_CANDLE, SoundSource.BLOCKS, 1.0F, 1.0F);
-                level.setBlockAndUpdate(pos, CandleCakeBlock.byCandle(cb));
-                level.gameEvent(player, GameEvent.BLOCK_CHANGE, pos);
-                player.awardStat(Stats.ITEM_USED.get(item));
+    protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player,
+                                               BlockHitResult hit) {
+        // same as cake one but with hit direction
+        var d = getHitDir(player, hit);
+        if (level.isClientSide) {
+            if (eatSliceD(level, pos, state, player, d).consumesAction()) {
                 return InteractionResult.SUCCESS;
             }
+
+            if (player.getItemInHand(InteractionHand.MAIN_HAND).isEmpty()) {
+                return InteractionResult.CONSUME;
+            }
         }
-        if (!canEat) return InteractionResult.PASS;
-        return this.eatSliceD(level, pos, state, player,
-                getHitDir(player, hit));
+
+        return eatSliceD(level, pos, state, player, d);
     }
+
+
 
     public static Direction getHitDir(Player player, BlockHitResult hit) {
         return hit.getDirection().getAxis() != Direction.Axis.Y ? hit.getDirection() : player.getDirection().getOpposite();
@@ -181,10 +162,10 @@ public class DirectionalCakeBlock extends CakeBlock implements SimpleWaterlogged
     @Override
     public VoxelShape getShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
         return switch (state.getValue(FACING)) {
-            default -> SHAPE_BY_BITE[state.getValue(BITES)];
             case EAST -> SHAPES_EAST[state.getValue(BITES)];
             case SOUTH -> SHAPES_SOUTH[state.getValue(BITES)];
             case NORTH -> SHAPES_NORTH[state.getValue(BITES)];
+            default -> SHAPE_BY_BITE[state.getValue(BITES)];
         };
     }
 

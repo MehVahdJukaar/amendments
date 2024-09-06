@@ -30,12 +30,12 @@ import java.util.stream.Collectors;
 
 public class DyeBottleItem extends Item {
 
-    private static final DyedItemColor DEFAULT_COLOR = new DyedItemColor(getDyeInt(DyeColor.WHITE), false);
-    public static final DyedItemColor RED_COLOR = new DyedItemColor(getDyeInt(DyeColor.RED), false);
-
     protected static final HashBiMap<DyeColor, Integer> COLOR_TO_DIFFUSE = Arrays.stream(DyeColor.values())
             .collect(Collectors.toMap(Function.identity(), DyeColor::getTextureDiffuseColor,
                     (color, color2) -> color2, HashBiMap::create));
+
+    private static final DyedItemColor DEFAULT_COLOR = new DyedItemColor(getDyeInt(DyeColor.WHITE), false);
+    public static final DyedItemColor RED_COLOR = new DyedItemColor(getDyeInt(DyeColor.RED), false);
 
     public DyeBottleItem(Properties properties) {
         super(properties);

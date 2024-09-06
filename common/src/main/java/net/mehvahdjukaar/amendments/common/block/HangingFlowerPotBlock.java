@@ -1,6 +1,5 @@
 package net.mehvahdjukaar.amendments.common.block;
 
-import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import net.mehvahdjukaar.amendments.Amendments;
 import net.mehvahdjukaar.amendments.common.FlowerPotHandler;
@@ -16,7 +15,6 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -146,7 +144,7 @@ public class HangingFlowerPotBlock extends Block implements EntityBlock {
                 }
             }
         }
-        return InteractionResult.PASS;
+        return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
     }
 
     public static void playPlantSound(Level level, BlockPos pos, Player player) {

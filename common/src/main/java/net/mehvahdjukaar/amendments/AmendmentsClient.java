@@ -264,17 +264,17 @@ public class AmendmentsClient {
 
     //TODO: add
     @EventCalled
-    public static void onItemTooltip(ItemStack itemStack, TooltipFlag tooltipFlag, List<Component> components) {
+    public static void onItemTooltip(ItemStack stack, Item.TooltipContext tooltipContext, TooltipFlag tooltipFlag, List<Component> list) {
         if (ClientConfigs.TOOLTIP_HINTS.get()) {
             // InteractEvents.addOverrideTooltips(itemStack, tooltipFlag, components);
         }
-
     }
 
     @ExpectPlatform
     public static boolean hasFixedNormals() {
         throw new AssertionError();
     }
+
 
 
 }

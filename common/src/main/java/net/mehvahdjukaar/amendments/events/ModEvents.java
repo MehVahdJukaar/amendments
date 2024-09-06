@@ -12,9 +12,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -56,10 +54,9 @@ public class ModEvents {
 
     public static InteractionResult onAttackEntity(Player player, Level level, InteractionHand hand,
                                                    Entity target, @Nullable EntityHitResult entityHitResult) {
+        //TODO:check
         ItemStack stack = player.getItemInHand(hand);
-        if (CommonConfigs.TORCH_FIRE_OFFHAND.get() && stack.getItem().getDefaultAttributeModifiers(
-                hand == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND
-        ).containsKey(Attributes.ATTACK_DAMAGE)) {
+        if (CommonConfigs.TORCH_FIRE_OFFHAND.get()) {
             ItemStack offHand = hand == InteractionHand.MAIN_HAND ? player.getOffhandItem() : player.getMainHandItem();
             var ret = torchEntity(player, level, target, offHand);
             if (ret.consumesAction()) return ret;
@@ -75,7 +72,7 @@ public class ModEvents {
                 if (CompatHandler.SOUL_FIRED) {
                     SoulFiredCompat.setSecondsOnFire(target, duration, stack);
                 } else {
-                    target.setSecondsOnFire(duration);
+                    target.setRemainingFireTicks(duration);
                 }
                 if (stack.is(ILightable.FLINT_AND_STEELS)) {
                     target.playSound(SoundEvents.FLINTANDSTEEL_USE, 1.0F, level.getRandom().nextFloat() * 0.4F + 0.8F);

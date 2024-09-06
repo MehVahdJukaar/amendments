@@ -1,4 +1,4 @@
-package net.mehvahdjukaar.amendments.integration.forge;
+package net.mehvahdjukaar.amendments.integration.neoforge;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;

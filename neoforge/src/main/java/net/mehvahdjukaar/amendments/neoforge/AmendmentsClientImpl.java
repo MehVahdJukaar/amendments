@@ -1,6 +1,4 @@
-package net.mehvahdjukaar.amendments.forge;
-
-import net.minecraftforge.common.ForgeConfig;
+package net.mehvahdjukaar.amendments.neoforge;
 
 public class AmendmentsClientImpl {
 
