@@ -5,6 +5,7 @@ import net.mehvahdjukaar.amendments.configs.CommonConfigs;
 import net.mehvahdjukaar.amendments.integration.CompatHandler;
 import net.mehvahdjukaar.amendments.integration.CompatObjects;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
+import net.mehvahdjukaar.amendments.reg.ModTags;
 import net.mehvahdjukaar.moonlight.api.set.BlocksColorAPI;
 import net.mehvahdjukaar.moonlight.api.util.Utils;
 import net.minecraft.core.BlockPos;
@@ -59,7 +60,8 @@ public class SkullCandleConversion implements ItemUseOnBlock {
 
         if (world.getBlockEntity(pos) instanceof SkullBlockEntity oldTile) {
             BlockState state = oldTile.getBlockState();
-            if ((state.getBlock() instanceof AbstractSkullBlock skullBlock && skullBlock.getType() != SkullBlock.Types.DRAGON)) {
+            if ((state.getBlock() instanceof AbstractSkullBlock skullBlock &&
+                    !skullBlock.asItem().builtInRegistryHolder().is(ModTags.SKULL_PILE_BLACKLIST))) {
 
                 ItemStack copy = stack.copy();
 

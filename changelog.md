@@ -1,4 +1,2 @@
-- hitting a lantern or sign will now emit a game event detectable by sculk
-- fixed an issue with swinging animation on servers
-- all cauldron interaction will now properly emit a game event
-- double cake and directional cakes will also emit game events
+added more tags for many modded items (thanks to Cicopath)
+added skull pile blacklist tag
