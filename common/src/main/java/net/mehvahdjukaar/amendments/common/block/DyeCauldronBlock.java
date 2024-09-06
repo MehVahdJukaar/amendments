@@ -1,5 +1,6 @@
 package net.mehvahdjukaar.amendments.common.block;
 
+import com.mojang.serialization.MapCodec;
 import net.mehvahdjukaar.amendments.common.LiquidMixer;
 import net.mehvahdjukaar.amendments.common.item.DyeBottleItem;
 import net.mehvahdjukaar.amendments.common.recipe.RecipeUtils;
@@ -16,6 +17,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.animal.Sheep;
 import net.minecraft.world.entity.player.Player;
@@ -34,11 +36,19 @@ import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.phys.BlockHitResult;
 
 public class DyeCauldronBlock extends ModCauldronBlock {
+
+    public static final MapCodec<DyeCauldronBlock> CODEC = simpleCodec(DyeCauldronBlock::new);
+
     public static final IntegerProperty LEVEL = BlockStateProperties.LEVEL_CAULDRON;
 
     public DyeCauldronBlock(Properties properties) {
         super(properties);
         this.registerDefaultState(this.getStateDefinition().any().setValue(LEVEL, 1));
+    }
+
+    @Override
+    protected MapCodec<? extends DyeCauldronBlock> codec() {
+        return CODEC;
     }
 
     @Override
@@ -72,18 +82,18 @@ public class DyeCauldronBlock extends ModCauldronBlock {
     }
 
     @Override
-    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player,
+                                              InteractionHand hand, BlockHitResult hitResult) {
         if (level.getBlockEntity(pos) instanceof LiquidCauldronBlockTile te) {
-            if (te.handleInteraction(player, hand)) {
-                return InteractionResult.sidedSuccess(level.isClientSide);
+            if (te.interactWithPlayerItem(player, hand, stack)) {
+                return ItemInteractionResult.sidedSuccess(level.isClientSide);
             }
-            if (!CommonConfigs.CAULDRON_CRAFTING.get()) return InteractionResult.PASS;
+            if (!CommonConfigs.CAULDRON_CRAFTING.get()) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
 
             SoftFluidTank tank = te.getSoftFluidTank();
             SoftFluidStack fluid = tank.getFluid();
 
             if (fluid.is(ModRegistry.DYE_SOFT_FLUID.get())) {
-                ItemStack stack = player.getItemInHand(hand);
                 //always allows adding dye. they dont add water
                 if (stack.getItem() instanceof DyeItem di) {
                     return addDye(level, te, stack, player, di);
@@ -95,12 +105,12 @@ public class DyeCauldronBlock extends ModCauldronBlock {
                     if (this.doCraftItem(level, pos, player, hand, fluid, stack, crafted.getFirst(), crafted.getSecond(),
                             CommonConfigs.DYE_RECIPES_PER_LAYER.get())) {
                         te.setChanged();
-                        return InteractionResult.sidedSuccess(level.isClientSide);
+                        return ItemInteractionResult.sidedSuccess(level.isClientSide);
                     }
                 }
             }
         }
-        return InteractionResult.PASS;
+        return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
     }
 
     @Override
@@ -142,7 +152,7 @@ public class DyeCauldronBlock extends ModCauldronBlock {
         stack.consume(1, player);
     }
 
-    public static InteractionResult addDye(Level level, LiquidCauldronBlockTile tile, ItemStack stack, Player player, DyeItem dyeItem) {
+    public static ItemInteractionResult addDye(Level level, LiquidCauldronBlockTile tile, ItemStack stack, Player player, DyeItem dyeItem) {
         SoftFluidStack fluid = tile.getSoftFluidTank().getFluid();
         if (!level.isClientSide()) {
             int count = fluid.getCount();
@@ -154,12 +164,15 @@ public class DyeCauldronBlock extends ModCauldronBlock {
                 mixed.setCount(count);
                 tile.getSoftFluidTank().setFluid(mixed);
                 tile.setChanged();
-            } else fluid.setCount(count);
+            } else{
+                fluid.setCount(count);
+                return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+            }
 
         }
 
         playDyeSoundAndConsume(tile.getBlockState(), tile.getBlockPos(), level, player, stack);
 
-        return InteractionResult.sidedSuccess(level.isClientSide);
+        return ItemInteractionResult.sidedSuccess(level.isClientSide);
     }
 }

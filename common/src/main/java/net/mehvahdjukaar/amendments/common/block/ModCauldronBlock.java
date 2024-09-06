@@ -4,8 +4,10 @@ import net.mehvahdjukaar.amendments.common.network.ClientBoundPlaySplashParticle
 import net.mehvahdjukaar.amendments.common.network.ModNetwork;
 import net.mehvahdjukaar.amendments.common.tile.LiquidCauldronBlockTile;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidStack;
+import net.mehvahdjukaar.moonlight.api.platform.network.NetworkHelper;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.cauldron.CauldronInteraction;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -36,7 +38,7 @@ import java.util.Map;
 public abstract class ModCauldronBlock extends AbstractCauldronBlock implements EntityBlock {
 
     public ModCauldronBlock(BlockBehaviour.Properties properties) {
-        super(properties, Map.of());
+        super(properties, new CauldronInteraction.InteractionMap("amendments_empty", Map.of()));
     }
 
     @Override
@@ -172,7 +174,7 @@ public abstract class ModCauldronBlock extends AbstractCauldronBlock implements 
 
         var particlePacket = new ClientBoundPlaySplashParticlesMessage(hitPos, speed, feetEntity.getBbWidth());
 
-        ModNetwork.CHANNEL.sentToAllClientPlayersTrackingEntityAndSelf(entity, particlePacket);
+        NetworkHelper.sendToAllClientPlayersTrackingEntityAndSelf(entity, particlePacket);
     }
 
 }

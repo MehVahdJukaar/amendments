@@ -12,6 +12,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeColor;
@@ -129,29 +130,30 @@ public class CeilingBannerBlock extends AbstractBannerBlock {
 
     @Override
     public void setPlacedBy(Level pLevel, BlockPos pPos, BlockState pState, @Nullable LivingEntity pPlacer, ItemStack pStack) {
-        //TODO: checl
+        //TODO: check
+        /*
         if (pStack.get(DataComponents.CUSTOM_NAME)) {
             if (pLevel.getBlockEntity(pPos) instanceof CeilingBannerBlockTile tile) {
                 tile.setCustomName(pStack.getHoverName());
             }
-        }
+        }*/
     }
 
     @Override
-    public InteractionResult use(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand, BlockHitResult pHit) {
-        ItemStack itemstack = pPlayer.getItemInHand(pHand);
+    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
+        ItemStack itemstack = player.getItemInHand(hand);
         Item item = itemstack.getItem();
 
         //put post on map
         if (item instanceof MapItem) {
-            if (!pLevel.isClientSide) {
-                if (MapItem.getSavedData(itemstack, pLevel) instanceof ExpandedMapData data) {
-                    data.toggleCustomDecoration(pLevel, pPos);
+            if (!level.isClientSide) {
+                if (MapItem.getSavedData(itemstack, level) instanceof ExpandedMapData data) {
+                    data.ml$toggleCustomDecoration(level, pos);
                 }
             }
-            return InteractionResult.sidedSuccess(pLevel.isClientSide);
+            return ItemInteractionResult.sidedSuccess(level.isClientSide);
         }
-        return super.use(pState, pLevel, pPos, pPlayer, pHand, pHit);
+        return super.useItemOn(stack, state, level, pos, player, hand, hitResult);
     }
 
     private String descriptionId;

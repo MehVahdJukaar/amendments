@@ -2,6 +2,7 @@ package net.mehvahdjukaar.amendments.mixins;
 
 import net.mehvahdjukaar.amendments.common.IBetterJukebox;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
@@ -43,8 +44,8 @@ public abstract class JukeboxBlockEntityMixin extends BlockEntity implements IBe
     }
 
     //vix vanilla bug
-    @Inject(method = "load", at = @At("HEAD"))
-    public void amendments$fixItemSync(CompoundTag tag, CallbackInfo ci) {
+    @Inject(method = "loadAdditional", at = @At("HEAD"))
+    public void amendments$fixItemSync(CompoundTag tag, HolderLookup.Provider registries, CallbackInfo ci) {
         this.items.set(0, ItemStack.EMPTY);
     }
 
@@ -75,8 +76,8 @@ public abstract class JukeboxBlockEntityMixin extends BlockEntity implements IBe
     }
 
     @Override
-    public CompoundTag getUpdateTag() {
-        return this.saveWithoutMetadata();
+    public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
+        return this.saveWithoutMetadata(registries);
     }
 
     @Nullable

@@ -23,6 +23,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -121,7 +122,7 @@ public class LiquidCauldronBlockTile extends BlockEntity implements IExtraModelD
 
 
     // does all the calculation for handling player interaction.
-    public boolean handleInteraction(Player player, InteractionHand hand) {
+    public boolean interactWithPlayerItem(Player player, InteractionHand hand, ItemStack stack) {
         //interact with fluid holder
         if (this.fluidTank.interactWithPlayer(player, hand, level, worldPosition)) {
             level.gameEvent(player, GameEvent.BLOCK_CHANGE, worldPosition);

@@ -1,12 +1,8 @@
 package net.mehvahdjukaar.amendments.client;
 
-import com.google.common.collect.ImmutableSet;
 import com.google.gson.JsonElement;
 import net.mehvahdjukaar.amendments.Amendments;
-import net.mehvahdjukaar.amendments.client.renderers.LanternRendererExtension;
-import net.mehvahdjukaar.amendments.common.block.WallLanternBlock;
-import net.mehvahdjukaar.amendments.configs.ClientConfigs;
-import net.mehvahdjukaar.moonlight.api.item.IThirdPersonSpecialItemRenderer;
+import net.mehvahdjukaar.moonlight.api.client.util.RenderUtil;
 import net.mehvahdjukaar.moonlight.api.platform.ClientHelper;
 import net.mehvahdjukaar.moonlight.api.resources.RPUtils;
 import net.mehvahdjukaar.moonlight.api.util.Utils;
@@ -15,25 +11,21 @@ import net.minecraft.client.renderer.block.BlockModelShaper;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
-import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashSet;
 import java.util.IdentityHashMap;
 import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 //handles wall lanterns and jar special models stuff. reloaded by dynamic pack early
 public class WallLanternModelsManager {
 
     private static final Map<Block, ResourceLocation> SPECIAL_MOUNT_TEXTURES = new IdentityHashMap<>();
-    private static final Map<Block, ResourceLocation> SPECIAL_LANTERN_MODELS = new IdentityHashMap<>();
+    private static final Map<Block, ModelResourceLocation> SPECIAL_LANTERN_MODELS = new IdentityHashMap<>();
 
     //early reload so we can register these models
     public static void refreshModels(ResourceManager manager) {
@@ -51,7 +43,7 @@ public class WallLanternModelsManager {
             ResourceLocation fullPath = Amendments.res("models/" + s + ".json");
             var resource = manager.getResource(fullPath);
             if (resource.isPresent()) {
-                SPECIAL_LANTERN_MODELS.put(l, Amendments.res(s));
+                SPECIAL_LANTERN_MODELS.put(l, RenderUtil.getStandaloneModelLocation(Amendments.res(s)));
             }
         }
     }
@@ -86,7 +78,7 @@ public class WallLanternModelsManager {
     }
 
     public static void registerSpecialModels(ClientHelper.SpecialModelEvent event) {
-        SPECIAL_LANTERN_MODELS.values().forEach(event::register);
+        SPECIAL_LANTERN_MODELS.values().forEach(e -> event.register(e.id()));
     }
 
     //returns the normal or custom wall lantern model

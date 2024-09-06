@@ -1,5 +1,6 @@
 package net.mehvahdjukaar.amendments.common.block;
 
+import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import net.mehvahdjukaar.amendments.common.network.ClientBoundEntityHitSwayingBlockMessage;
 import net.mehvahdjukaar.amendments.common.network.ModNetwork;
@@ -56,6 +57,9 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class WallLanternBlock extends WaterBlock implements EntityBlock {
+
+    public static final MapCodec<WallLanternBlock> CODEC = simpleCodec(WallLanternBlock::new);
+
     public static final VoxelShape SHAPE_NORTH = Block.box(5, 2, 6, 11, 15.99, 16);
     public static final VoxelShape SHAPE_SOUTH = MthUtils.rotateVoxelShape(SHAPE_NORTH, Direction.SOUTH);
     public static final VoxelShape SHAPE_WEST = MthUtils.rotateVoxelShape(SHAPE_NORTH, Direction.WEST);
@@ -73,8 +77,8 @@ public class WallLanternBlock extends WaterBlock implements EntityBlock {
     }
 
     @Override
-    protected MapCodec<? extends Block> codec() {
-        return super.codec();
+    protected MapCodec<? extends WallLanternBlock> codec() {
+        return CODEC;
     }
 
     @Override
@@ -256,7 +260,7 @@ public class WallLanternBlock extends WaterBlock implements EntityBlock {
             if (entity.xo != entity.getX() || entity.zo != entity.getZ() || entity.yo != entity.getY()) {
                 level.gameEvent(entity, GameEvent.BLOCK_ACTIVATE, pos);
             }
-            NetworkHelper.sentToAllClientPlayersTrackingEntity(entity, new ClientBoundEntityHitSwayingBlockMessage(pos, entity.getId()));
+            NetworkHelper.sendToAllClientPlayersTrackingEntity(entity, new ClientBoundEntityHitSwayingBlockMessage(pos, entity.getId()));
         }
     }
 

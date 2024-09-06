@@ -5,16 +5,15 @@ import net.mehvahdjukaar.amendments.common.item.DyeBottleItem;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.moonlight.api.set.BlocksColorAPI;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.component.DataComponents;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
-import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.DyedItemColor;
-import net.minecraft.world.item.crafting.*;
+import net.minecraft.world.item.crafting.CraftingBookCategory;
+import net.minecraft.world.item.crafting.CraftingInput;
+import net.minecraft.world.item.crafting.CustomRecipe;
+import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
 
 public class DyeBottleRecipe extends CustomRecipe {
@@ -42,13 +41,13 @@ public class DyeBottleRecipe extends CustomRecipe {
             if (!itemstack.isEmpty()) {
                 Item item = itemstack.getItem();
                 if (itemstack.is(ItemTags.DYEABLE) ||
-                            (BlocksColorAPI.changeColor(item,
-                                    DyeBottleItem.getClosestDye(dyeBottle)) != null)) {
-                        if (hasDyableItem) return false;
-                        else hasDyableItem = true;
-                    }
+                        (BlocksColorAPI.changeColor(item,
+                                DyeBottleItem.getClosestDye(dyeBottle)) != null)) {
+                    if (hasDyableItem) return false;
+                    else hasDyableItem = true;
                 }
             }
+        }
         return hasDyableItem;
     }
 
@@ -72,12 +71,12 @@ public class DyeBottleRecipe extends CustomRecipe {
             result = leather.copy();
 
             var colorComponent = leather.get(DataComponents.DYED_COLOR);
-            if(colorComponent != null) {
-                int mixedColor = DyeBottleItem.mixColor(DyeBottleItem.getColor(dyeBottle),
+            if (colorComponent != null) {
+                int mixedColor = DyeBottleItem.mixColor(dyeBottle.get(DataComponents.DYED_COLOR).rgb(),
                         colorComponent.rgb(), 1, 1);
                 result.set(DataComponents.DYED_COLOR, new DyedItemColor(mixedColor, true));
-            }else{
-                result.set(DataComponents.DYED_COLOR,new DyedItemColor( DyeBottleItem.getColor(dyeBottle), true));
+            } else {
+                result.set(DataComponents.DYED_COLOR, new DyedItemColor(dyeBottle.get(DataComponents.DYED_COLOR).rgb(), true));
             }
         } else {
             result = BlocksColorAPI.changeColor(leather.getItem(),

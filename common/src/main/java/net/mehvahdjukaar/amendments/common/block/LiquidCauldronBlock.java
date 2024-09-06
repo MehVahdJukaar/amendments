@@ -1,5 +1,6 @@
 package net.mehvahdjukaar.amendments.common.block;
 
+import com.mojang.serialization.MapCodec;
 import net.mehvahdjukaar.amendments.common.recipe.RecipeUtils;
 import net.mehvahdjukaar.amendments.common.tile.LiquidCauldronBlockTile;
 import net.mehvahdjukaar.amendments.configs.CommonConfigs;
@@ -19,15 +20,17 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.particles.ColorParticleOption;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.FastColor;
+import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -56,8 +59,12 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.stream.StreamSupport;
 
 public class LiquidCauldronBlock extends ModCauldronBlock {
+
+    public static final MapCodec<LiquidCauldronBlock> CODEC = simpleCodec(LiquidCauldronBlock::new);
+
     public static final int MAX_LEVEL = PlatHelper.getPlatform().isFabric() ? 3 : 4;
     public static final IntegerProperty LEVEL = PlatHelper.getPlatform().isFabric() ?
             BlockStateProperties.LEVEL_CAULDRON : ModBlockProperties.LEVEL_1_4;
@@ -69,6 +76,11 @@ public class LiquidCauldronBlock extends ModCauldronBlock {
         super(properties.lightLevel(value -> value.getValue(LIGHT_LEVEL)));
         this.registerDefaultState(this.getStateDefinition().any()
                 .setValue(LEVEL, 1).setValue(LIGHT_LEVEL, 0).setValue(BOILING, false));
+    }
+
+    @Override
+    protected MapCodec<? extends LiquidCauldronBlock> codec() {
+        return CODEC;
     }
 
     @Override
@@ -99,18 +111,16 @@ public class LiquidCauldronBlock extends ModCauldronBlock {
     }
 
     @Override
-    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
         if (level.getBlockEntity(pos) instanceof LiquidCauldronBlockTile te) {
-            if (te.handleInteraction(player, hand)) {
+            if (te.interactWithPlayerItem(player, hand, stack)) {
                 maybeSendPotionMixMessage(te.getSoftFluidTank(), player);
-                return InteractionResult.sidedSuccess(level.isClientSide);
+                return ItemInteractionResult.sidedSuccess(level.isClientSide);
             }
-            if (!CommonConfigs.CAULDRON_CRAFTING.get()) return InteractionResult.PASS;
+            if (!CommonConfigs.CAULDRON_CRAFTING.get()) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
 
             SoftFluidTank tank = te.getSoftFluidTank();
             SoftFluidStack fluid = tank.getFluid();
-            ItemStack stack = player.getItemInHand(hand);
-
 
             var crafted = RecipeUtils.craftWithFluid(level, tank.getFluid(), stack, true);
             if (crafted != null) {
@@ -118,11 +128,11 @@ public class LiquidCauldronBlock extends ModCauldronBlock {
                 int mult = fluid.is(BuiltInSoftFluids.POTION.get()) ? CommonConfigs.POTION_RECIPES_PER_LAYER.get() : 1;
                 if (this.doCraftItem(level, pos, player, hand, fluid, stack, crafted.getFirst(), crafted.getSecond(), mult)) {
                     te.setChanged();
-                    return InteractionResult.sidedSuccess(level.isClientSide);
+                    return ItemInteractionResult.sidedSuccess(level.isClientSide);
                 }
             }
         }
-        return InteractionResult.PASS;
+        return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
     }
 
     @Override
@@ -240,13 +250,12 @@ public class LiquidCauldronBlock extends ModCauldronBlock {
                     }
                     if (type != PotionBottleType.REGULAR) {
 
-                        ParticleOptions particle = type == PotionBottleType.SPLASH ?
-                                ParticleTypes.AMBIENT_ENTITY_EFFECT : ParticleTypes.ENTITY_EFFECT;
-
                         int color = tank.getCachedParticleColor(level, pos);
-                        addPotionParticles(particle, level, pos, 1,
-                                height, rand, color);
+                        int alpha = type == PotionBottleType.SPLASH ? Mth.floor(38.25F) : 255;
+                        ParticleOptions particle = ColorParticleOption.create(ParticleTypes.ENTITY_EFFECT,
+                                FastColor.ARGB32.color(alpha, color));
 
+                        addPotionParticles(particle, level, pos, 1, height, rand, color);
                     }
                 }
                 if (CompatHandler.ALEX_CAVES) {
@@ -277,8 +286,8 @@ public class LiquidCauldronBlock extends ModCauldronBlock {
     }
 
     private List<MobEffectInstance> getPotionEffects(SoftFluidStack stack) {
-        return stack.getOrDefault(DataComponents.POTION_CONTENTS, PotionContents.EMPTY)
-                .getAllEffects(stack.getTag());
+        return StreamSupport.stream(stack.getOrDefault(DataComponents.POTION_CONTENTS, PotionContents.EMPTY)
+                .getAllEffects().spliterator(), false).toList();
     }
 
 
@@ -356,7 +365,7 @@ public class LiquidCauldronBlock extends ModCauldronBlock {
         }
         //fizzle
         var inverse = CommonConfigs.INVERSE_POTIONS.get();
-        var effects = potionEffects.stream().map(e->e.getEffect().value()).toList();
+        var effects = potionEffects.stream().map(e -> e.getEffect().value()).toList();
         for (var effect : effects) {
             var inv = inverse.get(effect);
             if (inv != null && effects.contains(inv)) {

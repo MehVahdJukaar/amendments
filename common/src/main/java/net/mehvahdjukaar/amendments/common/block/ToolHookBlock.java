@@ -1,5 +1,6 @@
 package net.mehvahdjukaar.amendments.common.block;
 
+import com.mojang.serialization.MapCodec;
 import net.mehvahdjukaar.amendments.common.tile.ToolHookBlockTile;
 import net.mehvahdjukaar.moonlight.api.block.ItemDisplayTile;
 import net.mehvahdjukaar.moonlight.api.misc.ForgeOverride;
@@ -8,6 +9,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -28,6 +30,9 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 
 public class ToolHookBlock extends Block implements EntityBlock {
+
+    public static final MapCodec<ToolHookBlock> CODEC = simpleCodec(ToolHookBlock::new);
+
     public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
     public static final VoxelShape NORTH_AABB = Block.box(5.0, 5.0, 10.0, 11.0, 15.0, 16.0);
     public static final VoxelShape SOUTH_AABB = Block.box(5.0, 5.0, 0.0, 11.0, 15.0, 6.0);
@@ -37,6 +42,11 @@ public class ToolHookBlock extends Block implements EntityBlock {
     public ToolHookBlock(BlockBehaviour.Properties properties) {
         super(properties);
         this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH));
+    }
+
+    @Override
+    protected MapCodec<? extends ToolHookBlock> codec() {
+        return CODEC;
     }
 
     @Override
@@ -95,11 +105,11 @@ public class ToolHookBlock extends Block implements EntityBlock {
     }
 
     @Override
-    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         if (level.getBlockEntity(pos) instanceof ToolHookBlockTile tile) {
-            return tile.interact(player, hand);
+            return tile.interactWithPlayerItem(player, hand, stack);
         }
-        return super.use(state, level, pos, player, hand, hit);
+        return super.useItemOn(stack, state, level, pos, player, hand, hit);
     }
 
     @Nullable

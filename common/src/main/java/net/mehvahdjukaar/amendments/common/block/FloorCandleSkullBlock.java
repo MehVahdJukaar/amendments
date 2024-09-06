@@ -1,5 +1,7 @@
 package net.mehvahdjukaar.amendments.common.block;
 
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.mehvahdjukaar.amendments.common.tile.CandleSkullBlockTile;
 import net.mehvahdjukaar.moonlight.api.block.IRecolorable;
 import net.mehvahdjukaar.moonlight.api.set.BlocksColorAPI;
@@ -7,8 +9,10 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.AbstractCandleBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
@@ -21,7 +25,12 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Supplier;
 
-public class FloorCandleSkullBlock extends AbstractCandleSkullBlock  implements IRecolorable {
+public class FloorCandleSkullBlock extends AbstractCandleSkullBlock implements IRecolorable {
+
+    public static final MapCodec<FloorCandleSkullBlock> CODEC = RecordCodecBuilder.mapCodec((i) -> i.group(
+            BuiltInRegistries.PARTICLE_TYPE.byNameCodec().fieldOf("particle")
+                    .forGetter(FloorCandleSkullBlock::getParticle), propertiesCodec()
+    ).apply(i, (p, s) -> new FloorCandleSkullBlock(s, () -> p)));
 
     public static final IntegerProperty ROTATION = BlockStateProperties.ROTATION_16;
 
@@ -32,6 +41,11 @@ public class FloorCandleSkullBlock extends AbstractCandleSkullBlock  implements 
     public FloorCandleSkullBlock(BlockBehaviour.Properties properties, Supplier<ParticleType<? extends ParticleOptions>> particle) {
         super(properties, particle);
         this.registerDefaultState(this.defaultBlockState().setValue(ROTATION, 0).setValue(LIT, false));
+    }
+
+    @Override
+    protected MapCodec<? extends FloorCandleSkullBlock> codec() {
+        return CODEC;
     }
 
     @Override
@@ -52,11 +66,11 @@ public class FloorCandleSkullBlock extends AbstractCandleSkullBlock  implements 
 
     @Override
     public boolean tryRecolor(Level level, BlockPos blockPos, BlockState blockState, @Nullable DyeColor dyeColor) {
-        if(level.getBlockEntity(blockPos) instanceof CandleSkullBlockTile tile){
+        if (level.getBlockEntity(blockPos) instanceof CandleSkullBlockTile tile) {
             var c = tile.getCandle();
-            if(!c.isAir()){
+            if (!c.isAir()) {
                 Block otherCandle = BlocksColorAPI.changeColor(c.getBlock(), dyeColor);
-                if(otherCandle != null && !c.is(otherCandle)){
+                if (otherCandle != null && !c.is(otherCandle)) {
                     //TODO:fix
                     tile.setCandle(otherCandle.withPropertiesOf(c));
                     tile.setChanged();
@@ -69,7 +83,7 @@ public class FloorCandleSkullBlock extends AbstractCandleSkullBlock  implements 
 
     @Override
     public boolean isDefaultColor(Level level, BlockPos blockPos, BlockState blockState) {
-        if(level.getBlockEntity(blockPos) instanceof CandleSkullBlockTile tile) {
+        if (level.getBlockEntity(blockPos) instanceof CandleSkullBlockTile tile) {
             var c = tile.getCandle();
             return BlocksColorAPI.isDefaultColor(c.getBlock());
         }

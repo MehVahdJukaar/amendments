@@ -1,6 +1,7 @@
 package net.mehvahdjukaar.amendments.common.block;
 
 import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
@@ -14,6 +15,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -34,7 +36,11 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 public class WallCandleSkullBlock extends AbstractCandleSkullBlock implements IRecolorable {
-    public static final MapCodec<WallCandleSkullBlock> CODEC = simpleCodec(WallCandleSkullBlock::new);
+
+    public static final MapCodec<WallCandleSkullBlock> CODEC = RecordCodecBuilder.mapCodec((i) -> i.group(
+            BuiltInRegistries.PARTICLE_TYPE.byNameCodec().fieldOf("particle")
+                    .forGetter(WallCandleSkullBlock::getParticle), propertiesCodec()
+    ).apply(i, (p, s) -> new WallCandleSkullBlock(s, () -> p)));
 
     public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
     private static final Map<Direction, VoxelShape[]> SHAPES = Util.make(() -> {
@@ -79,7 +85,7 @@ public class WallCandleSkullBlock extends AbstractCandleSkullBlock implements IR
     }
 
     @Override
-    protected MapCodec<WallCandleSkullBlock> codec() {
+    protected MapCodec<? extends WallCandleSkullBlock> codec() {
         return CODEC;
     }
 

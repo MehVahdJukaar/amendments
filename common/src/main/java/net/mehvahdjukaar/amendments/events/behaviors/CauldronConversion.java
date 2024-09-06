@@ -59,7 +59,7 @@ public class CauldronConversion implements BlockUse {
         if (newState != null && level.setBlockAndUpdate(pos, newState)) {
 
             if (level.getBlockEntity(pos) instanceof LiquidCauldronBlockTile te) {
-                if (te.handleInteraction(player, hand)) {
+                if (te.interactWithPlayerItem(player, hand, stack)) {
                     return InteractionResult.sidedSuccess(level.isClientSide);
                 } else {
                     level.setBlockAndUpdate(pos, state);
@@ -80,7 +80,7 @@ public class CauldronConversion implements BlockUse {
         if (fluid == null) return null;
         SoftFluidStack first = fluid.getFirst();
 
-        if (checkCauldronInteractions && ((CauldronBlock) Blocks.CAULDRON).interactions.containsKey(stack.getItem())
+        if (checkCauldronInteractions && ((CauldronBlock) Blocks.CAULDRON).interactions.map().containsKey(stack.getItem())
                 && !first.is(BuiltInSoftFluids.POTION.get())) return null;
         if (CompatHandler.RATS && stack.is(Items.MILK_BUCKET)) return null;
         return getNewState(pos, level, first);

@@ -7,6 +7,8 @@ import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
 import net.mehvahdjukaar.moonlight.api.util.Utils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
@@ -16,6 +18,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.*;
@@ -40,9 +43,9 @@ public class DoubleSkullBlockTile extends EnhancedSkullBlockTile {
     }
 
     @Override
-    public void saveAdditional(CompoundTag tag) {
-        super.saveAdditional(tag);
-        this.saveInnerTile("SkullUp", this.innerTileUp, tag);
+    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+        super.saveAdditional(tag, registries);
+        this.saveInnerTile("SkullUp", this.innerTileUp, tag, registries);
 
         if (candleUp != null) {
             tag.putString("CandleAbove", Utils.getID(candleUp).toString());
@@ -50,9 +53,9 @@ public class DoubleSkullBlockTile extends EnhancedSkullBlockTile {
     }
 
     @Override
-    public void load(CompoundTag tag) {
-        super.load(tag);
-        this.innerTileUp = this.loadInnerTile("SkullUp", this.innerTileUp, tag);
+    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+        super.loadAdditional(tag, registries);
+        this.innerTileUp = this.loadInnerTile("SkullUp", this.innerTileUp, tag, registries);
         Block b = null;
         if (tag.contains("CandleAbove")) {
             ResourceLocation candle = ResourceLocation.tryParse(tag.getString("CandleAbove"));
@@ -101,18 +104,8 @@ public class DoubleSkullBlockTile extends EnhancedSkullBlockTile {
                 BlockEntity entity = upSkull.newBlockEntity(this.getBlockPos(), state);
                 if (entity instanceof SkullBlockEntity blockEntity) {
                     this.innerTileUp = blockEntity;
-
                     //sets owner of upper tile
-                    GameProfile gameprofile = null;
-                    if (skullStack.hasTag()) {
-                        CompoundTag compoundtag = skullStack.getTag();
-                        if (compoundtag.contains("SkullOwner", 10)) {
-                            gameprofile = NbtUtils.readGameProfile(compoundtag.getCompound("SkullOwner"));
-                        } else if (compoundtag.contains("SkullOwner", 8) && !StringUtils.isBlank(compoundtag.getString("SkullOwner"))) {
-                            gameprofile = new GameProfile(null, compoundtag.getString("SkullOwner"));
-                        }
-                    }
-                    this.innerTileUp.setOwner(gameprofile);
+                    this.innerTileUp.setOwner(skullStack.get(DataComponents.PROFILE));
                 }
             }
         }

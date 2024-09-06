@@ -3,11 +3,13 @@ package net.mehvahdjukaar.amendments.client.gui;
 import net.mehvahdjukaar.amendments.common.LecternEditMenu;
 import net.mehvahdjukaar.amendments.common.network.ModNetwork;
 import net.mehvahdjukaar.amendments.common.network.ServerBoundSyncLecternBookMessage;
+import net.mehvahdjukaar.moonlight.api.platform.network.NetworkHelper;
 import net.minecraft.SharedConstants;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.inventory.BookEditScreen;
 import net.minecraft.client.gui.screens.inventory.BookViewScreen;
 import net.minecraft.client.gui.screens.inventory.MenuAccess;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
@@ -29,7 +31,7 @@ public class LecternBookEditScreen extends BookEditScreen implements MenuAccess<
         @Override
         public void slotChanged(AbstractContainerMenu containerToSend, int dataSlotIndex, ItemStack stack) {
             book = stack;
-            CompoundTag compoundTag = book.getTag();
+            CompoundTag compoundTag = book.get(DataComponents.WRITTEN_BOOK_CONTENT);
             if (compoundTag != null) {
                 pages.clear();
                 Objects.requireNonNull(pages);
@@ -69,7 +71,7 @@ public class LecternBookEditScreen extends BookEditScreen implements MenuAccess<
             this.eraseEmptyTrailingPages();
             this.updateLocalCopy(publish);
 
-            ModNetwork.CHANNEL.sendToServer(new ServerBoundSyncLecternBookMessage(menu.getPos(),
+            NetworkHelper.sendToServer(new ServerBoundSyncLecternBookMessage(menu.getPos(),
                     this.pages, publish ? Optional.of(this.title.trim()) : Optional.empty(),
                     takeBook));
         }

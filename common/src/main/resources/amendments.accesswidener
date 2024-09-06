@@ -4,7 +4,10 @@ accessWidener   v2  named
 accessible method net/minecraft/client/renderer/blockentity/SignRenderer translateSignText (Lcom/mojang/blaze3d/vertex/PoseStack;ZLnet/minecraft/world/phys/Vec3;)V
 accessible method net/minecraft/client/renderer/blockentity/SignRenderer getTextOffset ()Lnet/minecraft/world/phys/Vec3;
 
+accessible field net/minecraft/world/level/block/AbstractCauldronBlock interactions Lnet/minecraft/core/cauldron/CauldronInteraction$InteractionMap;
+
 #book edit
+accessible method net/minecraft/client/gui/screens/inventory/BookEditScreen updateLocalCopy ()V
 extendable method net/minecraft/client/gui/screens/inventory/BookEditScreen saveChanges (Z)V
 accessible field net/minecraft/client/gui/screens/inventory/BookEditScreen isModified Z
 extendable method net/minecraft/client/gui/screens/inventory/BookEditScreen eraseEmptyTrailingPages ()V

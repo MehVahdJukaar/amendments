@@ -1,5 +1,7 @@
 package net.mehvahdjukaar.amendments.common.block;
 
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import net.mehvahdjukaar.amendments.Amendments;
 import net.mehvahdjukaar.amendments.common.FlowerPotHandler;
 import net.mehvahdjukaar.amendments.common.tile.HangingFlowerPotBlockTile;
@@ -15,6 +17,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
@@ -49,12 +52,19 @@ import java.util.List;
 
 public class HangingFlowerPotBlock extends Block implements EntityBlock {
 
+    public static final MapCodec<HangingFlowerPotBlock> CODEC = simpleCodec(HangingFlowerPotBlock::new);
+
     protected static final VoxelShape SHAPE = Block.box(5.0D, 0.0D, 5.0D, 11.0D, 6.0D, 11.0D);
     public static final IntegerProperty LIGHT_LEVEL = ModBlockProperties.LIGHT_LEVEL;
 
     public HangingFlowerPotBlock(Properties properties) {
         super(properties.lightLevel(state -> state.getValue(LIGHT_LEVEL)));
         this.registerDefaultState(this.stateDefinition.any().setValue(LIGHT_LEVEL, 0));
+    }
+
+    @Override
+    protected MapCodec<? extends HangingFlowerPotBlock> codec() {
+        return CODEC;
     }
 
     @Override
@@ -88,11 +98,12 @@ public class HangingFlowerPotBlock extends Block implements EntityBlock {
     }
 
     @Override
-    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand handIn, BlockHitResult hit) {
+    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player,
+                                              InteractionHand hand, BlockHitResult hitResult) {
         if (level.getBlockEntity(pos) instanceof HangingFlowerPotBlockTile tile && tile.isAccessibleBy(player)) {
             Block pot = tile.getHeldBlock().getBlock();
             if (pot instanceof FlowerPotBlock flowerPot) {
-                ItemStack itemstack = player.getItemInHand(handIn); //&& FlowerPotHandler.isEmptyPot(flowerPot)
+                ItemStack itemstack = player.getItemInHand(hand); //&& FlowerPotHandler.isEmptyPot(flowerPot)
                 Item item = itemstack.getItem();
                 //mimics flowerPorBlock behavior for consistency
                 Block newPot = item instanceof BlockItem bi ? FlowerPotHandler.getFullPot(flowerPot, bi.getBlock()) : Blocks.AIR;
@@ -116,7 +127,7 @@ public class HangingFlowerPotBlock extends Block implements EntityBlock {
                         ItemStack flowerItem = pot.getCloneItemStack(level, pos, state);
                         if (!flowerItem.equals(new ItemStack(this))) {
                             if (itemstack.isEmpty()) {
-                                player.setItemInHand(handIn, flowerItem);
+                                player.setItemInHand(hand, flowerItem);
                             } else if (!player.addItem(flowerItem)) {
                                 player.drop(flowerItem, false);
                             }
@@ -129,9 +140,9 @@ public class HangingFlowerPotBlock extends Block implements EntityBlock {
                     }
 
                     level.gameEvent(player, GameEvent.BLOCK_CHANGE, pos);
-                    return InteractionResult.sidedSuccess(level.isClientSide);
+                    return ItemInteractionResult.sidedSuccess(level.isClientSide);
                 } else {
-                    return InteractionResult.CONSUME;
+                    return ItemInteractionResult.CONSUME;
                 }
             }
         }

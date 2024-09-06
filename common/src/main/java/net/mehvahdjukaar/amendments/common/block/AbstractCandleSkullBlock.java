@@ -1,5 +1,7 @@
 package net.mehvahdjukaar.amendments.common.block;
 
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMaps;
@@ -17,6 +19,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -25,6 +28,7 @@ import net.minecraft.tags.ItemTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
@@ -166,9 +170,10 @@ public abstract class AbstractCandleSkullBlock extends AbstractCandleBlock imple
     }
 
     //same as ILightUpBlock (todo: try to merge)
+
+
     @Override
-    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult pHit) {
-        ItemStack stack = player.getItemInHand(hand);
+    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
         if (Utils.mayPerformBlockAction(player, pos, stack)) {
             //add candles
             if (stack.is(ItemTags.CANDLES) && stack.getItem() instanceof BlockItem blockItem) {
@@ -189,14 +194,14 @@ public abstract class AbstractCandleSkullBlock extends AbstractCandleBlock imple
                     level.setBlock(pos, state.setValue(CANDLES, count + 1), 2);
 
                     level.gameEvent(player, GameEvent.BLOCK_CHANGE, pos);
-                    return InteractionResult.sidedSuccess(level.isClientSide);
+                    return ItemInteractionResult.sidedSuccess(level.isClientSide);
                 }
-                return InteractionResult.PASS;
+                return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
             }
             //lightable logic
-            return interactWithPlayer(state, level, pos, player, hand);
+            return ILightable.super.interactWithPlayerItem(state, level, pos, player, hand, stack);
         }
-        return InteractionResult.PASS;
+        return super.useItemOn(stack, state, level, pos, player, hand, hitResult);
     }
 
     @Override
