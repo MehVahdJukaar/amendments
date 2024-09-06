@@ -25,6 +25,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -82,15 +83,15 @@ public class WallLanternBlock extends WaterBlock implements EntityBlock {
     }
 
     @Override
-    public InteractionResult use(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand, BlockHitResult pHit) {
-        if (pLevel.getBlockEntity(pPos) instanceof WallLanternBlockTile te && te.isAccessibleBy(pPlayer)) {
+    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
+        if (level.getBlockEntity(pos) instanceof WallLanternBlockTile te && te.isAccessibleBy(player)) {
             BlockState lantern = te.getHeldBlock();
             if (CompatHandler.SUPPSQUARED) {
-                InteractionResult res = SuppSquaredCompat.lightUpLantern(pLevel, pPos, pPlayer, pHand, te, lantern);
-                if (res != null) return res;
+                ItemInteractionResult res = SuppSquaredCompat.lightUpLantern(level, pos, player, hand, stack, te, lantern);
+                if (res.consumesAction()) return res;
             }
         }
-        return InteractionResult.PASS;
+        return super.useItemOn(stack, state, level, pos, player, hand, hitResult);
     }
 
 
@@ -158,10 +159,10 @@ public class WallLanternBlock extends WaterBlock implements EntityBlock {
     @Override
     public VoxelShape getShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
         return switch (state.getValue(FACING)) {
-            default -> SHAPE_SOUTH;
             case NORTH -> SHAPE_NORTH;
             case WEST -> SHAPE_WEST;
             case EAST -> SHAPE_EAST;
+            default -> SHAPE_SOUTH;
         };
     }
 
@@ -171,11 +172,6 @@ public class WallLanternBlock extends WaterBlock implements EntityBlock {
             return new ItemStack(te.getHeldBlock().getBlock());
         }
         return new ItemStack(Blocks.LANTERN, 1);
-    }
-
-    @Override
-    protected boolean isPathfindable(BlockState state, PathComputationType pathComputationType) {
-        return false;
     }
 
     @Override

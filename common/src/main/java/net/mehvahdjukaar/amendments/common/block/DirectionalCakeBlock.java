@@ -71,7 +71,11 @@ public class DirectionalCakeBlock extends CakeBlock implements SimpleWaterlogged
     public final CakeRegistry.CakeType type;
 
     public DirectionalCakeBlock(CakeRegistry.CakeType type) {
-        super(Utils.copyPropertySafe(type.cake).dropsLike(type.cake));
+        this(Utils.copyPropertySafe(type.cake).dropsLike(type.cake), type);
+    }
+
+    public DirectionalCakeBlock(Properties properties, CakeRegistry.CakeType type) {
+        super(properties);
         this.registerDefaultState(this.defaultBlockState().setValue(BITES, 0)
                 .setValue(FACING, Direction.WEST).setValue(WATERLOGGED, false));
         this.type = type;

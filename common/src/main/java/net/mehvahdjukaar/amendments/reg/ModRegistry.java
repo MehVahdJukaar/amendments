@@ -179,11 +179,11 @@ public class ModRegistry {
 
     //carpeted blocks
     public static final Supplier<Block> CARPET_STAIRS = regBlock(CARPETED_STAIR_NAME,
-            () -> new CarpetStairBlock(Blocks.OAK_STAIRS)
+            () -> new CarpetStairBlock(Blocks.OAK_STAIRS, BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_STAIRS))
     );
 
     public static final Supplier<Block> CARPET_SLAB = regBlock(CARPETED_SLAB_NAME,
-            () -> new CarpetSlabBlock(Blocks.OAK_SLAB)
+            () -> new CarpetSlabBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_SLAB))
     );
 
     public static final Supplier<BlockEntityType<CarpetedBlockTile>> CARPET_STAIRS_TILE = regTile("carpeted_block",

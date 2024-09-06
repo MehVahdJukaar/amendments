@@ -5,7 +5,9 @@ import net.mehvahdjukaar.suppsquared.common.LightableLanternBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -16,16 +18,16 @@ public class SuppSquaredCompat {
         return b instanceof LightableLanternBlock;
     }
 
-    @Nullable
-    public static InteractionResult lightUpLantern(Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand, WallLanternBlockTile te, BlockState lantern) {
+    public static ItemInteractionResult lightUpLantern(Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand,
+                                                       ItemStack stack, WallLanternBlockTile te, BlockState lantern) {
         if (lantern.getBlock() instanceof LightableLanternBlock) {
             var opt = LightableLanternBlock.toggleLight(lantern, pLevel, pPos, pPlayer, pHand);
             if (opt.isPresent()) {
                 te.setHeldBlock(opt.get());
-                return InteractionResult.sidedSuccess(pLevel.isClientSide);
+                return ItemInteractionResult.sidedSuccess(pLevel.isClientSide);
             }
         }
-        return null;
+        return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
     }
 
 
