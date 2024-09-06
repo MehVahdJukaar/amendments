@@ -97,11 +97,6 @@ public class SuppCompat {
         return IRopeConnection.canConnectDown(neighborState);
     }
 
-    public static boolean isEndermanHead(SkullBlock skull) {
-        return skull.getType() == EndermanSkullBlock.TYPE;
-    }
-
-
     @Environment(EnvType.CLIENT)
     @Nullable
     public static Material getFlagMaterial(BannerPatternItem bannerPatternItem) {
