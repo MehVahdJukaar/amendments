@@ -37,7 +37,7 @@ itemIcon = "minecraft:painting" #catalogue icon
 [[dependencies.${ mod_id }]]
     modId = "moonlight"
     mandatory = true
-    versionRange = "*"
+    versionRange = "[${moonlight_min_version},)"
     ordering = "NONE"
     side = "BOTH"
 

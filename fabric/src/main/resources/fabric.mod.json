@@ -29,7 +29,7 @@
   "depends": {
     "fabric": "*",
     "minecraft": ">=${minecraft_min_version} <${minecraft_max_version}",
-    "moonlight": ">=${required_moonlight_version}"
+    "moonlight": ">=${moonlight_min_version}"
   },
   "conflicts": {
     "supplementaries": "<1.20-2.8.0"

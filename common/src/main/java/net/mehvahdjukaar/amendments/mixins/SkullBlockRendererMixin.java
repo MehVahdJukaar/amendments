@@ -5,6 +5,7 @@ import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.mojang.authlib.GameProfile;
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.mehvahdjukaar.amendments.common.block.DoubleSkullBlock;
 import net.mehvahdjukaar.supplementaries.reg.ModTextures;
 import net.minecraft.client.model.SkullModelBase;
 import net.minecraft.client.model.dragon.DragonHeadModel;
