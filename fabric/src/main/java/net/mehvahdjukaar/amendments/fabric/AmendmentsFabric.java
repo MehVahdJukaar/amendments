@@ -61,8 +61,6 @@ public class AmendmentsFabric implements ModInitializer {
         return null;
     }
 
-    ;
-
     public void onInitialize() {
         Amendments.init();
         UseBlockCallback.EVENT.register(ModEvents::onRightClickBlockHP);

@@ -4,18 +4,17 @@ import net.mehvahdjukaar.amendments.Amendments;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.RecordItem;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.registries.MissingMappingsEvent;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.neoforge.registries.IdMappingEvent;
 
-
-@Mod.EventBusSubscriber(modid = Amendments.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
+@EventBusSubscriber(modid = Amendments.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
 public class RemapHandler {
 
 
     @SubscribeEvent
-    public static void onRemapBlocks(MissingMappingsEvent event) {
+    public static void onRemapBlocks(IdMappingEvent event) {
         remapAll(event, BuiltInRegistries.BLOCK);
         remapAll(event, BuiltInRegistries.ITEM);
         remapAll(event, BuiltInRegistries.BLOCK_ENTITY_TYPE);
@@ -23,7 +22,7 @@ public class RemapHandler {
     }
 
 
-    private static <T> void remapAll(MissingMappingsEvent event, Registry<T> registry) {
+    private static <T> void remapAll(IdMappingEvent event, Registry<T> registry) {
         for (var mod : Amendments.OLD_MODS) {
             for (var mapping : event.getMappings(registry.key(), mod)) {
                 ResourceLocation newLoc = Amendments.res(mapping.getKey().getPath());

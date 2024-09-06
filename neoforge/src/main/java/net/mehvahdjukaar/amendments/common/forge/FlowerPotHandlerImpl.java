@@ -1,11 +1,11 @@
 package net.mehvahdjukaar.amendments.common.forge;
 
 import net.mehvahdjukaar.moonlight.api.util.Utils;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.FlowerPotBlock;
-import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.HashSet;
 import java.util.IdentityHashMap;
@@ -32,7 +32,7 @@ public class FlowerPotHandlerImpl {
 
         //maybe not needed since there's only 1 flower pot in vanilla and there are no mods that add more
         Set<FlowerPotBlock> emptyPots = new HashSet<>();
-        for (Block b : ForgeRegistries.BLOCKS) {
+        for (Block b : BuiltInRegistries.BLOCK) {
             if (b instanceof FlowerPotBlock flowerPotBlock) {
                 emptyPots.add(flowerPotBlock.getEmptyPot());
             }

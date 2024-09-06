@@ -9,6 +9,8 @@ import net.mehvahdjukaar.amendments.integration.forge.BlueprintIntegration;
 import net.mehvahdjukaar.amendments.integration.forge.configured.ModConfigSelectScreen;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
+import net.mehvahdjukaar.moonlight.api.platform.RegHelper;
+import net.mehvahdjukaar.moonlight.neoforge.MoonlightForge;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
@@ -21,6 +23,7 @@ import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
+import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.TagsUpdatedEvent;
 import net.neoforged.neoforge.event.entity.player.AttackEntityEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
@@ -39,13 +42,14 @@ import static net.mehvahdjukaar.amendments.Amendments.MOD_ID;
 @Mod(MOD_ID)
 public class AmendmentsForge {
 
-    public AmendmentsForge() {
+    public AmendmentsForge(IEventBus bus) {
+        RegHelper.startRegisteringFor(bus);
+
         Amendments.init();
-        IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
         bus.addListener(AmendmentsForge::onRegisterPOI);
-        MinecraftForge.EVENT_BUS.register(this);
+        NeoForge.EVENT_BUS.register(this);
         if (PlatHelper.getPhysicalSide().isClient()) {
-            MinecraftForge.EVENT_BUS.register(ClientEvents.class);
+            NeoForge.EVENT_BUS.register(ClientEvents.class);
             if (CompatHandler.CONFIGURED && ClientConfigs.CUSTOM_CONFIGURED_SCREEN.get()) {
                 ModConfigSelectScreen.registerConfigScreen(Amendments.MOD_ID, ModConfigSelectScreen::new);
             }
@@ -67,7 +71,7 @@ public class AmendmentsForge {
             set.addAll(extraStates);
             PoiType poiType = new PoiType(set, value.maxTickets(), value.validRange());
 
-            event.getForgeRegistry().register(ResourceLocation.withDefaultNamespace("leatherworker"), poiType);
+            event.register(ResourceLocation.withDefaultNamespace("leatherworker"), poiType);
 
         }
     }
