@@ -23,6 +23,7 @@ import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
 import net.mehvahdjukaar.moonlight.api.platform.RegHelper;
 import net.mehvahdjukaar.moonlight.api.set.BlockSetAPI;
 import net.mehvahdjukaar.moonlight.api.set.BlocksColorAPI;
+import net.mehvahdjukaar.supplementaries.common.block.blocks.GunpowderBlock;
 import net.minecraft.Util;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ParticleTypes;
@@ -58,6 +59,8 @@ import java.util.function.Supplier;
 
 import static net.mehvahdjukaar.amendments.Amendments.res;
 import static net.mehvahdjukaar.amendments.reg.ModConstants.*;
+import static net.mehvahdjukaar.supplementaries.reg.ModConstants.GUNPOWDER_BLOCK_NAME;
+import static net.mehvahdjukaar.supplementaries.reg.RegUtils.regBlock;
 
 public class ModRegistry {
 
@@ -67,6 +70,12 @@ public class ModRegistry {
         BlockSetAPI.addDynamicBlockRegistration(ModRegistry::registerDoubleCakes, CakeRegistry.CakeType.class);
         AdditionalItemPlacementsAPI.addRegistration(ModRegistry::registerAdditionalPlacements);
     }
+
+    public static final Supplier<Block> GUNPOWDER_BLOCK = RegHelper.registerBlockWithItem (
+            ResourceLocation.tryParse("supplementaries:gunpowder"),
+             () -> new GunpowderBlock(
+            BlockBehaviour.Properties.ofFullCopy(Blocks.REDSTONE_WIRE).sound(SoundType.SAND)));
+
 
     public static void registerAdditionalPlacements(AdditionalItemPlacementsAPI.Event event) {
         // this is specifically for things that place a new block in air. Stuff that modifiers blocks is in events.

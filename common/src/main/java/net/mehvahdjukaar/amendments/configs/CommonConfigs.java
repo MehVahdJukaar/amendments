@@ -68,12 +68,23 @@ public class CommonConfigs {
     public static final Supplier<Boolean> TORCH_FIRE;
     public static final Supplier<Boolean> TORCH_FIRE_OFFHAND;
     public static final Supplier<Integer> TORCH_FIRE_DURATION;
-
+    public static final Supplier<Boolean> PLACEABLE_GUNPOWDER;
+    public static final Supplier<Integer> GUNPOWDER_BURN_SPEED;
+    public static final Supplier<Integer> GUNPOWDER_SPREAD_AGE;
 
     public static final ModConfigHolder SPEC;
 
     static {
         ConfigBuilder builder = ConfigBuilder.create(Amendments.MOD_ID, ConfigType.COMMON_SYNCED);
+
+        builder.push("placeable_gunpowder");
+        PLACEABLE_GUNPOWDER = builder.comment("Allow placeable gunpowder")
+                .define("enabled", true);
+        GUNPOWDER_BURN_SPEED = builder.comment("Number of ticks it takes for gunpowder to burn 1 stage (out of 8). Increase to slow it down")
+                .define("speed", 2, 0, 20);
+        GUNPOWDER_SPREAD_AGE = builder.comment("Age at which it spread to the next gunpowder block. Also affects speed")
+                .define("spread_age", 2, 0, 8);
+        builder.pop();
 
         builder.push("lectern");
         LECTERN_STUFF = builder.comment("Improved lectern screen allowing to edit font of a book while on it")
