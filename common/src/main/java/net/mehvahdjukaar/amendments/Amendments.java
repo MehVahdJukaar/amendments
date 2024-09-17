@@ -64,6 +64,8 @@ public class Amendments {
 
         RegHelper.registerSimpleRecipeCondition(res("flag"), CommonConfigs::isFlagOn);
 
+        // todo: finish porting
+
         // make bell connections
 
         // add wall lantern stand model override instead of texture one
@@ -78,11 +80,9 @@ public class Amendments {
         // spyglass zoom hotkey
         //banners as capes when in trinket
         //fix normal flower pot model
-        //hanging signs banner pattersn and items
         //cobwebs animation string thngies
         //shiny particles on emeralds
-        //pink petals
-        //waterlogged hollow logs have bubbles wit magma quark
+        //pink petals on water (wuark does it)
         //particle mod snow rain enderman teleport, smoke wind lightning
         //low tech mod?
     }
