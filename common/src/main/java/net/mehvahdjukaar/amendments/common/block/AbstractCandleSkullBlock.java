@@ -16,6 +16,7 @@ import net.mehvahdjukaar.moonlight.api.util.Utils;
 import net.minecraft.Util;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.particles.ParticleTypes;
@@ -232,7 +233,7 @@ public abstract class AbstractCandleSkullBlock extends AbstractCandleBlock imple
     }
 
     @Override
-    public boolean tryWash(Level level, BlockPos pos, BlockState state) {
+    public boolean tryWash(Level level, BlockPos pos, BlockState state, Vec3 dir) {
         if (level.getBlockEntity(pos) instanceof CandleSkullBlockTile tile) {
             var c = tile.getCandle();
             if (c != null) {

@@ -71,7 +71,7 @@ public class GunpowderExplosion extends Explosion {
         BlockPos pos = new BlockPos(px, py, pz);
         BlockState newFire = BaseFireBlock.getState(this.level, pos);
         BlockState s = level.getBlockState(pos);
-        if (s.canBeReplaced() || s.is(ModRegistry.GUNPOWDER_BLOCK.get())) {
+        if (s.canBeReplaced() || (s.is(ModRegistry.GUNPOWDER_BLOCK.get()) && !s.getValue(GunpowderBlock.HIDDEN))) {
             if (this.hasFlammableNeighbours(pos) || PlatHelper.isFireSource(this.level.getBlockState(pos.below()), level, pos, Direction.UP)
                     || newFire.getBlock() != Blocks.FIRE) {
                 this.level.setBlockAndUpdate(pos, newFire);

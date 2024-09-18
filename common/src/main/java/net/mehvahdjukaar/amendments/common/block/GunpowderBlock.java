@@ -97,7 +97,7 @@ public class GunpowderBlock extends LightUpBlock {
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(NORTH, EAST, SOUTH, WEST, BURNING);
+        builder.add(NORTH, EAST, SOUTH, WEST, BURNING, HIDDEN);
     }
 
     private VoxelShape calculateVoxelShape(BlockState state) {
@@ -170,7 +170,10 @@ public class GunpowderBlock extends LightUpBlock {
     @Override
     public BlockState updateShape(BlockState state, Direction direction, BlockState otherState, LevelAccessor world, BlockPos pos, BlockPos otherPos) {
         //should be server only
-        if (otherState.is(this) && !otherState.getValue(HIDDEN) && !state.getValue(HIDDEN)) {
+        if (otherState.is(this) && !otherState.getValue(HIDDEN) && state.getValue(HIDDEN) && otherState.getValue(BURNING) == 0) {
+            return state.setValue(HIDDEN, false);
+        }
+        if(otherState.is(Blocks.RED_MUSHROOM_BLOCK) && state.getValue(HIDDEN)){
             return state.setValue(HIDDEN, false);
         }
         BlockState newState;
@@ -385,6 +388,7 @@ public class GunpowderBlock extends LightUpBlock {
 
     @Override
     public void tick(BlockState state, ServerLevel world, BlockPos pos, RandomSource random) {
+       if(state.getValue(HIDDEN))return;
         int burning = state.getValue(BURNING);
 
         if (!world.isClientSide) {
@@ -423,6 +427,8 @@ public class GunpowderBlock extends LightUpBlock {
 
     @Override
     public boolean lightUp(Entity entity, BlockState state, BlockPos pos, LevelAccessor world, FireSoundType fireSourceType) {
+    if(state.getValue(HIDDEN))return false;
+      if(state.getValue(BURNING) >0)return false;
         boolean ret = super.lightUp(entity, state, pos, world, fireSourceType);
         if (ret) {
             //spawn particles when first lit
@@ -437,6 +443,7 @@ public class GunpowderBlock extends LightUpBlock {
 
     //for gunpowder -> gunpowder
     private void lightUpByWire(BlockState state, BlockPos pos, LevelAccessor level) {
+        if(state.getValue(HIDDEN))return;
         if (!this.isLitUp(state, level, pos)) {
             //spawn particles when first lit
             if (!level.isClientSide()) {
@@ -473,6 +480,7 @@ public class GunpowderBlock extends LightUpBlock {
 
     @SuppressWarnings("ConstantConditions")
     public static boolean isFireSource(BlockState state, BlockGetter level, BlockPos pos) {
+        if(state.getBlock() instanceof GunpowderBlock gb)return gb.isLitUp(state, level, pos);
         Block b = state.getBlock();
         if (b instanceof TorchBlock && !(b instanceof RedstoneTorchBlock))
             return true;

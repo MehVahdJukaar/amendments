@@ -15,6 +15,7 @@ import net.mehvahdjukaar.amendments.client.particles.BoilingParticle;
 import net.mehvahdjukaar.amendments.client.particles.ColoredSplashParticle;
 import net.mehvahdjukaar.amendments.client.renderers.*;
 import net.mehvahdjukaar.amendments.common.block.BoilingWaterCauldronBlock;
+import net.mehvahdjukaar.amendments.common.block.GunpowderBlock;
 import net.mehvahdjukaar.amendments.configs.ClientConfigs;
 import net.mehvahdjukaar.amendments.integration.CompatHandler;
 import net.mehvahdjukaar.amendments.integration.CompatObjects;
@@ -25,6 +26,7 @@ import net.mehvahdjukaar.moonlight.api.misc.EventCalled;
 import net.mehvahdjukaar.moonlight.api.platform.ClientHelper;
 import net.mehvahdjukaar.moonlight.api.set.BlocksColorAPI;
 import net.mehvahdjukaar.moonlight.api.util.Utils;
+import net.minecraft.client.color.block.BlockColor;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.renderer.RenderType;
@@ -32,14 +34,19 @@ import net.minecraft.client.renderer.blockentity.BannerRenderer;
 import net.minecraft.client.renderer.entity.FallingBlockRenderer;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.resources.model.Material;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.FastColor;
+import net.minecraft.util.Mth;
 import net.minecraft.world.item.*;
+import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.WoodType;
 
 import java.util.*;
@@ -141,6 +148,8 @@ public class AmendmentsClient {
         ClientHelper.registerRenderType(ModRegistry.WALL_LANTERN.get(), RenderType.cutout());
         ClientHelper.registerRenderType(ModRegistry.TOOL_HOOK.get(), RenderType.cutout());
         MenuScreens.register(ModRegistry.LECTERN_EDIT_MENU.get(), LecternBookEditScreen::new);
+        ClientHelper.registerRenderType(ModRegistry.GUNPOWDER_BLOCK.get(), RenderType.cutout());
+
     }
 
     public static void afterTagSetup() {
@@ -215,6 +224,8 @@ public class AmendmentsClient {
         event.register(BoilingWaterCauldronBlock::getWaterColor, Blocks.WATER_CAULDRON);
         event.register(new BrewingStandColor(), Blocks.BREWING_STAND);
         event.register(new SoftFluidColor(), ModRegistry.DYE_CAULDRON.get(), ModRegistry.LIQUID_CAULDRON.get());
+        event.register(new GunpowderBlockColor(), ModRegistry.GUNPOWDER_BLOCK.get());
+
     }
 
 
@@ -275,6 +286,44 @@ public class AmendmentsClient {
         throw new AssertionError();
     }
 
+    public static class GunpowderBlockColor implements BlockColor {
 
+        private static final int[] COLORS = new int[9];
+
+        static {
+            for (int i = 0; i < 9; i++) {
+                float litAmount = i / 8.0F;
+                float red = litAmount * 0.7F + 0.3F;
+
+                float green = litAmount * litAmount * 0.4F + 0.3F;
+                float blue = 0.3F;
+
+                if (green < 0.0F) {
+                    green = 0.0F;
+                }
+
+                if (blue < 0.0F) {
+                    blue = 0.0F;
+                }
+
+                int redInt = Mth.clamp(Mth.floor(red * 255), 0, 255);
+                int greenInt = Mth.clamp(Mth.floor(green * 255), 0, 255);
+                int blueInt = Mth.clamp(Mth.floor(blue * 255), 0, 255);
+                COLORS[i] = FastColor.ARGB32.color(0, redInt, greenInt, blueInt);
+                ;
+                //if(i==0) COLORS[i] = 0xffffff;
+                // return 6579300;
+            }
+        }
+
+        @Override
+        public int getColor(BlockState state, BlockAndTintGetter reader, BlockPos pos, int color) {
+            return COLORS[state.getValue(GunpowderBlock.BURNING)];
+        }
+
+        public static int getColor(float f) {
+            return COLORS[Mth.clamp((int) (f * 8),0,8)];
+        }
+    }
 
 }

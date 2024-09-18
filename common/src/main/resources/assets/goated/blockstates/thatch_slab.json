@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "type=bottom": {
+      "model": "goated:block/thatch_slab"
+    },
+    "type=double": {
+      "model": "goated:block/thatch"
+    },
+    "type=top": {
+      "model": "goated:block/thatch_slab_top"
+    }
+  }
+}

@@ -23,7 +23,6 @@ import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
 import net.mehvahdjukaar.moonlight.api.platform.RegHelper;
 import net.mehvahdjukaar.moonlight.api.set.BlockSetAPI;
 import net.mehvahdjukaar.moonlight.api.set.BlocksColorAPI;
-import net.mehvahdjukaar.supplementaries.common.block.blocks.GunpowderBlock;
 import net.minecraft.Util;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ParticleTypes;
@@ -42,14 +41,12 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
-import net.minecraft.world.level.block.BannerBlock;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.PushReaction;
+import org.violetmoon.quark.content.building.block.ThatchBlock;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -76,6 +73,12 @@ public class ModRegistry {
              () -> new GunpowderBlock(
             BlockBehaviour.Properties.ofFullCopy(Blocks.REDSTONE_WIRE).sound(SoundType.SAND)));
 
+    public static final Supplier<Block> THATCH = RegHelper.registerBlockWithItem(
+            ResourceLocation.tryParse("goated:thatch_slab"),
+            () -> new SlabBlock(BlockBehaviour.Properties.of()
+                    .strength(0.5F)
+                    .sound(SoundType.GRASS)
+                    .noOcclusion()));
 
     public static void registerAdditionalPlacements(AdditionalItemPlacementsAPI.Event event) {
         // this is specifically for things that place a new block in air. Stuff that modifiers blocks is in events.
