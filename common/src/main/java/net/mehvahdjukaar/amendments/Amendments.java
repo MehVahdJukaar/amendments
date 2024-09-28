@@ -29,6 +29,7 @@ import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SupportType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.RailShape;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -54,7 +55,6 @@ public class Amendments {
         CommonConfigs.init();
         ModRegistry.init();
         ModNetwork.init();
-
         if (PlatHelper.getPhysicalSide().isClient()) {
             ClientConfigs.init();
             AmendmentsClient.init();

@@ -92,7 +92,7 @@ public class StructureCauldronHack extends Block implements EntityBlock {
                     var list = HARMFUL_POTS.get();
                     var pot = list.get(level.random.nextInt(list.size()));
                     SoftFluidStack fluidStack = SoftFluidStack.of(
-                            BuiltInSoftFluids.POTION.getHolder(),
+                            BuiltInSoftFluids.POTION,
                             level.random.nextIntBetweenInclusive(1, 4));
                     fluidStack.set(DataComponents.POTION_CONTENTS,
                             new PotionContents(BuiltInRegistries.POTION.wrapAsHolder(pot)));

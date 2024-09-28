@@ -1,7 +1,6 @@
 package net.mehvahdjukaar.amendments.mixins;
 
 import net.mehvahdjukaar.amendments.common.LecternEditMenu;
-import net.mehvahdjukaar.amendments.common.tile.DoubleSkullBlockTile;
 import net.mehvahdjukaar.amendments.configs.CommonConfigs;
 import net.mehvahdjukaar.amendments.reg.ModTags;
 import net.minecraft.core.BlockPos;
@@ -60,7 +59,8 @@ public abstract class LecternBlockEntityMixin extends BlockEntity implements Con
     @Shadow
     private int pageCount;
 
-    @Shadow public abstract boolean hasBook();
+    @Shadow
+    public abstract boolean hasBook();
 
     @Inject(method = "createMenu", at = @At("HEAD"), cancellable = true)
     public void createEditMenu(int i, Inventory inventory, Player player, CallbackInfoReturnable<AbstractContainerMenu> cir) {
@@ -75,7 +75,7 @@ public abstract class LecternBlockEntityMixin extends BlockEntity implements Con
         if (page >= this.pageCount && page <= 100 &&
                 this.book.getItem() instanceof WritableBookItem && CommonConfigs.LECTERN_STUFF.get()) {
             //weirdness because empty book has 0 pages and we want to skip to second page here
-            if (pageCount == 0) this.pageCount+=2;
+            if (pageCount == 0) this.pageCount += 2;
             else this.pageCount++;
         }
     }
@@ -126,22 +126,23 @@ public abstract class LecternBlockEntityMixin extends BlockEntity implements Con
         return stack.is(ModTags.GOES_IN_LECTERN);
     }
 
-    @Override
-    public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
-        return saveWithoutMetadata(registries);
-    }
 
     @Override
     public void setChanged() {
         super.setChanged();
-        if(level != null) {
+        if (level != null) {
             BlockState state = this.getBlockState();
-            if(state.getValue(LecternBlock.HAS_BOOK)!= this.hasBook()){
+            if (state.getValue(LecternBlock.HAS_BOOK) != this.hasBook()) {
                 //set changed might be the only method called after say a hopper changes the content of this so we might beed to udpate the state
                 resetBookState(null, level, worldPosition, getBlockState(), this.hasBook());
             }
         }
         //this.level.sendBlockUpdated(this.worldPosition, this.getBlockState(), this.getBlockState(), 3);
+    }
+
+    @Override
+    public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
+        return saveWithoutMetadata(registries);
     }
 
     @Nullable

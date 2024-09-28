@@ -8,6 +8,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.inventory.LecternMenu;
 import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.inventory.SimpleContainerData;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.LecternBlockEntity;
 
@@ -17,9 +18,10 @@ public class LecternEditMenu extends LecternMenu {
 
     private final BlockPos pos;
 
-    public LecternEditMenu(int id, Inventory playerInventory, FriendlyByteBuf packetBuffer) {
-        super(id);
-        this.pos = packetBuffer.readBlockPos();
+    public static LecternEditMenu of(int id, Inventory playerInventory, FriendlyByteBuf packetBuffer) {
+        BlockPos pos = packetBuffer.readBlockPos();
+        return new LecternEditMenu(id,(LecternBlockEntity) playerInventory.player.level()
+                .getBlockEntity(pos), new SimpleContainerData(1));
     }
 
     public LecternEditMenu(int i, LecternBlockEntity container, ContainerData containerData) {
@@ -40,4 +42,6 @@ public class LecternEditMenu extends LecternMenu {
     public void initializeContents(int stateId, List<ItemStack> items, ItemStack carried) {
         super.initializeContents(stateId, items, carried);
     }
+
+
 }

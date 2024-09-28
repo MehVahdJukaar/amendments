@@ -16,6 +16,7 @@ import net.mehvahdjukaar.moonlight.api.util.Utils;
 import net.minecraft.Util;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.particles.ParticleTypes;
@@ -29,6 +30,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
@@ -56,6 +58,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.function.Supplier;
@@ -199,7 +202,7 @@ public abstract class AbstractCandleSkullBlock extends AbstractCandleBlock imple
                 return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
             }
             //lightable logic
-            return ILightable.super.interactWithPlayerItem(state, level, pos, player, hand, stack);
+            return ILightable.super.lightableInteractWithPlayerItem(state, level, pos, player, hand, stack);
         }
         return super.useItemOn(stack, state, level, pos, player, hand, hitResult);
     }
@@ -210,7 +213,7 @@ public abstract class AbstractCandleSkullBlock extends AbstractCandleBlock imple
     }
 
     @Override
-    public void setLitUp(BlockState state, LevelAccessor world, BlockPos pos, boolean lit) {
+    public void setLitUp(BlockState state, LevelAccessor world, BlockPos pos, @Nullable Entity player, boolean lit) {
         world.setBlock(pos, state.setValue(LIT, lit), 3);
     }
 
@@ -232,7 +235,7 @@ public abstract class AbstractCandleSkullBlock extends AbstractCandleBlock imple
     }
 
     @Override
-    public boolean tryWash(Level level, BlockPos pos, BlockState state) {
+    public boolean tryWash(Level level, BlockPos pos, BlockState state, Vec3 hit) {
         if (level.getBlockEntity(pos) instanceof CandleSkullBlockTile tile) {
             var c = tile.getCandle();
             if (c != null) {

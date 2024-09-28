@@ -35,7 +35,7 @@ public class LecternBookEditScreen extends BookEditScreen implements MenuAccess<
         @Override
         public void slotChanged(AbstractContainerMenu containerToSend, int dataSlotIndex, ItemStack stack) {
             book = stack;
-
+            pages.clear();
             WritableBookContent writableBookContent = book.get(DataComponents.WRITABLE_BOOK_CONTENT);
             if (writableBookContent != null) {
                 writableBookContent.getPages(Minecraft.getInstance().isTextFilteringEnabled()).forEach(pages::add);
@@ -59,7 +59,7 @@ public class LecternBookEditScreen extends BookEditScreen implements MenuAccess<
     private StyledTextFieldHelper page;
 
     public LecternBookEditScreen(LecternEditMenu lecternMenu, Inventory inventory, Component component) {
-        super(inventory.player, Items.WRITABLE_BOOK.getDefaultInstance(), InteractionHand.MAIN_HAND);
+        super(inventory.player, lecternMenu.getBook(), InteractionHand.MAIN_HAND);
         this.menu = lecternMenu;
         this.lastPage = this.menu.getPage();
     }

@@ -13,6 +13,6 @@
   "still_texture": "amendments:block/dye_still",
   "translation_key": "fluid.amendments.dye",
   "preserved_tags_from_item": [
-    "color"
+    "dyed_color"
   ]
 }

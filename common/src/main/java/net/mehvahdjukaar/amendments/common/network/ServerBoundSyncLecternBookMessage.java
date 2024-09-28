@@ -110,20 +110,22 @@ public class ServerBoundSyncLecternBookMessage implements Message {
         if (itemstack.is(Items.WRITABLE_BOOK)) {
             List<Filterable<String>> list = pages.stream().map(t -> filterableFromOutgoing(t, player)).toList();
             itemstack.set(DataComponents.WRITABLE_BOOK_CONTENT, new WritableBookContent(list));
+            be.setChanged();
+            be.getLevel().sendBlockUpdated(be.getBlockPos(), be.getBlockState(), be.getBlockState(), 3);
         }
     }
 
     private void signBook(LecternBlockEntity be, ServerPlayer player, ItemStack book,
                           FilteredText title, List<FilteredText> pages) {
-        ItemStack writtenBook = book.transmuteCopy(Items.WRITTEN_BOOK);
-        writtenBook.remove(DataComponents.WRITABLE_BOOK_CONTENT);
+        ItemStack signedBook = book.transmuteCopy(Items.WRITTEN_BOOK);
+        signedBook.remove(DataComponents.WRITABLE_BOOK_CONTENT);
         List<Filterable<Component>> filteredPages = pages.stream().map((t) ->
                 this.filterableFromOutgoing(t, player).map(s -> (Component) Component.literal(s))).toList();
-        writtenBook.set(DataComponents.WRITTEN_BOOK_CONTENT, new WrittenBookContent(this.filterableFromOutgoing(title, player),
+        signedBook.set(DataComponents.WRITTEN_BOOK_CONTENT, new WrittenBookContent(this.filterableFromOutgoing(title, player),
                 player.getName().getString(), 0, filteredPages, true));
 
 
-        be.setBook(book);
+        be.setBook(signedBook);
         be.setChanged();
         player.level().sendBlockUpdated(pos, be.getBlockState(), be.getBlockState(), 3);
 
