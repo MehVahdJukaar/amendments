@@ -79,8 +79,6 @@ public class HangingFlowerPotBlock extends Block implements EntityBlock {
                 BlockState mimic = blockItem.getBlock().defaultBlockState();
                 tile.setHeldBlock(mimic);
             }
-            if (CompatHandler.SUPPLEMENTARIES)
-                SuppCompat.addOptionalOwnership(tile.getLevel(), tile.getBlockPos(), entity);
         }
     }
 
@@ -98,7 +96,7 @@ public class HangingFlowerPotBlock extends Block implements EntityBlock {
     @Override
     protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player,
                                               InteractionHand hand, BlockHitResult hitResult) {
-        if (level.getBlockEntity(pos) instanceof HangingFlowerPotBlockTile tile && tile.isAccessibleBy(player)) {
+        if (level.getBlockEntity(pos) instanceof HangingFlowerPotBlockTile tile) {
             Block pot = tile.getHeldBlock().getBlock();
             if (pot instanceof FlowerPotBlock flowerPot) {
                 ItemStack itemstack = player.getItemInHand(hand); //&& FlowerPotHandler.isEmptyPot(flowerPot)

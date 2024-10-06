@@ -165,4 +165,9 @@ public class CeilingBannerBlock extends AbstractBannerBlock {
         }
         return descriptionId;
     }
+
+    @Override
+    public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state) {
+        return super.getCloneItemStack(level, pos, state);
+    }
 }

@@ -84,7 +84,7 @@ public class WallLanternBlock extends WaterBlock implements EntityBlock {
 
     @Override
     protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
-        if (level.getBlockEntity(pos) instanceof WallLanternBlockTile te && te.isAccessibleBy(player)) {
+        if (level.getBlockEntity(pos) instanceof WallLanternBlockTile te) {
             BlockState lantern = te.getHeldBlock();
             if (CompatHandler.SUPPSQUARED) {
                 ItemInteractionResult res = SuppSquaredCompat.lightUpLantern(level, pos, player, hand, stack, te, lantern);
@@ -117,7 +117,6 @@ public class WallLanternBlock extends WaterBlock implements EntityBlock {
         if (te instanceof WallLanternBlockTile blockHolder && i instanceof BlockItem blockItem) {
             blockHolder.setHeldBlock(blockItem.getBlock().defaultBlockState());
         }
-        if (CompatHandler.SUPPLEMENTARIES) SuppCompat.addOptionalOwnership(world, pos, entity);
     }
 
 

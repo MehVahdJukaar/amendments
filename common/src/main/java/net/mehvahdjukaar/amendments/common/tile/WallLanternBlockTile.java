@@ -1,14 +1,11 @@
 package net.mehvahdjukaar.amendments.common.tile;
 
-import net.mehvahdjukaar.amendments.common.SwayingAnimation;
-import net.mehvahdjukaar.amendments.common.SwingAnimation;
 import net.mehvahdjukaar.amendments.common.block.WallLanternBlock;
 import net.mehvahdjukaar.amendments.configs.ClientConfigs;
 import net.mehvahdjukaar.amendments.integration.CompatHandler;
 import net.mehvahdjukaar.amendments.integration.ThinAirCompat;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.moonlight.api.block.IBlockHolder;
-import net.mehvahdjukaar.moonlight.api.block.IOwnerProtected;
 import net.mehvahdjukaar.moonlight.api.block.MimicBlockTile;
 import net.mehvahdjukaar.moonlight.api.client.model.ExtraModelData;
 import net.mehvahdjukaar.moonlight.api.client.model.IExtraModelDataProvider;
@@ -24,12 +21,9 @@ import net.minecraft.world.level.block.LanternBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.ticks.TickPriority;
-import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 
-import java.util.UUID;
-
-public class WallLanternBlockTile extends SwayingBlockTile implements IBlockHolder, IOwnerProtected, IExtraModelDataProvider {
+public class WallLanternBlockTile extends SwayingBlockTile implements IBlockHolder, IExtraModelDataProvider {
 
     public static final ModelDataKey<BlockState> MIMIC_KEY = MimicBlockTile.MIMIC_KEY;
 
@@ -38,7 +32,6 @@ public class WallLanternBlockTile extends SwayingBlockTile implements IBlockHold
 
     //for charm compat
     protected boolean isRedstoneLantern = false;
-    private UUID owner = null;
 
     public WallLanternBlockTile(BlockPos pos, BlockState state) {
         super(ModRegistry.WALL_LANTERN_TILE.get(), pos, state);
@@ -125,17 +118,6 @@ public class WallLanternBlockTile extends SwayingBlockTile implements IBlockHold
             }
         }
         return true;
-    }
-
-    @Nullable
-    @Override
-    public UUID getOwner() {
-        return owner;
-    }
-
-    @Override
-    public void setOwner(@Nullable UUID owner) {
-        this.owner = owner;
     }
 
 }

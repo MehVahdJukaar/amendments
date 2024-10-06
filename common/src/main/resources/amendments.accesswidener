@@ -6,6 +6,10 @@ accessible method net/minecraft/client/renderer/blockentity/SignRenderer getText
 
 accessible field net/minecraft/world/level/block/AbstractCauldronBlock interactions Lnet/minecraft/core/cauldron/CauldronInteraction$InteractionMap;
 
+#banner renderer
+accessible field net/minecraft/client/renderer/blockentity/BannerRenderer bar Lnet/minecraft/client/model/geom/ModelPart;
+accessible field net/minecraft/client/renderer/blockentity/BannerRenderer flag Lnet/minecraft/client/model/geom/ModelPart;
+
 #book edit
 accessible method net/minecraft/client/gui/screens/inventory/BookEditScreen updateLocalCopy ()V
 extendable method net/minecraft/client/gui/screens/inventory/BookEditScreen saveChanges (Z)V

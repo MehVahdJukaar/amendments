@@ -77,10 +77,6 @@ public class SuppCompat {
         }
     }
 
-    public static void addOptionalOwnership(Level world, BlockPos pos, @Nullable LivingEntity entity) {
-        BlockUtil.addOptionalOwnership(entity, world, pos);
-    }
-
     public static float getSignColorMult() {
         return ClientConfigs.getSignColorMult();
     }

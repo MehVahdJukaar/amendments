@@ -26,10 +26,8 @@ public class CeilingBannerBlockTileRenderer extends BannerRenderer {
     }
 
     @Override
-    public void render(BannerBlockEntity tile, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
-        super.render(tile, partialTick, poseStack, bufferSource, packedLight, packedOverlay);
-        if(true)return;
-        /*
+    public void render(BannerBlockEntity tile, float partialTick, PoseStack poseStack,
+                       MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
         var patterns = tile.getPatterns();
         poseStack.pushPose();
         long i;
@@ -46,19 +44,17 @@ public class CeilingBannerBlockTileRenderer extends BannerRenderer {
 
         poseStack.pushPose();
         poseStack.scale(-0.6666667F, -0.6666667F, 0.6666667F);
-        VertexConsumer buffer = ModelBakery.BANNER_BASE.buffer(multiBufferSource, RenderType::entitySolid);
+        VertexConsumer buffer = ModelBakery.BANNER_BASE.buffer(bufferSource, RenderType::entitySolid);
 
-        this.bar.render(poseStack, buffer, light, pPackedOverlay);
+        this.bar.render(poseStack, buffer, packedLight, packedOverlay);
         BlockPos blockpos = tile.getBlockPos();
         float f2 = ((float) Math.floorMod((long) (blockpos.getX() * 7 + blockpos.getY() * 9 + blockpos.getZ() * 13) + i, 100L) + partialTick) / 100.0F;
         this.flag.xRot = (-0.0125F + 0.01F * Mth.cos(((float) Math.PI * 2F) * f2)) * (float) Math.PI;
         this.flag.y = -32.0F;
-        BannerRenderer.renderPatterns(poseStack, multiBufferSource, light, pPackedOverlay, this.flag,
+        BannerRenderer.renderPatterns(poseStack, bufferSource, packedLight, packedOverlay, this.flag,
                 ModelBakery.BANNER_BASE, true, tile.getBaseColor(), patterns);
         poseStack.popPose();
         poseStack.popPose();
-
-         */
     }
 
 }

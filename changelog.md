@@ -1,2 +1,2 @@
-- fixed lectern editing not working properly
-- updated to newest moonlight version
+fixed loot tables
+fixed ceiling banners
