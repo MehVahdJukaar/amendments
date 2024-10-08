@@ -141,7 +141,7 @@ dependencies {
    // modRuntimeOnly("einstein.jmc:JustMoreCakes:forge-1.20-1.12.1")
     modImplementation("curse.maven:lucent-493280:4951434")
 
-    modCompileOnly("curse.maven:embeddium-908741:5321172")
+    modImplementation("curse.maven:embeddium-908741:5681725")
     modCompileOnly("curse.maven:farmers-delight-398521:5051242")
    // modImplementation("curse.maven:polytone-958094:5308480")
     modCompileOnly("curse.maven:etched-491890:5065299")
