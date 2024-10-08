@@ -1,10 +1,14 @@
 {
   "replace": false,
   "values": [
+    "minecraft:dragon_head",
     {
       "id": "supplementaries:enderman_head",
       "required": false
     },
-    "minecraft:dragon_head"
+    {
+      "id": "#hybrid-aquatic:plushies",
+      "required": false
+    }
   ]
 }
