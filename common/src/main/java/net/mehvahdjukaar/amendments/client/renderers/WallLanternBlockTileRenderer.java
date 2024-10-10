@@ -32,21 +32,29 @@ public class WallLanternBlockTileRenderer implements BlockEntityRenderer<WallLan
 
     @Override
     public boolean shouldRender(WallLanternBlockTile blockEntity, Vec3 cameraPos) {
-        return blockEntity.shouldRenderFancy(cameraPos);
+        return blockEntity.shouldRenderFancy(cameraPos) ;
     }
 
     public void renderLantern(WallLanternBlockTile tile, BlockState lanternState, float partialTicks, PoseStack poseStack, MultiBufferSource bufferIn,
                               int combinedLightIn, int combinedOverlayIn, boolean ceiling) {
         poseStack.pushPose();
         // rotate towards direction
+
+
+
         poseStack.translate(0.5, 0.875, 0.5);
         poseStack.mulPose(RotHlpr.rot(tile.getBlockState().getValue(WallLanternBlock.FACING)));
+
 
         float angle = tile.amendments$getAnimation().getAngle(partialTicks);
 
         // animation
         poseStack.mulPose(Axis.ZP.rotationDegrees(angle));
         poseStack.translate(-0.5, -0.75 - tile.getAttachmentOffset(), -0.375);
+
+        poseStack.translate(0.5, 0.5, 0.5);
+        poseStack.mulPose(RotHlpr.Y180);
+        poseStack.translate(-0.5, -0.5, -0.5);
 
         BakedModel model = WallLanternModelsManager.getModel(
                 blockRenderer.getBlockModelShaper(), lanternState);
