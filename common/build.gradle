@@ -25,7 +25,7 @@ dependencies {
     modCompileOnly("curse.maven:farmers-delight-398521:5051242")
     modCompileOnly("curse.maven:scholar-961802:5214379")
     modCompileOnly("curse.maven:new-thin-air-878379:5068247")
-    modCompileOnly("curse.maven:soul-fire-d-662413:5448803")
+    modCompileOnly("it.crystalnest:soul-fire-d-common:$minecraft_min_version-$soul_fire_d_version")
     modCompileOnly("curse.maven:quark-243121:5093415")
     modCompileOnly("curse.maven:zeta-968868:5078215")
 
