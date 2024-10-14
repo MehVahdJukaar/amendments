@@ -103,9 +103,4 @@ public class AmendmentsForge {
         }
     }
 
-    @SubscribeEvent
-    public void onTagUpdate(TagsUpdatedEvent event) {
-        Amendments.onCommonTagUpdate(event.getRegistryAccess(),
-                event.getUpdateCause() == TagsUpdatedEvent.UpdateCause.CLIENT_PACKET_RECEIVED);
-    }
 }

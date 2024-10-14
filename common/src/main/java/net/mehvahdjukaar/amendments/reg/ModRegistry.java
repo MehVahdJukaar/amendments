@@ -84,7 +84,11 @@ public class ModRegistry {
         }
         if (CommonConfigs.CEILING_BANNERS.get()) {
             for (var e : CEILING_BANNERS.entrySet()) {
-                event.registerSimple(Preconditions.checkNotNull(BannerBlock.byColor(e.getKey()).asItem()),
+                Item item = BannerBlock.byColor(e.getKey()).asItem();
+                if(item == Items.AIR){
+                    throw new IllegalStateException("Block " + e.getValue().get() + " has no corresponding item! How did this happen? Some OTHER mod must have screwed up the block to items map!" );
+                }
+                event.registerSimple(Preconditions.checkNotNull(item),
                         e.getValue().get());
             }
         }

@@ -1,1 +1,1 @@
-fixed a crash due to fabric being stupid and not fixing a vanilla bug like forge
+fixed wall lantern rendering

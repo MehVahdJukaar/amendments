@@ -61,6 +61,8 @@ public class Amendments {
         }
         PlatHelper.addCommonSetupAsync(Amendments::setupAsync);
         PlatHelper.addCommonSetup(Amendments::setup);
+        PlatHelper.addReloadableCommonSetup(Amendments::onCommonTagUpdate);
+        RegHelper.addDynamicDispenserBehaviorRegistration(Amendments::registerDispenserBehaviors);
 
         RegHelper.registerSimpleRecipeCondition(res("flag"), CommonConfigs::isFlagOn);
 
@@ -78,6 +80,7 @@ public class Amendments {
         //make directional cake reg override
         //tripwire hook and lead
         // spyglass zoom hotkey
+        //sniffer eggdirectonal
         //banners as capes when in trinket
         //fix normal flower pot model
         //cobwebs animation string thngies
@@ -107,28 +110,25 @@ public class Amendments {
         FlowerPotHandler.setup();
     }
 
-    private static boolean hasRun = false;
 
     @EventCalled
     public static void onCommonTagUpdate(RegistryAccess registryAccess, boolean client) {
         InteractEvents.setupOverrides();
-        if (!hasRun) {
-            hasRun = true;
-            for (SoftFluid f : SoftFluidRegistry.getRegistry(registryAccess)) {
-                registerFluidBehavior(f);
-            }
-        }
         if (client) AmendmentsClient.afterTagSetup();
     }
 
-    public static void registerFluidBehavior(SoftFluid f) {
-        Set<Item> itemSet = new HashSet<>();
-        Collection<FluidContainerList.Category> categories = f.getContainerList().getCategories();
-        for (FluidContainerList.Category c : categories) {
-            for (Item full : c.getFilledItems()) {
-                if (full != Items.AIR && !itemSet.contains(full)) {
-                    DispenserHelper.registerCustomBehavior(new CauldronConversion.DispenserBehavior(full));
-                    itemSet.add(full);
+
+    @EventCalled
+    private static void registerDispenserBehaviors(DispenserHelper.Event event) {
+        for (SoftFluid f : SoftFluidRegistry.getRegistry(event.getRegistryAccess())) {
+            Set<Item> itemSet = new HashSet<>();
+            Collection<FluidContainerList.Category> categories = f.getContainerList().getCategories();
+            for (FluidContainerList.Category c : categories) {
+                for (Item full : c.getFilledItems()) {
+                    if (full != Items.AIR && !itemSet.contains(full)) {
+                        event.register(new CauldronConversion.DispenserBehavior(full));
+                        itemSet.add(full);
+                    }
                 }
             }
         }

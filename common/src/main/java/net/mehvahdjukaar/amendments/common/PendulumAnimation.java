@@ -1,6 +1,7 @@
 package net.mehvahdjukaar.amendments.common;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.DataResult;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.mehvahdjukaar.amendments.configs.ClientConfigs;
 import net.minecraft.core.BlockPos;
@@ -317,14 +318,21 @@ public class PendulumAnimation extends SwingAnimation {
 
 
     public static class Config {
+        private static Codec<Double> floatRangeMinExclusiveWithMessage(double min, double max, Function<Double, String> errorMessage) {
+            return Codec.DOUBLE.validate((float_) -> float_.compareTo(min) > 0 && float_.compareTo(max) <= 0 ? DataResult.success(float_) :
+                    DataResult.error(() -> errorMessage.apply(float_)));
+        }
+
+        private static final Codec<Double> POSITIVE_DOUBLE = floatRangeMinExclusiveWithMessage(0.0F, Double.MAX_VALUE, (float_) -> "Value must be positive: " + float_);
+
         public static final Codec<Config> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-                Codec.floatRange(0, 360).fieldOf("min_angle").forGetter(c -> Mth.RAD_TO_DEG * (c.minAngle)),
-                Codec.floatRange(0, 360).fieldOf("max_angle").forGetter(c -> Mth.RAD_TO_DEG * (c.maxAngle)),
-                Codec.FLOAT.fieldOf("damping").forGetter(c -> c.damping),
-                Codec.FLOAT.fieldOf("frequency").forGetter(c -> c.frequency),
+                Codec.doubleRange(0, 360).fieldOf("min_angle").forGetter(c -> (double) (Mth.RAD_TO_DEG * (c.minAngle))),
+                Codec.doubleRange(0, 360).fieldOf("max_angle").forGetter(c -> (double) (Mth.RAD_TO_DEG * (c.maxAngle))),
+                Codec.DOUBLE.fieldOf("damping").forGetter(c -> (double) c.damping),
+                Codec.DOUBLE.fieldOf("frequency").forGetter(c -> (double) c.frequency),
                 Codec.BOOL.fieldOf("collision_considers_entity_hitbox").forGetter(c -> c.considerEntityHitbox),
-                ExtraCodecs.POSITIVE_FLOAT.fieldOf("collision_inertia").forGetter(c -> c.collisionInertia),
-                ExtraCodecs.POSITIVE_FLOAT.fieldOf("collision_force").forGetter(c -> c.collisionForce)
+                POSITIVE_DOUBLE.fieldOf("collision_inertia").forGetter(c -> c.collisionInertia),
+                POSITIVE_DOUBLE.fieldOf("collision_force").forGetter(c -> c.collisionForce)
 
         ).apply(instance, Config::new));
 
@@ -338,22 +346,22 @@ public class PendulumAnimation extends SwingAnimation {
         protected final float k;
 
         protected final boolean considerEntityHitbox;
-        protected final float collisionInertia;
-        protected final float collisionForce;
+        protected final double collisionInertia;
+        protected final double collisionForce;
 
 
-        public Config(float minAngle, float maxAngle, float damping, float frequency, boolean hitbox, float mass, float force) {
-            this.minAngle = minAngle * Mth.DEG_TO_RAD;
-            this.maxAngle = maxAngle * Mth.DEG_TO_RAD;
-            this.damping = damping;
-            this.frequency = frequency;
+        public Config(double minAngle, double maxAngle, double damping, double frequency, boolean hitbox, double mass, double force) {
+            this.minAngle = (float) (minAngle * Mth.DEG_TO_RAD);
+            this.maxAngle = (float) (maxAngle * Mth.DEG_TO_RAD);
+            this.damping = (float) damping;
+            this.frequency = (float) frequency;
             // g/L. L = length = 1 k=g
             // spring constant of pendulum and other constants included here like gravity
             //can this be scaled too? what does t affect? it should be equivalent to increase length
             //freq is proportional to k so increasing f is like increasing l. mass doesnt play a role here
             k = (float) Math.pow(2 * Math.PI * frequency, 2);
-            maxAngleEnergy = angleToEnergy(k, this.maxAngle);
-            minAngleEnergy = angleToEnergy(k, this.minAngle);
+            maxAngleEnergy = angleToEnergy((float) k, this.maxAngle);
+            minAngleEnergy = angleToEnergy((float) k, this.minAngle);
 
             this.considerEntityHitbox = hitbox;
             this.collisionInertia = mass;
