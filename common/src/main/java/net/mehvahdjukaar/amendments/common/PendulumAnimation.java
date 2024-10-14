@@ -360,8 +360,8 @@ public class PendulumAnimation extends SwingAnimation {
             //can this be scaled too? what does t affect? it should be equivalent to increase length
             //freq is proportional to k so increasing f is like increasing l. mass doesnt play a role here
             k = (float) Math.pow(2 * Math.PI * frequency, 2);
-            maxAngleEnergy = angleToEnergy((float) k, this.maxAngle);
-            minAngleEnergy = angleToEnergy((float) k, this.minAngle);
+            maxAngleEnergy = angleToEnergy(k, this.maxAngle);
+            minAngleEnergy = angleToEnergy(k, this.minAngle);
 
             this.considerEntityHitbox = hitbox;
             this.collisionInertia = mass;
@@ -369,7 +369,7 @@ public class PendulumAnimation extends SwingAnimation {
         }
 
         public Config() {
-            this(0.8f, 60, 0.525f, 0.60f, true, 1f, 15);
+            this(0.8d, 60, 0.525d, 0.60d, true, 1d, 15);
         }
 
     }

@@ -4,6 +4,7 @@ import com.mojang.datafixers.util.Pair;
 import net.mehvahdjukaar.amendments.common.item.DyeBottleItem;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluid;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidStack;
+import net.minecraft.client.gui.screens.inventory.CraftingScreen;
 import net.minecraft.world.item.DyeItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -29,6 +30,7 @@ public class RecipeUtils {
 
     public static Pair<ItemStack, Float> craftWithFluid(Level level, SoftFluidStack fluidStack, ItemStack playerItem,
                                                         boolean try9x9) {
+        if (playerItem.isEmpty()) return null;
         SoftFluid sf = fluidStack.fluid();
         for (var category : sf.getContainerList().getCategories()) {
             int capacity = category.getCapacity();

@@ -69,7 +69,7 @@ public class LiquidCauldronBlockTile extends BlockEntity implements IExtraModelD
     @Override
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
-        this.fluidTank.load(tag);
+        this.fluidTank.load(tag, registries);
         if (this.level != null) {
             if (this.level.isClientSide) {
                 fluidTank.refreshTintCache();
@@ -82,7 +82,8 @@ public class LiquidCauldronBlockTile extends BlockEntity implements IExtraModelD
     @Override
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
-        this.fluidTank.save(tag);
+        this.fluidTank.save(tag, registries);
+
         if (this.hasGlowInk) tag.putBoolean("glow_ink", true);
     }
 
