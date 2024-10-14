@@ -164,6 +164,10 @@ allprojects {
             url = "https://maven.blamejared.com/"
         }
 
+        maven {
+            name = "Crystal Nest"
+            url = "https://maven.crystalnest.it"
+        }
     }
 
     tasks.withType(JavaCompile) {
@@ -197,7 +201,8 @@ ext{
             neo_version          : neo_version,
             neo_version_range    : neo_version_range,
             loader_version_range : loader_version_range,
-            moonlight_min_version: moonlight_min_version
+            moonlight_min_version: moonlight_min_version,
+            soul_fire_d_version  : soul_fire_d_version
     ]
 }
 

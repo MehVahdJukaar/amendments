@@ -115,7 +115,7 @@ dependencies {
     modCompileOnly("curse.maven:spelunkery-790530:5043883")
     modCompileOnly("curse.maven:scholar-961802:5214379")
     modCompileOnly("curse.maven:map-atlases-forge-519759:5307805")
-    modCompileOnly("curse.maven:soul-fire-d-662413:5448803")
+    modCompileOnly("it.crystalnest:soul-fire-d-fabric:$minecraft_min_version-$soul_fire_d_version")
     modCompileOnly("curse.maven:cobweb-968456:5441209")
     modCompileOnly("curse.maven:puzzles-lib-495476:5330447")
     modCompileOnly("curse.maven:new-thin-air-878379:5068247")
