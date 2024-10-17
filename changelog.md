@@ -1,4 +1,1 @@
-- updated soul fired compat
-- fixed an issue with cauldron crafting not working with 3x3 recipes
-- fixed dye fluid not keeping its components when extracted from cauldron
-- changed config values to use doubles instead of float
+- lectern will update their book blockstate when they contain any non empty item
