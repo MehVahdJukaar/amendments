@@ -4,8 +4,6 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.mehvahdjukaar.amendments.common.block.CeilingBannerBlock;
 import net.mehvahdjukaar.amendments.common.tile.LiquidCauldronBlockTile;
-import net.mehvahdjukaar.amendments.events.behaviors.CauldronConversion;
-import net.mehvahdjukaar.moonlight.api.fluids.BuiltInSoftFluids;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidStack;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidTank;
 import net.mehvahdjukaar.supplementaries.client.ModMaterials;
@@ -13,26 +11,21 @@ import net.mehvahdjukaar.supplementaries.common.block.IRopeConnection;
 import net.mehvahdjukaar.supplementaries.common.block.blocks.*;
 import net.mehvahdjukaar.supplementaries.common.block.faucet.FaucetTarget;
 import net.mehvahdjukaar.supplementaries.common.block.tiles.FaucetBlockTile;
-import net.mehvahdjukaar.supplementaries.common.utils.BlockUtil;
+import net.mehvahdjukaar.supplementaries.common.misc.explosion.GunpowderExplosion;
 import net.mehvahdjukaar.supplementaries.common.utils.MiscUtils;
 import net.mehvahdjukaar.supplementaries.configs.ClientConfigs;
-import net.mehvahdjukaar.supplementaries.integration.InspirationCompat;
-import net.mehvahdjukaar.supplementaries.reg.ModRegistry;
 import net.minecraft.client.resources.model.Material;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.BannerPatternItem;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.SkullBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import org.jetbrains.annotations.Nullable;
 
 import static net.mehvahdjukaar.amendments.events.behaviors.CauldronConversion.getNewState;
@@ -40,7 +33,7 @@ import static net.mehvahdjukaar.amendments.events.behaviors.CauldronConversion.g
 
 public class SuppCompat {
 
-    public static void setup(){
+    public static void setup() {
         FaucetBlockTile.registerInteraction(new FaucetCauldronConversion());
     }
 
@@ -85,8 +78,8 @@ public class SuppCompat {
         return IRopeConnection.isSupportingCeiling(upState, pos, world);
     }
 
-    public static void createMiniExplosion(Level level, BlockPos pos, boolean b) {
-        GunpowderBlock.createMiniExplosion(level, pos, b);
+    public static void createMiniExplosion(ServerLevel level, BlockPos pos, boolean b) {
+        GunpowderExplosion.explode(level, pos);
     }
 
     public static boolean canConnectDown(BlockState neighborState) {
@@ -95,12 +88,12 @@ public class SuppCompat {
 
     @Environment(EnvType.CLIENT)
     @Nullable
-    public static Material getFlagMaterial(BannerPatternItem bannerPatternItem) {
-        return ModMaterials.getFlagMaterialForPatternItem(bannerPatternItem);
+    public static Material getFlagMaterial(Level l, BannerPatternItem bannerPatternItem) {
+        return ModMaterials.getFlagMaterialForPatternItem(l, bannerPatternItem);
     }
 
     public static boolean isSconce(Block block) {
-        if(block instanceof SconceLeverBlock)return true;
+        if (block instanceof SconceLeverBlock) return true;
         return block instanceof SconceBlock && !(block instanceof SconceWallBlock);
     }
 

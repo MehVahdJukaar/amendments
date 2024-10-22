@@ -9,8 +9,11 @@ import net.mehvahdjukaar.moonlight.api.client.model.CustomBakedModel;
 import net.mehvahdjukaar.moonlight.api.client.model.ExtraModelData;
 import net.mehvahdjukaar.moonlight.api.fluids.BuiltInSoftFluids;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluid;
+import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidRegistry;
 import net.mehvahdjukaar.moonlight.api.platform.ClientHelper;
 import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.ItemOverrides;
@@ -19,6 +22,8 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.ModelState;
 import net.minecraft.core.Direction;
+import net.minecraft.core.RegistryAccess;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.state.BlockState;
@@ -50,24 +55,26 @@ public class CauldronBakedModel implements CustomBakedModel {
         }
         if (!hasTranslucent || isTranslucentLayer) {
             List<BakedQuad> liquidQuads = fluid.getQuads(state, direction, randomSource);
-            if (liquidQuads.isEmpty()) return quads;
-
-            SoftFluid fluid = extraModelData.get(LiquidCauldronBlockTile.FLUID);
+            ClientLevel level = Minecraft.getInstance().level;
+            if (liquidQuads.isEmpty() || level == null) return quads;
+            RegistryAccess reg = level.registryAccess();
+            ResourceKey<SoftFluid> fluidKey = extraModelData.get(LiquidCauldronBlockTile.FLUID);
+            SoftFluid fluid = SoftFluidRegistry.getRegistry(reg).get(fluidKey);
             Boolean glowing = extraModelData.get(LiquidCauldronBlockTile.GLOWING);
             if (glowing == null) glowing = false;
             BakedQuadsTransformer transformer = BakedQuadsTransformer.create();
             // has custom fluid. Fluid might not be received immediately so might be empty for a split second
             if (fluid != null && !fluid.isEmptyFluid()) {
                 ResourceLocation stillTexture = fluid.getStillTexture();
-                if (ClientConfigs.POTION_TEXTURE.get() && fluid == BuiltInSoftFluids.POTION.get()) {
+                if (ClientConfigs.POTION_TEXTURE.get() && BuiltInSoftFluids.POTION.is(fluidKey)) {
                     stillTexture = AmendmentsClient.POTION_TEXTURE;
-                } else if (fluid == BuiltInSoftFluids.MUSHROOM_STEW.get()) {
+                } else if (BuiltInSoftFluids.MUSHROOM_STEW.is(fluidKey)) {
                     stillTexture = AmendmentsClient.MUSHROOM_STEW;
-                } else if (fluid == BuiltInSoftFluids.BEETROOT_SOUP.get()) {
+                } else if (BuiltInSoftFluids.BEETROOT_SOUP.is(fluidKey)) {
                     stillTexture = AmendmentsClient.BEETROOT_SOUP;
-                } else if (fluid == BuiltInSoftFluids.RABBIT_STEW.get()) {
+                } else if (BuiltInSoftFluids.RABBIT_STEW.is(fluidKey)) {
                     stillTexture = AmendmentsClient.RABBIT_STEW;
-                } else if (fluid == BuiltInSoftFluids.SUS_STEW.get()) {
+                } else if (BuiltInSoftFluids.SUS_STEW.is(fluidKey)) {
                     stillTexture = AmendmentsClient.SUS_STEW;
                 }
                 TextureAtlasSprite sprite = ClientHelper.getBlockMaterial(stillTexture).sprite();

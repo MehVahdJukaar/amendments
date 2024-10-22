@@ -16,7 +16,9 @@ dependencies {
 
     modImplementation("curse.maven:farmers-delight-398521:5566383")
 
-    modCompileOnly("curse.maven:supplementaries-412082:5147148")
+    modImplementation ("net.mehvahdjukaar:supplementaries:1.21-3.0.0-ZZZ")
+
+    //modCompileOnly("curse.maven:supplementaries-412082:5147148")
     modCompileOnly("curse.maven:flan-404578:5290167")
     modCompileOnly("com.jozufozu.flywheel:flywheel-forge-${flywheel_version}")
     modCompileOnly("curse.maven:supplementaries-squared-838411:5130385")

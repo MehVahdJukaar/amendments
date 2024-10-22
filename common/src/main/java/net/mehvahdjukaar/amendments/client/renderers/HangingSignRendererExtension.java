@@ -230,7 +230,7 @@ public class HangingSignRendererExtension {
                     norm, lod, filtered, tile.getTextLineHeight(), tile.getMaxTextLineWidth(),
                     colorMult);
         } else if (CompatHandler.SUPPLEMENTARIES && item.getItem() instanceof BannerPatternItem banner) {
-            renderBannerPattern(tile.getFrontText(), poseStack, buffer, light, banner);
+            renderBannerPattern(tile.getLevel(), tile.getFrontText(), poseStack, buffer, light, banner);
         } else {
             poseStack.mulPose(RotHlpr.Y180);
             renderItem(item, poseStack, buffer, light, overlay, tile.getLevel());
@@ -249,7 +249,7 @@ public class HangingSignRendererExtension {
                     colorMult);
         } else if (CompatHandler.SUPPLEMENTARIES && item.getItem() instanceof BannerPatternItem banner) {
             poseStack.mulPose(RotHlpr.Y180);
-            renderBannerPattern(tile.getBackText(), poseStack, buffer, light, banner);
+            renderBannerPattern(tile.getLevel(), tile.getBackText(), poseStack, buffer, light, banner);
         } else {
             renderItem(item, poseStack, buffer, light, overlay, tile.getLevel());
         }
@@ -277,10 +277,10 @@ public class HangingSignRendererExtension {
         }
     }
 
-    private static void renderBannerPattern(SignText sign, PoseStack poseStack, MultiBufferSource bufferSource,
+    private static void renderBannerPattern(Level level, SignText sign, PoseStack poseStack, MultiBufferSource bufferSource,
                                             int packedLight, BannerPatternItem banner) {
 
-        Material renderMaterial = SuppCompat.getFlagMaterial(banner);
+        Material renderMaterial = SuppCompat.getFlagMaterial(level, banner);
         if (renderMaterial != null) {
             poseStack.pushPose();
             poseStack.translate(0, -9 / 16f, 1 / 16f + 0.001);
