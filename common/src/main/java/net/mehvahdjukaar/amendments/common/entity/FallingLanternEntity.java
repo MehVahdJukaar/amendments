@@ -8,6 +8,7 @@ import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.moonlight.api.entity.ImprovedFallingBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.item.FallingBlockEntity;
@@ -50,8 +51,8 @@ public class FallingLanternEntity extends ImprovedFallingBlockEntity {
             level.levelEvent(null, LevelEvent.PARTICLES_DESTROY_BLOCK, pos, Block.getId(state));
             if (state.getLightEmission() != 0) {
 
-                if (CompatHandler.SUPPLEMENTARIES) {
-                    SuppCompat.createMiniExplosion(level, pos, true);
+                if (CompatHandler.SUPPLEMENTARIES && level instanceof ServerLevel l) {
+                    SuppCompat.createMiniExplosion(l, pos, true);
                 } else if (level.getBlockState(pos).isAir()) {
                     if (BaseFireBlock.canBePlacedAt(level, pos, Direction.DOWN)) {
                         level.setBlockAndUpdate(pos, BaseFireBlock.getState(level, pos));

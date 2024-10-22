@@ -79,6 +79,7 @@ public class WallLanternBakedModel implements CustomBakedModel {
                     mat.mul(rotation.getRotation().getMatrix());
 
                     mat.translate(0, 2 / 16f, 2 / 16f);
+                    mat.rotate(RotHlpr.Y90);
 
                     BakedQuadsTransformer transformer = BakedQuadsTransformer.create()
                             .applyingTransform(mat);
