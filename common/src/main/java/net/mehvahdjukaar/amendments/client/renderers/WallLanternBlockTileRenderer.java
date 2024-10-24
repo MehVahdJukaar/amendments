@@ -48,10 +48,6 @@ public class WallLanternBlockTileRenderer implements BlockEntityRenderer<WallLan
         poseStack.mulPose(Axis.ZP.rotationDegrees(angle));
         poseStack.translate(-0.5, -0.75 - tile.getAttachmentOffset(), -0.375);
 
-        poseStack.translate(0.5, 0.5, 0.5);
-        poseStack.mulPose(RotHlpr.Y90);
-        poseStack.translate(-0.5, -0.5, -0.5);
-
         BakedModel model = WallLanternModelsManager.getModel(
                 blockRenderer.getBlockModelShaper(), lanternState);
         // render block

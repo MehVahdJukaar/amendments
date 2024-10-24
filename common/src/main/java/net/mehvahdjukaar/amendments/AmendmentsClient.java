@@ -29,16 +29,21 @@ import net.mehvahdjukaar.moonlight.api.util.Utils;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.entity.FallingBlockRenderer;
 import net.minecraft.client.renderer.texture.TextureAtlas;
+import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.Material;
+import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.WoodType;
 
 import java.util.*;
@@ -120,7 +125,7 @@ public class AmendmentsClient {
         ClientHelper.addItemColorsRegistration(AmendmentsClient::registerItemColors);
         ClientHelper.addParticleRegistration(AmendmentsClient::registerParticles);
 
-        if(CompatHandler.FLYWHEEL) FlywheelCompat.init();
+        if (CompatHandler.FLYWHEEL) FlywheelCompat.init();
     }
 
 
@@ -205,7 +210,7 @@ public class AmendmentsClient {
     @EventCalled
     private static void registerBlockColors(ClientHelper.BlockColorEvent event) {
         List<Block> mimics = new ArrayList<>();
-        mimics.addAll(List.of( ModRegistry.CARPET_STAIRS.get(), ModRegistry.CARPET_SLAB.get(),
+        mimics.addAll(List.of(ModRegistry.CARPET_STAIRS.get(), ModRegistry.CARPET_SLAB.get(),
                 ModRegistry.WALL_LANTERN.get(), ModRegistry.HANGING_FLOWER_POT.get(),
                 ModRegistry.WATERLILY_BLOCK.get()));
         mimics.addAll(ModRegistry.DOUBLE_CAKES.values());
@@ -215,8 +220,6 @@ public class AmendmentsClient {
         event.register(new BrewingStandColor(), Blocks.BREWING_STAND);
         event.register(new SoftFluidColor(), ModRegistry.DYE_CAULDRON.get(), ModRegistry.LIQUID_CAULDRON.get());
     }
-
-
 
 
     public static Map<Item, Material> getAllRecords() {
@@ -273,9 +276,22 @@ public class AmendmentsClient {
     }
 
     @ExpectPlatform
-    public static boolean hasFixedNormals(){
+    public static boolean hasFixedNormals() {
         throw new AssertionError();
     }
 
+
+    private static final Direction[] DIRS = new Direction[]{
+            Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST, null
+    };
+
+    @Deprecated(forRemoval = true)
+    public static List<BakedQuad> getAllModelQuads(BakedModel model, BlockState state, RandomSource rand) {
+        List<BakedQuad> allQuads = new ArrayList<>();
+        for (var d : DIRS) {
+            allQuads.addAll(model.getQuads(state, d, rand));
+        }
+        return allQuads;
+    }
 
 }

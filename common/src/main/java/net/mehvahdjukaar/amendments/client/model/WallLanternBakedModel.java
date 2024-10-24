@@ -1,5 +1,6 @@
 package net.mehvahdjukaar.amendments.client.model;
 
+import net.mehvahdjukaar.amendments.AmendmentsClient;
 import net.mehvahdjukaar.amendments.client.WallLanternModelsManager;
 import net.mehvahdjukaar.amendments.common.tile.WallLanternBlockTile;
 import net.mehvahdjukaar.amendments.reg.ModBlockProperties;
@@ -7,7 +8,6 @@ import net.mehvahdjukaar.moonlight.api.block.MimicBlock;
 import net.mehvahdjukaar.moonlight.api.client.model.BakedQuadsTransformer;
 import net.mehvahdjukaar.moonlight.api.client.model.CustomBakedModel;
 import net.mehvahdjukaar.moonlight.api.client.model.ExtraModelData;
-import net.mehvahdjukaar.moonlight.api.platform.ClientHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.BlockModelShaper;
@@ -19,7 +19,6 @@ import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.ModelState;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.state.BlockState;
 import org.joml.Matrix4f;
 
@@ -41,53 +40,40 @@ public class WallLanternBakedModel implements CustomBakedModel {
     public List<BakedQuad> getBlockQuads(BlockState state, Direction side, RandomSource rand, RenderType renderType, ExtraModelData data) {
 
         List<BakedQuad> quads = new ArrayList<>();
-
-        BlockState mimic = null;
-        try {
-            mimic = data.get(ModBlockProperties.MIMIC);
-        } catch (Exception ignored) {
-        }
+        BlockState mimic = data.get(ModBlockProperties.MIMIC);
+        if (mimic == null) return quads;
 
         //support
-        try {
-
-            var supportQuads = support.getQuads(state, side, rand);
-            if (!supportQuads.isEmpty()) {
-                if (mimic != null) {
-                    var sprite = WallLanternModelsManager.getTexture(mimic.getBlock());
-                    if (sprite != null) {
-                        BakedQuadsTransformer transformer = BakedQuadsTransformer.create()
-                                .applyingSprite(sprite);
-                        supportQuads = transformer.transformAll(supportQuads);
-                    }
-                }
-                quads.addAll(supportQuads);
+        var supportQuads = support.getQuads(state, side, rand);
+        if (!supportQuads.isEmpty()) {
+            var sprite = WallLanternModelsManager.getTexture(mimic.getBlock());
+            if (sprite != null) {
+                BakedQuadsTransformer transformer = BakedQuadsTransformer.create()
+                        .applyingSprite(sprite);
+                supportQuads = transformer.transformAll(supportQuads);
             }
-
-        } catch (Exception ignored) {
+            quads.addAll(supportQuads);
         }
 
         //mimic
-        try {
-            boolean fancy = Boolean.TRUE.equals(data.get(WallLanternBlockTile.IS_FANCY));
-            if (!fancy) {
-                if (mimic != null && !(mimic.getBlock() instanceof MimicBlock) && !mimic.isAir() && state != null) {
+        boolean fancy = Boolean.TRUE.equals(data.get(WallLanternBlockTile.IS_FANCY));
+        if (!fancy && side == null) {
+            //add all quads to null side
+            if (!(mimic.getBlock() instanceof MimicBlock) && !mimic.isAir() && state != null) {
+                BakedModel model = WallLanternModelsManager.getModel(blockModelShaper, mimic);
+                List<BakedQuad> allQuads = AmendmentsClient.getAllModelQuads(model, mimic, rand);
 
-                    BakedModel model = WallLanternModelsManager.getModel(blockModelShaper, mimic);
-                    List<BakedQuad> mimicQuads = model.getQuads(mimic, side, rand);
-                    Matrix4f mat = new Matrix4f();
-                    mat.mul(rotation.getRotation().getMatrix());
+                Matrix4f mat = new Matrix4f();
+                mat.mul(rotation.getRotation().getMatrix());
 
-                    mat.translate(0, 2 / 16f, 2 / 16f);
-                    mat.rotate(RotHlpr.Y90);
+                mat.translate(0, 2 / 16f, 2 / 16f);
 
-                    BakedQuadsTransformer transformer = BakedQuadsTransformer.create()
-                            .applyingTransform(mat);
-                    quads.addAll(transformer.transformAll(mimicQuads));
-                }
+                BakedQuadsTransformer transformer = BakedQuadsTransformer.create()
+                        .applyingTransform(mat);
+                quads.addAll(transformer.transformAll(allQuads));
             }
-        } catch (Exception ignored) {
         }
+
         return quads;
     }
 

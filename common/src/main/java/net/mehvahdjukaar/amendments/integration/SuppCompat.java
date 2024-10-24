@@ -12,6 +12,7 @@ import net.mehvahdjukaar.supplementaries.common.block.blocks.*;
 import net.mehvahdjukaar.supplementaries.common.block.faucet.FaucetTarget;
 import net.mehvahdjukaar.supplementaries.common.block.tiles.FaucetBlockTile;
 import net.mehvahdjukaar.supplementaries.common.misc.explosion.GunpowderExplosion;
+import net.mehvahdjukaar.supplementaries.common.utils.BlockUtil;
 import net.mehvahdjukaar.supplementaries.common.utils.MiscUtils;
 import net.mehvahdjukaar.supplementaries.configs.ClientConfigs;
 import net.minecraft.client.resources.model.Material;
@@ -20,6 +21,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.BannerPatternItem;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
@@ -83,7 +85,7 @@ public class SuppCompat {
     }
 
     public static void createMiniExplosion(ServerLevel level, BlockPos pos, boolean b) {
-        GunpowderExplosion.explode(level, pos);
+        GunpowderBlock.createMiniExplosion(level, pos, b);
     }
 
     public static boolean canConnectDown(BlockState neighborState) {
@@ -93,7 +95,7 @@ public class SuppCompat {
     @Environment(EnvType.CLIENT)
     @Nullable
     public static Material getFlagMaterial(Level l, BannerPatternItem bannerPatternItem) {
-        return ModMaterials.getFlagMaterialForPatternItem(l, bannerPatternItem);
+        return ModMaterials.getFlagMaterialForPatternItem(bannerPatternItem);
     }
 
     public static boolean isSconce(Block block) {

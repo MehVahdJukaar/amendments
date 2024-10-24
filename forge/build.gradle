@@ -129,8 +129,8 @@ dependencies {
     implementation(include("io.github.llamalad7:mixinextras-forge:${mixin_extras_version}"))
     annotationProcessor 'net.fabricmc:sponge-mixin:0.12.5+mixin.0.8.5'
 
-    //modImplementation("net.mehvahdjukaar:moonlight-forge:${moonlight_version}")
-	modImplementation("curse.maven:selene-499980:5458914")
+    modImplementation("net.mehvahdjukaar:moonlight-forge:${moonlight_version}")
+	//modImplementation("curse.maven:selene-499980:5458914")
 	
     //modCompileOnly("net.mehvahdjukaar:supplementaries-forge:${supplementaries_version}")
     modImplementation("curse.maven:supplementaries-412082:5458843")
@@ -142,6 +142,7 @@ dependencies {
     modImplementation("curse.maven:lucent-493280:4951434")
 
     modImplementation("curse.maven:embeddium-908741:5681725")
+    modImplementation("curse.maven:skinned-lanterns-414154:4656953")
     modCompileOnly("curse.maven:farmers-delight-398521:5051242")
    // modImplementation("curse.maven:polytone-958094:5308480")
     modCompileOnly("curse.maven:etched-491890:5065299")

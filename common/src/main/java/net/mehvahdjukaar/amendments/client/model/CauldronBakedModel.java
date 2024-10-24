@@ -60,14 +60,12 @@ public class CauldronBakedModel implements CustomBakedModel {
             if (liquidQuads.isEmpty() || level == null) return quads;
             RegistryAccess reg = level.registryAccess();
             ResourceKey<SoftFluid> fluidKey = extraModelData.get(LiquidCauldronBlockTile.FLUID);
-            SoftFluid fluid = SoftFluidRegistry.getRegistry(reg).get(fluidKey);
             Boolean glowing = extraModelData.get(LiquidCauldronBlockTile.GLOWING);
             if (glowing == null) glowing = false;
             BakedQuadsTransformer transformer = BakedQuadsTransformer.create();
             // has custom fluid. Fluid might not be received immediately so might be empty for a split second
-            if (fluidRes != null) {
-                RegistryAccess ra = Minecraft.getInstance().level.registryAccess();
-                SoftFluid fluid = SoftFluidRegistry.getRegistry(ra).get(fluidRes);
+            if (fluidKey != null) {
+                SoftFluid fluid = SoftFluidRegistry.getRegistry(reg).get(fluidKey);
                 if (fluid != null && !fluid.isEmptyFluid()) {
                     ResourceLocation stillTexture = fluid.getStillTexture();
                     if (ClientConfigs.POTION_TEXTURE.get() && BuiltInSoftFluids.POTION.is(fluidKey)) {
