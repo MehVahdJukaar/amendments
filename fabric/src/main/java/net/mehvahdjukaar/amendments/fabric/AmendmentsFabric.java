@@ -1,6 +1,7 @@
 package net.mehvahdjukaar.amendments.fabric;
 
 import com.google.common.collect.Lists;
+import me.chrr.scribble.mixin.BookEditScreenMixin;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
@@ -19,6 +20,7 @@ import net.mehvahdjukaar.amendments.events.ModEvents;
 import net.mehvahdjukaar.amendments.reg.ModConstants;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
+import net.mehvahdjukaar.supplementaries.mixins.BookViewScreenMixin;
 import net.minecraft.Util;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
