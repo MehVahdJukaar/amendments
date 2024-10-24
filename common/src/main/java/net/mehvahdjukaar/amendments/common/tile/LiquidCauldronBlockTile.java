@@ -19,6 +19,7 @@ import net.mehvahdjukaar.moonlight.api.util.PotionNBTHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Block;
@@ -28,7 +29,8 @@ import net.minecraft.world.level.gameevent.GameEvent;
 
 
 public class LiquidCauldronBlockTile extends BlockEntity implements IExtraModelDataProvider, ISoftFluidTankProvider {
-    public static final ModelDataKey<SoftFluid> FLUID = new ModelDataKey<>(SoftFluid.class);
+    public static final ModelDataKey<ResourceKey<SoftFluid>> FLUID =
+            (ModelDataKey<ResourceKey<SoftFluid>>) new ModelDataKey(ResourceKey.class);
     public static final ModelDataKey<Boolean> GLOWING = new ModelDataKey<>(Boolean.class);
 
     private final SoftFluidTank fluidTank;
@@ -54,7 +56,7 @@ public class LiquidCauldronBlockTile extends BlockEntity implements IExtraModelD
 
     @Override
     public void addExtraModelData(ExtraModelData.Builder builder) {
-        builder.with(FLUID, fluidTank.getFluidValue());
+        builder.with(FLUID, fluidTank.getFluid().getHolder().unwrapKey().get());
         builder.with(GLOWING, hasGlowInk);
     }
 
