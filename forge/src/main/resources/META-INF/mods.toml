@@ -49,4 +49,4 @@ issueTrackerURL = "${mod_github}/issues"
     modId = "flywheel"
     mandatory = false
     versionRange = "(0,)"
-    ordering = "AFTER"
+    ordering = "NONE"

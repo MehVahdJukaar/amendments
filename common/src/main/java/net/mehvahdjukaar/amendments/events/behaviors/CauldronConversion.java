@@ -81,7 +81,7 @@ public class CauldronConversion implements BlockUse {
         SoftFluidStack first = fluid.getFirst();
 
         if (checkCauldronInteractions && ((CauldronBlock) Blocks.CAULDRON).interactions.containsKey(stack.getItem())
-                && !first.is(BuiltInSoftFluids.POTION.get())) return null;
+                && !first.is(BuiltInSoftFluids.POTION)) return null;
         if (CompatHandler.RATS && stack.is(Items.MILK_BUCKET)) return null;
         return getNewState(pos, level, first);
     }
@@ -90,7 +90,7 @@ public class CauldronConversion implements BlockUse {
     public static BlockState getNewState(BlockPos pos, Level level, SoftFluidStack fluid) {
         if (fluid != null && !fluid.is(ModTags.CAULDRON_BLACKLIST)) {
             BlockState newState;
-            if (fluid.is(ModRegistry.DYE_SOFT_FLUID.get())) {
+            if (fluid.is(ModRegistry.DYE_SOFT_FLUID)) {
                 newState = ModRegistry.DYE_CAULDRON.get().defaultBlockState();
             } else {
                 BlockPos belowPos = pos.below();
@@ -104,35 +104,5 @@ public class CauldronConversion implements BlockUse {
         return null;
     }
 
-    public static class DispenserBehavior extends DispenserHelper.AdditionalDispenserBehavior {
 
-        public DispenserBehavior(Item item) {
-            super(item);
-        }
-
-        @Override
-        protected InteractionResultHolder<ItemStack> customBehavior(BlockSource source, ItemStack stack) {
-            //this.setSuccessful(false);
-            ServerLevel level = source.getLevel();
-            BlockState originalState = source.getBlockState();
-            BlockPos pos = source.getPos().relative(originalState.getValue(DispenserBlock.FACING));
-            if (!originalState.is(Blocks.CAULDRON)) return InteractionResultHolder.pass(stack);
-
-            BlockState newState = getNewState(pos, level, stack);
-            if (newState != null) {
-                level.setBlockAndUpdate(pos, newState);
-                if (level.getBlockEntity(pos) instanceof LiquidCauldronBlockTile te) {
-                    SoftFluidTank tank = te.getSoftFluidTank();
-                    ItemStack returnStack = tank.interactWithItem(stack, level, pos, false);
-                    if (returnStack != null) {
-                        level.gameEvent(null, GameEvent.BLOCK_CHANGE, pos);
-                        return InteractionResultHolder.success(returnStack);
-                    } else {
-                        level.setBlockAndUpdate(pos, originalState);
-                    }
-                }
-            }
-            return InteractionResultHolder.pass(stack);
-        }
-    }
 }
