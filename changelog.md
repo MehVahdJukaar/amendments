@@ -1,1 +1,1 @@
-- lectern will update their book blockstate when they contain any non empty item
+- updated moonlight lib
