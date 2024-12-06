@@ -19,31 +19,32 @@ public class StyledTextFieldHelper extends TextFieldHelper {
     }
 
     @Override
-    public void removeFromCursor(int i, CursorStep cursorStep) {
+    public void removeFromCursor(int direction, CursorStep cursorStep) {
         String msg = this.getMessageFn.get();
         int cursorPos = getCursorPos();
         boolean hasTokenAtCursor = cursorPos < msg.length() && msg.charAt(cursorPos) == TOKEN;
-        if (i < 0) {
-            int k = getIndexBeforeToken(i, msg, cursorPos);
+        if (direction < 0) {
+            int k = getIndexBeforeToken(direction, msg, cursorPos);
             if (cursorPos == msg.length() || hasTokenAtCursor) {
-                i = k;
+                direction = k;
             }
-            super.removeFromCursor(i, cursorStep);
-            if (k != i) {
+            super.removeFromCursor(direction, cursorStep);
+            if (k != direction) {
                 moveBy(k + 1, false, cursorStep);
             }
         } else {
             if (hasTokenAtCursor) {
-                moveBy(i, false, CursorStep.CHARACTER);
+                moveBy(direction, false, CursorStep.CHARACTER);
                 this.removeFromCursor(-1, cursorStep);
             }
-            else super.removeFromCursor(i,cursorStep);
+            else super.removeFromCursor(direction,cursorStep);
         }
     }
 
     private static int getIndexBeforeToken(int i, String msg, int cursorPos) {
         int p = cursorPos - 3;
-        if (p >= 0 && msg.charAt(p) == TOKEN) {
+        if (p >= 0 && msg.length() > p &&
+                msg.charAt(p) == TOKEN) {
             i = -3;
             int p1 = cursorPos - 5;
             if (p1 >= 0 && msg.charAt(p1) == TOKEN) {
