@@ -9,6 +9,7 @@ import net.mehvahdjukaar.moonlight.api.block.IRecolorable;
 import net.mehvahdjukaar.moonlight.api.misc.ForgeOverride;
 import net.mehvahdjukaar.moonlight.api.platform.ForgeHelper;
 import net.mehvahdjukaar.moonlight.api.set.BlocksColorAPI;
+import net.mehvahdjukaar.supplementaries.common.entities.trades.PresentItemListing;
 import net.mehvahdjukaar.moonlight.api.util.Utils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -18,6 +19,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
@@ -32,6 +34,7 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
+import net.minecraft.world.level.block.state.properties.SlabType;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.level.storage.loot.LootParams;
@@ -198,6 +201,12 @@ public class CarpetSlabBlock extends SlabBlock implements EntityBlock, IRecolora
             var c = tile.getHeldBlock();
             return BlocksColorAPI.isDefaultColor(c.getBlock());
         }
+        return false;
+    }
+
+    //slab code is so dumb
+    @Override
+    public boolean canBeReplaced(BlockState state, BlockPlaceContext useContext) {
         return false;
     }
 }

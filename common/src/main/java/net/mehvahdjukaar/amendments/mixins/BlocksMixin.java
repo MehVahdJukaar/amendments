@@ -16,6 +16,8 @@ import java.util.function.Predicate;
 
 @Mixin(Blocks.class)
 public class BlocksMixin {
+
+    //redirect or this specific case is ok? we want to crash if another mod does it
     @Redirect(method = "<clinit>", at = @At(
             value = "NEW",
             target = "(Lnet/minecraft/world/level/biome/Biome$Precipitation;Lnet/minecraft/core/cauldron/CauldronInteraction$InteractionMap;Lnet/minecraft/world/level/block/state/BlockBehaviour$Properties;)Lnet/minecraft/world/level/block/LayeredCauldronBlock;",

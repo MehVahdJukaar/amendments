@@ -64,7 +64,7 @@ class DoubleCakeConversion implements ItemUseOnBlock {
         BlockState state = level.getBlockState(pos);
         Block block = state.getBlock();
         if (((CAKES.get().contains(block) || block instanceof DirectionalCakeBlock) &&
-                state.getValue(DirectionalCakeBlock.BITES) == 0)) {
+                state.getValue(DirectionalCakeBlock.BITES) == 0) && !(block instanceof DoubleCakeBlock)) {
             CakeRegistry.CakeType t;
             if (block instanceof DirectionalCakeBlock dc) {
                 t = dc.type;
