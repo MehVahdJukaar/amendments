@@ -69,7 +69,6 @@ public class AmendmentsFabric implements ModInitializer {
         UseBlockCallback.EVENT.register(ModEvents::onRightClickBlockHP);
         UseBlockCallback.EVENT.register(ModEvents::onRightClickBlock);
         UseItemCallback.EVENT.register(ModEvents::onUseItem);
-        CommonLifecycleEvents.TAGS_LOADED.register(Amendments::onCommonTagUpdate);
         if (PlatHelper.getPhysicalSide().isClient()) {
             ItemTooltipCallback.EVENT.register(AmendmentsClient::onItemTooltip);
         }

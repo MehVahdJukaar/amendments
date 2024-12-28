@@ -18,6 +18,7 @@ public class ItemHoldingAnimationsManager {
         if (animAdded) return;
         animAdded = true;
 
+        //bad
         if (ClientConfigs.LANTERN_HOLDING.get()) {
             var anim = new LanternRendererExtension();
             BlockScanner.getLanterns()

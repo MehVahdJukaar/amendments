@@ -1,1 +1,1 @@
-improved lectern logic
+- fixed fletchers not having dye but potion cauldrons

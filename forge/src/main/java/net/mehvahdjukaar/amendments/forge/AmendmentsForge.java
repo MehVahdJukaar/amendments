@@ -28,6 +28,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.RegisterEvent;
+import pepjebs.mapatlases.MapAtlasesMod;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -118,9 +119,4 @@ public class AmendmentsForge {
         }
     }
 
-    @SubscribeEvent
-    public void onTagUpdate(TagsUpdatedEvent event) {
-        Amendments.onCommonTagUpdate(event.getRegistryAccess(),
-                event.getUpdateCause() == TagsUpdatedEvent.UpdateCause.CLIENT_PACKET_RECEIVED);
-    }
 }

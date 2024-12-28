@@ -1,12 +1,11 @@
 package net.mehvahdjukaar.amendments;
 
-import net.mehvahdjukaar.amendments.client.BlockScanner;
 import net.mehvahdjukaar.amendments.common.FlowerPotHandler;
 import net.mehvahdjukaar.amendments.common.network.ModNetwork;
 import net.mehvahdjukaar.amendments.configs.ClientConfigs;
 import net.mehvahdjukaar.amendments.configs.CommonConfigs;
-import net.mehvahdjukaar.amendments.events.behaviors.CauldronConversion;
 import net.mehvahdjukaar.amendments.events.behaviors.InteractEvents;
+import net.mehvahdjukaar.amendments.events.dispenser.CauldronDispenserBehavior;
 import net.mehvahdjukaar.amendments.integration.CompatHandler;
 import net.mehvahdjukaar.amendments.integration.SuppCompat;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
@@ -58,11 +57,11 @@ public class Amendments {
         }
         PlatHelper.addCommonSetupAsync(Amendments::setupAsync);
         PlatHelper.addCommonSetup(Amendments::setup);
-
+        PlatHelper.addReloadableCommonSetup(Amendments::onReload);
+        RegHelper.addDynamicDispenserBehaviorRegistration(Amendments::registerDispenserBehavior);
         RegHelper.registerSimpleRecipeCondition(res("flag"), CommonConfigs::isFlagOn);
 
-        // make bell connections
-
+        // configurable models for wall lanterns and skulls
         // add wall lantern stand model override instead of texture one
         // mud slows down mobs
         //TODO: check bell ringing with rope
@@ -84,40 +83,37 @@ public class Amendments {
         //low tech mod?
     }
 
+
     private static void setup() {
         if (CommonConfigs.INVERSE_POTIONS.get() == null) {
             throw new IllegalStateException("Inverse potions config is null. How??");
         }
         if (CompatHandler.SUPPLEMENTARIES) SuppCompat.setup();
-
     }
-
 
     private static void setupAsync() {
         FlowerPotHandler.setup();
     }
 
-    private static boolean hasRun = false;
-
-    @EventCalled
-    public static void onCommonTagUpdate(RegistryAccess registryAccess, boolean client) {
+    public static void onReload(RegistryAccess registryAccess, boolean client) {
         InteractEvents.setupOverrides();
-        if (!hasRun) {
-            hasRun = true;
-            for (SoftFluid f : SoftFluidRegistry.getRegistry(registryAccess)) {
-                registerFluidBehavior(f);
-            }
-        }
         if (client) AmendmentsClient.afterTagSetup();
     }
 
-    public static void registerFluidBehavior(SoftFluid f) {
+    private static void registerDispenserBehavior(DispenserHelper.Event event) {
+        for (SoftFluid f : SoftFluidRegistry.getRegistry(event.getRegistryAccess())) {
+            registerFluidBehavior(f, event);
+        }
+    }
+
+
+    public static void registerFluidBehavior(SoftFluid f, DispenserHelper.Event event) {
         Set<Item> itemSet = new HashSet<>();
         Collection<FluidContainerList.Category> categories = f.getContainerList().getCategories();
         for (FluidContainerList.Category c : categories) {
             for (Item full : c.getFilledItems()) {
                 if (full != Items.AIR && !itemSet.contains(full)) {
-                    DispenserHelper.registerCustomBehavior(new CauldronConversion.DispenserBehavior(full));
+                    event.register(new CauldronDispenserBehavior(full));
                     itemSet.add(full);
                 }
             }
