@@ -1,7 +1,9 @@
 package net.mehvahdjukaar.amendments.integration;
 
 import com.google.common.base.Suppliers;
+import gg.moonflower.etched.common.component.DiscAppearanceComponent;
 import net.minecraft.core.Registry;
+import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
@@ -32,6 +34,7 @@ public class CompatObjects {
     public static final Supplier<Block> SPECTACLE_CANDLE = make("cave_enhancements:spectacle_candle", BuiltInRegistries.BLOCK);
 
     public static final Supplier<ParticleType<?>> SMALL_SOUL_FLAME = make("buzzier_bees:small_soul_fire_flame", BuiltInRegistries.PARTICLE_TYPE);
+    public static final Supplier<DataComponentType<?>> DISC_APPEARANCE = make("etched:disc_appearance", BuiltInRegistries.DATA_COMPONENT_TYPE);
 
 
     private static <T> Supplier<@Nullable T> make(String name, Registry<T> registry) {

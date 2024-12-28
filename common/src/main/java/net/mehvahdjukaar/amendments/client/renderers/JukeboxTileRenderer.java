@@ -16,8 +16,6 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.resources.model.Material;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.util.FastColor;
 import net.minecraft.world.level.block.JukeboxBlock;
 import net.minecraft.world.level.block.entity.JukeboxBlockEntity;
 
@@ -29,7 +27,7 @@ public class JukeboxTileRenderer implements BlockEntityRenderer<JukeboxBlockEnti
     @Override
     public void render(JukeboxBlockEntity blockEntity, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
         var item = blockEntity.getTheItem();
-    
+
         if (!item.isEmpty() && blockEntity.getBlockState().getValue(JukeboxBlock.HAS_RECORD)) {
             poseStack.translate(0.5, 15.25 / 16f, 0.5);
 
@@ -48,27 +46,7 @@ public class JukeboxTileRenderer implements BlockEntityRenderer<JukeboxBlockEnti
 
             // etched shit
             if (item.getItem() == CompatObjects.ETCHED_DISC.get()) {
-                int color = EtchedCompat.getDiscColor(item);
-                if (color != 5329233) {
-                    builder = AmendmentsClient.TINTED_RECORD.buffer(bufferSource, RenderType::entityCutout);
-                    drawColoredQuad(poseStack, builder, lu, lv, color);
-                } else {
-                    builder = AmendmentsClient.DEFAULT_RECORD.buffer(bufferSource, RenderType::entityCutout);
-                    VertexUtil.addQuad(builder, poseStack, -0.5f, -0.5f, 0.5f, 0.5f, lu, lv);
-                }
-
-                CompoundTag label = EtchedCompat.getLabelColor(item);
-                int pattern = EtchedCompat.getPattern(item);
-                if (!label.isEmpty() && pattern < 6) {
-                    builder = AmendmentsClient.RECORD_PATTERNS.get(pattern).buffer(bufferSource, RenderType::entityCutout);
-                    int primaryColor = label.getInt("Primary");
-                    if (primaryColor == 0) primaryColor = -1;
-                    drawColoredQuad(poseStack, builder, lu, lv, primaryColor);
-                    builder = AmendmentsClient.RECORD_PATTERNS_OVERLAY.get(pattern).buffer(bufferSource, RenderType::entityCutout);
-                    int secondaryColor = label.getInt("Secondary");
-                    if (secondaryColor == 0) secondaryColor = -1;
-                    drawColoredQuad(poseStack, builder, lu, lv, secondaryColor);
-                }
+                EtchedCompat.drawDisc(item, poseStack, bufferSource, lu, lv);
             } else {
                 builder = material.buffer(bufferSource, RenderType::entityCutout);
                 VertexUtil.addQuad(builder, poseStack, -0.5f, -0.5f, 0.5f, 0.5f, lu, lv);
@@ -76,12 +54,5 @@ public class JukeboxTileRenderer implements BlockEntityRenderer<JukeboxBlockEnti
         }
     }
 
-    private static void drawColoredQuad(PoseStack poseStack, VertexConsumer builder, int lu, int lv, int color) {
-        int r = FastColor.ARGB32.red(color);
-        int g = FastColor.ARGB32.green(color);
-        int b = FastColor.ARGB32.blue(color);
-        VertexUtil.addQuad(builder, poseStack, -0.5f, -0.5f, 0.5f, 0.5f,
-                r, g, b, 255, lu, lv);
-    }
 
 }

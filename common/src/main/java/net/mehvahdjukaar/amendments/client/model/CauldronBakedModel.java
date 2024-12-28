@@ -7,7 +7,7 @@ import net.mehvahdjukaar.amendments.configs.ClientConfigs;
 import net.mehvahdjukaar.moonlight.api.client.model.BakedQuadsTransformer;
 import net.mehvahdjukaar.moonlight.api.client.model.CustomBakedModel;
 import net.mehvahdjukaar.moonlight.api.client.model.ExtraModelData;
-import net.mehvahdjukaar.moonlight.api.fluids.BuiltInSoftFluids;
+import net.mehvahdjukaar.moonlight.api.fluids.MLBuiltinSoftFluids;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluid;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidRegistry;
 import net.mehvahdjukaar.moonlight.api.platform.ClientHelper;
@@ -54,36 +54,37 @@ public class CauldronBakedModel implements CustomBakedModel {
             quads.addAll(cauldron.getQuads(state, direction, randomSource));
         }
         if (!hasTranslucent || isTranslucentLayer) {
+            BakedQuadsTransformer transformer = BakedQuadsTransformer.create();
             List<BakedQuad> liquidQuads = fluid.getQuads(state, direction, randomSource);
             ClientLevel level = Minecraft.getInstance().level;
             if (liquidQuads.isEmpty() || level == null) return quads;
-            RegistryAccess reg = level.registryAccess();
+            RegistryAccess access = level.registryAccess();
             ResourceKey<SoftFluid> fluidKey = extraModelData.get(LiquidCauldronBlockTile.FLUID);
-            SoftFluid fluid = SoftFluidRegistry.getRegistry(reg).get(fluidKey);
-            Boolean glowing = extraModelData.get(LiquidCauldronBlockTile.GLOWING);
-            if (glowing == null) glowing = false;
-            BakedQuadsTransformer transformer = BakedQuadsTransformer.create();
-            // has custom fluid. Fluid might not be received immediately so might be empty for a split second
-            if (fluid != null && !fluid.isEmptyFluid()) {
-                ResourceLocation stillTexture = fluid.getStillTexture();
-                if (ClientConfigs.POTION_TEXTURE.get() && BuiltInSoftFluids.POTION.is(fluidKey)) {
-                    stillTexture = AmendmentsClient.POTION_TEXTURE;
-                } else if (BuiltInSoftFluids.MUSHROOM_STEW.is(fluidKey)) {
-                    stillTexture = AmendmentsClient.MUSHROOM_STEW;
-                } else if (BuiltInSoftFluids.BEETROOT_SOUP.is(fluidKey)) {
-                    stillTexture = AmendmentsClient.BEETROOT_SOUP;
-                } else if (BuiltInSoftFluids.RABBIT_STEW.is(fluidKey)) {
-                    stillTexture = AmendmentsClient.RABBIT_STEW;
-                } else if (BuiltInSoftFluids.SUS_STEW.is(fluidKey)) {
-                    stillTexture = AmendmentsClient.SUS_STEW;
+            if (fluidKey != null) {
+                SoftFluid fluid = SoftFluidRegistry.get(access).get(fluidKey);
+                Boolean glowing = extraModelData.get(LiquidCauldronBlockTile.GLOWING);
+                if (glowing == null) glowing = false;
+                // has custom fluid. Fluid might not be received immediately so might be empty for a split second
+                if (fluid != null && !MLBuiltinSoftFluids.EMPTY.is(fluidKey)) {
+                    ResourceLocation stillTexture = fluid.getStillTexture();
+                    if (ClientConfigs.POTION_TEXTURE.get() && MLBuiltinSoftFluids.POTION.is(fluidKey)) {
+                        stillTexture = AmendmentsClient.POTION_TEXTURE;
+                    } else if (MLBuiltinSoftFluids.MUSHROOM_STEW.is(fluidKey)) {
+                        stillTexture = AmendmentsClient.MUSHROOM_STEW;
+                    } else if (MLBuiltinSoftFluids.BEETROOT_SOUP.is(fluidKey)) {
+                        stillTexture = AmendmentsClient.BEETROOT_SOUP;
+                    } else if (MLBuiltinSoftFluids.RABBIT_STEW.is(fluidKey)) {
+                        stillTexture = AmendmentsClient.RABBIT_STEW;
+                    } else if (MLBuiltinSoftFluids.SUS_STEW.is(fluidKey)) {
+                        stillTexture = AmendmentsClient.SUS_STEW;
+                    }
+                    TextureAtlasSprite sprite = ClientHelper.getBlockMaterial(stillTexture).sprite();
+                    transformer.applyingAmbientOcclusion(false)
+                            .applyingEmissivity(Math.max(glowing ? 14 : 0, fluid.getEmissivity()))
+                            .applyingSprite(sprite);
+
+                    quads.addAll(transformer.transformAll(liquidQuads));
                 }
-                TextureAtlasSprite sprite = ClientHelper.getBlockMaterial(stillTexture).sprite();
-                transformer.applyingAmbientOcclusion(false)
-                        .applyingEmissivity(Math.max(glowing ? 14 : 0, fluid.getEmissivity()))
-                        .applyingSprite(sprite);
-
-                quads.addAll(transformer.transformAll(liquidQuads));
-
             } else if (!(state.getBlock() instanceof ModCauldronBlock)) {
                 transformer.applyingAmbientOcclusion(false);
                 quads.addAll(transformer.transformAll(liquidQuads));

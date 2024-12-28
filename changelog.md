@@ -2,3 +2,4 @@
 - bells will now trigger observers when ring by a propjectile or chain.
 - fixed a crash with carpeted slab blocks and falling entities
 - fixed double cake interaction when holding cake
+- updated etched compat

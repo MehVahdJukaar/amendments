@@ -4,8 +4,8 @@ import net.mehvahdjukaar.amendments.common.FlowerPotHandler;
 import net.mehvahdjukaar.amendments.common.network.ModNetwork;
 import net.mehvahdjukaar.amendments.configs.ClientConfigs;
 import net.mehvahdjukaar.amendments.configs.CommonConfigs;
+import net.mehvahdjukaar.amendments.events.behaviors.CauldronConversion;
 import net.mehvahdjukaar.amendments.events.behaviors.InteractEvents;
-import net.mehvahdjukaar.amendments.events.dispenser.CauldronDispenserBehavior;
 import net.mehvahdjukaar.amendments.integration.CompatHandler;
 import net.mehvahdjukaar.amendments.integration.SuppCompat;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
@@ -61,7 +61,7 @@ public class Amendments {
         }
         PlatHelper.addCommonSetupAsync(Amendments::setupAsync);
         PlatHelper.addCommonSetup(Amendments::setup);
-        PlatHelper.addReloadableCommonSetup(Amendments::onCommonTagUpdate);
+        PlatHelper.addReloadableCommonSetup(Amendments::onReload);
         RegHelper.addDynamicDispenserBehaviorRegistration(Amendments::registerDispenserBehaviors);
 
         RegHelper.registerSimpleRecipeCondition(res("flag"), CommonConfigs::isFlagOn);

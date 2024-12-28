@@ -11,14 +11,13 @@ import net.mehvahdjukaar.moonlight.api.block.ISoftFluidTankProvider;
 import net.mehvahdjukaar.moonlight.api.client.model.ExtraModelData;
 import net.mehvahdjukaar.moonlight.api.client.model.IExtraModelDataProvider;
 import net.mehvahdjukaar.moonlight.api.client.model.ModelDataKey;
-import net.mehvahdjukaar.moonlight.api.fluids.BuiltInSoftFluids;
+import net.mehvahdjukaar.moonlight.api.fluids.MLBuiltinSoftFluids;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluid;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidStack;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidTank;
 import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
 import net.mehvahdjukaar.moonlight.api.util.PotionBottleType;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
@@ -145,8 +144,8 @@ public class LiquidCauldronBlockTile extends BlockEntity implements IExtraModelD
         return new SoftFluidTank(PlatHelper.getPlatform().isFabric() ? 3 : 4) {
             @Override
             public boolean isFluidCompatible(SoftFluidStack fluidStack) {
-                if (fluidStack.is(BuiltInSoftFluids.WATER.get())) return false;
-                if (canMixPotions() && fluidStack.is(BuiltInSoftFluids.POTION.get()) && fluidStack.is(this.getFluidValue())) {
+                if (fluidStack.is(MLBuiltinSoftFluids.WATER)) return false;
+                if (canMixPotions() && fluidStack.is(MLBuiltinSoftFluids.POTION) && fluidStack.is(this.getFluid().getHolder())) {
                     // just compares bottle types
                     return this.fluidStack.getOrDefault(MoonlightRegistry.BOTTLE_TYPE.get(), PotionBottleType.REGULAR)
                             == fluidStack.getOrDefault(MoonlightRegistry.BOTTLE_TYPE.get(), PotionBottleType.REGULAR);
@@ -156,7 +155,7 @@ public class LiquidCauldronBlockTile extends BlockEntity implements IExtraModelD
 
             @Override
             protected void addFluidOntoExisting(SoftFluidStack incoming) {
-                if (canMixPotions() && incoming.is(BuiltInSoftFluids.POTION.get())) {
+                if (canMixPotions() && incoming.is(MLBuiltinSoftFluids.POTION)) {
                     SoftFluidStack newStack = LiquidMixer.mixPotions(this.fluidStack, incoming);
                     if (newStack != null) {
                         this.setFluid(newStack);
@@ -173,7 +172,7 @@ public class LiquidCauldronBlockTile extends BlockEntity implements IExtraModelD
 
             @Override
             public boolean isFluidCompatible(SoftFluidStack fluidStack) {
-                if (fluidStack.is(ModRegistry.DYE_SOFT_FLUID.get()) && fluidStack.is(this.getFluidValue())) {
+                if (fluidStack.is(ModRegistry.DYE_SOFT_FLUID) && fluidStack.is(this.getFluid().getHolder())) {
                     return true; //discard nbt
                 } else return super.isFluidCompatible(fluidStack);
             }
@@ -181,7 +180,7 @@ public class LiquidCauldronBlockTile extends BlockEntity implements IExtraModelD
 
             @Override
             protected void addFluidOntoExisting(SoftFluidStack fluidStack) {
-                if (fluidStack.is(ModRegistry.DYE_SOFT_FLUID.get())) {
+                if (fluidStack.is(ModRegistry.DYE_SOFT_FLUID)) {
                     var mixed = LiquidMixer.mixDye(this.fluidStack, fluidStack);
                     if (mixed != null) {
                         this.setFluid(mixed);
