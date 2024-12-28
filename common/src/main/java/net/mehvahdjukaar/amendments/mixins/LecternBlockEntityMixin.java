@@ -127,6 +127,7 @@ public abstract class LecternBlockEntityMixin extends BlockEntity implements Con
     }
 
 
+
     @Override
     public void setChanged() {
         super.setChanged();
@@ -142,14 +143,4 @@ public abstract class LecternBlockEntityMixin extends BlockEntity implements Con
         //this.level.sendBlockUpdated(this.worldPosition, this.getBlockState(), this.getBlockState(), 3);
     }
 
-    @Override
-    public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
-        return saveWithoutMetadata(registries);
-    }
-
-    @Nullable
-    @Override
-    public Packet<ClientGamePacketListener> getUpdatePacket() {
-        return ClientboundBlockEntityDataPacket.create(this);
-    }
 }

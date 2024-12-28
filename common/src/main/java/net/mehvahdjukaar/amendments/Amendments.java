@@ -4,8 +4,8 @@ import net.mehvahdjukaar.amendments.common.FlowerPotHandler;
 import net.mehvahdjukaar.amendments.common.network.ModNetwork;
 import net.mehvahdjukaar.amendments.configs.ClientConfigs;
 import net.mehvahdjukaar.amendments.configs.CommonConfigs;
-import net.mehvahdjukaar.amendments.events.behaviors.CauldronConversion;
 import net.mehvahdjukaar.amendments.events.behaviors.InteractEvents;
+import net.mehvahdjukaar.amendments.events.dispenser.CauldronDispenserBehavior;
 import net.mehvahdjukaar.amendments.integration.CompatHandler;
 import net.mehvahdjukaar.amendments.integration.SuppCompat;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
@@ -66,6 +66,7 @@ public class Amendments {
 
         RegHelper.registerSimpleRecipeCondition(res("flag"), CommonConfigs::isFlagOn);
 
+        // configurable models for wall lanterns and skulls
         // todo: finish porting
 
         // make bell connections
@@ -90,6 +91,7 @@ public class Amendments {
         //low tech mod?
     }
 
+
     private static void setup() {
         if (CommonConfigs.INVERSE_POTIONS.get() == null) {
             throw new IllegalStateException("Inverse potions config is null. How??");
@@ -105,14 +107,11 @@ public class Amendments {
         PoiTypes.registerBlockStates(holder, extraStates);
     }
 
-
     private static void setupAsync() {
         FlowerPotHandler.setup();
     }
 
-
-    @EventCalled
-    public static void onCommonTagUpdate(RegistryAccess registryAccess, boolean client) {
+    public static void onReload(RegistryAccess registryAccess, boolean client) {
         InteractEvents.setupOverrides();
         if (client) AmendmentsClient.afterTagSetup();
     }

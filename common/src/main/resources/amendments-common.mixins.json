@@ -23,6 +23,7 @@
     "LanternBlockPlacementMixin",
     "LavaCauldronMixin",
     "LecternBlockEntityMixin",
+    "LecternBlockEntityUpdateMixin",
     "LecternBlockMixin",
     "PotionTooltipMixin",
     "SkullBlockEntityMixin",
