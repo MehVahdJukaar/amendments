@@ -74,6 +74,7 @@ class BellChainRing implements BlockUse {
             }
             BlockHitResult hit = new BlockHitResult(new Vec3(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5),
                     d, pos, true);
+
             return bellBlock.onHit(world, state, hit, player, true);
         }
         return false;

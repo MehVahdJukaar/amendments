@@ -1,10 +1,12 @@
 package net.mehvahdjukaar.amendments.mixins;
 
+import com.llamalad7.mixinextras.sugar.Local;
 import net.mehvahdjukaar.amendments.common.IBellConnection;
 import net.mehvahdjukaar.amendments.integration.CompatHandler;
 import net.mehvahdjukaar.amendments.integration.SuppCompat;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -59,9 +61,22 @@ public abstract class BellMixin extends Block {
         }
     }
 
+    @Inject(method = "attemptToRing(Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/core/Direction;)Z",
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;playSound(Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/core/BlockPos;Lnet/minecraft/sounds/SoundEvent;Lnet/minecraft/sounds/SoundSource;FF)V"))
+    public void amendments$updateObservers(Entity entity, Level level, BlockPos pos, Direction direction,
+                                           CallbackInfoReturnable<Boolean> cir, @Local BlockEntity blockEntity) {
+        BlockState state = blockEntity.getBlockState();
+        if (!state.getValue(BellBlock.POWERED)) {
+            level.setBlockAndUpdate(pos, state.setValue(BellBlock.POWERED, true));
+            level.setBlockAndUpdate(pos, state.setValue(BellBlock.POWERED, false));
+        }
+    }
+
     @Override
     public void setPlacedBy(Level worldIn, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack) {
         super.setPlacedBy(worldIn, pos, state, placer, stack);
         this.amendments$tryConnect(pos, worldIn.getBlockState(pos.below()), worldIn);
     }
+
+
 }
