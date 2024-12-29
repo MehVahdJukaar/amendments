@@ -49,6 +49,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -277,7 +278,7 @@ public class WallLanternBlock extends WaterBlock implements EntityBlock {
         }
     }
 
-    public static boolean isValidBlock(Block b) {
+    public static boolean isValidBlock(@NotNull Block b) {
         if (b.asItem() == Items.AIR) return false;
         ResourceLocation id = Utils.getID(b);
         String namespace = id.getNamespace();
