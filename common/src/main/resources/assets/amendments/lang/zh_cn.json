@@ -35,9 +35,12 @@
   "gui.amendments.ink.blue": "蓝色",
   "message.amendments.double_cake": "方块状态下可叠放",
   "block.amendments.double_cake": "双层蛋糕",
+  "block.amendments.skull_pile": "头颅堆",
+  "block.amendments.candle_skull": "头颅烛台",
+  "block.amendments.hanging_pot": "悬挂式花盆",
   "message.amendments.hanging_pot": "可悬挂",
   "message.amendments.wall_lantern": "可放置在墙上",
-  "block.amendments.hanging_flower_pot": "悬挂的花盆",
+  "block.amendments.hanging_flower_pot": "悬挂式花盆",
   "block.amendments.directional_cake": "多向蛋糕",
   "item.amendments.dye_bottle": "染料瓶",
   "item.amendments.dye_bottle.red": "红色",
@@ -85,5 +88,124 @@
   "item.amendments.dye_bottle.aqua": "水蓝色",
   "item.amendments.dye_bottle.slate": "岩蓝色",
   "fluid.amendments.dye": "染料",
-  "message.amendments.cauldron": "这种混合药水似乎不太稳定……"
+  "message.amendments.cauldron": "这种混合药水似乎不太稳定……",
+
+
+
+
+
+  "amendments.configuration.lectern": "讲台",
+  "amendments.configuration.improved_screen": "界面改进",
+
+  "amendments.configuration.hanging_signs": "悬挂式告示牌",
+  "amendments.configuration.items_on_signs": "展示物品",
+
+  "amendments.configuration.cauldron": "炼药锅",
+  "amendments.configuration.enhanced_cauldron": "炼药锅增强",
+  "amendments.configuration.crafting": "炼药锅合成",
+  "amendments.configuration.dye_water": "给水染色",
+  "amendments.configuration.dye_recipes_per_layer": "单位液体物品染色倍数",
+  "amendments.configuration.potion_recipes_per_layer": "单位液体药水酿造倍数",
+  "amendments.configuration.potions_mixing": "混合药水",
+  "amendments.configuration.potion_mixing_limit": "混合药水种类上限",
+  "amendments.configuration.inverse_potions": "反性药水",
+  "amendments.configuration.connect_to_fences": "与栅栏连接",
+
+  "amendments.configuration.tripwire_hook": "绊线钩",
+  "amendments.configuration.tool_hook": "工具钩",
+
+  "amendments.configuration.carpets": "地毯",
+  "amendments.configuration.carpeted_stairs": "地毯楼梯",
+  "amendments.configuration.carpeted_slabs": "地毯台阶",
+
+  "amendments.configuration.cake": "蛋糕",
+  "amendments.configuration.double_cake": "双层蛋糕",
+  "amendments.configuration.directional_cake": "多向蛋糕",
+
+  "amendments.configuration.mob_head": "生物头颅",
+  "amendments.configuration.skull_piles": "头颅堆",
+  "amendments.configuration.skull_candles": "头颅烛台",
+  "amendments.configuration.multiple_candles": "多支蜡烛",
+
+  "amendments.configuration.flower_pot": "花盆",
+  "amendments.configuration.hanging_pot": "悬挂式花盆",
+
+  "amendments.configuration.lantern": "灯笼",
+  "amendments.configuration.wall_lanterns": "墙上的灯笼",
+  "amendments.configuration.high_priority": "高优先级",
+  "amendments.configuration.mod_blacklist": "黑名单模组",
+  "amendments.configuration.id_whitelist": "白名单ID",
+  "amendments.configuration.falling_lanterns": "灯笼坠落",
+
+  "amendments.configuration.bell": "钟",
+  "amendments.configuration.chain_ringing": "锁链鸣钟",
+  "amendments.configuration.chain_length": "锁链长度",
+
+  "amendments.configuration.banners": "旗帜",
+  "amendments.configuration.ceiling_banners": "吊顶旗帜",
+
+  "amendments.configuration.misc": "杂项",
+  "amendments.configuration.dye_blocks": "给方块染色",
+
+  "amendments.configuration.torch": "火把",
+  "amendments.configuration.torch_fire": "火把点燃实体",
+  "amendments.configuration.torch_fire_offhand": "副手火把点燃实体",
+  "amendments.configuration.torch_fire_duration": "着火持续时间",
+
+  "amendments.configuration.lily_pad": "睡莲",
+  "amendments.configuration.better_lilypads": "更好的睡莲",
+
+
+
+  "amendments.configuration.general": "通用",
+  "amendments.configuration.tooltip_hints": "提示文本中显示提示",
+  "amendments.configuration.custom_configured_screen": "专属设置界面",
+
+  "comment.amendments.configuration.lily_pad": "",
+  "amendments.configuration.y_offset": "Y偏移量",
+
+  "comment.amendments.configuration.bell": "",
+  "amendments.configuration.chain_attachment": "锁链视觉连接",
+
+  "amendments.configuration.brewing_stand": "酿造台",
+  "amendments.configuration.brewing_stand_colors": "酿造台渲染药水颜色",
+
+  "amendments.configuration.arrows": "箭",
+  "amendments.configuration.crossbows_colors": "弩渲染箭颜色",
+
+  "comment.amendments.configuration.tripwire_hook": "",
+  "amendments.configuration.fast_hooks": "绊线钩快速渲染",
+
+  "amendments.configuration.hanging_sign": "悬挂式告示牌",
+  "amendments.configuration.item_pixel_scale": "所展示物品像素比例",
+  "amendments.configuration.swinging_signs": "告示牌晃动",
+  "amendments.configuration.sign_attachment": "告示牌视觉连接",
+  "amendments.configuration.swing_physics": "晃动物理效果",
+
+  "comment.amendments.configuration.lantern": "",
+  "amendments.configuration.fast_lanterns": "灯笼快速渲染",
+  "amendments.configuration.lantern_item_size": "手持灯笼物品尺寸",
+  "amendments.configuration.lantern_item_holding": "手持灯笼动画",
+  "amendments.configuration.lantern_item_holding_up": "举起灯笼动画",
+
+  "comment.amendments.configuration.cauldron": "",
+  "amendments.configuration.potion_texture": "药水纹理",
+
+  "amendments.configuration.jukebox": "唱片机",
+  "amendments.configuration.new_model": "新模型",
+  "amendments.configuration.disc_spin": "旋转唱片",
+
+  "comment.amendments.configuration.misc": "",
+  "amendments.configuration.torch_item_holding": "手持火把动画",
+  "amendments.configuration.torch_item_size": "手持火把物品尺寸",
+  "amendments.configuration.candle_holder_item_holding": "手持烛台动画",
+  "amendments.configuration.handle_holder_item_size": "手持烛台物品尺寸",
+  "amendments.configuration.fixed_holding_animations": "固定手持动画",
+  "amendments.configuration.sign_text_color_multiplier": "告示牌文字色彩倍数",
+  "amendments.configuration.campfire_smoke_through_blocks": "营火烟雾穿透方块",
+
+  "amendments.configuration.merge_dynamic_packs": "合并动态资源包",
+  "amendments.configuration.lazy_map_upload": "惰性地图加载",
+  "amendments.configuration.maps_mipmap": "Mipmap渲染地图纹理",
+  "amendments.configuration.consistent_entity_renderer_shading": "实体着色器一致性"
 }
