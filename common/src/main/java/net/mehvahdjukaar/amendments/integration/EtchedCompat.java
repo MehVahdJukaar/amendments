@@ -6,6 +6,7 @@ import gg.moonflower.etched.common.component.DiscAppearanceComponent;
 import gg.moonflower.etched.core.registry.EtchedComponents;
 import net.mehvahdjukaar.amendments.AmendmentsClient;
 import net.mehvahdjukaar.moonlight.api.client.util.VertexUtil;
+import net.mehvahdjukaar.moonlight.api.trades.ItemListingManager;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.util.FastColor;
@@ -20,6 +21,7 @@ public class EtchedCompat {
         int color = app.discColor();
         VertexConsumer builder;
         if (color != -11447983) {
+            ItemListingManager
             builder = AmendmentsClient.TINTED_RECORD.buffer(bufferSource, RenderType::entityCutout);
             drawColoredQuad(poseStack, builder, lu, lv, color);
         } else {
