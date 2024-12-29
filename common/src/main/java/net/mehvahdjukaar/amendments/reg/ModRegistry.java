@@ -74,6 +74,7 @@ public class ModRegistry {
         for (var i : BuiltInRegistries.ITEM) {
             if (i instanceof BlockItem bi) {
                 Block block = bi.getBlock();
+                Preconditions.checkNotNull(block, "BlockItem " + i + " has a NULL block! This is not an amendments issue and its likely caused by some bigger underlying issue");
                 if (CommonConfigs.WALL_LANTERN.get() && WallLanternBlock.isValidBlock(block)) {
                     event.register(i, wallLanternPlacement);
                 }
