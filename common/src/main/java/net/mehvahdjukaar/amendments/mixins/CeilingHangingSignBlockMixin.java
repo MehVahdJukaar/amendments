@@ -1,5 +1,7 @@
 package net.mehvahdjukaar.amendments.mixins;
 
+import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import net.mehvahdjukaar.amendments.common.ExtendedHangingSign;
 import net.mehvahdjukaar.amendments.common.network.ClientBoundEntityHitSwayingBlockMessage;
 import net.mehvahdjukaar.amendments.common.network.ModNetwork;
@@ -16,9 +18,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.CeilingHangingSignBlock;
 import net.minecraft.world.level.block.EntityBlock;
-import net.minecraft.world.level.block.WallHangingSignBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -73,11 +73,18 @@ public abstract class CeilingHangingSignBlockMixin extends Block implements Enti
         }
     }
 
-    @Nullable
-    @Override
-    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level pLevel, BlockState pState, BlockEntityType<T> pBlockEntityType) {
-        return !pLevel.isClientSide ? null : (level, blockPos, blockState, blockEntity) -> {
-            if (ClientConfigs.SWINGING_SIGNS.get() && blockEntity instanceof ExtendedHangingSign te) {
+    /**
+     * Swings signs that don't override getTicker
+     */
+    @WrapMethod(method = "getTicker")
+    private <T extends BlockEntity> BlockEntityTicker<T> amendments$swingSign(Level pLevel, BlockState pState, BlockEntityType<T> pBlockEntityType, Operation<BlockEntityTicker<T>> original){
+        BlockEntityTicker<T> ticker = original.call(pLevel, pState, pBlockEntityType);
+        if (ticker == null && !pLevel.isClientSide) { return null; }
+        return (Level level, BlockPos blockPos, BlockState blockState, T blockEntity) -> {
+            if (ticker != null) {
+                ticker.tick(level, blockPos, blockState, blockEntity);
+            }
+            if (level.isClientSide && ClientConfigs.SWINGING_SIGNS.get() && blockEntity instanceof ExtendedHangingSign te){
                 te.amendments$getExtension().clientTick(level, blockPos, blockState);
             }
         };
