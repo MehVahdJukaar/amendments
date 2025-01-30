@@ -1,4 +1,1 @@
-- fixed fletchers not having dye but potion cauldrons
-- bells will now trigger observers when ring by a propjectile or chain.
-- fixed a crash with carpeted slab blocks and falling entities
-- fixed double cake interaction when holding cake
+- fixed buzzier bees compat

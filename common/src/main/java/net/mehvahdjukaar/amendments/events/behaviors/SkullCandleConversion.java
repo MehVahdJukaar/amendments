@@ -48,6 +48,8 @@ public class SkullCandleConversion implements ItemUseOnBlock {
             var n = Utils.getID(item).getNamespace();
             return (n.equals("minecraft") || n.equals("tinted") || n.equals("dye_depot") ||
                     item == CompatObjects.SOUL_CANDLE_ITEM.get() ||
+                    item == CompatObjects.ENDER_CANDLE_ITEM.get() ||
+                    item == CompatObjects.CUPRIC_CANDLE_ITEM.get() ||
                     item == CompatObjects.SPECTACLE_CANDLE_ITEM.get());
         }
         return false;

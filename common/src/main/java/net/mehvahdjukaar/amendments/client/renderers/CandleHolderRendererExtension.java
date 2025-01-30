@@ -23,16 +23,14 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.ItemTransform;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemDisplayContext;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.*;
 import net.minecraft.world.level.block.CandleBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import org.joml.Vector3f;
@@ -103,18 +101,19 @@ public class CandleHolderRendererExtension implements IThirdPersonAnimationProvi
 
     private static final Supplier<Map<Item, ResourceLocation>> FLAMES = Suppliers.memoize(() -> {
         Map<Item, ResourceLocation> map = new HashMap<>();
-        var s = CompatObjects.SOUL_CANDLE.get();
-        if (s != null)
-            map.put(s.asItem(), new ResourceLocation("textures/particle/soul_fire_flame.png"));
-        var c = CompatObjects.CUPRIC_CANDLE.get();
-        if (c != null) map.put(c.asItem(), new ResourceLocation("caverns_and_chasms",
+        var s = CompatObjects.SOUL_CANDLE_ITEM.get();
+        if (s != null) map.put(s.asItem(), new ResourceLocation("textures/particle/soul_fire_flame.png"));
+        var c = CompatObjects.CUPRIC_CANDLE_ITEM.get();
+        if (c != null) map.put(c, new ResourceLocation("caverns_and_chasms",
                 "textures/particle/cupric_fire_flame.png"));
-        var e = CompatObjects.ENDER_CANDLE.get();
-        if (e != null) map.put(e.asItem(), new ResourceLocation("endergetic",
+        var e = CompatObjects.ENDER_CANDLE_ITEM.get();
+        if (e != null) map.put(e, new ResourceLocation("endergetic",
                 "textures/particle/ender_fire_flame.png"));
+        //map.put(Items.REDSTONE_TORCH,
+        //        new ResourceLocation("textures/particle/generic_6.png"));
         return map;
     });
-    private static final ResourceLocation FLAME = ResourceLocation.withDefaultNamespace("textures/particle/flame.png");
+    private static final ResourceLocation FLAME = new ResourceLocation("textures/particle/flame.png");
 
     private static void renderFlame(LivingEntity entity, PoseStack poseStack, MultiBufferSource bufferSource, ItemStack stack) {
         var builder = bufferSource.getBuffer(RenderType.text(
@@ -122,6 +121,16 @@ public class CandleHolderRendererExtension implements IThirdPersonAnimationProvi
 
         int lu = LightTexture.FULL_BRIGHT & '\uffff';
         int lv = LightTexture.FULL_BRIGHT >> 16 & '\uffff';
+
+        int r, g, b, a;
+        a = r = g = b = 255;
+        /*
+        if (stack.is(Items.REDSTONE_TORCH)) {
+            var c = DustParticleOptions.REDSTONE_PARTICLE_COLOR;
+            r = (int) (c.x * 255);
+            g = (int) (c.y * 255);
+            b = (int) (c.z * 255);
+        }*/
 
         float period = 20;
         float t = ((entity.tickCount + Minecraft.getInstance().getFrameTime()) % period) / period;
@@ -133,7 +142,8 @@ public class CandleHolderRendererExtension implements IThirdPersonAnimationProvi
         poseStack.last().pose().setRotationXYZ(0, 0, 0);
         poseStack.scale(-scale, scale, -scale);
 
-        VertexUtil.addQuad(builder, poseStack, -0.5f, -0.5f, 0.5f, 0.5f, lu, lv);
+        VertexUtil.addQuad(builder, poseStack, -0.5f, -0.5f, 0.5f, 0.5f,
+                r, g, b, a, lu, lv);
     }
 
     private static void renderLanternModel(LivingEntity entity, ItemStack itemStack, PoseStack poseStack,
