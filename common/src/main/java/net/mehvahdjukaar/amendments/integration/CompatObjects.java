@@ -32,6 +32,8 @@ public class CompatObjects {
     public static final Supplier<Block> SPECTACLE_CANDLE = make("cave_enhancements:spectacle_candle", BuiltInRegistries.BLOCK);
 
     public static final Supplier<ParticleType<?>> SMALL_SOUL_FLAME = make("buzzier_bees:small_soul_fire_flame", BuiltInRegistries.PARTICLE_TYPE);
+    public static final Supplier<ParticleType<?>> SMALL_ENDER_FLAME = make("endergetic:small_ender_flame", BuiltInRegistries.PARTICLE_TYPE);
+    public static final Supplier<ParticleType<?>> SMALL_CUPRIC_FLAME = make("caves_and_chasms:small_cupric_flame", BuiltInRegistries.PARTICLE_TYPE);
 
 
     private static <T> Supplier<@Nullable T> make(String name, Registry<T> registry) {
