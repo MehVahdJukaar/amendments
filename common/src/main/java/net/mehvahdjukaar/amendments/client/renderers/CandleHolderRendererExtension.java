@@ -101,12 +101,12 @@ public class CandleHolderRendererExtension implements IThirdPersonAnimationProvi
 
     private static final Supplier<Map<Item, ResourceLocation>> FLAMES = Suppliers.memoize(() -> {
         Map<Item, ResourceLocation> map = new HashMap<>();
-        var s = CompatObjects.SOUL_CANDLE_ITEM.get();
+        Item s = CompatObjects.SOUL_CANDLE_ITEM.get();
         if (s != null) map.put(s.asItem(), ResourceLocation.withDefaultNamespace("textures/particle/soul_fire_flame.png"));
-        var c = CompatObjects.CUPRIC_CANDLE_ITEM.get();
+        Item c = CompatObjects.CUPRIC_CANDLE_ITEM.get();
         if (c != null) map.put(c, ResourceLocation.fromNamespaceAndPath("caverns_and_chasms",
                 "textures/particle/cupric_fire_flame.png"));
-        var e = CompatObjects.ENDER_CANDLE_ITEM.get();
+        Item e = CompatObjects.ENDER_CANDLE_ITEM.get();
         if (e != null) map.put(e, ResourceLocation.fromNamespaceAndPath("endergetic",
                 "textures/particle/ender_fire_flame.png"));
         //map.put(Items.REDSTONE_TORCH,
