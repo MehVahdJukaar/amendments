@@ -39,7 +39,7 @@ public class JukeboxTileRenderer implements BlockEntityRenderer<JukeboxBlockEnti
 
             Material material = AmendmentsClient.getRecordMaterial(item.getItem());
             VertexConsumer builder;
-            int upLight = LevelRenderer.getLightColor(blockEntity.getLevel(), blockEntity.getBlockPos().above(2));
+            int upLight = LevelRenderer.getLightColor(blockEntity.getLevel(), blockEntity.getBlockPos().above(1));
             int lu = upLight & '\uffff';
             int lv = upLight >> 16 & '\uffff';
 
