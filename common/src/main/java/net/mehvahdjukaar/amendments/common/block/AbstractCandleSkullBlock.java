@@ -85,17 +85,10 @@ public abstract class AbstractCandleSkullBlock extends AbstractCandleBlock imple
     public static final IntegerProperty CANDLES = BlockStateProperties.CANDLES;
     public static final BooleanProperty LIT = AbstractCandleBlock.LIT;
 
-    private final Supplier<ParticleType<? extends ParticleOptions>> particle;
-
-    protected AbstractCandleSkullBlock(Properties properties, Supplier<ParticleType<? extends ParticleOptions>> particle) {
+    protected AbstractCandleSkullBlock(Properties properties) {
         super(properties.lightLevel(CandleBlock.LIGHT_EMISSION));
         this.registerDefaultState(this.defaultBlockState()
                 .setValue(LIT, false).setValue(CANDLES, 1));
-        this.particle = particle;
-    }
-
-    public ParticleType<? extends ParticleOptions> getParticle() {
-        return this.particle.get();
     }
 
     @Override
@@ -261,8 +254,8 @@ public abstract class AbstractCandleSkullBlock extends AbstractCandleBlock imple
 
     @Override
     public void animateTick(BlockState state, Level level, BlockPos blockPos, RandomSource randomSource) {
-        if (state.getValue(LIT)) {
-            this.getParticleOffsets(state).forEach(vec3 -> addParticlesAndSound(particle.get(), level, vec3.add(blockPos.getX(), blockPos.getY(), blockPos.getZ()), randomSource));
+        if (state.getValue(LIT) && level.getBlockEntity(blockPos) instanceof CandleSkullBlockTile tile) {
+            this.getParticleOffsets(state).forEach(vec3 -> addParticlesAndSound(tile.getParticle(), level, vec3.add(blockPos.getX(), blockPos.getY(), blockPos.getZ()), randomSource));
         }
     }
 

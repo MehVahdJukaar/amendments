@@ -42,7 +42,7 @@ public class DyeBottleItem extends Item {
     }
 
     public static SoftFluidStack createFluidStack(DyeColor color, int amount) {
-        SoftFluidStack stack = SoftFluidStack.of(ModRegistry.DYE_SOFT_FLUID.getHolder(), amount);
+        SoftFluidStack stack = SoftFluidStack.of(ModRegistry.DYE_SOFT_FLUID, amount);
         stack.set(DataComponents.DYED_COLOR, new DyedItemColor(getDyeInt(color), true));
         return stack;
     }

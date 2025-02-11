@@ -9,6 +9,8 @@ import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
 import net.mehvahdjukaar.moonlight.api.util.Utils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.particles.ParticleType;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.resources.ResourceLocation;
@@ -17,6 +19,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.CandleBlock;
 import net.minecraft.world.level.block.entity.SkullBlockEntity;
@@ -27,6 +30,7 @@ public class CandleSkullBlockTile extends EnhancedSkullBlockTile {
     private BlockState candle = Blocks.AIR.defaultBlockState();
     //client only
     private ResourceLocation waxTexture = null;
+    private ParticleType<?> particle = ParticleTypes.SMALL_FLAME;
 
     public CandleSkullBlockTile(BlockPos pWorldPosition, BlockState pBlockState) {
         super(ModRegistry.SKULL_CANDLE_TILE.get(), pWorldPosition, pBlockState);
@@ -62,6 +66,16 @@ public class CandleSkullBlockTile extends EnhancedSkullBlockTile {
             this.waxTexture = null;
             if (this.candle != null) {
                 this.waxTexture = AmendmentsClient.SKULL_CANDLES_TEXTURES.get().get(this.candle.getBlock());
+            }
+            Block b = candle.getBlock();
+            if (b == CompatObjects.CUPRIC_CANDLE.get()) {
+                this.particle = CompatObjects.SMALL_CUPRIC_FLAME.get();
+            } else if (b == CompatObjects.ENDER_CANDLE.get()) {
+                this.particle = CompatObjects.SMALL_ENDER_FLAME.get();
+            } else if (b == CompatObjects.SOUL_CANDLE.get()) {
+                this.particle = CompatObjects.SMALL_SOUL_FLAME.get();
+            } else {
+                this.particle = ParticleTypes.SMALL_FLAME;
             }
         }
     }
@@ -100,5 +114,9 @@ public class CandleSkullBlockTile extends EnhancedSkullBlockTile {
         if (CompatHandler.CAVE_ENHANCEMENTS && e.candle.is(CompatObjects.SPECTACLE_CANDLE.get())) {
             CaveEnhancementsCompat.tick(level, pos, state);
         }
+    }
+
+    public ParticleType<?> getParticle() {
+        return particle;
     }
 }

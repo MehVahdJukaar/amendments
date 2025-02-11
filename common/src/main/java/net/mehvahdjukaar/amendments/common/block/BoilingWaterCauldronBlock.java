@@ -75,7 +75,7 @@ public class BoilingWaterCauldronBlock extends LayeredCauldronBlock {
         super.entityInside(state, level, pos, entity);
         if (!level.isClientSide && this.isEntityInsideContent(state, pos, entity)) {
             if (state.getValue(BOILING) && entity instanceof LivingEntity) {
-                entity.hurt(new DamageSource(ModRegistry.BOILING_DAMAGE.getHolder()), 1.0F);
+                entity.hurt(new DamageSource(ModRegistry.BOILING_DAMAGE), 1.0F);
             }
             if (entity.isOnFire()) LiquidCauldronBlock.playExtinguishSound(level, pos, entity);
 
