@@ -5,6 +5,7 @@ import net.mehvahdjukaar.amendments.AmendmentsClient;
 import net.mehvahdjukaar.amendments.client.renderers.HangingSignRendererExtension;
 import net.mehvahdjukaar.amendments.common.ExtendedHangingSign;
 import net.mehvahdjukaar.amendments.configs.ClientConfigs;
+import net.mehvahdjukaar.amendments.configs.CommonConfigs;
 import net.mehvahdjukaar.amendments.integration.CompatHandler;
 import net.mehvahdjukaar.amendments.integration.SuppCompat;
 import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
@@ -53,7 +54,8 @@ public abstract class HangingSignRendererMixin extends SignRenderer {
             at = @At("HEAD"), cancellable = true)
     public void renderEnhancedSign(SignBlockEntity tile, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource,
                                    int packedLight, int packedOverlay, CallbackInfo ci) {
-        if ((ClientConfigs.SIGN_ATTACHMENT.get() || ClientConfigs.SWINGING_SIGNS.get()) && tile instanceof ExtendedHangingSign hs) {
+        if ((ClientConfigs.SIGN_ATTACHMENT.get() || ClientConfigs.SWINGING_SIGNS.get() ||
+                CommonConfigs.HANGING_SIGN_ITEM.get()) && tile instanceof ExtendedHangingSign hs) {
             BlockState blockState = tile.getBlockState();
             WoodType woodType = SignBlock.getWoodType(blockState.getBlock());
             //normal model

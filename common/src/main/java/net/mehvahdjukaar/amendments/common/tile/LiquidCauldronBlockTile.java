@@ -143,8 +143,8 @@ public class LiquidCauldronBlockTile extends BlockEntity implements IExtraModelD
         return new SoftFluidTank(PlatHelper.getPlatform().isFabric() ? 3 : 4) {
             @Override
             public boolean isFluidCompatible(SoftFluidStack fluidStack) {
-                if (fluidStack.is(BuiltInSoftFluids.WATER.get())) return false;
-                if (canMixPotions() && fluidStack.is(BuiltInSoftFluids.POTION.get()) && fluidStack.is(this.getFluidValue())) {
+                if (fluidStack.is(BuiltInSoftFluids.WATER)) return false;
+                if (canMixPotions() && fluidStack.is(BuiltInSoftFluids.POTION) && fluidStack.is(this.fluidStack.getHolder())) {
                     // just compares bottle types
                     return this.fluidStack.getTag().getString(PotionNBTHelper.POTION_TYPE_KEY).equals(
                             fluidStack.getTag().getString(PotionNBTHelper.POTION_TYPE_KEY));
@@ -154,7 +154,7 @@ public class LiquidCauldronBlockTile extends BlockEntity implements IExtraModelD
 
             @Override
             protected void addFluidOntoExisting(SoftFluidStack incoming) {
-                if (canMixPotions() && incoming.is(BuiltInSoftFluids.POTION.get())) {
+                if (canMixPotions() && incoming.is(BuiltInSoftFluids.POTION)) {
                     LiquidMixer.mixPotions(this.fluidStack, incoming);
                     needsColorRefresh = true;
 
@@ -169,7 +169,7 @@ public class LiquidCauldronBlockTile extends BlockEntity implements IExtraModelD
 
             @Override
             public boolean isFluidCompatible(SoftFluidStack fluidStack) {
-                if (fluidStack.is(ModRegistry.DYE_SOFT_FLUID.get()) && fluidStack.is(this.getFluidValue())) {
+                if (fluidStack.is(ModRegistry.DYE_SOFT_FLUID) && fluidStack.is(this.fluidStack.getHolder())) {
                     return true; //discard nbt
                 } else return super.isFluidCompatible(fluidStack);
             }
@@ -177,7 +177,7 @@ public class LiquidCauldronBlockTile extends BlockEntity implements IExtraModelD
 
             @Override
             protected void addFluidOntoExisting(SoftFluidStack fluidStack) {
-                if (fluidStack.is(ModRegistry.DYE_SOFT_FLUID.get())) {
+                if (fluidStack.is(ModRegistry.DYE_SOFT_FLUID)) {
                     LiquidMixer.mixDye(this.fluidStack, fluidStack);
                 }
                 super.addFluidOntoExisting(fluidStack);

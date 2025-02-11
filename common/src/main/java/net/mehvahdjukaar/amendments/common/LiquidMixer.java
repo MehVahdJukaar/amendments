@@ -1,14 +1,11 @@
 package net.mehvahdjukaar.amendments.common;
 
 import net.mehvahdjukaar.amendments.common.item.DyeBottleItem;
-import net.mehvahdjukaar.moonlight.api.fluids.BuiltInSoftFluids;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidStack;
-import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidTank;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.alchemy.PotionUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -61,7 +58,7 @@ public class LiquidMixer {
         for (MobEffectInstance mobEffectInstance : effects) {
             listTag.add(mobEffectInstance.save(new CompoundTag()));
         }
-        tag.put("CustomPotionEffects", listTag);
+        if (!listTag.isEmpty()) tag.put("CustomPotionEffects", listTag);
     }
 
     private static void combineEffects(List<MobEffectInstance> combinedEffects,

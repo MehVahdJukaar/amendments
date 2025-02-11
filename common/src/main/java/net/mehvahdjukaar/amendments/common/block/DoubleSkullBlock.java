@@ -55,14 +55,14 @@ public class DoubleSkullBlock extends SkullBlock implements IRotatable {
         if (builder.getOptionalParameter(LootContextParams.BLOCK_ENTITY) instanceof DoubleSkullBlockTile tile) {
             List<ItemStack> loot = new ArrayList<>();
             BlockEntity skullTile = tile.getSkullTile();
-            if(skullTile!=null){
+            if (skullTile != null) {
                 BlockState skull = skullTile.getBlockState();
                 builder = builder.withOptionalParameter(LootContextParams.BLOCK_ENTITY, skullTile);
 
                 loot.addAll(skull.getDrops(builder));
             }
             BlockEntity skullTileUp = tile.getSkullTileUp();
-            if(skullTileUp!=null){
+            if (skullTileUp != null) {
                 BlockState skull = skullTileUp.getBlockState();
                 builder = builder.withOptionalParameter(LootContextParams.BLOCK_ENTITY, skullTileUp)
                         .withOptionalParameter(LootContextParams.BLOCK_STATE, skull);
@@ -134,6 +134,6 @@ public class DoubleSkullBlock extends SkullBlock implements IRotatable {
 
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(@NotNull Level level, @NotNull BlockState state, @NotNull BlockEntityType<T> type) {
-        return Utils.getTicker(type, ModRegistry.SKULL_PILE_TILE.get(), DoubleSkullBlockTile::ti2ck);
+        return Utils.getTicker(type, ModRegistry.SKULL_PILE_TILE.get(), DoubleSkullBlockTile::tick);
     }
 }

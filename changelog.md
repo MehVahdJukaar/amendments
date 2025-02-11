@@ -1,1 +1,1 @@
-- fixed buzzier bees compat
+misc fixes

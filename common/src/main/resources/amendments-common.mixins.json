@@ -6,7 +6,6 @@
   "mixins": [
     "AbstractCauldronBlockMixin",
     "AbstractSkullBlockMixin",
-    "SignBlockEntityMixin",
     "BellMixin",
     "BellTileEntityMixin",
     "BlocksMixin",
@@ -27,6 +26,7 @@
     "LecternBlockEntityUpdateMixin",
     "LecternBlockMixin",
     "PotionTooltipMixin",
+    "SignBlockEntityMixin",
     "SkullBlockEntityMixin",
     "SkullBlockMixin",
     "VineMixin",
