@@ -70,11 +70,7 @@ public class WallCandleSkullBlock extends AbstractCandleSkullBlock implements IR
     });
 
     public WallCandleSkullBlock(Properties properties) {
-        this(properties, () -> ParticleTypes.SMALL_FLAME);
-    }
-
-    public WallCandleSkullBlock(Properties properties, Supplier<ParticleType<? extends ParticleOptions>> particle) {
-        super(properties, particle);
+        super(properties);
         this.registerDefaultState(this.defaultBlockState().setValue(FACING, Direction.NORTH));
     }
 

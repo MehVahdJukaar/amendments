@@ -17,6 +17,7 @@ import net.mehvahdjukaar.moonlight.api.fluids.SoftFluid;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidRegistry;
 import net.mehvahdjukaar.moonlight.api.item.additional_placements.AdditionalItemPlacementsAPI;
 import net.mehvahdjukaar.moonlight.api.misc.DataObjectReference;
+import net.mehvahdjukaar.moonlight.api.misc.DynamicHolder;
 import net.mehvahdjukaar.moonlight.api.misc.RegSupplier;
 import net.mehvahdjukaar.moonlight.api.misc.Registrator;
 import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
@@ -91,11 +92,11 @@ public class ModRegistry {
         }
     }
 
-    public static final DataObjectReference<DamageType> BOILING_DAMAGE = new DataObjectReference<>(
+    public static final DynamicHolder<DamageType> BOILING_DAMAGE = DynamicHolder.of(
             res("boiling"), Registries.DAMAGE_TYPE);
 
 
-    public static final DataObjectReference<SoftFluid> DYE_SOFT_FLUID = new DataObjectReference<>(res("dye"),
+    public static final DynamicHolder<SoftFluid> DYE_SOFT_FLUID = DynamicHolder.of(res("dye"),
             SoftFluidRegistry.KEY);
 
     public static final RegSupplier<RecipeSerializer<DyeBottleRecipe>> DYE_BOTTLE_RECIPE = RegHelper.registerSpecialRecipe(
@@ -241,12 +242,10 @@ public class ModRegistry {
 
     //needed for tag so it can repel piglins
     public static final Supplier<Block> SKULL_CANDLE_SOUL = regBlock(SKULL_CANDLE_SOUL_NAME, () ->
-            new FloorCandleSkullBlock(BlockBehaviour.Properties.copy(SKULL_CANDLE.get()),
-                    CompatHandler.BUZZIER_BEES ? CompatObjects.SMALL_SOUL_FLAME : () -> ParticleTypes.SOUL_FIRE_FLAME));
+            new FloorCandleSkullBlock(BlockBehaviour.Properties.copy(SKULL_CANDLE.get())));
 
     public static final Supplier<Block> SKULL_CANDLE_SOUL_WALL = regBlock(SKULL_CANDLE_SOUL_NAME + "_wall", () ->
-            new WallCandleSkullBlock(BlockBehaviour.Properties.copy(SKULL_CANDLE.get()),
-                    CompatHandler.BUZZIER_BEES ? CompatObjects.SMALL_SOUL_FLAME : () -> ParticleTypes.SOUL_FIRE_FLAME));
+            new WallCandleSkullBlock(BlockBehaviour.Properties.copy(SKULL_CANDLE.get())));
 
 
     public static final Supplier<BlockEntityType<CandleSkullBlockTile>> SKULL_CANDLE_TILE = regTile(

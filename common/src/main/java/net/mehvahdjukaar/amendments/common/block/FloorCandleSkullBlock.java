@@ -26,11 +26,7 @@ public class FloorCandleSkullBlock extends AbstractCandleSkullBlock  implements 
     public static final IntegerProperty ROTATION = BlockStateProperties.ROTATION_16;
 
     public FloorCandleSkullBlock(BlockBehaviour.Properties properties) {
-        this(properties, () -> ParticleTypes.SMALL_FLAME);
-    }
-
-    public FloorCandleSkullBlock(BlockBehaviour.Properties properties, Supplier<ParticleType<? extends ParticleOptions>> particle) {
-        super(properties, particle);
+        super(properties);
         this.registerDefaultState(this.defaultBlockState().setValue(ROTATION, 0).setValue(LIT, false));
     }
 
