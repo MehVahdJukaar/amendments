@@ -2,6 +2,7 @@
   "replace": false,
   "values": [
     {"id":"minecraft:spyglass","required":false},
+    {"id":"minecraft:brush","required":false},
     {"id":"supplementaries:wrench","required":false},
     {"id":"create:wrench","required":false},
     {"id":"botania:twig_wand","required":false},
@@ -37,6 +38,8 @@
     {"id":"spellbladenext:offering","required":false},
     {"id":"#c:tool","required":false},
     {"id":"#c:tools","required":false},
+    {"id":"#forge:tools","required":false},
+    {"id":"#forge:tool","required":false},
     {"id":"#spectrum:sugar_sticks","required":false},
     {"id":"#spectrum:rock_candy","required":false}
   ]
