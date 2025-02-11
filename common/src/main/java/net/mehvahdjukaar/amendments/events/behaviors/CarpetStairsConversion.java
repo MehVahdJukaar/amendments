@@ -18,7 +18,6 @@ import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.StairBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.Half;
-import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.BlockHitResult;
 
 public class CarpetStairsConversion implements ItemUseOnBlock {
@@ -42,6 +41,8 @@ public class CarpetStairsConversion implements ItemUseOnBlock {
     public boolean appliesToItem(Item item) {
         if (item instanceof BlockItem bi) {
             Block b = bi.getBlock();
+            if (b == null)
+                throw new NullPointerException("A block item had a null block. Please report to the mod that adds it: " + bi);
             return b instanceof CarpetBlock || b.builtInRegistryHolder().is(ModTags.STAIRS_CARPETS);
         }
         return false;

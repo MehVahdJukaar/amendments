@@ -2,7 +2,6 @@ package net.mehvahdjukaar.amendments.common.tile;
 
 import com.mojang.datafixers.util.Pair;
 import net.mehvahdjukaar.amendments.common.block.CarpetSlabBlock;
-import net.mehvahdjukaar.amendments.common.block.CarpetStairBlock;
 import net.mehvahdjukaar.amendments.reg.ModBlockProperties;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.moonlight.api.block.MimicBlockTile;
@@ -74,6 +73,12 @@ public class CarpetedBlockTile extends MimicBlockTile {
 
     @Override
     public boolean setHeldBlock(BlockState state, int index) {
+        if (index == 0) {
+            this.mimic = state;
+        } else if (index == 1) {
+            this.carpet = state;
+        }
+        this.soundType = null;
         if (this.level instanceof ServerLevel) {
             this.setChanged();
             int newLight = Math.max(ForgeHelper.getLightEmission(getCarpet(), level, worldPosition),
@@ -85,16 +90,7 @@ public class CarpetedBlockTile extends MimicBlockTile {
         } else {
             this.requestModelReload();
         }
-
-        if (index == 0) {
-            this.mimic = state;
-            return true;
-        } else if (index == 1) {
-            this.carpet = state;
-            return true;
-        }
-        this.soundType = null;
-        return false;
+        return true;
     }
 
     public void initialize(BlockState stairs, BlockState carpet) {

@@ -148,7 +148,7 @@ public class DoubleSkullBlockTile extends EnhancedSkullBlockTile {
         return this.innerTileUp;
     }
 
-    public static void ti2ck(Level level, BlockPos pos, BlockState state, DoubleSkullBlockTile e) {
+    public static void tick(Level level, BlockPos pos, BlockState state, DoubleSkullBlockTile e) {
         e.tick(level, pos, state);
         var tileUp = e.getSkullTileUp();
         if (tileUp != null) {
