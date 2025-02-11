@@ -26,7 +26,7 @@ public class LiquidMixer {
         List<MobEffectInstance> combinedEffects = new ArrayList<>();
         List<MobEffectInstance> existingEffects = PotionUtils.getAllEffects(tankTag);
         List<MobEffectInstance> newEffects = PotionUtils.getAllEffects(newFluid.getTag());
-        if (newEffects.equals(existingEffects)) return;
+        if (newEffects.equals(existingEffects)) return; // just increment
 
         float oldMult = oldCount / (float) newCount;
         float newMult = 1 - oldMult;
