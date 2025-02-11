@@ -2,6 +2,7 @@ package net.mehvahdjukaar.amendments.mixins;
 
 import net.mehvahdjukaar.amendments.common.block.AbstractCandleSkullBlock;
 import net.mehvahdjukaar.amendments.common.tile.CandleSkullBlockTile;
+import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.moonlight.api.misc.OptionalMixin;
 import net.mehvahdjukaar.moonlight.api.set.BlocksColorAPI;
 import net.mehvahdjukaar.moonlight.api.util.math.ColorUtils;
@@ -13,6 +14,7 @@ import net.minecraft.util.FastColor;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.CandleBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
@@ -29,9 +31,6 @@ import java.util.List;
 @OptionalMixin("org.violetmoon.quark.api.IEnchantmentInfluencer")
 @Mixin(AbstractCandleSkullBlock.class)
 public abstract class CompatQuarkSelfCandleSkullMixin implements IEnchantmentInfluencer {
-
-    @Shadow
-    public abstract ParticleType<? extends ParticleOptions> getParticle();
 
     @Unique
     private DyeColor amendments$getColor(BlockState s, BlockGetter level, BlockPos pos) {
@@ -55,8 +54,11 @@ public abstract class CompatQuarkSelfCandleSkullMixin implements IEnchantmentInf
     @Nullable
     @Override
     public ParticleOptions getExtraParticleOptions(BlockGetter world, BlockPos pos, BlockState state) {
-        if (state.getValue(CandleBlock.LIT) && this.getParticle() != ParticleTypes.SMALL_FLAME) {
-            return ParticleTypes.SOUL;
+        if (state.getValue(CandleBlock.LIT)) {
+            if (world.getBlockEntity(pos) instanceof CandleSkullBlockTile tile &&
+                    tile.getParticle() != ParticleTypes.SMALL_FLAME) {
+                return (ParticleOptions) tile.getParticle();
+            }
         }
         return null;
     }
@@ -79,7 +81,7 @@ public abstract class CompatQuarkSelfCandleSkullMixin implements IEnchantmentInf
         DyeColor color = amendments$getColor(state, world, pos);
         if (color == null) return false;
         Influence influence = MatrixEnchantingModule.candleInfluences.get(color);
-        List<Enchantment> boosts = (this.getParticle() != ParticleTypes.SMALL_FLAME) ? influence.dampen() : influence.boost();
+        List<Enchantment> boosts = (this.amendments$isSoul(state.getBlock())) ? influence.dampen() : influence.boost();
         return boosts.contains(enchantment);
     }
 
@@ -88,7 +90,12 @@ public abstract class CompatQuarkSelfCandleSkullMixin implements IEnchantmentInf
         DyeColor color = amendments$getColor(state, world, pos);
         if (color == null) return false;
         Influence influence = MatrixEnchantingModule.candleInfluences.get(color);
-        List<Enchantment> dampens = (this.getParticle() != ParticleTypes.SMALL_FLAME) ? influence.boost() : influence.dampen();
+        List<Enchantment> dampens = (this.amendments$isSoul(state.getBlock())) ? influence.boost() : influence.dampen();
         return dampens.contains(enchantment);
+    }
+
+    @Unique
+    private boolean amendments$isSoul(Block block) {
+        return block == ModRegistry.SKULL_CANDLE_SOUL.get() || block == ModRegistry.SKULL_CANDLE_SOUL_WALL.get();
     }
 }
