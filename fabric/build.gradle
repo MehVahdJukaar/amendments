@@ -29,16 +29,16 @@ dependencies {
    // modImplementation("net.mehvahdjukaar:moonlight-fabric:${moonlight_version}")
    // modImplementation ("curse.maven:sodium-394468:5726291")
 
-    modImplementation("maven.modrinth:sodium:mc1.21-0.6.0-beta.2-fabric")
+   // modImplementation("maven.modrinth:sodium:mc1.21-0.6.0-beta.2-fabric")
 
     modCompileOnly "com.terraformersmc:modmenu:4.0.6", {
         exclude module: "fabric-api"
     }
 
-    //modImplementation ("net.mehvahdjukaar:moonlight-fabric:${moonlight_version}")
+    modImplementation ("net.mehvahdjukaar:moonlight-fabric:${moonlight_version}")
 
     modCompileOnly("curse.maven:supplementaries-412082:5147147")
-    modImplementation("curse.maven:selene-499980:5824029")
+   // modImplementation("curse.maven:selene-499980:5824029")
     modCompileOnly("curse.maven:farmers-delight-refabricated-993166:5215068")
     modCompileOnly("curse.maven:spelunkery-790530:5043881")
     modImplementation("it.crystalnest:soul-fire-d-common:$minecraft_min_version-$soul_fire_d_version")

@@ -113,7 +113,7 @@ public class CandleHolderRendererExtension implements IThirdPersonAnimationProvi
         //        new ResourceLocation("textures/particle/generic_6.png"));
         return map;
     });
-    private static final ResourceLocation FLAME = new ResourceLocation("textures/particle/flame.png");
+    private static final ResourceLocation FLAME = ResourceLocation.withDefaultNamespace("textures/particle/flame.png");
 
     private static void renderFlame(LivingEntity entity, PoseStack poseStack, MultiBufferSource bufferSource, ItemStack stack) {
         var builder = bufferSource.getBuffer(RenderType.text(

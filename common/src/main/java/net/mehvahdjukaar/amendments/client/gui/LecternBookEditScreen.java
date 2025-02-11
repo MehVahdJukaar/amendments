@@ -1,18 +1,13 @@
 package net.mehvahdjukaar.amendments.client.gui;
 
 import net.mehvahdjukaar.amendments.common.LecternEditMenu;
-import net.mehvahdjukaar.amendments.common.network.ModNetwork;
 import net.mehvahdjukaar.amendments.common.network.ServerBoundSyncLecternBookMessage;
 import net.mehvahdjukaar.moonlight.api.platform.network.NetworkHelper;
-import net.minecraft.SharedConstants;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.inventory.BookEditScreen;
-import net.minecraft.client.gui.screens.inventory.BookViewScreen;
 import net.minecraft.client.gui.screens.inventory.MenuAccess;
 import net.minecraft.core.component.DataComponents;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.StringUtil;
@@ -21,10 +16,8 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerListener;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.WritableBookContent;
 
-import java.util.Objects;
 import java.util.Optional;
 
 
@@ -40,6 +33,9 @@ public class LecternBookEditScreen extends BookEditScreen implements MenuAccess<
             if (writableBookContent != null) {
                 writableBookContent.getPages(Minecraft.getInstance().isTextFilteringEnabled()).forEach(pages::add);
                 clearDisplayCache();
+            }
+            if (pages.isEmpty()) {
+                pages.add("");
             }
         }
 
@@ -162,7 +158,7 @@ public class LecternBookEditScreen extends BookEditScreen implements MenuAccess<
                 lastPage++;
                 super.pageForward();
                 if (lastPage > this.pages.size()) {
-                    for(int i = 0; i < value - this.pages.size(); i++){
+                    for (int i = 0; i < value - this.pages.size(); i++) {
                         this.pages.add("");
                     }
                     this.isModified = true;

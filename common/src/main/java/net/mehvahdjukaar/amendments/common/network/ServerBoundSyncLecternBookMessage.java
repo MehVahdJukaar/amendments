@@ -113,6 +113,13 @@ public class ServerBoundSyncLecternBookMessage implements Message {
             be.setChanged();
             be.getLevel().sendBlockUpdated(be.getBlockPos(), be.getBlockState(), be.getBlockState(), 3);
         }
+        //needs to happen here otherwise the book is taken before the packet is sent
+        if (takeBook) {
+            if (player.containerMenu instanceof LecternEditMenu m) {
+                //take button menu
+                m.clickMenuButton(player, 3);
+            }
+        }
     }
 
     private void signBook(LecternBlockEntity be, ServerPlayer player, ItemStack book,

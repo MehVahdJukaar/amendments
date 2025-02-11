@@ -12,10 +12,7 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.AbstractCandleBlock;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Mirror;
-import net.minecraft.world.level.block.Rotation;
+import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
@@ -26,11 +23,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.function.Supplier;
 
 public class FloorCandleSkullBlock extends AbstractCandleSkullBlock implements IRecolorable {
-
-    public static final MapCodec<FloorCandleSkullBlock> CODEC = RecordCodecBuilder.mapCodec((i) -> i.group(
-            BuiltInRegistries.PARTICLE_TYPE.byNameCodec().fieldOf("particle")
-                    .forGetter(FloorCandleSkullBlock::getParticle), propertiesCodec()
-    ).apply(i, (p, s) -> new FloorCandleSkullBlock(s, () -> p)));
+    public static final MapCodec<FloorCandleSkullBlock> CODEC = simpleCodec(FloorCandleSkullBlock::new);
 
     public static final IntegerProperty ROTATION = BlockStateProperties.ROTATION_16;
 
@@ -39,7 +32,6 @@ public class FloorCandleSkullBlock extends AbstractCandleSkullBlock implements I
         this.registerDefaultState(this.defaultBlockState().setValue(ROTATION, 0).setValue(LIT, false));
     }
 
-    @Override
     protected MapCodec<? extends FloorCandleSkullBlock> codec() {
         return CODEC;
     }

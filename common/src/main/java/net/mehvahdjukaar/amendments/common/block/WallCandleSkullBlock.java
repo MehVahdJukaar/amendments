@@ -36,11 +36,7 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 public class WallCandleSkullBlock extends AbstractCandleSkullBlock implements IRecolorable {
-
-    public static final MapCodec<WallCandleSkullBlock> CODEC = RecordCodecBuilder.mapCodec((i) -> i.group(
-            BuiltInRegistries.PARTICLE_TYPE.byNameCodec().fieldOf("particle")
-                    .forGetter(WallCandleSkullBlock::getParticle), propertiesCodec()
-    ).apply(i, (p, s) -> new WallCandleSkullBlock(s, () -> p)));
+    public static final MapCodec<WallCandleSkullBlock> CODEC = simpleCodec(WallCandleSkullBlock::new);
 
     public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
     private static final Map<Direction, VoxelShape[]> SHAPES = Util.make(() -> {
