@@ -23,7 +23,7 @@ public abstract class LecternBlockMixin {
     public void amendments$openCustomMenu(Level level, BlockPos pos, Player player, CallbackInfo ci) {
         BlockEntity blockEntity = level.getBlockEntity(pos);
         if (blockEntity instanceof LecternBlockEntity be && be.getBook().getItem() instanceof WritableBookItem
-                && CommonConfigs.LECTERN_STUFF.get()) {
+                && CommonConfigs.LECTERN_STUFF.get() && !player.isSpectator()) {
             PlatHelper.openCustomMenu((ServerPlayer) player, be, pos);
             player.awardStat(Stats.INTERACT_WITH_LECTERN);
             ci.cancel();
