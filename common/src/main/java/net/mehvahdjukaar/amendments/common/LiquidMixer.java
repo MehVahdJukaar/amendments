@@ -23,7 +23,6 @@ public class LiquidMixer {
     public static SoftFluidStack mixPotions(SoftFluidStack firstFluid, SoftFluidStack secondFluid) {
         var tankFluidContent = firstFluid.getOrDefault(DataComponents.POTION_CONTENTS, PotionContents.EMPTY);
         var newFluidContent = secondFluid.getOrDefault(DataComponents.POTION_CONTENTS, PotionContents.EMPTY);
-        if (!tankFluidContent.hasEffects() || !newFluidContent.hasEffects()) return null;
         int oldCount = firstFluid.getCount();
         int newCount = oldCount + secondFluid.getCount();
         List<MobEffectInstance> combinedEffects = new ArrayList<>();
@@ -34,7 +33,7 @@ public class LiquidMixer {
         List<MobEffectInstance> newEffects = new ArrayList<>();
         newFluidContent.getAllEffects().forEach(newEffects::add);
 
-        if (newEffects.equals(existingEffects)) return null;
+        if (newEffects.equals(existingEffects)) return null; // just increment
 
         float oldMult = oldCount / (float) newCount;
         float newMult = 1 - oldMult;

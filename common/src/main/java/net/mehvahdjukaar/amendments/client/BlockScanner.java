@@ -6,6 +6,7 @@ import net.mehvahdjukaar.amendments.integration.CompatHandler;
 import net.mehvahdjukaar.amendments.integration.SuppCompat;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.TorchBlock;
 import net.minecraft.world.level.block.WallTorchBlock;
 import org.jetbrains.annotations.NotNull;
@@ -18,6 +19,7 @@ public class BlockScanner {
     private static final Set<Block> torches;
     private static final Set<Block> candleHolders;
 
+    //TODO: make data driven, on world reload
     //statically initialized because its needed very early. Pls no concurrency issues
     static  {
         ImmutableSet.Builder<Block> lanternBuilder = ImmutableSet.builder();
@@ -33,6 +35,7 @@ public class BlockScanner {
                 candleBuilder.add(block);
             }
         }
+        torchesBuilder.add(Blocks.REDSTONE_TORCH);
         lanterns = lanternBuilder.build();
         torches = torchesBuilder.build();
         candleHolders = candleBuilder.build();
