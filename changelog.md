@@ -1,5 +1,5 @@
-- fixed fletchers not having dye but potion cauldrons
-- bells will now trigger observers when ring by a propjectile or chain.
-- fixed a crash with carpeted slab blocks and falling entities
-- fixed double cake interaction when holding cake
-- updated etched compat
+- ported many fixes
+- redstone torch have holding anim
+- fixed lectern take book not woking
+- fixed lectern requiring to make a new page to write
+- fixed potion mixing with mundane, thick and awkward potions duplicating potions
