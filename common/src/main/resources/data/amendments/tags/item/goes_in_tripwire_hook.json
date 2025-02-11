@@ -2,6 +2,7 @@
   "replace": false,
   "values": [
     {"id":"minecraft:spyglass","required":false},
+    {"id":"minecraft:brush","required":false},
     {"id":"supplementaries:wrench","required":false},
     {"id":"create:wrench","required":false},
     {"id":"botania:twig_wand","required":false},
