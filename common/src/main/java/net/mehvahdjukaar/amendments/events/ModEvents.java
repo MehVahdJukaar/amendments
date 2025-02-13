@@ -68,8 +68,8 @@ public class ModEvents {
     }
 
     private static @NotNull InteractionResult torchEntity(Player player, Level level, Entity target, ItemStack stack) {
-        if (stack.is(ModTags.SET_ENTITY_ON_FIRE) &&
-                target.isAttackable() && !target.skipAttackInteraction(player) && target instanceof LivingEntity) {
+        if (CommonConfigs.TORCH_FIRE && 
+            stack.is(ModTags.SET_ENTITY_ON_FIRE) && target.isAttackable() && !target.skipAttackInteraction(player) && target instanceof LivingEntity) {
             if (!target.isOnFire()) {
                 int duration = CommonConfigs.TORCH_FIRE_DURATION.get();
                 if (CompatHandler.SOUL_FIRED) {
