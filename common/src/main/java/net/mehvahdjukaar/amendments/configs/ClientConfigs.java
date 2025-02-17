@@ -46,6 +46,8 @@ public class ClientConfigs {
     public static final Supplier<Boolean> COLORED_ARROWS;
     public static final Supplier<Boolean> FAST_HOOKS;
 
+    public static final Supplier<Boolean> FIREBALL_3D;
+
     public static final Supplier<Double> BRIGHTEN_SIGN_TEXT_COLOR;
 
     private static float signColorMult = 1.2f;
@@ -60,6 +62,13 @@ public class ClientConfigs {
         builder.push("general");
         TOOLTIP_HINTS = builder.define("tooltip_hints", true);
         CUSTOM_CONFIGURED_SCREEN = builder.define("custom_configured_screen", true);
+        builder.pop();
+
+        builder.push("fireball");
+
+        FIREBALL_3D = builder.comment("Makes fireballs render in 3D")
+                .define("fireball_3d", true);
+
         builder.pop();
 
         builder.push("lily_pad");

@@ -11,8 +11,7 @@ import net.mehvahdjukaar.amendments.client.colors.MimicBlockColor;
 import net.mehvahdjukaar.amendments.client.colors.SoftFluidColor;
 import net.mehvahdjukaar.amendments.client.gui.LecternBookEditScreen;
 import net.mehvahdjukaar.amendments.client.model.*;
-import net.mehvahdjukaar.amendments.client.particles.BoilingParticle;
-import net.mehvahdjukaar.amendments.client.particles.ColoredSplashParticle;
+import net.mehvahdjukaar.amendments.client.particles.*;
 import net.mehvahdjukaar.amendments.client.renderers.*;
 import net.mehvahdjukaar.amendments.common.block.BoilingWaterCauldronBlock;
 import net.mehvahdjukaar.amendments.common.item.DyeBottleItem;
@@ -39,6 +38,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -98,6 +98,7 @@ public class AmendmentsClient {
     public static final ModelLayerLocation HANGING_SIGN_EXTENSION = loc("hanging_sign_extension");
     public static final ModelLayerLocation HANGING_SIGN_EXTENSION_CHAINS = loc("hanging_sign_chains");
     public static final ModelLayerLocation SKULL_CANDLE_OVERLAY = loc("skull_candle");
+    public static final ModelLayerLocation METEOR_MODEL = loc("fireball_3d");
 
     public static final ResourceLocation BELL_ROPE = Amendments.res("block/bell_rope");
     public static final ResourceLocation BELL_CHAIN = Amendments.res("block/bell_chain");
@@ -107,6 +108,10 @@ public class AmendmentsClient {
     public static final ResourceLocation RABBIT_STEW = Amendments.res("block/rabbit_stew_cauldron");
     public static final ResourceLocation BEETROOT_SOUP = Amendments.res("block/beetroot_soup_cauldron");
     public static final ResourceLocation SUS_STEW = Amendments.res("block/suspicious_stew_cauldron");
+    public static final ResourceLocation FIREBALL_TEXTURE = Amendments.res("textures/entity/fireball/fireball_3d.png");
+    public static final ResourceLocation FIREBALL_OVERLAY_TEXTURE = Amendments.res("textures/entity/fireball/fireball_3d_overlay.png");
+    public static final ResourceLocation DRAGON_FIREBALL_TEXTURE = Amendments.res("textures/entity/fireball/dragon_fireball_3d.png");
+    public static final ResourceLocation DRAGON_FIREBALL_OVERLAY_TEXTURE = Amendments.res("textures/entity/fireball/dragon_fireball_3d_overlay.png");
 
     private static ModelLayerLocation loc(String name) {
         return new ModelLayerLocation(Amendments.res(name), name);
@@ -175,11 +180,25 @@ public class AmendmentsClient {
     private static void registerParticles(ClientHelper.ParticleEvent event) {
         event.register(ModRegistry.BOILING_PARTICLE.get(), BoilingParticle.Provider::new);
         event.register(ModRegistry.SPLASH_PARTICLE.get(), ColoredSplashParticle.Provider::new);
+        event.register(ModRegistry.FIREBALL_TRAIL_PARTICLE.get(), FireballTrailParticle.Factory::new);
+        event.register(ModRegistry.DRAGON_FIREBALL_TRAIL_PARTICLE.get(), FireballTrailParticle.Factory::new);
+        event.register(ModRegistry.FIREBALL_EMITTER_PARTICLE.get(), FireballExplosionEmitterParticle.Factory::new);
+        event.register(ModRegistry.FIREBALL_EXPLOSION_PARTICLE.get(), FireballExplosionParticle.Factory::new);
+
     }
 
     @EventCalled
     private static void registerEntityRenderers(ClientHelper.EntityRendererEvent event) {
         event.register(ModRegistry.FALLING_LANTERN.get(), FallingBlockRenderer::new);
+
+        float modelScale = 0.75f;
+        if (ClientConfigs.FIREBALL_3D.get()) {
+            //same visual scale as the original
+         //   event.register(EntityType.FIREBALL, context -> new FireballRenderer3D(context, modelScale * 2.375f, FIREBALL_TEXTURE, FIREBALL_OVERLAY_TEXTURE));
+            event.register(EntityType.SMALL_FIREBALL, context -> new FireballRenderer3D(context, modelScale * 0.75f, FIREBALL_TEXTURE, FIREBALL_OVERLAY_TEXTURE));
+            event.register(EntityType.DRAGON_FIREBALL, context -> new FireballRenderer3D(context, modelScale * 2.375f, DRAGON_FIREBALL_TEXTURE, DRAGON_FIREBALL_OVERLAY_TEXTURE));
+        }
+        event.register(ModRegistry.SMALL_DRAGON_FIREBALL.get(), context -> new FireballRenderer3D(context, modelScale * 0.75f, DRAGON_FIREBALL_TEXTURE, DRAGON_FIREBALL_OVERLAY_TEXTURE));
     }
 
     @EventCalled
@@ -205,6 +224,7 @@ public class AmendmentsClient {
         event.register(HANGING_SIGN_EXTENSION, HangingSignRendererExtension::createMesh);
         event.register(HANGING_SIGN_EXTENSION_CHAINS, HangingSignRendererExtension::createChainMesh);
         event.register(SKULL_CANDLE_OVERLAY, SkullCandleOverlayModel::createMesh);
+        event.register(METEOR_MODEL, FireballRenderer3D::createMesh);
     }
 
     @EventCalled

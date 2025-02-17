@@ -69,6 +69,11 @@ public class CommonConfigs {
     public static final Supplier<Boolean> TORCH_FIRE_OFFHAND;
     public static final Supplier<Integer> TORCH_FIRE_DURATION;
 
+    public static final Supplier<Boolean> FIRE_CHARGE_GRAVITY;
+    public static final Supplier<Boolean> DRAGON_CHARGE;
+    public static final Supplier<Boolean> DEFLECT_FIRE_CHARGES;
+    public static final Supplier<Boolean> THROWABLE_FIRE_CHARGES;
+
 
     public static final ConfigSpec SPEC;
 
@@ -78,6 +83,18 @@ public class CommonConfigs {
         builder.push("lectern");
         LECTERN_STUFF = builder.comment("Improved lectern screen allowing to edit font of a book while on it")
                 .define("improved_screen", true);
+        builder.pop();
+
+        builder.push("fireball");
+        DRAGON_CHARGE = builder.comment("Adds dragons charge item")
+                .define("dragon_charge", true);
+        FIRE_CHARGE_GRAVITY = builder.comment("Makes fire & dragon charges have gravity")
+                .define("gravity", true);
+        DEFLECT_FIRE_CHARGES = builder.comment("Makes fire charges deflectable by punching")
+                .define("deflectable", true);
+        THROWABLE_FIRE_CHARGES = builder.comment("Allows throwing fire & dragon charges")
+                .define("throwable", true);
+
         builder.pop();
 
         builder.push("hanging_signs");

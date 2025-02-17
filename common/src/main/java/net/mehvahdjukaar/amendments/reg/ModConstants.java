@@ -8,6 +8,7 @@ public class ModConstants {
     public static final String DYE_CAULDRON_NAME = "dye_cauldron";
     public static final String WATER_LILY_NAME = "water_lily_pad";
     public static final String DYE_BOTTLE_NAME = "dye_bottle";
+    public static final String DRAGON_CHARGE_NAME = "dragon_charge";
     public static final String CARPETED_STAIR_NAME = "carpet_stairs";
     public static final String CARPETED_SLAB_NAME = "carpet_slab";
     public static final String DIRECTIONAL_CAKE_NAME = "directional_cake";

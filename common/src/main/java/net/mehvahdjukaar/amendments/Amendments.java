@@ -12,7 +12,6 @@ import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.moonlight.api.fluids.FluidContainerList;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluid;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidRegistry;
-import net.mehvahdjukaar.moonlight.api.misc.EventCalled;
 import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
 import net.mehvahdjukaar.moonlight.api.platform.RegHelper;
 import net.mehvahdjukaar.moonlight.api.util.DispenserHelper;
@@ -20,6 +19,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.LevelAccessor;
@@ -55,12 +56,13 @@ public class Amendments {
             ClientConfigs.init();
             AmendmentsClient.init();
         }
+
         PlatHelper.addCommonSetupAsync(Amendments::setupAsync);
         PlatHelper.addCommonSetup(Amendments::setup);
         PlatHelper.addReloadableCommonSetup(Amendments::onReload);
         RegHelper.addDynamicDispenserBehaviorRegistration(Amendments::registerDispenserBehavior);
         RegHelper.registerSimpleRecipeCondition(res("flag"), CommonConfigs::isFlagOn);
-
+        RegHelper.addItemsToTabsRegistration(Amendments::addItemsToTabs);
         // configurable models for wall lanterns and skulls
         // add wall lantern stand model override instead of texture one
         // mud slows down mobs
@@ -83,12 +85,28 @@ public class Amendments {
         //low tech mod?
     }
 
+    private static void addItemsToTabs(RegHelper.ItemToTabEvent itemToTabEvent) {
+        if (CommonConfigs.THROWABLE_FIRE_CHARGES.get()) {
+            itemToTabEvent.addBefore(CreativeModeTabs.COMBAT,
+                    i -> i.is(Items.SNOWBALL), Items.FIRE_CHARGE);
+            if (CommonConfigs.DRAGON_CHARGE.get()) {
+                itemToTabEvent.addBefore(CreativeModeTabs.COMBAT,
+                        i -> i.is(Items.SNOWBALL), ModRegistry.DRAGON_CHARGE.get());
+            }
+        }
+    }
+
 
     private static void setup() {
         if (CommonConfigs.INVERSE_POTIONS.get() == null) {
             throw new IllegalStateException("Inverse potions config is null. How??");
         }
         if (CompatHandler.SUPPLEMENTARIES) SuppCompat.setup();
+
+        // gg vanilla. They arent even marked as fire immune
+        EntityType.SMALL_FIREBALL.fireImmune = true;
+        EntityType.FIREBALL.fireImmune = true;
+        EntityType.DRAGON_FIREBALL.fireImmune = true;
     }
 
     private static void setupAsync() {
