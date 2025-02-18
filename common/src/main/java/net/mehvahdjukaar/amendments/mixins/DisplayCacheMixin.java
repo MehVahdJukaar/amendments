@@ -10,6 +10,7 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 @Mixin(BookEditScreen.DisplayCache.class)
 public abstract class DisplayCacheMixin {
 
+    // I have no idea why this is like that or what its for
     @Redirect(method = "getIndexAtPosition", at = @At(value = "INVOKE",
             target = "Lnet/minecraft/client/StringSplitter;plainIndexAtWidth(Ljava/lang/String;ILnet/minecraft/network/chat/Style;)I"))
     public int plainIndexAtWidth(StringSplitter instance, String content, int maxWidth, Style style) {
