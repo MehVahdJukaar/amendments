@@ -1,5 +1,6 @@
 package net.mehvahdjukaar.amendments.mixins;
 
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.world.entity.Entity;
@@ -28,4 +29,6 @@ public abstract class AbstractHurtingProjectileMixin extends Entity {
 
         return yLocal + this.getBbHeight() / 2.0;
     }
+
+    @WrapOperation(method = "part")
 }
