@@ -18,7 +18,7 @@ import org.spongepowered.asm.mixin.Unique;
 public abstract class HangingSignBlockEntityMixin extends BlockEntity implements ExtendedHangingSign {
 
     @Unique
-    private final HangingSignTileExtension supplementaries$extension = new HangingSignTileExtension(this.getBlockState());
+    private final HangingSignTileExtension amendments$extension = new HangingSignTileExtension(this.getBlockState());
 
     protected HangingSignBlockEntityMixin(BlockEntityType<?> blockEntityType, BlockPos blockPos, BlockState blockState) {
         super(blockEntityType, blockPos, blockState);
@@ -32,17 +32,17 @@ public abstract class HangingSignBlockEntityMixin extends BlockEntity implements
     @Override
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
-        this.supplementaries$extension.saveAdditional(tag, registries);
+        this.amendments$extension.saveAdditional(tag, registries);
     }
 
     @Override
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
-        this.supplementaries$extension.load(tag, registries);
+        this.amendments$extension.load(tag, registries);
     }
 
     @Override
     public HangingSignTileExtension amendments$getExtension() {
-        return supplementaries$extension;
+        return amendments$extension;
     }
 }
