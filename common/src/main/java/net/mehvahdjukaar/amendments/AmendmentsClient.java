@@ -99,6 +99,7 @@ public class AmendmentsClient {
     public static final ModelLayerLocation HANGING_SIGN_EXTENSION_CHAINS = loc("hanging_sign_chains");
     public static final ModelLayerLocation SKULL_CANDLE_OVERLAY = loc("skull_candle");
     public static final ModelLayerLocation METEOR_MODEL = loc("fireball_3d");
+    public static final ModelLayerLocation SMALL_METEOR_MODEL = loc("small_fireball_3d");
 
     public static final ResourceLocation BELL_ROPE = Amendments.res("block/bell_rope");
     public static final ResourceLocation BELL_CHAIN = Amendments.res("block/bell_chain");
@@ -108,6 +109,7 @@ public class AmendmentsClient {
     public static final ResourceLocation RABBIT_STEW = Amendments.res("block/rabbit_stew_cauldron");
     public static final ResourceLocation BEETROOT_SOUP = Amendments.res("block/beetroot_soup_cauldron");
     public static final ResourceLocation SUS_STEW = Amendments.res("block/suspicious_stew_cauldron");
+    public static final ResourceLocation BLAZE_TEXTURE = Amendments.res("textures/entity/fireball/blazeball_3d.png");
     public static final ResourceLocation FIREBALL_TEXTURE = Amendments.res("textures/entity/fireball/fireball_3d.png");
     public static final ResourceLocation FIREBALL_OVERLAY_TEXTURE = Amendments.res("textures/entity/fireball/fireball_3d_overlay.png");
     public static final ResourceLocation DRAGON_FIREBALL_TEXTURE = Amendments.res("textures/entity/fireball/dragon_fireball_3d.png");
@@ -194,11 +196,11 @@ public class AmendmentsClient {
         float modelScale = 0.75f;
         if (ClientConfigs.FIREBALL_3D.get()) {
             //same visual scale as the original
-         //   event.register(EntityType.FIREBALL, context -> new FireballRenderer3D(context, modelScale * 2.375f, FIREBALL_TEXTURE, FIREBALL_OVERLAY_TEXTURE));
-            event.register(EntityType.SMALL_FIREBALL, context -> new FireballRenderer3D(context, modelScale * 0.75f, FIREBALL_TEXTURE, FIREBALL_OVERLAY_TEXTURE));
-            event.register(EntityType.DRAGON_FIREBALL, context -> new FireballRenderer3D(context, modelScale * 2.375f, DRAGON_FIREBALL_TEXTURE, DRAGON_FIREBALL_OVERLAY_TEXTURE));
+            event.register(EntityType.FIREBALL, context -> new FireballRenderer3D(context, modelScale * 2.375f, FIREBALL_TEXTURE, FIREBALL_OVERLAY_TEXTURE, true));
+            event.register(EntityType.SMALL_FIREBALL, context -> new FireballRenderer3D(context, modelScale * 0.75f, BLAZE_TEXTURE, FIREBALL_OVERLAY_TEXTURE, false));
+            event.register(EntityType.DRAGON_FIREBALL, context -> new FireballRenderer3D(context, modelScale * 2.375f, DRAGON_FIREBALL_TEXTURE, DRAGON_FIREBALL_OVERLAY_TEXTURE, false));
         }
-        event.register(ModRegistry.SMALL_DRAGON_FIREBALL.get(), context -> new FireballRenderer3D(context, modelScale * 0.75f, DRAGON_FIREBALL_TEXTURE, DRAGON_FIREBALL_OVERLAY_TEXTURE));
+        event.register(ModRegistry.SMALL_DRAGON_FIREBALL.get(), context -> new FireballRenderer3D(context, modelScale * 0.75f, DRAGON_FIREBALL_TEXTURE, DRAGON_FIREBALL_OVERLAY_TEXTURE, false));
     }
 
     @EventCalled
@@ -224,7 +226,8 @@ public class AmendmentsClient {
         event.register(HANGING_SIGN_EXTENSION, HangingSignRendererExtension::createMesh);
         event.register(HANGING_SIGN_EXTENSION_CHAINS, HangingSignRendererExtension::createChainMesh);
         event.register(SKULL_CANDLE_OVERLAY, SkullCandleOverlayModel::createMesh);
-        event.register(METEOR_MODEL, FireballRenderer3D::createMesh);
+        event.register(METEOR_MODEL, () -> FireballRenderer3D.createMesh(8));
+        event.register(SMALL_METEOR_MODEL, () -> FireballRenderer3D.createMesh(6));
     }
 
     @EventCalled

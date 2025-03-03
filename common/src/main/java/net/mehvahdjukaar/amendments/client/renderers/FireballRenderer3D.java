@@ -34,12 +34,13 @@ public class FireballRenderer3D extends EntityRenderer<Entity> {
 
     public FireballRenderer3D(EntityRendererProvider.Context context, float scale,
                               ResourceLocation texture,
-                              ResourceLocation overlayTexture) {
+                              ResourceLocation overlayTexture, boolean smallModel) {
         super(context);
         this.scale = scale;
         this.texture = texture;
         this.overlayTexture = overlayTexture;
-        ModelPart ball1 = context.bakeLayer(AmendmentsClient.METEOR_MODEL);
+        ModelPart ball1 = smallModel ? context.bakeLayer(AmendmentsClient.SMALL_METEOR_MODEL) :
+                context.bakeLayer(AmendmentsClient.METEOR_MODEL);
         this.meteor = ball1.getChild("meteor");
         this.meteorEmissive = ball1.getChild("meteor_emissive");
         this.overlay = ball1.getChild("overlay");
@@ -85,25 +86,27 @@ public class FireballRenderer3D extends EntityRenderer<Entity> {
         return texture;
     }
 
-    public static LayerDefinition createMesh() {
+    public static LayerDefinition createMesh(int size) {
+        int r = size/2;
         MeshDefinition mesh = new MeshDefinition();
         PartDefinition root = mesh.getRoot();
         root.addOrReplaceChild("meteor", CubeListBuilder.create()
                         .texOffs(0, 0)
-                        .addBox(-4F, -4F, -4F, 8F, 8, 8),
+                        .addBox(-r, -r, -r, size, size, size),
                 PartPose.offset(0, 0, 0));
 
         root.addOrReplaceChild("meteor_emissive", CubeListBuilder.create()
                         .texOffs(32, 0)
-                        .addBox(-4F, -4F, -4F, 8F, 8, 8),
+                        .addBox(-r, -r, -r, size, size, size),
                 PartPose.offset(0, 0, 0));
 
         root.addOrReplaceChild("overlay", CubeListBuilder.create()
                         .texOffs(0, 16)
-                        .addBox(-5F, -5F, -5F, 10, 10, 10),
+                        .addBox(-(r+1), -(r+1), -(r+1), (size+2), (size+2), (size+2)),
                 PartPose.offset(0, 0, 0));
 
         return LayerDefinition.create(mesh, 64, 64);
     }
+
 
 }

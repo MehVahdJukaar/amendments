@@ -30,5 +30,5 @@ public abstract class AbstractHurtingProjectileMixin extends Entity {
         return yLocal + this.getBbHeight() / 2.0;
     }
 
-    @WrapOperation(method = "part")
+    //@WrapOperation(method = "part")
 }

@@ -39,7 +39,6 @@ public class SmallDragonFireball extends Fireball {
         super.onHit(result);
         if (result.getType() != HitResult.Type.ENTITY || !this.ownedBy(((EntityHitResult) result).getEntity())) {
             if (!this.level().isClientSide) {
-                List<LivingEntity> list = this.level().getEntitiesOfClass(LivingEntity.class, this.getBoundingBox().inflate(4.0, 2.0, 4.0));
                 AreaEffectCloud areaEffectCloud = new AreaEffectCloud(this.level(), this.getX(), this.getY(), this.getZ());
                 Entity entity = this.getOwner();
                 if (entity instanceof LivingEntity) {
@@ -47,20 +46,10 @@ public class SmallDragonFireball extends Fireball {
                 }
 
                 areaEffectCloud.setParticle(ParticleTypes.DRAGON_BREATH);
-                areaEffectCloud.setRadius(3.0F);
-                areaEffectCloud.setDuration(600);
+                areaEffectCloud.setRadius(2.0F);
+                areaEffectCloud.setDuration(300);
                 areaEffectCloud.setRadiusPerTick((7.0F - areaEffectCloud.getRadius()) / (float) areaEffectCloud.getDuration());
                 areaEffectCloud.addEffect(new MobEffectInstance(MobEffects.HARM, 1, 1));
-                if (!list.isEmpty()) {
-
-                    for (LivingEntity livingEntity : list) {
-                        double d = this.distanceToSqr(livingEntity);
-                        if (d < 16.0) {
-                            areaEffectCloud.setPos(livingEntity.getX(), livingEntity.getY(), livingEntity.getZ());
-                            break;
-                        }
-                    }
-                }
 
                 this.level().levelEvent(2006, this.blockPosition(), this.isSilent() ? -1 : 1);
                 this.level().addFreshEntity(areaEffectCloud);
