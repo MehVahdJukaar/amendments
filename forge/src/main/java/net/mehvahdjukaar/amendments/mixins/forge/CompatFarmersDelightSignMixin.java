@@ -1,5 +1,6 @@
 package net.mehvahdjukaar.amendments.mixins.forge;
 
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.mehvahdjukaar.amendments.configs.ClientConfigs;
 import net.mehvahdjukaar.moonlight.api.util.math.ColorUtils;
@@ -12,6 +13,7 @@ import net.minecraft.world.level.block.SignBlock;
 import net.minecraft.world.level.block.entity.SignBlockEntity;
 import net.minecraft.world.level.block.entity.SignText;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3f;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
@@ -69,4 +71,15 @@ public abstract class CompatFarmersDelightSignMixin {
     private void resetYaw(SignBlockEntity signBlockEntity, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, int packedOverlay, BlockState state, SignBlock block, DyeColor dye, Model model, CallbackInfo ci) {
         amendments$canvasSignYaw = null;
     }
+    @Unique
+    private static final Vec3 NEW_OFFSET = new Vec3(0.0D, -1 / 32f, 1 / 16f + 0.001);
+
+    @ModifyReturnValue(method = "getTextOffset", at = @At("RETURN"))
+    private Vec3 amendments$signTextOffset(Vec3 scale) {
+        if (ClientConfigs.PIXEL_CONSISTENT_SIGNS.get()) {
+            return NEW_OFFSET;
+        }
+        return scale;
+    }
+
 }

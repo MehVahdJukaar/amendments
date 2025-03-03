@@ -41,6 +41,7 @@
     "BellRendererMixin",
     "DisplayCacheMixin",
     "HangingSignRendererMixin",
+    "SignEditScreenMixin",
     "SignRendererAccessor",
     "SignRendererMixin",
     "SkullBlockRendererMixin"
