@@ -21,7 +21,7 @@ public class CompatHandler {
     public static final boolean ALEX_CAVES = PlatHelper.isModLoaded("alexscaves");
     public static final boolean RATS = PlatHelper.isModLoaded("rats");
     public static final boolean THIN_AIR = PlatHelper.isModLoaded("thinair");
-    public static final boolean FLYWHEEL = PlatHelper.isModLoaded("flywheel");
+    public static final boolean FLYWHEEL = PlatHelper.isModLoaded("flywheel") && false;
 
     static {
         boolean fd = false;
