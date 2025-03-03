@@ -1,5 +1,1 @@
-- ported many fixes
-- redstone torch have holding anim
-- fixed lectern take book not woking
-- fixed lectern requiring to make a new page to write
-- fixed potion mixing with mundane, thick and awkward potions duplicating potions
+- removed flywheel compat. not needed anymore as that bell instance stuff is no longer in flywheel but in vanillin (I believe)

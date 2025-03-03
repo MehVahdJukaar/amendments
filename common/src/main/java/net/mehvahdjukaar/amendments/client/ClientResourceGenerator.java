@@ -1,16 +1,14 @@
 package net.mehvahdjukaar.amendments.client;
 
 import com.google.gson.JsonParser;
-import com.mojang.blaze3d.platform.Lighting;
 import net.mehvahdjukaar.amendments.Amendments;
 import net.mehvahdjukaar.amendments.AmendmentsClient;
 import net.mehvahdjukaar.amendments.common.CakeRegistry;
 import net.mehvahdjukaar.amendments.configs.ClientConfigs;
+import net.mehvahdjukaar.amendments.configs.CommonConfigs;
 import net.mehvahdjukaar.amendments.integration.CompatHandler;
 import net.mehvahdjukaar.amendments.mixins.SignRendererAccessor;
 import net.mehvahdjukaar.moonlight.api.events.AfterLanguageLoadEvent;
-import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidStack;
-import net.mehvahdjukaar.moonlight.api.platform.ClientHelper;
 import net.mehvahdjukaar.moonlight.api.resources.RPUtils;
 import net.mehvahdjukaar.moonlight.api.resources.ResType;
 import net.mehvahdjukaar.moonlight.api.resources.StaticResource;
@@ -35,14 +33,18 @@ import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.apache.logging.log4j.Logger;
-import org.joml.Vector3f;
 
+import java.util.List;
 import java.util.stream.Stream;
 
 public class ClientResourceGenerator extends DynClientResourcesGenerator {
     public ClientResourceGenerator() {
         super(new DynamicTexturePack(Amendments.res("generated_pack")));
         this.dynamicPack.addNamespaces("minecraft");
+        if(ClientConfigs.PIXEL_CONSISTENT_SIGNS.get()){
+            //super hack
+            AmendmentsClient.getAllLoadedMods().forEach(this.dynamicPack::addNamespaces);
+        }
     }
 
     @Override
@@ -61,11 +63,21 @@ public class ClientResourceGenerator extends DynClientResourcesGenerator {
         //need this here for reasons I forgot
         WallLanternModelsManager.refreshModels(manager);
 
-        generateJukeboxAssets(manager);
+        if (ClientConfigs.JUKEBOX_MODEL.get()) {
+            generateJukeboxAssets(manager);
+        }
 
-        generateDoubleCakesAssets(manager);
+        if (CommonConfigs.DOUBLE_CAKES.get()) {
+            generateDoubleCakesAssets(manager);
+        }
 
-        generateHangingSignAssets(manager);
+        if (ClientConfigs.SIGN_ATTACHMENT.get()) {
+            generateHangingSignAssets(manager);
+        }
+
+        if (ClientConfigs.PIXEL_CONSISTENT_SIGNS.get()) {
+            generateSignAssets(manager);
+        }
 
         if (ClientConfigs.COLORED_ARROWS.get()) {
             this.dynamicPack.addItemModel(ResourceLocation.withDefaultNamespace("crossbow_arrow"), JsonParser.parseString(
@@ -100,6 +112,66 @@ public class ClientResourceGenerator extends DynClientResourcesGenerator {
                               }
                             }
                             """));
+        }
+    }
+
+    private void generateSignAssets(ResourceManager manager) {
+        ImageTransformer transformer = ImageTransformer.builder(64, 32, 64, 32)
+                .copyRect(0, 16, 16, 16, 0, 16)
+                .build();
+
+        try (TextureImage template = TextureImage.open(manager,
+                Amendments.res("entity/sign/template"));
+             TextureImage mask = TextureImage.open(manager,
+                     Amendments.res("entity/sign/mask"))) {
+
+            Respriter respriter = Respriter.masked(template, mask);
+
+            for (WoodType w : WoodTypeRegistry.getTypes()) {
+                Block sing = w.getBlockOfThis("sign");
+                if (sing == null) continue;
+
+                net.minecraft.world.level.block.state.properties.WoodType vanilla = w.toVanilla();
+                if (vanilla == null) {
+                    Amendments.LOGGER.error("Vanilla wood type for wood {} was null. This is a bug", w);
+                    continue;
+                }
+                Material signMaterial = Sheets.getSignMaterial(vanilla);
+                if (signMaterial == null) {
+                    try {
+                        BlockEntity be = ((EntityBlock) sing).newBlockEntity(BlockPos.ZERO, sing.defaultBlockState());
+                        BlockEntityRenderer<?> renderer = Minecraft.getInstance().getBlockEntityRenderDispatcher().getRenderer(be);
+                        if (renderer instanceof SignRendererAccessor sr) {
+                            signMaterial = sr.invokeGetSignMaterial(vanilla);
+                        }
+                    } catch (Exception e) {
+                        Amendments.LOGGER.error("Failed to get sign material for wood (from block entity renderer) {}, ", w, e);
+                        continue;
+                    }
+                }
+                if (signMaterial == null) {
+                    Amendments.LOGGER.error("Sign material for wood {} was null. " +
+                            "This is likely due to some mod calling Sheets.getSignMaterial too early or by some wood mod not registering their wood type properly by not adding it to the vanilla texture map. Sheets.getSignMaterial is NOT Nullable, i shouldn't even have this check.", w);
+                    continue;
+                }
+                try (TextureImage vanillaTexture = TextureImage.open(manager,
+                        signMaterial.texture());
+                     TextureImage modPlankTexture = TextureImage.open(manager,
+                             RPUtils.findFirstBlockTextureLocation(manager, w.planks));) {
+                    List<Palette> palette = Palette.fromAnimatedImage(modPlankTexture);
+                    for(var p : palette){
+                        p.remove(p.getLightest());
+                    }
+                    TextureImage newImage = respriter.recolorWithAnimationOf(modPlankTexture);
+                    transformer.apply(vanillaTexture, newImage);
+                    this.dynamicPack.addAndCloseTexture(signMaterial.texture(), newImage);
+                } catch (Exception e) {
+                    Amendments.LOGGER.warn("Failed to generate hanging sign extension texture for {}, ", w, e);
+                }
+
+            }
+        } catch (Exception e) {
+            int aa = 1;
         }
     }
 
@@ -138,7 +210,7 @@ public class ClientResourceGenerator extends DynClientResourcesGenerator {
             }
             if (hangingSignMaterial == null) {
                 Amendments.LOGGER.error("Hanging sign material for wood {} was null. " +
-                        "This is likely due to some mod not registering their wood type properly by not adding it to the vanilla texture map. Sheets.getHangingSignMaterial is NOT Nullable, i shouldn't even have this check.", w);
+                        "This is likely due to some mod calling Sheets.getHangingSignMaterial too early or by some wood mod not registering their wood type properly by not adding it to the vanilla texture map. Sheets.getHangingSignMaterial is NOT Nullable, i shouldn't even have this check.", w);
                 continue;
             }
             try (TextureImage vanillaTexture = TextureImage.open(manager,
@@ -157,7 +229,7 @@ public class ClientResourceGenerator extends DynClientResourcesGenerator {
         if (CompatHandler.FARMERS_DELIGHT) {
             //hanging sign extension textures
             try (TextureImage vanillaTexture = TextureImage.open(manager,
-                    ResourceLocation.fromNamespaceAndPath("farmersdelight","entity/signs/hanging/canvas"))) {
+                    ResourceLocation.fromNamespaceAndPath("farmersdelight", "entity/signs/hanging/canvas"))) {
                 TextureImage flipped = vanillaTexture.createRotated(Rotation.CLOCKWISE_90);
                 TextureImage newIm = flipped.createResized(0.5f, 0.25f);
                 newIm.clear();

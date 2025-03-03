@@ -43,6 +43,8 @@ public class ClientConfigs {
     public static final Supplier<Boolean> HOLDING_ANIMATION_FIXED;
     public static final Supplier<Boolean> CAMPFIRE_SMOKE;
 
+    public static final Supplier<Boolean> PIXEL_CONSISTENT_SIGNS;
+
     public static final Supplier<Boolean> COLORED_ARROWS;
     public static final Supplier<Boolean> FAST_HOOKS;
 
@@ -60,6 +62,13 @@ public class ClientConfigs {
         builder.push("general");
         TOOLTIP_HINTS = builder.define("tooltip_hints", true);
         CUSTOM_CONFIGURED_SCREEN = builder.define("custom_configured_screen", true);
+        builder.pop();
+
+        builder.push("sign");
+        PIXEL_CONSISTENT_SIGNS = builder.comment("Gives signs a pixel consistent model and texture. Also affects other mods")
+                .define("pixel_consistent", true);
+        BRIGHTEN_SIGN_TEXT_COLOR = builder.comment("A scalar multiplier that will be applied to sign text making it brighter, supposedly more legible")
+                .define("text_color_multiplier", 1.2d, 0, 5);
         builder.pop();
 
         builder.push("lily_pad");
@@ -146,8 +155,6 @@ public class ClientConfigs {
 
         HOLDING_ANIMATION_FIXED = builder.comment("Makes Torch and Lantern holding animation be fixed, not changing with player facing")
                 .define("fixed_holding_animations", false);
-        BRIGHTEN_SIGN_TEXT_COLOR = builder.comment("A scalar multiplier that will be applied to sign text making it brighter, supposedly more legible")
-                .define("sign_text_color_multiplier", 1.2d, 0, 5);
 
         CAMPFIRE_SMOKE = builder.comment("Prevents campfire smoke from rendering if there is a solid block above it")
                 .define("campfire_smoke_through_blocks", false);
