@@ -36,6 +36,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import org.apache.logging.log4j.Logger;
 
 import java.util.List;
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
