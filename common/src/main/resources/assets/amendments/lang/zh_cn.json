@@ -159,7 +159,11 @@
 
   "amendments.configuration.general": "通用",
   "amendments.configuration.tooltip_hints": "提示文本中显示提示",
-  "amendments.configuration.custom_configured_screen": "专属设置界面",
+  "amendments.configuration.custom_configured_screen": "专属Configured配置界面",
+
+  "amendments.configuration.sign": "告示牌",
+  "amendments.configuration.pixel_consistent": "像素一致性",
+  "amendments.configuration.text_color_multiplier": "文本颜色亮度倍数",
 
   "comment.amendments.configuration.lily_pad": "",
   "amendments.configuration.y_offset": "Y偏移量",
