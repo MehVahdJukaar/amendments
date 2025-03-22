@@ -1,1 +1,1 @@
-removed flywheel integration as its not needed anymore. will be added later when vanillin is released
+updated blueprint compat
