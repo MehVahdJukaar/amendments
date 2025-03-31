@@ -121,7 +121,7 @@ public class AmendmentsClient {
         ClientHelper.addItemColorsRegistration(AmendmentsClient::registerItemColors);
         ClientHelper.addParticleRegistration(AmendmentsClient::registerParticles);
 
-        if (CompatHandler.FLYWHEEL) FlywheelCompat.init();
+        if (CompatHandler.FLYWHEEL && false) FlywheelCompat.init();
     }
 
 
