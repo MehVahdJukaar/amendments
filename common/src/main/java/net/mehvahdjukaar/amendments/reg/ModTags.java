@@ -18,6 +18,7 @@ public class ModTags {
     public static final TagKey<Block> PALISADES = suppTag("palisades");
     public static final TagKey<Block> BEAMS = suppTag("beams");
     public static final TagKey<Block> WALLS = suppTag("walls");
+    public static final TagKey<Block> FALLING_LANTERNS_BLACKLIST = suppTag("falling_lantern_blacklist");
 
     public static final TagKey<Block> HEAT_SOURCES = blockTag("cauldron_heat_source");
 

@@ -5,6 +5,7 @@ import net.mehvahdjukaar.amendments.configs.CommonConfigs;
 import net.mehvahdjukaar.amendments.integration.CompatHandler;
 import net.mehvahdjukaar.amendments.integration.SuppCompat;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
+import net.mehvahdjukaar.amendments.reg.ModTags;
 import net.mehvahdjukaar.moonlight.api.entity.ImprovedFallingBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -72,7 +73,8 @@ public class FallingLanternEntity extends ImprovedFallingBlockEntity {
     //called by mixin
     public static boolean canSurviveCeilingAndMaybeFall(BlockState state, BlockPos pos, LevelReader worldIn) {
         if (!Amendments.isSupportingCeiling(pos.above(), worldIn) && worldIn instanceof Level l) {
-            if (CommonConfigs.FALLING_LANTERNS.get().isOn() && l.getBlockState(pos).is(state.getBlock())) {
+            if (CommonConfigs.FALLING_LANTERNS.get().isOn() && l.getBlockState(pos).is(state.getBlock())
+                    && !state.is(ModTags.FALLING_LANTERNS_BLACKLIST)) {
                 return createFallingLantern(state, pos, l);
             }
             return false;
