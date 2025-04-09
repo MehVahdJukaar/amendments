@@ -9,6 +9,7 @@ import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidTank;
 import net.mehvahdjukaar.supplementaries.client.ModMaterials;
 import net.mehvahdjukaar.supplementaries.common.block.IRopeConnection;
 import net.mehvahdjukaar.supplementaries.common.block.blocks.*;
+import net.mehvahdjukaar.supplementaries.common.block.faucet.FaucetBehaviorsManager;
 import net.mehvahdjukaar.supplementaries.common.block.faucet.FaucetTarget;
 import net.mehvahdjukaar.supplementaries.common.block.tiles.FaucetBlockTile;
 import net.mehvahdjukaar.supplementaries.common.misc.explosion.GunpowderExplosion;
@@ -36,7 +37,9 @@ import static net.mehvahdjukaar.amendments.events.behaviors.CauldronConversion.g
 public class SuppCompat {
 
     public static void setup() {
-        FaucetBlockTile.registerInteraction(new FaucetCauldronConversion());
+        FaucetBehaviorsManager.addRegisterFaucetInteraction(() -> {
+            FaucetBlockTile.registerInteraction(new FaucetCauldronConversion());
+        });
     }
 
     public static boolean canBannerAttachToRope(BlockState state, BlockState above) {

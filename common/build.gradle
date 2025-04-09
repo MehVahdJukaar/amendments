@@ -22,7 +22,7 @@ dependencies {
     modImplementation ("net.mehvahdjukaar:moonlight:${moonlight_version}")
 	
     //modCompileOnly ("net.mehvahdjukaar:supplementaries:${supplementaries_version}")
-	modCompileOnly("curse.maven:supplementaries-412082:5147148")
+	modCompileOnly("curse.maven:supplementaries-412082:6373937")
 	
     modImplementation("curse.maven:supplementaries-squared-838411:5130385")
     modImplementation("curse.maven:cave-enhancements-597562:4388535")
