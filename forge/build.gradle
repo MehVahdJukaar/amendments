@@ -133,7 +133,7 @@ dependencies {
 	//modImplementation("curse.maven:selene-499980:5458914")
 	
     //modCompileOnly("net.mehvahdjukaar:supplementaries-forge:${supplementaries_version}")
-    modImplementation("curse.maven:supplementaries-412082:5458843")
+    modImplementation("curse.maven:supplementaries-412082:6373937")
 	
     //modCompileOnly("net.mehvahdjukaar:suppsquared-forge:${suppsquared_version}")
 	modCompileOnly("curse.maven:supplementaries-squared-838411:5130385")

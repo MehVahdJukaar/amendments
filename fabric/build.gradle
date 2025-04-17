@@ -43,7 +43,7 @@ dependencies {
     //modImplementation("curse.maven:selene-499980:5831458")
 
     //modImplementation ("net.mehvahdjukaar:supplementaries-fabric:${supplementaries_version}")
-    modImplementation("curse.maven:supplementaries-412082:5147147")
+    modImplementation("curse.maven:supplementaries-412082:6377872")
     modImplementation("curse.maven:scribble-1051344:5828872")
 
 	//modCompileOnly ("net.mehvahdjukaar:suppsquared-fabric:${suppsquared_version}")
