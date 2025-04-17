@@ -304,17 +304,4 @@ public class AmendmentsClient {
     }
 
 
-    private static final Direction[] DIRS = new Direction[]{
-            Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST, null
-    };
-
-    @Deprecated(forRemoval = true)
-    public static List<BakedQuad> getAllModelQuads(BakedModel model, BlockState state, RandomSource rand) {
-        List<BakedQuad> allQuads = new ArrayList<>();
-        for (var d : DIRS) {
-            allQuads.addAll(model.getQuads(state, d, rand));
-        }
-        return allQuads;
-    }
-
 }

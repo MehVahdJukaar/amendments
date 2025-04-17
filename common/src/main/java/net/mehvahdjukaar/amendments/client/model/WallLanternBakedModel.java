@@ -25,6 +25,8 @@ import org.joml.Matrix4f;
 import java.util.ArrayList;
 import java.util.List;
 
+import static net.mehvahdjukaar.moonlight.api.client.util.VertexUtil.getAllModelQuads;
+
 public class WallLanternBakedModel implements CustomBakedModel {
     private final BakedModel support;
     private final BlockModelShaper blockModelShaper;
@@ -61,7 +63,7 @@ public class WallLanternBakedModel implements CustomBakedModel {
             //add all quads to null side
             if (!(mimic.getBlock() instanceof MimicBlock) && !mimic.isAir() && state != null) {
                 BakedModel model = WallLanternModelsManager.getModel(blockModelShaper, mimic);
-                List<BakedQuad> allQuads = AmendmentsClient.getAllModelQuads(model, mimic, rand);
+                List<BakedQuad> allQuads = getAllModelQuads(model, mimic, rand);
 
                 Matrix4f mat = new Matrix4f();
                 mat.mul(rotation.getRotation().getMatrix());

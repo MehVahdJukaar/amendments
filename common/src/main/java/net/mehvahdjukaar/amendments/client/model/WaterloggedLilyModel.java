@@ -24,6 +24,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import java.util.ArrayList;
 import java.util.List;
 
+import static net.mehvahdjukaar.moonlight.api.client.util.VertexUtil.getAllModelQuads;
+
 public class WaterloggedLilyModel implements CustomBakedModel {
 
     public WaterloggedLilyModel() {
@@ -41,7 +43,7 @@ public class WaterloggedLilyModel implements CustomBakedModel {
         if (mimic != null && !mimic.isAir()) {
 
             BakedModel model = blockModelShaper.getBlockModel(mimic);
-            List<BakedQuad> mimicQuads = AmendmentsClient.getAllModelQuads(model, mimic, rand);
+            List<BakedQuad> mimicQuads = getAllModelQuads(model, mimic, rand);
 
             PoseStack pose = new PoseStack();
             double v = 1 + (state.getValue(WaterloggedLilyBlock.EXTENDED) ? 0 : ClientConfigs.LILY_OFFSET.get());
