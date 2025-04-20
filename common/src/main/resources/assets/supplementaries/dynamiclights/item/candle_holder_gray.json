@@ -1,5 +1,7 @@
 {
-  "item": "supplementaries:candle_holder_gray",
+  "match": {
+    "items": "supplementaries:candle_holder_gray"
+  },
   "luminance": 8,
   "water_sensitive": true
 }
