@@ -44,9 +44,6 @@ public class CeilingBannerBlock extends AbstractBannerBlock {
     private static final VoxelShape SHAPE_X = Block.box(7.0D, 0.0D, 0.0D, 9.0D, 16.0D, 16.0D);
     private static final VoxelShape SHAPE_Z = Block.box(0.0D, 0.0D, 7.0D, 16.0D, 16.0D, 9.0D);
 
-    private final Supplier<Block> baseBlock = Suppliers.memoize(() ->
-            Preconditions.checkNotNull(BlocksColorAPI.getColoredBlock("banner", getColor())));
-
     public CeilingBannerBlock(DyeColor color, Properties properties) {
         super(color, properties);
         this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(ATTACHED, false));
@@ -147,9 +144,17 @@ public class CeilingBannerBlock extends AbstractBannerBlock {
     }
 
 
+    private String descriptionId;
 
     @Override
     public String getDescriptionId() {
-        return baseBlock.get().getDescriptionId();
+        if (this.descriptionId == null) {
+            Block baseBlock = BlocksColorAPI.getColoredBlock("banner", getColor());
+            if (baseBlock != null) {
+                this.descriptionId = baseBlock.getDescriptionId();
+            } else return "block.amendments.ceiling_banner"; //should never happen
+
+        }
+        return descriptionId;
     }
 }
