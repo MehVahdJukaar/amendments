@@ -1,5 +1,7 @@
 package net.mehvahdjukaar.amendments.common.block;
 
+import com.google.common.base.Preconditions;
+import com.google.common.base.Suppliers;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.mehvahdjukaar.amendments.common.tile.CeilingBannerBlockTile;
@@ -38,6 +40,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.function.Supplier;
 
 public class CeilingBannerBlock extends AbstractBannerBlock {
     public static final MapCodec<CeilingBannerBlock> CODEC = RecordCodecBuilder.mapCodec((i) -> i.group(
@@ -49,6 +52,9 @@ public class CeilingBannerBlock extends AbstractBannerBlock {
     public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
     private static final VoxelShape SHAPE_X = Block.box(7.0D, 0.0D, 0.0D, 9.0D, 16.0D, 16.0D);
     private static final VoxelShape SHAPE_Z = Block.box(0.0D, 0.0D, 7.0D, 16.0D, 16.0D, 9.0D);
+
+    private final Supplier<Block> baseBlock = Suppliers.memoize(() ->
+            Preconditions.checkNotNull(BlocksColorAPI.getColoredBlock("banner", getColor())));
 
     public CeilingBannerBlock(DyeColor color, Properties properties) {
         super(color, properties);
@@ -156,14 +162,11 @@ public class CeilingBannerBlock extends AbstractBannerBlock {
         return super.useItemOn(stack, state, level, pos, player, hand, hitResult);
     }
 
-    private String descriptionId;
+
 
     @Override
     public String getDescriptionId() {
-        if (this.descriptionId == null) {
-            this.descriptionId = BlocksColorAPI.getColoredBlock("banner", getColor()).getDescriptionId();
-        }
-        return descriptionId;
+        return baseBlock.get().getDescriptionId();
     }
 
     @Override

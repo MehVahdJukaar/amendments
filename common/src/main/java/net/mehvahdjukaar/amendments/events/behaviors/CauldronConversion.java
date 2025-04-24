@@ -55,7 +55,7 @@ public class CauldronConversion implements BlockUse {
     }
 
 
-    //caled by mixin
+    //called by mixin
     public static ItemInteractionResult convert(BlockState state, BlockPos pos, Level level, Player player, InteractionHand hand,
                                                 ItemStack stack, boolean checkCauldronInteractions) {
         BlockState newState = getNewState(pos, level, stack, checkCauldronInteractions);
