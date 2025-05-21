@@ -41,18 +41,16 @@ public class QuillButton extends AbstractWidget {
     @Override
     public void onClick(double mouseX, double mouseY) {
         int length = QuillType.values().length;
-        if (Screen.hasShiftDown()) {
-            this.type = (length + type - 1) % length;
-        } else {
-            this.type = (type + 1) % length;
-        }
+        int inc = Screen.hasShiftDown() ? 1 : -1;
+        type =  (type + inc + length) % length;
         this.refreshTooltip();
     }
 
     @ForgeOverride
     public void onClick(double mouseX, double mouseY, int button) {
-        type += button == 0 ? 1 : -1;
-        this.type = type % QuillType.values().length;
+        int length = QuillType.values().length;
+        int inc = (button == 0)? 1 : -1;
+        type =  (type + inc + length) % length;
         this.refreshTooltip();
     }
 
