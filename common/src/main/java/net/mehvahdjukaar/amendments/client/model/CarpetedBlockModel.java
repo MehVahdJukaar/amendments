@@ -67,6 +67,7 @@ public class CarpetedBlockModel implements CustomBakedModel {
                         TextureAtlasSprite sprite = getCarpetSprite(carpetBlock);
                         BakedQuadsTransformer transformer = BakedQuadsTransformer.create()
                                 .applyingSprite(sprite)
+                                .applyingTintIndex(16)
                                 .applyingAmbientOcclusion(occl);
                         carpetQuads = transformer.transformAll(carpetQuads);
                     }

@@ -235,11 +235,11 @@ public class AmendmentsClient {
     @EventCalled
     private static void registerBlockColors(ClientHelper.BlockColorEvent event) {
         List<Block> mimics = new ArrayList<>();
-        mimics.addAll(List.of(ModRegistry.CARPET_STAIRS.get(), ModRegistry.CARPET_SLAB.get(),
-                ModRegistry.WALL_LANTERN.get(), ModRegistry.HANGING_FLOWER_POT.get(),
+        mimics.addAll(List.of(ModRegistry.WALL_LANTERN.get(), ModRegistry.HANGING_FLOWER_POT.get(),
                 ModRegistry.WATERLILY_BLOCK.get()));
         mimics.addAll(ModRegistry.DOUBLE_CAKES.values());
         event.register(new MimicBlockColor(), mimics.toArray(new Block[0]));
+        event.register(new CarpetedBlockColor(), ModRegistry.CARPET_SLAB.get(), ModRegistry.CARPET_STAIRS.get());
         //event.register(new LilyBlockColor(), ModRegistry.WATERLILY_BLOCK.get());
         event.register(BoilingWaterCauldronBlock::getWaterColor, Blocks.WATER_CAULDRON);
         event.register(new BrewingStandColor(), Blocks.BREWING_STAND);
