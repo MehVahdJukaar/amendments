@@ -11,6 +11,7 @@ import net.mehvahdjukaar.moonlight.api.item.IFirstPersonSpecialItemRenderer;
 import net.mehvahdjukaar.moonlight.api.item.IThirdPersonAnimationProvider;
 import net.mehvahdjukaar.moonlight.api.item.IThirdPersonSpecialItemRenderer;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.model.ArmedModel;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.HeadedModel;
@@ -99,6 +100,7 @@ public class CandleHolderRendererExtension implements IThirdPersonAnimationProvi
         }
     }
 
+    //TODO: improve for animated textures
     private static final Supplier<Map<Item, ResourceLocation>> FLAMES = Suppliers.memoize(() -> {
         Map<Item, ResourceLocation> map = new HashMap<>();
         Item s = CompatObjects.SOUL_CANDLE_ITEM.get();
@@ -141,6 +143,8 @@ public class CandleHolderRendererExtension implements IThirdPersonAnimationProvi
         poseStack.translate(0, 3 / 16f, 0);
         poseStack.last().pose().setRotationXYZ(0, 0, 0);
         poseStack.scale(-scale, scale, -scale);
+
+        //TODO: fix for animated particles
 
         VertexUtil.addQuad(builder, poseStack, -0.5f, -0.5f, 0.5f, 0.5f,
                 r, g, b, a, lu, lv);
