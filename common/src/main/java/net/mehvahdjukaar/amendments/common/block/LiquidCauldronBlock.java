@@ -11,7 +11,8 @@ import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.amendments.reg.ModTags;
 import net.mehvahdjukaar.moonlight.api.MoonlightRegistry;
 import net.mehvahdjukaar.moonlight.api.block.ILightable;
-import net.mehvahdjukaar.moonlight.api.fluids.BuiltInSoftFluids;
+import net.mehvahdjukaar.moonlight.api.fluids.MLBuiltinSoftFluids;
+import net.mehvahdjukaar.moonlight.api.fluids.SoftFluid;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidStack;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidTank;
 import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
@@ -43,9 +44,11 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.CampfireBlock;
+import net.minecraft.world.level.block.CauldronBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -96,16 +99,42 @@ public class LiquidCauldronBlock extends ModCauldronBlock {
 
     @Override
     protected boolean canReceiveStalactiteDrip(Fluid fluid) {
-        return fluid != Fluids.WATER && fluid != Fluids.LAVA;
+        return true;
     }
 
     @Override
     public void receiveStalactiteDrip(BlockState state, Level level, BlockPos pos, Fluid fluid) {
         if (!isFull(state) && level.getBlockEntity(pos) instanceof LiquidCauldronBlockTile te) {
-            var sf = SoftFluidStack.fromFluid(fluid, 1, null);
+            int amount = SoftFluid.BOTTLE_COUNT;
+            //dumb but matches vanilla
+            if(!CommonConfigs.LAVA_LAYERS.get() && fluid == Fluids.LAVA) {
+                amount = SoftFluid.BUCKET_COUNT;
+            }
+            var sf = SoftFluidStack.fromFluid(fluid, amount);
             if (!sf.isEmpty() && te.getSoftFluidTank().addFluid(sf, false) != 0) {
+                te.setChanged();
                 level.gameEvent(GameEvent.BLOCK_CHANGE, pos, GameEvent.Context.of(state));
-                level.levelEvent(1047, pos, 0);
+                if (fluid == Fluids.LAVA) {
+                    level.levelEvent(1046, pos, 0);
+
+                } else {
+                    level.levelEvent(1047, pos, 0);
+                }
+            }
+        }
+    }
+
+    @Override
+    public void handlePrecipitation(BlockState state, Level level, BlockPos pos, Biome.Precipitation precipitation) {
+        super.handlePrecipitation(state, level, pos, precipitation);
+        if (!isFull(state) && level.getBlockEntity(pos) instanceof LiquidCauldronBlockTile te) {
+            SoftFluidTank softFluidTank = te.getSoftFluidTank();
+            var sf = softFluidTank.getFluid();
+            if (precipitation == Biome.Precipitation.RAIN && sf.is(MLBuiltinSoftFluids.WATER) &&
+                    softFluidTank.addFluid(SoftFluidStack.fromFluid(Fluids.WATER, 1), false) > 0) {
+                level.gameEvent(GameEvent.BLOCK_CHANGE, pos, GameEvent.Context.of(state));
+                te.setChanged();
+
             }
         }
     }
@@ -125,7 +154,7 @@ public class LiquidCauldronBlock extends ModCauldronBlock {
             var crafted = RecipeUtils.craftWithFluid(level, tank.getFluid(), stack, true);
             if (crafted != null) {
 
-                int mult = fluid.is(BuiltInSoftFluids.POTION) ? CommonConfigs.POTION_RECIPES_PER_LAYER.get() : 1;
+                int mult = fluid.is(MLBuiltinSoftFluids.POTION) ? CommonConfigs.POTION_RECIPES_PER_LAYER.get() : 1;
                 if (this.doCraftItem(level, pos, player, hand, fluid, stack, crafted.getFirst(), crafted.getSecond(), mult)) {
                     te.setChanged();
                     return ItemInteractionResult.sidedSuccess(level.isClientSide);
@@ -263,7 +292,7 @@ public class LiquidCauldronBlock extends ModCauldronBlock {
                 }
 
                 BlockPos blockPos = pos.above();
-                if (fluid.is(BuiltInSoftFluids.LAVA) && level.getBlockState(blockPos).isAir() && !level.getBlockState(blockPos).isSolidRender(level, blockPos)) {
+                if (fluid.is(MLBuiltinSoftFluids.LAVA) && level.getBlockState(blockPos).isAir() && !level.getBlockState(blockPos).isSolidRender(level, blockPos)) {
                     var c = pos.getCenter();
                     if (rand.nextInt(20) == 0) {
                         addSurfaceParticles(ParticleTypes.LAVA, level, pos, 1, height, rand, 0, 0, 0);
@@ -279,7 +308,7 @@ public class LiquidCauldronBlock extends ModCauldronBlock {
 
     @Nullable
     private PotionBottleType getPotType(SoftFluidStack stack) {
-        if (stack.is(BuiltInSoftFluids.POTION)) {
+        if (stack.is(MLBuiltinSoftFluids.POTION)) {
             return stack.getOrDefault(MoonlightRegistry.BOTTLE_TYPE.get(), PotionBottleType.REGULAR);
         }
         return null;
@@ -335,7 +364,7 @@ public class LiquidCauldronBlock extends ModCauldronBlock {
     }
 
     public void maybeSendPotionMixMessage(SoftFluidTank fluidTank, Player player) {
-        if (fluidTank.getFluid().is(BuiltInSoftFluids.POTION)) {
+        if (fluidTank.getFluid().is(MLBuiltinSoftFluids.POTION)) {
             var potionEffects = getPotionEffects(fluidTank.getFluid());
             int potionEffectAmount = potionEffects.size();
             if (potionEffectAmount == CommonConfigs.POTION_MIXING_LIMIT.get()) {
