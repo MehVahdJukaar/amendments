@@ -26,6 +26,7 @@ public class CommonConfigs {
 
     public static final Supplier<Boolean> LIQUID_CAULDRON;
     public static final Supplier<Boolean> CONNECT_TO_FENCES;
+    public static final Supplier<Boolean> LAVA_LAYERS;
     public static final Supplier<MixingMode> POTION_MIXING;
     public static final Supplier<Integer> POTION_MIXING_LIMIT;
     public static final Supplier<Map<MobEffect, MobEffect>> INVERSE_POTIONS;
@@ -126,6 +127,8 @@ public class CommonConfigs {
 
         CONNECT_TO_FENCES = builder.comment("Makes cauldrons connect to fences")
                 .define("connect_to_fences", true);
+        LAVA_LAYERS = builder.comment("Makes it so a dripstone drop only increments a cauldron by 1 layer(buttle) instead of a full bottle, making it just like a water cauldron")
+                .define("consistent_lava_layers", false);
         builder.pop();
 
         builder.push("tripwire_hook");
