@@ -69,9 +69,9 @@ public class Amendments {
         // configurable models for wall lanterns and skulls
         // todo: finish porting
 
+        // register 1 wall lantern per type
         // make bell connections
 
-        // add wall lantern stand model override instead of texture one
         // mud slows down mobs
         //TODO: check bell ringing with rope
         //here we go. ideas part 2
