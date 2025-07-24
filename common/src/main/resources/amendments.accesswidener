@@ -10,6 +10,10 @@ accessible field net/minecraft/world/level/block/AbstractCauldronBlock interacti
 accessible field net/minecraft/client/renderer/blockentity/BannerRenderer bar Lnet/minecraft/client/model/geom/ModelPart;
 accessible field net/minecraft/client/renderer/blockentity/BannerRenderer flag Lnet/minecraft/client/model/geom/ModelPart;
 
+#area of effect
+accessible field net/minecraft/world/entity/AreaEffectCloud effects Ljava/util/List;
+accessible field net/minecraft/world/entity/AreaEffectCloud reapplicationDelay I
+
 #book edit
 accessible method net/minecraft/client/gui/screens/inventory/BookEditScreen updateLocalCopy ()V
 extendable method net/minecraft/client/gui/screens/inventory/BookEditScreen saveChanges (Z)V

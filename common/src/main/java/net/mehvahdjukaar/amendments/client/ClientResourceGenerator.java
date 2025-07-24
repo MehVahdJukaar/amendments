@@ -9,12 +9,15 @@ import net.mehvahdjukaar.amendments.configs.CommonConfigs;
 import net.mehvahdjukaar.amendments.integration.CompatHandler;
 import net.mehvahdjukaar.amendments.mixins.SignRendererAccessor;
 import net.mehvahdjukaar.moonlight.api.events.AfterLanguageLoadEvent;
+import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
 import net.mehvahdjukaar.moonlight.api.resources.RPUtils;
 import net.mehvahdjukaar.moonlight.api.resources.ResType;
 import net.mehvahdjukaar.moonlight.api.resources.StaticResource;
 import net.mehvahdjukaar.moonlight.api.resources.pack.DynClientResourcesGenerator;
 import net.mehvahdjukaar.moonlight.api.resources.pack.DynamicTexturePack;
 import net.mehvahdjukaar.moonlight.api.resources.pack.ResourceGenTask;
+import net.mehvahdjukaar.moonlight.api.resources.pack.ResourceGenTask;
+import net.mehvahdjukaar.moonlight.api.resources.pack.ResourceSink;
 import net.mehvahdjukaar.moonlight.api.resources.textures.ImageTransformer;
 import net.mehvahdjukaar.moonlight.api.resources.textures.Palette;
 import net.mehvahdjukaar.moonlight.api.resources.textures.Respriter;
@@ -38,17 +41,19 @@ import org.apache.logging.log4j.Logger;
 import java.util.List;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 public class ClientResourceGenerator extends DynClientResourcesGenerator {
     public ClientResourceGenerator() {
         super(new DynamicTexturePack(Amendments.res("generated_pack")));
         this.dynamicPack.addNamespaces("minecraft");
-        if(ClientConfigs.PIXEL_CONSISTENT_SIGNS.get()){
-            //super hack
-            AmendmentsClient.getAllLoadedMods().forEach(this.dynamicPack::addNamespaces);
+        if (ClientConfigs.PIXEL_CONSISTENT_SIGNS.get()) {
+            //super hack and not ideal at all
+            PlatHelper.getInstalledMods().forEach(this.dynamicPack::addNamespaces);
         }
     }
+
 
     @Override
     public Logger getLogger() {
@@ -60,64 +65,72 @@ public class ClientResourceGenerator extends DynClientResourcesGenerator {
     }
 
     @Override
+    public void regenerateDynamicAssets(Consumer<ResourceGenTask> executor) {
+
+        if (ClientConfigs.JUKEBOX_MODEL.get()) {
+            executor.accept(this::generateJukeboxAssets);
+        }
+
+        if (CommonConfigs.DOUBLE_CAKES.get()) {
+            executor.accept(this::generateDoubleCakesAssets);
+        }
+
+        if (ClientConfigs.SIGN_ATTACHMENT.get()) {
+            executor.accept(this::generateHangingSignAssets);
+        }
+
+        if (ClientConfigs.PIXEL_CONSISTENT_SIGNS.get()) {
+            executor.accept(this::generateSignAssets);
+        }
+
+        executor.accept((manager, sink) -> {
+
+            if (ClientConfigs.COLORED_ARROWS.get()) {
+                sink.addItemModel(ResourceLocation.withDefaultNamespace("crossbow_arrow"), JsonParser.parseString(
+                        """ 
+                                {
+                                    "parent": "item/crossbow",
+                                    "textures": {
+                                        "layer0": "item/crossbow_arrow_base",
+                                        "layer1": "item/crossbow_arrow_tip"
+                                    }
+                                }
+                                """));
+            }
+
+            if (ClientConfigs.JUKEBOX_MODEL.get()) {
+                sink.addItemModel(ResourceLocation.withDefaultNamespace("jukebox"), JsonParser.parseString(
+                        """ 
+                                {
+                                  "parent": "amendments:block/jukebox"
+                                }
+                                """));
+                sink.addBlockState(ResourceLocation.withDefaultNamespace("jukebox"), JsonParser.parseString(
+                        """ 
+                                {
+                                  "variants": {
+                                    "has_record=true": {
+                                      "model": "amendments:block/jukebox_on"
+                                    },
+                                    "has_record=false": {
+                                      "model": "amendments:block/jukebox"
+                                    }
+                                  }
+                                }
+                                """));
+            }
+        });
+    }
+
+    @Override
     public void regenerateDynamicAssets(ResourceManager manager) {
 
         //need this here for reasons I forgot
         WallLanternModelsManager.refreshModels(manager);
-
-        if (ClientConfigs.JUKEBOX_MODEL.get()) {
-            generateJukeboxAssets(manager);
-        }
-
-        if (CommonConfigs.DOUBLE_CAKES.get()) {
-            generateDoubleCakesAssets(manager);
-        }
-
-        if (ClientConfigs.SIGN_ATTACHMENT.get()) {
-            generateHangingSignAssets(manager);
-        }
-
-        if (ClientConfigs.PIXEL_CONSISTENT_SIGNS.get()) {
-            generateSignAssets(manager);
-        }
-
-        if (ClientConfigs.COLORED_ARROWS.get()) {
-            this.dynamicPack.addItemModel(ResourceLocation.withDefaultNamespace("crossbow_arrow"), JsonParser.parseString(
-                    """ 
-                            {
-                                "parent": "item/crossbow",
-                                "textures": {
-                                    "layer0": "item/crossbow_arrow_base",
-                                    "layer1": "item/crossbow_arrow_tip"
-                                }
-                            }
-                            """));
-        }
-
-        if (ClientConfigs.JUKEBOX_MODEL.get()) {
-            this.dynamicPack.addItemModel(ResourceLocation.withDefaultNamespace("jukebox"), JsonParser.parseString(
-                    """ 
-                            {
-                              "parent": "amendments:block/jukebox"
-                            }
-                            """));
-            this.dynamicPack.addBlockState(ResourceLocation.withDefaultNamespace("jukebox"), JsonParser.parseString(
-                    """ 
-                            {
-                              "variants": {
-                                "has_record=true": {
-                                  "model": "amendments:block/jukebox_on"
-                                },
-                                "has_record=false": {
-                                  "model": "amendments:block/jukebox"
-                                }
-                              }
-                            }
-                            """));
-        }
+        super.regenerateDynamicAssets(manager);
     }
 
-    private void generateSignAssets(ResourceManager manager) {
+    private void generateSignAssets(ResourceManager manager, ResourceSink sink) {
         ImageTransformer transformer = ImageTransformer.builder(64, 32, 64, 32)
                 .copyRect(0, 16, 16, 16, 0, 16)
                 .build();
@@ -161,12 +174,12 @@ public class ClientResourceGenerator extends DynClientResourcesGenerator {
                      TextureImage modPlankTexture = TextureImage.open(manager,
                              RPUtils.findFirstBlockTextureLocation(manager, w.planks));) {
                     List<Palette> palette = Palette.fromAnimatedImage(modPlankTexture);
-                    for(var p : palette){
+                    for (var p : palette) {
                         p.remove(p.getLightest());
                     }
                     TextureImage newImage = respriter.recolorWithAnimationOf(modPlankTexture);
                     transformer.apply(vanillaTexture, newImage);
-                    this.dynamicPack.addAndCloseTexture(signMaterial.texture(), newImage);
+                    sink.addAndCloseTexture(signMaterial.texture(), newImage);
                 } catch (Exception e) {
                     Amendments.LOGGER.warn("Failed to generate hanging sign extension texture for {}, ", w, e);
                 }
@@ -177,7 +190,7 @@ public class ClientResourceGenerator extends DynClientResourcesGenerator {
         }
     }
 
-    private void generateHangingSignAssets(ResourceManager manager) {
+    private void generateHangingSignAssets(ResourceManager manager, ResourceSink sink) {
         ImageTransformer transformer = ImageTransformer.builder(32, 64, 16, 16)
                 .copyRect(26, 0, 2, 4, 4, 0)
                 .copyRect(26, 8, 6, 8, 4, 4)
@@ -223,7 +236,7 @@ public class ClientResourceGenerator extends DynClientResourcesGenerator {
 
                 transformer.apply(flipped, newIm);
                 flipped.close();
-                this.dynamicPack.addAndCloseTexture(Amendments.res("entity/signs/hanging/" + w.getVariantId("extension")), newIm);
+                sink.addAndCloseTexture(Amendments.res("entity/signs/hanging/" + w.getVariantId("extension")), newIm);
             } catch (Exception e) {
                 Amendments.LOGGER.warn("Failed to generate hanging sign extension texture for {}, ", w, e);
             }
@@ -238,14 +251,14 @@ public class ClientResourceGenerator extends DynClientResourcesGenerator {
 
                 transformer.apply(flipped, newIm);
                 flipped.close();
-                this.dynamicPack.addAndCloseTexture(Amendments.res("entity/signs/hanging/farmersdelight/extension_canvas"), newIm);
+                sink.addAndCloseTexture(Amendments.res("entity/signs/hanging/farmersdelight/extension_canvas"), newIm);
             } catch (Exception e) {
                 Amendments.LOGGER.warn("Failed to generate hanging sign extension texture for {}, ", "canvas sign", e);
             }
         }
     }
 
-    private void generateJukeboxAssets(ResourceManager manager) {
+    private void generateJukeboxAssets(ResourceManager manager, ResourceSink sink) {
 
         ImageTransformer transformer = ImageTransformer.builder(16, 16, 16, 16)
                 .copyRect(5, 6, 3, 2, 6, 6)
@@ -265,7 +278,7 @@ public class ClientResourceGenerator extends DynClientResourcesGenerator {
 
             for (var e : AmendmentsClient.getAllRecords().entrySet()) {
                 ResourceLocation res = Amendments.res(e.getValue().texture().getPath());
-                if (alreadyHasTextureAtLocation(manager, res)) continue;
+                if (sink.alreadyHasTextureAtLocation(manager, res)) continue;
                 //hanging sign extension textures
                 try (TextureImage vanillaTexture = TextureImage.open(manager,
                         RPUtils.findFirstItemTextureLocation(manager, e.getKey()))) {
@@ -278,10 +291,10 @@ public class ClientResourceGenerator extends DynClientResourcesGenerator {
                         newImage.setFramePixel(0, 6, 6, p.getLightest().rgb().toInt());
                         newImage.setFramePixel(0, 9, 9, p.getLightest().rgb().toInt());
                     }
-                    this.dynamicPack.addAndCloseTexture(res, newImage);
+                    sink.addAndCloseTexture(res, newImage);
                 } catch (Exception ex) {
                     getLogger().warn("Failed to generate record item texture for {}. No model / texture found", e.getKey());
-                    this.dynamicPack.addAndCloseTexture(res, fallback.makeCopy());
+                    sink.addAndCloseTexture(res, fallback.makeCopy());
                 }
             }
         } catch (Exception ignored) {
@@ -302,7 +315,7 @@ public class ClientResourceGenerator extends DynClientResourcesGenerator {
     }
 
 
-    private void generateDoubleCakesAssets(ResourceManager manager) {
+    private void generateDoubleCakesAssets(ResourceManager manager, ResourceSink sink) {
         StaticResource[] cakeModels = Stream.of("full", "slice1", "slice2", "slice3", "slice4", "slice5", "slice6")
                 .map(s -> StaticResource.getOrLog(manager,
                         ResType.BLOCK_MODELS.getPath(Amendments.res("double_cake/vanilla_" + s)))).toArray(StaticResource[]::new);
@@ -319,7 +332,7 @@ public class ClientResourceGenerator extends DynClientResourcesGenerator {
                     ResourceLocation inner = RPUtils.findFirstBlockTextureLocation(manager, t.cake, s -> s.contains("inner"));
 
                     for (var m : cakeModels) {
-                        addSimilarJsonResource(manager, m, s -> s
+                        sink.addSimilarJsonResource(manager, m, s -> s
                                         .replace("amendments:block/double_cake", "")
                                         .replace("minecraft:block/cake", "")
                                         .replace("\"/", "\"amendments:block/double_cake/")
@@ -329,7 +342,7 @@ public class ClientResourceGenerator extends DynClientResourcesGenerator {
                                         .replace("_bottom", bottom.toString()),
                                 s -> s.replace("vanilla", dcId.getPath()));
                     }
-                    addSimilarJsonResource(manager, doubleCakeModelState,
+                    sink.addSimilarJsonResource(manager, doubleCakeModelState,
                             s -> s.replace("vanilla", dcId.getPath()),
                             s -> s.replace("double_cake", dcId.getPath()));
                 } catch (Exception e) {

@@ -62,6 +62,8 @@ public class InteractEvents {
         List<ItemUse> itemUse = new ArrayList<>();
         List<BlockUse> blockUse = new ArrayList<>();
 
+        itemUse.add(new FireChargeShoot());
+
         blockUse.add(new DirectionalCakeConversion());
         blockUse.add(new BellChainRing());
         //blockUse.add(new CauldronConversion());
