@@ -7,6 +7,10 @@ accessible method net/minecraft/client/renderer/blockentity/SignRenderer getText
 accessible field net/minecraft/world/entity/EntityType fireImmune Z
 mutable field net/minecraft/world/entity/EntityType fireImmune Z
 
+#area of effect
+accessible field net/minecraft/world/entity/AreaEffectCloud effects Ljava/util/List;
+accessible field net/minecraft/world/entity/AreaEffectCloud reapplicationDelay I
+
 #book edit
 extendable method net/minecraft/client/gui/screens/inventory/BookEditScreen saveChanges (Z)V
 accessible field net/minecraft/client/gui/screens/inventory/BookEditScreen isModified Z

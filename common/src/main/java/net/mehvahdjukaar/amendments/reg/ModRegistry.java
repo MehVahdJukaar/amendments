@@ -6,7 +6,9 @@ import net.mehvahdjukaar.amendments.common.CakeRegistry;
 import net.mehvahdjukaar.amendments.common.LecternEditMenu;
 import net.mehvahdjukaar.amendments.common.block.*;
 import net.mehvahdjukaar.amendments.common.entity.FallingLanternEntity;
-import net.mehvahdjukaar.amendments.common.entity.SmallDragonFireball;
+import net.mehvahdjukaar.amendments.common.entity.MediumDragonFireball;
+import net.mehvahdjukaar.amendments.common.entity.MediumFireball;
+import net.mehvahdjukaar.amendments.common.entity.RingEffectCloud;
 import net.mehvahdjukaar.amendments.common.item.DragonChargeItem;
 import net.mehvahdjukaar.amendments.common.item.DyeBottleItem;
 import net.mehvahdjukaar.amendments.common.item.placement.WallLanternPlacement;
@@ -117,15 +119,32 @@ public class ModRegistry {
     private static final Supplier<RecipeSerializer<CauldronRecipe>> CAULDRON_RECIPE_SERIALIZER = RegHelper.registerSpecialRecipe(
             res("cauldron_recipe"), CauldronRecipe::new);*/
 
-    public static final Supplier<EntityType<SmallDragonFireball>> SMALL_DRAGON_FIREBALL =
-            RegHelper.registerEntityType(res("small_dragon_fireball"),
-                    () -> EntityType.Builder.<SmallDragonFireball>of(SmallDragonFireball::new, MobCategory.MISC)
+    public static final Supplier<EntityType<MediumDragonFireball>> MEDIUM_DRAGON_FIREBALL =
+            RegHelper.registerEntityType(res("medium_dragon_fireball"),
+                    () -> EntityType.Builder.<MediumDragonFireball>of(MediumDragonFireball::new, MobCategory.MISC)
                             .sized(0.3125F, 0.3125F)
                             .clientTrackingRange(4)
                             .fireImmune()
                             .updateInterval(10)
-                            .build("small_dragon_fireball"));
+                            .build("medium_dragon_fireball"));
 
+    public static final Supplier<EntityType<MediumFireball>> MEDIUM_FIREBALL =
+            RegHelper.registerEntityType(res("medium_fireball"),
+                    () -> EntityType.Builder.<MediumFireball>of(MediumFireball::new, MobCategory.MISC)
+                            .sized(0.3125F, 0.3125F)
+                            .clientTrackingRange(4)
+                            .fireImmune()
+                            .updateInterval(10)
+                            .build("medium_fireball"));
+
+    public static final Supplier<EntityType<RingEffectCloud>> RING_EFFECT_CLOUD =
+            RegHelper.registerEntityType(res("ring_effect_cloud"),
+                    () -> EntityType.Builder.<RingEffectCloud>of(RingEffectCloud::new, MobCategory.MISC)
+                            .fireImmune()
+                            .sized(6.0F, 0.5F)
+                            .clientTrackingRange(10)
+                            .updateInterval(Integer.MAX_VALUE)
+                            .build("ring_effect_cloud"));
 
     public static final Supplier<Item> DRAGON_CHARGE = regItem(DRAGON_CHARGE_NAME,
             () -> new DragonChargeItem(new Item.Properties()));
