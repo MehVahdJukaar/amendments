@@ -26,7 +26,6 @@ public class MediumDragonFireball extends ImprovedProjectileEntity {
             .spacing(0.25)
             .maxParticlesPerTick(5)
             .minSpeed(0.0)
-            .gravity(0.98)
             .particle(ParticleTypes.FLAME)
             .build();
 

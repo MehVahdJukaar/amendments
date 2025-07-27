@@ -17,7 +17,6 @@ public class MediumFireball extends ImprovedProjectileEntity {
             .spacing(0.5)
             .maxParticlesPerTick(20)
             .minSpeed(0)
-            .gravity(0.98)
             .particle(this::spawnFireTrailParticle)
             .build();
 
