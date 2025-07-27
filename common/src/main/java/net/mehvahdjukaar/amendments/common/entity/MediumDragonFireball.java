@@ -1,10 +1,12 @@
 package net.mehvahdjukaar.amendments.common.entity;
 
-import net.mehvahdjukaar.amendments.Amendments;
 import net.mehvahdjukaar.amendments.configs.CommonConfigs;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.moonlight.api.entity.ImprovedProjectileEntity;
+import net.mehvahdjukaar.moonlight.api.entity.ParticleTrailEmitter;
+import net.minecraft.client.particle.DragonBreathParticle;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -17,16 +19,19 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Quaterniond;
+import org.joml.Quaternionf;
+import org.joml.Vector3d;
+import org.joml.Vector3f;
 
 public class MediumDragonFireball extends ImprovedProjectileEntity {
 
-
     private final ParticleTrailEmitter trailEmitter = ParticleTrailEmitter.builder()
-            .spacing(0.25)
+            .spacing(0.7)
             .maxParticlesPerTick(5)
             .minSpeed(0.0)
-            .particle(ParticleTypes.FLAME)
             .build();
 
     public MediumDragonFireball(EntityType<? extends MediumDragonFireball> entityType, Level level) {
@@ -37,11 +42,48 @@ public class MediumDragonFireball extends ImprovedProjectileEntity {
         super(ModRegistry.MEDIUM_DRAGON_FIREBALL.get(), shooter, level);
     }
 
+    private int particleCount = 0;
 
     @Override
     public void spawnTrailParticles() {
         super.spawnTrailParticles();
-        trailEmitter.tick(this);
+        trailEmitter.tick(this, (p, motion) -> {
+            if (this.isInWater()) return;
+
+            float coneAngle = Mth.DEG_TO_RAD *10;
+            float spiralIncrement = 0.1f;
+            float speed = 0.1f;
+
+            // Normalize motion vector
+            Vector3f dir = motion.toVector3f().normalize();
+
+            // Compute a perpendicular vector to `dir`
+            Vector3f up = new Vector3f(0, 1, 0);
+            if (Math.abs(dir.dot(up)) > 0.99) {
+                up.set(1, 0, 0); // fallback if dir is nearly parallel to Y
+            }
+            Vector3f tangent = dir.cross(up, new Vector3f()).normalize();
+
+            // Create rotation around the motion vector to rotate the tangent
+            float spiralAngle = particleCount * spiralIncrement; // tweak 0.3 to control spiral density
+            Quaternionf spiralRotation = new Quaternionf().fromAxisAngleRad(dir, spiralAngle);
+            tangent.rotate(spiralRotation);
+
+            // Tilt the vector toward the dir to form the cone (mix between tangent and dir)
+            Vector3f finalDir = new Vector3f(dir).mul(Mth.cos(coneAngle)).add(tangent.mul(Mth.sin(coneAngle)))
+                    .normalize().mul(speed);
+
+            // Spawn particle with the calculated direction
+            level().addParticle(ParticleTypes.DRAGON_BREATH,
+                    p.x,
+                    p.y,
+                    p.z,
+                    random.nextGaussian() * 0.04,
+                    random.nextGaussian() * 0.04,
+                    random.nextGaussian() * 0.04);
+
+            particleCount++;
+        });
     }
 
     @Override
@@ -62,7 +104,9 @@ public class MediumDragonFireball extends ImprovedProjectileEntity {
                 areaEffectCloud.setRadiusPerTick((6.5F - areaEffectCloud.getRadius()) / (float) areaEffectCloud.getDuration());
                 areaEffectCloud.addEffect(new MobEffectInstance(MobEffects.HARM, 1, 1));
 
-                this.level().levelEvent(2006, this.blockPosition(), this.isSilent() ? -1 : 1);
+                //TODO: fix particles not breaking end crystals
+                //TODO: particle effect here
+               // this.level().levelEvent(2006, this.blockPosition(), this.isSilent() ? -1 : 1);
                 this.level().addFreshEntity(areaEffectCloud);
                 this.discard();
             }
@@ -89,67 +133,10 @@ public class MediumDragonFireball extends ImprovedProjectileEntity {
         return false;
     }
 
-
-    /*
-    public static void spawnTrailParticles(MediumDragonFireball entity, Vec3 currentPos, Vec3 newPos) {
-        if (!entity.noPhysics) {
-            double d = entity.getDeltaMovement().length();
-            if (entity.tickCount > 1 && d * entity.tickCount > 1.5) {
-                if (false) {
-
-                    Vec3 rot = new Vec3(0.325, 0, 0).yRot(entity.tickCount * 0.32f);
-
-                    Vec3 movement = entity.getDeltaMovement();
-                    Vec3 offset = MthUtils.changeBasisN(movement, rot);
-
-                    double px = newPos.x + offset.x;
-                    double py = newPos.y + offset.y; //+ this.getBbHeight() / 2d;
-                    double pz = newPos.z + offset.z;
-
-                    movement = movement.scale(0.25);
-                    entity.level().addParticle(ParticleTypes.LARGE_SMOKE, px, py, pz, movement.x, movement.y, movement.z);
-                } else {
-                    double interval = 4 / (d * 0.95 + 0.05);
-                    if (true || entity.particleCooldown > interval) {
-                        entity.particleCooldown -= interval;
-                        double x = currentPos.x;
-                        double y = currentPos.y + entity.getBbHeight() / 2d;
-                        double z = currentPos.z;
-                        Vec3 movement = entity.getDeltaMovement();
-                        movement = movement.scale(1);
-                        var r = entity.level().random;
-                        entity.level().addAlwaysVisibleParticle(ParticleTypes.DRAGON_BREATH, true,
-                                x, y, z, r.nextGaussian() * 0.02, r.nextGaussian() * 0.02, r.nextGaussian() * 0.02);
-
-                        entity.level().addAlwaysVisibleParticle(ParticleTypes.DRAGON_BREATH, true,
-                                x - movement.x, y - movement.y, z - movement.z, r.nextGaussian() * 0.02, r.nextGaussian() * 0.02, r.nextGaussian() * 0.02);
-
-                        entity.level().addAlwaysVisibleParticle(ParticleTypes.DRAGON_BREATH, true,
-                                x - movement.x / 2f, y - movement.y / 2f, z - movement.z / 2f, r.nextGaussian() * 0.02, r.nextGaussian() * 0.02, r.nextGaussian() * 0.02);
-
-                        entity.level().addAlwaysVisibleParticle(ParticleTypes.DRAGON_BREATH, true,
-                                x - movement.x / 4f, y - movement.y / 4f, z - movement.z / 4f, r.nextGaussian() * 0.02, r.nextGaussian() * 0.02, r.nextGaussian() * 0.02);
-
-
-                        entity.level().addAlwaysVisibleParticle(ParticleTypes.DRAGON_BREATH, true,
-                                x - movement.x * 3 / 4f, y - movement.y * 3 / 4f, z - movement.z * 3 / 4f, r.nextGaussian() * 0.02, r.nextGaussian() * 0.02, r.nextGaussian() * 0.02);
-                    }
-                }
-            }
-        }
-    }
-*/
-
     @Override
     protected Item getDefaultItem() {
         return ModRegistry.DRAGON_CHARGE.get();
     }
-
-
-
-
-
-
 
 
 }

@@ -48,6 +48,9 @@ public class ClientConfigs {
     public static final Supplier<Boolean> COLORED_ARROWS;
     public static final Supplier<Boolean> FAST_HOOKS;
 
+    public static final Supplier<Boolean> FIREBALL_3D;
+    public static final Supplier<Boolean> DRAGON_BREATH_EMISSIBE;
+
     public static final Supplier<Double> BRIGHTEN_SIGN_TEXT_COLOR;
 
     private static float signColorMult = 1.2f;
@@ -71,12 +74,20 @@ public class ClientConfigs {
                 .define("text_color_multiplier", 1.2d, 0, 5);
         builder.pop();
 
-        builder.push("sign");
-        PIXEL_CONSISTENT_SIGNS = builder.comment("Gives signs a pixel consistent model and texture. Also affects other mods")
-                .define("pixel_consistent", true);
-        BRIGHTEN_SIGN_TEXT_COLOR = builder.comment("A scalar multiplier that will be applied to sign text making it brighter, supposedly more legible")
-                .define("text_color_multiplier", 1.2d, 0, 5);
+      builder.push("fireball");
+
+        FIREBALL_3D = builder.comment("Makes fireballs render in 3D")
+                .define("fireball_3d", true);
+
+        builder.push("dragon_fireball");
+        DRAGON_BREATH_EMISSIBE = builder.comment("Makes dragon's breath particles emissive to better match new visuals")
+                .define("dragon_breath_emissive", true);
+
         builder.pop();
+
+        builder.pop();
+
+
 
         builder.push("lily_pad");
         LILY_OFFSET = builder.comment("set to 0 tho have lilypads at the same exact position as vanilla." +
