@@ -10,7 +10,6 @@ public class ParticleTrailEmitter {
     private final double idealSpacing;
     private final int maxParticlesPerTick;
     private final double minSpeed;
-    private final double gravity;
     private final Emitter emitter;
     private Vec3 lastEmittedPos = null; // Track last emitted particle position
 
@@ -23,7 +22,6 @@ public class ParticleTrailEmitter {
         this.idealSpacing = builder.idealSpacing;
         this.maxParticlesPerTick = builder.maxParticlesPerTick;
         this.minSpeed = builder.minSpeed;
-        this.gravity = builder.gravity;
         this.emitter = builder.emitter;
         this.accumulatedDistanceSinceLastParticle = -idealSpacing; // delay first particle emission
     }
@@ -36,26 +34,19 @@ public class ParticleTrailEmitter {
         previousVelocities.push(currentVel);
         previousPositions.push(currentPos);
 
-        if (!previousPositions.isFull()) return;
+        if (previousPositions.size() < 2) return;
 
         Vec3 prevPos = previousPositions.get(0);
-        Vec3 medPos = previousPositions.get(1);
+        Vec3 currentPosBuf = previousPositions.get(1);
         Vec3 prevVel = previousVelocities.get(0);
-        Vec3 medVel = previousVelocities.get(1);
 
-        double segmentLength = prevPos.distanceTo(medPos);
+        double segmentLength = prevPos.distanceTo(currentPosBuf);
         if (segmentLength < minSpeed) return;
 
-        // Calculate how many particles we should emit
-        double totalNeeded = idealSpacing - accumulatedDistanceSinceLastParticle;
-        int particlesToEmit = 0;
-        double remainingDistance = segmentLength;
-
-        while (remainingDistance >= totalNeeded && particlesToEmit < maxParticlesPerTick) {
-            particlesToEmit++;
-            totalNeeded += idealSpacing;
-            remainingDistance = segmentLength - (totalNeeded - idealSpacing - accumulatedDistanceSinceLastParticle);
-        }
+        // Calculate how many particles we can emit
+        double totalAvailable = accumulatedDistanceSinceLastParticle + segmentLength;
+        int particlesToEmit = (int)(totalAvailable / idealSpacing);
+        particlesToEmit = Math.min(particlesToEmit, maxParticlesPerTick);
 
         if (particlesToEmit == 0) {
             accumulatedDistanceSinceLastParticle += segmentLength;
@@ -63,52 +54,35 @@ public class ParticleTrailEmitter {
         }
 
         // Calculate exact emission points
-        double accumulated = accumulatedDistanceSinceLastParticle;
         Vec3 lastPos = (lastEmittedPos != null) ? lastEmittedPos : prevPos;
+        double spacingSum = 0;
 
-        for (int i = 0; i < particlesToEmit; i++) {
-            double distFromStart = accumulated + idealSpacing;
-            double t = distFromStart / (accumulatedDistanceSinceLastParticle + segmentLength);
-            t = Math.min(Math.max(t, 0), 1);
+        for (int i = 1; i <= particlesToEmit; i++) {
+            double targetDist = i * idealSpacing - accumulatedDistanceSinceLastParticle;
+            double t = targetDist / segmentLength;
+            t = Math.max(0, Math.min(1, t)); // Clamp to segment bounds
 
-            Vec3 emitPos = interpolateParabola(prevPos, medPos, t);
-            Vec3 emitVel = prevVel.lerp(medVel, t);
+            Vec3 emitPos = prevPos.lerp(currentPosBuf, t);
+            Vec3 emitVel = prevVel.lerp(previousVelocities.get(1), t);
 
-            // Calculate actual distance from previous particle
-            double actualDistance = emitPos.distanceTo(lastPos);
-            double error = actualDistance - idealSpacing;
+            // Ensure perfect spacing
+            Vec3 direction = emitPos.subtract(lastPos).normalize();
+            Vec3 perfectPos = lastPos.add(direction.scale(idealSpacing));
 
-            // Adjust position to correct spacing
-            if (Math.abs(error) > 0.001) {
-                Vec3 direction = emitPos.subtract(lastPos).normalize();
-                emitPos = lastPos.add(direction.scale(idealSpacing));
-            }
-
-            emitter.emitParticle(obj.level(), emitPos, emitVel);
+            emitter.emitParticle(obj.level(), perfectPos, emitVel);
 
             // Debug output
-            System.out.printf("Particle | Dist: %.6f | Ideal: %.6f | Error: %.6f%n",
-                    actualDistance, idealSpacing, error);
+            double actualDist = perfectPos.distanceTo(lastPos);
+            System.out.printf("Particle %d | Dist: %.6f | Ideal: %.6f%n",
+                    i, actualDist, idealSpacing);
 
-            lastPos = emitPos;
-            accumulated += idealSpacing;
+            lastPos = perfectPos;
+            spacingSum += idealSpacing;
         }
 
-        // Update state for next tick
+        // Update state
         lastEmittedPos = lastPos;
-        accumulatedDistanceSinceLastParticle = segmentLength - (accumulated - accumulatedDistanceSinceLastParticle);
-    }
-
-    private Vec3 interpolateParabola(Vec3 from, Vec3 to, double t) {
-        double x = from.x + (to.x - from.x) * t;
-        double z = from.z + (to.z - from.z) * t;
-
-        double y0 = from.y;
-        double dy = to.y - from.y;
-        double estimatedVy = dy + 0.5 * gravity;
-        double y = y0 + estimatedVy * t - 0.5 * gravity * t * t;
-
-        return new Vec3(x, y, z);
+        accumulatedDistanceSinceLastParticle = totalAvailable - spacingSum;
     }
 
     public static Builder builder() {
@@ -120,7 +94,6 @@ public class ParticleTrailEmitter {
         private double idealSpacing = 0.5;
         private int maxParticlesPerTick = 5;
         private double minSpeed = 0.0;
-        private double gravity = 0.98;
         private Emitter emitter = (level, position, velocity) -> {
             // Default emitter does nothing
         };
@@ -157,11 +130,6 @@ public class ParticleTrailEmitter {
 
         public Builder minSpeed(double speed) {
             this.minSpeed = speed;
-            return this;
-        }
-
-        public Builder gravity(double gravity) {
-            this.gravity = gravity;
             return this;
         }
 
