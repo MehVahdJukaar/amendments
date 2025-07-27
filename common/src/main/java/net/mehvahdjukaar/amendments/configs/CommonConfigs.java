@@ -81,6 +81,18 @@ public class CommonConfigs {
                 .define("improved_screen", true);
         builder.pop();
 
+        builder.push("fireball");
+        DRAGON_CHARGE = builder.comment("Adds dragons charge item")
+                .define("dragon_charge", true);
+        FIRE_CHARGE_GRAVITY = builder.comment("Makes fire & dragon charges have gravity")
+                .define("gravity", true);
+        DEFLECT_FIRE_CHARGES = builder.comment("Makes fire charges deflectable by punching")
+                .define("deflectable", false);
+        THROWABLE_FIRE_CHARGES = builder.comment("Allows throwing fire & dragon charges")
+                .define("throwable", true);
+
+        builder.pop();
+
         builder.push("hanging_signs");
         HANGING_SIGN_ITEM = builder.comment("Allows placing items on hanging signs")
                 .define("items_on_signs", true);

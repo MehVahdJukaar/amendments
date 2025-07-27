@@ -13,7 +13,8 @@ accessible field net/minecraft/client/renderer/blockentity/BannerRenderer flag L
 #area of effect
 accessible field net/minecraft/world/entity/AreaEffectCloud effects Ljava/util/List;
 accessible field net/minecraft/world/entity/AreaEffectCloud reapplicationDelay I
-
+accessible method net/minecraft/world/damagesource/DamageSources source (Lnet/minecraft/resources/ResourceKey;Lnet/minecraft/world/entity/Entity;)Lnet/minecraft/world/damagesource/DamageSource;
+accessible method net/minecraft/world/damagesource/DamageSources source (Lnet/minecraft/resources/ResourceKey;Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/entity/Entity;)Lnet/minecraft/world/damagesource/DamageSource;
 #book edit
 accessible method net/minecraft/client/gui/screens/inventory/BookEditScreen updateLocalCopy ()V
 extendable method net/minecraft/client/gui/screens/inventory/BookEditScreen saveChanges (Z)V
