@@ -16,6 +16,7 @@
     "CauldronBlockMixin",
     "CeilingHangingSignBlockMixin",
     "CompatQuarkSelfCandleSkullMixin",
+    "DragonFireballMixin",
     "FenceBlockMixin",
     "FireballMixin",
     "FlowerPotBlockMixin",

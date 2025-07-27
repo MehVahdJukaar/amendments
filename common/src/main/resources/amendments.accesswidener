@@ -10,7 +10,8 @@ mutable field net/minecraft/world/entity/EntityType fireImmune Z
 #area of effect
 accessible field net/minecraft/world/entity/AreaEffectCloud effects Ljava/util/List;
 accessible field net/minecraft/world/entity/AreaEffectCloud reapplicationDelay I
-
+accessible method net/minecraft/world/damagesource/DamageSources source (Lnet/minecraft/resources/ResourceKey;Lnet/minecraft/world/entity/Entity;)Lnet/minecraft/world/damagesource/DamageSource;
+accessible method net/minecraft/world/damagesource/DamageSources source (Lnet/minecraft/resources/ResourceKey;Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/entity/Entity;)Lnet/minecraft/world/damagesource/DamageSource;
 #book edit
 extendable method net/minecraft/client/gui/screens/inventory/BookEditScreen saveChanges (Z)V
 accessible field net/minecraft/client/gui/screens/inventory/BookEditScreen isModified Z

@@ -1,6 +1,8 @@
 package net.mehvahdjukaar.amendments.mixins;
 
+import net.mehvahdjukaar.amendments.common.FireballStats;
 import net.mehvahdjukaar.amendments.common.entity.MediumFireball;
+import net.mehvahdjukaar.amendments.common.entity.TumblingAnimation;
 import net.mehvahdjukaar.amendments.configs.ClientConfigs;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.moonlight.api.entity.ParticleTrailEmitter;
@@ -23,6 +25,8 @@ public abstract class FireballMixin extends AbstractHurtingProjectile {
 
     @Unique
     private final ParticleTrailEmitter amendments$trailEmitter = MediumFireball.makeTrialEmitter();
+    @Unique
+    private final TumblingAnimation amendments$tumblingAnimation = FireballStats.makeTumbler();
 
     protected FireballMixin(EntityType<? extends AbstractHurtingProjectile> entityType, Level level) {
         super(entityType, level);
@@ -35,7 +39,6 @@ public abstract class FireballMixin extends AbstractHurtingProjectile {
     public FireballMixin(EntityType<? extends AbstractHurtingProjectile> entityType, LivingEntity shooter, double offsetX, double offsetY, double offsetZ, Level level) {
         super(entityType, shooter, offsetX, offsetY, offsetZ, level);
     }
-
 
     @Shadow
     public abstract ItemStack getItem();
@@ -58,11 +61,13 @@ public abstract class FireballMixin extends AbstractHurtingProjectile {
     @Override
     public void tick() {
         super.tick();
-        amendments$trailEmitter.tick(this,
-                (p, v) -> {
-                    if (this.isInWater()) return;
-                    level().addParticle(ModRegistry.FIREBALL_TRAIL_PARTICLE.get(), p.x, p.y, p.z, 0, 0, 0);
-                }
-        );
+        if(level().isClientSide) {
+            amendments$trailEmitter.tick(this,
+                    (p, v) -> {
+                        if (this.isInWater()) return;
+                        level().addParticle(ModRegistry.FIREBALL_TRAIL_PARTICLE.get(), p.x, p.y, p.z, 0, 0, 0);
+                    }
+            );
+        }
     }
 }

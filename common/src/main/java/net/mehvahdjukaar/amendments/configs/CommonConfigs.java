@@ -92,7 +92,7 @@ public class CommonConfigs {
         FIRE_CHARGE_GRAVITY = builder.comment("Makes fire & dragon charges have gravity")
                 .define("gravity", true);
         DEFLECT_FIRE_CHARGES = builder.comment("Makes fire charges deflectable by punching")
-                .define("deflectable", true);
+                .define("deflectable", false);
         THROWABLE_FIRE_CHARGES = builder.comment("Allows throwing fire & dragon charges")
                 .define("throwable", true);
 

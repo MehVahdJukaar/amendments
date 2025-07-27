@@ -1,5 +1,6 @@
 package net.mehvahdjukaar.amendments.common.entity;
 
+import net.mehvahdjukaar.amendments.common.FireballStats;
 import net.mehvahdjukaar.amendments.configs.CommonConfigs;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.moonlight.api.entity.ImprovedProjectileEntity;
@@ -26,14 +27,11 @@ import org.joml.Quaternionf;
 import org.joml.Vector3d;
 import org.joml.Vector3f;
 
-public class MediumDragonFireball extends ImprovedProjectileEntity {
+public class MediumDragonFireball extends ImprovedProjectileEntity implements IVisualRotationProvider{
 
-    private final ParticleTrailEmitter trailEmitter = ParticleTrailEmitter.builder()
-            .spacing(0.7)
-            .maxParticlesPerTick(5)
-            .minSpeed(0.0)
-            .build();
-
+    private final ParticleTrailEmitter trailEmitter = makeTrialEmitter(false);
+    private final TumblingAnimation tumblingAnimation = FireballStats.makeTumbler();
+    
     public MediumDragonFireball(EntityType<? extends MediumDragonFireball> entityType, Level level) {
         super(entityType, level);
     }
@@ -42,7 +40,13 @@ public class MediumDragonFireball extends ImprovedProjectileEntity {
         super(ModRegistry.MEDIUM_DRAGON_FIREBALL.get(), shooter, level);
     }
 
-    private int particleCount = 0;
+    public static ParticleTrailEmitter makeTrialEmitter(boolean isLarge) {
+        return ParticleTrailEmitter.builder()
+                .spacing(0.7)
+                .maxParticlesPerTick(5)
+                .minSpeed(0.0)
+                .build();
+    }
 
     @Override
     public void spawnTrailParticles() {
@@ -50,40 +54,18 @@ public class MediumDragonFireball extends ImprovedProjectileEntity {
         trailEmitter.tick(this, (p, motion) -> {
             if (this.isInWater()) return;
 
-            float coneAngle = Mth.DEG_TO_RAD *10;
-            float spiralIncrement = 0.1f;
-            float speed = 0.1f;
-
-            // Normalize motion vector
-            Vector3f dir = motion.toVector3f().normalize();
-
-            // Compute a perpendicular vector to `dir`
-            Vector3f up = new Vector3f(0, 1, 0);
-            if (Math.abs(dir.dot(up)) > 0.99) {
-                up.set(1, 0, 0); // fallback if dir is nearly parallel to Y
-            }
-            Vector3f tangent = dir.cross(up, new Vector3f()).normalize();
-
-            // Create rotation around the motion vector to rotate the tangent
-            float spiralAngle = particleCount * spiralIncrement; // tweak 0.3 to control spiral density
-            Quaternionf spiralRotation = new Quaternionf().fromAxisAngleRad(dir, spiralAngle);
-            tangent.rotate(spiralRotation);
-
-            // Tilt the vector toward the dir to form the cone (mix between tangent and dir)
-            Vector3f finalDir = new Vector3f(dir).mul(Mth.cos(coneAngle)).add(tangent.mul(Mth.sin(coneAngle)))
-                    .normalize().mul(speed);
-
             // Spawn particle with the calculated direction
             level().addParticle(ParticleTypes.DRAGON_BREATH,
-                    p.x,
-                    p.y,
-                    p.z,
+                    p.x, p.y, p.z,
                     random.nextGaussian() * 0.04,
                     random.nextGaussian() * 0.04,
                     random.nextGaussian() * 0.04);
-
-            particleCount++;
         });
+    }
+
+    @Override
+    public Quaternionf amendments$getVisualRotation(float partialTicks) {
+        return this.tumblingAnimation.getRotation(partialTicks);
     }
 
     @Override

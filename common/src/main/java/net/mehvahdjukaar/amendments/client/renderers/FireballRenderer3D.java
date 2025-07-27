@@ -2,8 +2,7 @@ package net.mehvahdjukaar.amendments.client.renderers;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Axis;
-import net.mehvahdjukaar.amendments.AmendmentsClient;
+import net.mehvahdjukaar.amendments.common.entity.IVisualRotationProvider;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
@@ -21,10 +20,11 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.LightLayer;
+import org.joml.Quaternionf;
 
 import java.util.function.Function;
 
-public class FireballRenderer3D extends EntityRenderer<Entity> {
+public class FireballRenderer3D <E extends  Entity & IVisualRotationProvider> extends EntityRenderer<E> {
 
     private final ModelPart meteorRock;
     private final ModelPart meteorEmissive;
@@ -51,19 +51,16 @@ public class FireballRenderer3D extends EntityRenderer<Entity> {
     }
 
     @Override
-    public void render(Entity entity, float entityYaw, float partialTick, PoseStack poseStack,
+    public void render(E entity, float entityYaw, float partialTick, PoseStack poseStack,
                        MultiBufferSource bufferSource, int packedLight) {
         if (entity.tickCount >= 2 || !(this.entityRenderDispatcher.camera.getEntity().distanceToSqr(entity) < 12.25)) {
             super.render(entity, entityYaw, partialTick, poseStack, bufferSource, packedLight);
             poseStack.pushPose();
             poseStack.translate(0, entity.getBbHeight() / 2f, 0);
             poseStack.scale(scale, scale, scale);
-            float si = (float) (Math.sin(System.currentTimeMillis() / 8000.0) * 400);
-            float s2 = (float) (Math.sin(System.currentTimeMillis() / 5000.0) * 700);
 
-            poseStack.mulPose(Axis.YP.rotationDegrees(si));
-            poseStack.mulPose(Axis.XP.rotationDegrees(s2));
-
+            Quaternionf rotation = entity.amendments$getVisualRotation(partialTick);
+            poseStack.mulPose(rotation);
 
             ResourceLocation meteorTexture = getTextureLocation(entity);
             RenderType meteroRenderType = renderTypeFunction.apply(meteorTexture);
@@ -82,12 +79,12 @@ public class FireballRenderer3D extends EntityRenderer<Entity> {
     }
 
     @Override
-    protected int getSkyLightLevel(Entity entity, BlockPos pos) {
+    protected int getSkyLightLevel(E entity, BlockPos pos) {
         return super.getSkyLightLevel(entity, pos);
     }
 
     @Override
-    protected int getBlockLightLevel(Entity entity, BlockPos pos) {
+    protected int getBlockLightLevel(E entity, BlockPos pos) {
         // otherwise its always 15 since its on fire
         return  entity.level().getBrightness(LightLayer.BLOCK, pos);
     }
@@ -97,7 +94,7 @@ public class FireballRenderer3D extends EntityRenderer<Entity> {
     }
 
     @Override
-    public ResourceLocation getTextureLocation(Entity entity) {
+    public ResourceLocation getTextureLocation(E entity) {
         return texture;
     }
 
