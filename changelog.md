@@ -1,1 +1,1 @@
-- removed flywheel compat. not needed anymore as that bell instance stuff is no longer in flywheel but in vanillin (I believe)
+a fix maybe

@@ -14,6 +14,7 @@ import net.mehvahdjukaar.moonlight.api.resources.ResType;
 import net.mehvahdjukaar.moonlight.api.resources.StaticResource;
 import net.mehvahdjukaar.moonlight.api.resources.pack.DynClientResourcesGenerator;
 import net.mehvahdjukaar.moonlight.api.resources.pack.DynamicTexturePack;
+import net.mehvahdjukaar.moonlight.api.resources.pack.ResourceGenTask;
 import net.mehvahdjukaar.moonlight.api.resources.textures.ImageTransformer;
 import net.mehvahdjukaar.moonlight.api.resources.textures.Palette;
 import net.mehvahdjukaar.moonlight.api.resources.textures.Respriter;
@@ -35,6 +36,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import org.apache.logging.log4j.Logger;
 
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 public class ClientResourceGenerator extends DynClientResourcesGenerator {
@@ -53,8 +55,7 @@ public class ClientResourceGenerator extends DynClientResourcesGenerator {
     }
 
     @Override
-    public boolean dependsOnLoadedPacks() {
-        return true;
+    public void regenerateDynamicAssets(Consumer<ResourceGenTask> executor) {
     }
 
     @Override
