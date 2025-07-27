@@ -1,9 +1,9 @@
 package net.mehvahdjukaar.amendments.common.entity;
 
+import net.mehvahdjukaar.amendments.Amendments;
 import net.mehvahdjukaar.amendments.configs.CommonConfigs;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.moonlight.api.entity.ImprovedProjectileEntity;
-import net.mehvahdjukaar.moonlight.api.util.math.MthUtils;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -17,10 +17,18 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
-import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
 public class MediumDragonFireball extends ImprovedProjectileEntity {
+
+
+    private final ParticleTrailEmitter trailEmitter = ParticleTrailEmitter.builder()
+            .spacing(0.25)
+            .maxParticlesPerTick(5)
+            .minSpeed(0.0)
+            .gravity(0.98)
+            .particle(ParticleTypes.FLAME)
+            .build();
 
     public MediumDragonFireball(EntityType<? extends MediumDragonFireball> entityType, Level level) {
         super(entityType, level);
@@ -28,6 +36,13 @@ public class MediumDragonFireball extends ImprovedProjectileEntity {
 
     public MediumDragonFireball(Level level, LivingEntity shooter) {
         super(ModRegistry.MEDIUM_DRAGON_FIREBALL.get(), shooter, level);
+    }
+
+
+    @Override
+    public void spawnTrailParticles() {
+        super.spawnTrailParticles();
+        trailEmitter.tick(this);
     }
 
     @Override
@@ -75,15 +90,8 @@ public class MediumDragonFireball extends ImprovedProjectileEntity {
         return false;
     }
 
-    @Override
-    public void tick() {
-        //TODO:refactor
-        spawnTrailParticles(this, this.position(), this.position().add(this.getDeltaMovement()));
-        super.tick();
-    }
 
-    private int particleCooldown;
-
+    /*
     public static void spawnTrailParticles(MediumDragonFireball entity, Vec3 currentPos, Vec3 newPos) {
         if (!entity.noPhysics) {
             double d = entity.getDeltaMovement().length();
@@ -131,9 +139,18 @@ public class MediumDragonFireball extends ImprovedProjectileEntity {
             }
         }
     }
+*/
 
     @Override
     protected Item getDefaultItem() {
         return ModRegistry.DRAGON_CHARGE.get();
     }
+
+
+
+
+
+
+
+
 }
