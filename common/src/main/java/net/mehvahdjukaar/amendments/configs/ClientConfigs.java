@@ -49,6 +49,7 @@ public class ClientConfigs {
     public static final Supplier<Boolean> FAST_HOOKS;
 
     public static final Supplier<Boolean> FIREBALL_3D;
+    public static final Supplier<Boolean> DRAGON_BREATH_EMISSIBE;
 
     public static final Supplier<Double> BRIGHTEN_SIGN_TEXT_COLOR;
 
@@ -78,7 +79,15 @@ public class ClientConfigs {
         FIREBALL_3D = builder.comment("Makes fireballs render in 3D")
                 .define("fireball_3d", true);
 
+        builder.push("dragon_fireball");
+        DRAGON_BREATH_EMISSIBE = builder.comment("Makes dragon's breath particles emissive to better match new visuals")
+                .define("dragon_breath_emissive", true);
+
         builder.pop();
+
+        builder.pop();
+
+
 
         builder.push("lily_pad");
         LILY_OFFSET = builder.comment("set to 0 tho have lilypads at the same exact position as vanilla." +

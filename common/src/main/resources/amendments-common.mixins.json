@@ -41,6 +41,7 @@
   "client": [
     "BellRendererMixin",
     "DisplayCacheMixin",
+    "DragonBreathParticleMixin",
     "HangingSignRendererMixin",
     "SignEditScreenMixin",
     "SignRendererAccessor",
