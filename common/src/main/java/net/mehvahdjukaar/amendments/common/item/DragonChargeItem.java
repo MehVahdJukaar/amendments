@@ -24,6 +24,7 @@ public class DragonChargeItem extends Item {
         ItemStack itemStack = player.getItemInHand(usedHand);
      //   this.playSound(level, blockPos);
         //same as in ThrowableProjectile
+
         level.playSound( null, player.getX(),player.getEyeY() - 0.1, player.getZ(), SoundEvents.SNOWBALL_THROW, SoundSource.NEUTRAL, 0.5F, 0.4F / (level.getRandom().nextFloat() * 0.4F + 0.8F));
         if (!level.isClientSide) {
             MediumDragonFireball snowball = new MediumDragonFireball(level, player);
