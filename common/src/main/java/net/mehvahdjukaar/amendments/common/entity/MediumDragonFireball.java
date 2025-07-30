@@ -61,6 +61,7 @@ public class MediumDragonFireball extends ImprovedProjectileEntity implements IV
                     random.nextGaussian() * 0.04,
                     random.nextGaussian() * 0.04);
         });
+        tumblingAnimation.tick(this.random);
     }
 
     @Override

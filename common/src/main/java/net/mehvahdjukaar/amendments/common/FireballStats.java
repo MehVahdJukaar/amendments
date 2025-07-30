@@ -34,6 +34,6 @@ public class FireballStats {
 
     public static TumblingAnimation makeTumbler() {
         return new TumblingAnimation(
-                0.1f, 0.2f, 0.05f);
+                4f, 7f, 0.5f);
     }
 }

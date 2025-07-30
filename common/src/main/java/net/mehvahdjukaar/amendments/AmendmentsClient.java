@@ -1,7 +1,6 @@
 package net.mehvahdjukaar.amendments;
 
 import com.google.common.base.Suppliers;
-import com.mojang.datafixers.util.Pair;
 import dev.architectury.injectables.annotations.ExpectPlatform;
 import net.mehvahdjukaar.amendments.client.ClientResourceGenerator;
 import net.mehvahdjukaar.amendments.client.ItemHoldingAnimationsManager;
@@ -23,6 +22,7 @@ import net.mehvahdjukaar.moonlight.api.misc.EventCalled;
 import net.mehvahdjukaar.moonlight.api.platform.ClientHelper;
 import net.mehvahdjukaar.moonlight.api.set.BlocksColorAPI;
 import net.mehvahdjukaar.moonlight.api.util.Utils;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.renderer.RenderType;
@@ -32,19 +32,18 @@ import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.resources.model.Material;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.*;
-import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.properties.WoodType;
 
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -195,22 +194,22 @@ public class AmendmentsClient {
         //override vanilla renderers
         if (ClientConfigs.FIREBALL_3D.get()) {
             //same visual scale as the original
-            event.register(EntityType.SMALL_FIREBALL, context -> new FireballRenderer3D(context,
+            event.register(EntityType.SMALL_FIREBALL, context -> new FireballRenderer<>(context,
                     modelScale * 0.75f, BLAZE_TEXTURE, FIREBALL_OVERLAY_TEXTURE,
                     SMALL_FIREBALL_MODEL, true));
-            event.register(EntityType.FIREBALL, context -> new FireballRenderer3D(context,
+            event.register(EntityType.FIREBALL, context -> new FireballRenderer(context,
                     modelScale * 2.375f, FIREBALL_TEXTURE, FIREBALL_OVERLAY_TEXTURE,
                     FIREBALL_MODEL, false));
-            event.register(EntityType.DRAGON_FIREBALL, context -> new FireballRenderer3D(context,
+            event.register(EntityType.DRAGON_FIREBALL, context -> new FireballRenderer<>(context,
                     modelScale * 2.375f, DRAGON_FIREBALL_TEXTURE, DRAGON_FIREBALL_OVERLAY_TEXTURE,
                     FIREBALL_MODEL, false));
 
             //mod own entities
-            event.register(ModRegistry.MEDIUM_DRAGON_FIREBALL.get(), context -> new FireballRenderer3D(context,
+            event.register(ModRegistry.MEDIUM_DRAGON_FIREBALL.get(), context -> new FireballRenderer<>(context,
                     modelScale * 0.75f, DRAGON_FIREBALL_TEXTURE, DRAGON_FIREBALL_OVERLAY_TEXTURE,
                     FIREBALL_MODEL, false));
 
-            event.register(ModRegistry.MEDIUM_FIREBALL.get(), context -> new FireballRenderer3D(context,
+            event.register(ModRegistry.MEDIUM_FIREBALL.get(), context -> new FireballRenderer<>(context,
                     modelScale * 0.75f, FIREBALL_TEXTURE, FIREBALL_OVERLAY_TEXTURE,
                     FIREBALL_MODEL, false));
 
@@ -245,8 +244,8 @@ public class AmendmentsClient {
         event.register(HANGING_SIGN_EXTENSION, HangingSignRendererExtension::createMesh);
         event.register(HANGING_SIGN_EXTENSION_CHAINS, HangingSignRendererExtension::createChainMesh);
         event.register(SKULL_CANDLE_OVERLAY, SkullCandleOverlayModel::createMesh);
-        event.register(FIREBALL_MODEL, () -> FireballRenderer3D.createMesh(8));
-        event.register(SMALL_FIREBALL_MODEL, () -> FireballRenderer3D.createMesh(6));
+        event.register(FIREBALL_MODEL, () -> FireballRenderer.createMesh(8));
+        event.register(SMALL_FIREBALL_MODEL, () -> FireballRenderer.createMesh(6));
     }
 
     @EventCalled
@@ -321,4 +320,7 @@ public class AmendmentsClient {
         throw new AssertionError();
     }
 
+    public static void withClientLevel(Consumer<Level> o) {
+        o.accept(Minecraft.getInstance().level);
+    }
 }

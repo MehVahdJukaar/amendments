@@ -14,5 +14,6 @@ public class ModNetwork {
             .register(NetworkDir.PLAY_TO_SERVER, ServerBoundSyncLecternBookMessage.class, ServerBoundSyncLecternBookMessage::new)
             .register(NetworkDir.PLAY_TO_CLIENT, ClientBoundPlaySplashParticlesMessage.class, ClientBoundPlaySplashParticlesMessage::new)
             .register(NetworkDir.PLAY_TO_CLIENT, ClientBoundEntityHitSwayingBlockMessage.class, ClientBoundEntityHitSwayingBlockMessage::new)
+            .register(NetworkDir.PLAY_TO_CLIENT, ClientBoundFireballExplodePacket.class, ClientBoundFireballExplodePacket::new)
             .build();
 }

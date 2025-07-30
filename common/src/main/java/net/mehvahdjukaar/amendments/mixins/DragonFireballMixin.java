@@ -59,6 +59,7 @@ public abstract class DragonFireballMixin extends AbstractHurtingProjectile impl
                         random.nextGaussian() * 0.05,
                         random.nextGaussian() * 0.05);
             });
+            amendments$tumblingAnimation.tick(random);
         }
     }
 }
