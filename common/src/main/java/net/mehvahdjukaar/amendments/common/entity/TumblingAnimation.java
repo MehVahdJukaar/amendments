@@ -6,24 +6,22 @@ import org.joml.Quaternionf;
 
 public class TumblingAnimation {
 
-    // Angular velocity vector (degrees per tick)
+    // Angular velocity (degrees/tick)
     private float speedX, speedY, speedZ;
-
-    // Current rotation angles (degrees)
-    private float rotX = 0f, rotY = 0f, rotZ = 0f;
-    private float lastRotX = 0f, lastRotY = 0f, lastRotZ = 0f;
-
-
+    // Current and previous orientations
+    private final Quaternionf currentOrientation = new Quaternionf().identity();
+    private final Quaternionf previousOrientation = new Quaternionf().identity();
     private boolean initialized = false;
-    // Configuration
+    // Configuration (unchanged)
     private final float minAngularVelMag;
     private final float maxAngularVelMag;
-    private final float jitterAmount; // max jitter added to speeds per tick
+    private final float jitterAmount;
 
-    public TumblingAnimation(float minMagnitude, float maxMagnitude, float jitterAmount) {
+    // Constructor unchanged
+    public TumblingAnimation(float minMagnitude, float maxMagnitude, float maxJitterAmount) {
         this.minAngularVelMag = minMagnitude;
         this.maxAngularVelMag = maxMagnitude;
-        this.jitterAmount = jitterAmount;
+        this.jitterAmount = maxJitterAmount;
     }
 
     private void initRotationSpeeds(RandomSource rand) {
@@ -53,59 +51,56 @@ public class TumblingAnimation {
         speedZ = z * magnitude;
     }
 
-    // Call every tick to update rotation
+
     public void tick(RandomSource rand) {
         if (!initialized) {
             initRotationSpeeds(rand);
             initialized = true;
         }
-        // Add jitter to speeds
 
+        // Apply jitter & clamp magnitude (same as original)
         speedX += (rand.nextFloat() - 0.5f) * jitterAmount;
         speedY += (rand.nextFloat() - 0.5f) * jitterAmount;
         speedZ += (rand.nextFloat() - 0.5f) * jitterAmount;
 
-        // Clamp speeds magnitude but keep direction
         float mag = (float) Math.sqrt(speedX * speedX + speedY * speedY + speedZ * speedZ);
         if (mag < minAngularVelMag) {
             float scale = minAngularVelMag / mag;
             speedX *= scale;
             speedY *= scale;
             speedZ *= scale;
+            mag = minAngularVelMag;
         } else if (mag > maxAngularVelMag) {
             float scale = maxAngularVelMag / mag;
             speedX *= scale;
             speedY *= scale;
             speedZ *= scale;
+            mag = maxAngularVelMag;
         }
 
-        // Store last rotation angles
-        lastRotX = rotX;
-        lastRotY = rotY;
-        lastRotZ = rotZ;
+        // Save current orientation for interpolation
+        previousOrientation.set(currentOrientation);
 
-        // Increment rotation angles
-        rotX = (rotX + speedX) % 360f;
-        rotY = (rotY + speedY) % 360f;
-        rotZ = (rotZ + speedZ) % 360f;
+        // Skip update if angular velocity is negligible
+        if (mag < 1e-6f) return;
+
+        // Convert angular velocity to axis-angle in radians
+        float angleRad = (float) Math.toRadians(mag);
+        float axisX = speedX / mag;
+        float axisY = speedY / mag;
+        float axisZ = speedZ / mag;
+
+        // Create rotation quaternion from axis-angle
+        Quaternionf deltaQ = new Quaternionf().fromAxisAngleRad(axisX, axisY, axisZ, angleRad);
+
+        // Apply rotation (world space)
+        currentOrientation.set(deltaQ.mul(currentOrientation));
+        currentOrientation.normalize(); // Prevent drift
     }
 
-    // Return current rotation as a Quaternion
     public Quaternionf getRotation(float partialTicks) {
-        if (!initialized) {
-            return new Quaternionf().identity();
-        }
-
-        // Interpolate between last and current rotation
-        float interpX = Mth.lerp(partialTicks, lastRotX, rotX);
-        float interpY = Mth.lerp(partialTicks, lastRotY, rotY);
-        float interpZ = Mth.lerp(partialTicks, lastRotZ, rotZ);
-
-        return new Quaternionf()
-                .rotateXYZ(
-                        Mth.DEG_TO_RAD * interpX,
-                        Mth.DEG_TO_RAD * interpY,
-                        Mth.DEG_TO_RAD * interpZ
-                );
+        if (!initialized) return new Quaternionf().identity();
+        // Interpolate smoothly between orientations
+        return previousOrientation.nlerp(currentOrientation, partialTicks, new Quaternionf());
     }
 }

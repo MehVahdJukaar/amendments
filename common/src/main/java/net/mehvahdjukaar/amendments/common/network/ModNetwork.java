@@ -14,4 +14,11 @@ public class ModNetwork {
         event.registerClientBound(ClientBoundPlaySplashParticlesMessage.TYPE);
     }
 
+    public static final ChannelHandler CHANNEL = ChannelHandler.builder(Amendments.MOD_ID)
+            .version(2)
+            .register(NetworkDir.PLAY_TO_SERVER, ServerBoundSyncLecternBookMessage.class, ServerBoundSyncLecternBookMessage::new)
+            .register(NetworkDir.PLAY_TO_CLIENT, ClientBoundPlaySplashParticlesMessage.class, ClientBoundPlaySplashParticlesMessage::new)
+            .register(NetworkDir.PLAY_TO_CLIENT, ClientBoundEntityHitSwayingBlockMessage.class, ClientBoundEntityHitSwayingBlockMessage::new)
+            .register(NetworkDir.PLAY_TO_CLIENT, ClientBoundFireballExplodePacket.class, ClientBoundFireballExplodePacket::new)
+            .build();
 }

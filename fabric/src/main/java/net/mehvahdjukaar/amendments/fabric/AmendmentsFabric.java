@@ -20,10 +20,13 @@ import net.mehvahdjukaar.amendments.events.ModEvents;
 import net.mehvahdjukaar.amendments.reg.ModConstants;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
+import net.mehvahdjukaar.supplementaries.mixins.BookViewScreenMixin;
+import net.mehvahdjukaar.supplementaries.mixins.ExplosionMixin;
 import net.minecraft.Util;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.ai.village.poi.PoiTypes;
+import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.HashSet;
@@ -55,6 +58,7 @@ public class AmendmentsFabric implements ModInitializer {
     public static ResourceLocation shouldRemap(String namespace, String path) {
         if (Amendments.OLD_MODS.contains(namespace)) {
             if (NAMES.contains(path)) {
+                Explosion
                 return Amendments.res(path);
             }
         }

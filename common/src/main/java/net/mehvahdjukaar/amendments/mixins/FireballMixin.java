@@ -1,6 +1,7 @@
 package net.mehvahdjukaar.amendments.mixins;
 
 import net.mehvahdjukaar.amendments.common.FireballStats;
+import net.mehvahdjukaar.amendments.common.entity.IVisualRotationProvider;
 import net.mehvahdjukaar.amendments.common.entity.MediumFireball;
 import net.mehvahdjukaar.amendments.common.entity.TumblingAnimation;
 import net.mehvahdjukaar.amendments.configs.ClientConfigs;
@@ -15,13 +16,14 @@ import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Quaternionf;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 
 // just here because it annoyed me that you can pick these
 @Mixin(Fireball.class)
-public abstract class FireballMixin extends AbstractHurtingProjectile {
+public abstract class FireballMixin extends AbstractHurtingProjectile implements IVisualRotationProvider {
 
     @Unique
     private final ParticleTrailEmitter amendments$trailEmitter = MediumFireball.makeTrialEmitter();
@@ -32,12 +34,9 @@ public abstract class FireballMixin extends AbstractHurtingProjectile {
         super(entityType, level);
     }
 
-    public FireballMixin(EntityType<? extends AbstractHurtingProjectile> entityType, double x, double y, double z, double offsetX, double offsetY, double offsetZ, Level level) {
-        super(entityType, x, y, z, offsetX, offsetY, offsetZ, level);
-    }
-
-    public FireballMixin(EntityType<? extends AbstractHurtingProjectile> entityType, LivingEntity shooter, double offsetX, double offsetY, double offsetZ, Level level) {
-        super(entityType, shooter, offsetX, offsetY, offsetZ, level);
+    @Override
+    public Quaternionf amendments$getVisualRotation(float partialTicks) {
+        return this.amendments$tumblingAnimation.getRotation(partialTicks);
     }
 
     @Shadow
@@ -68,6 +67,8 @@ public abstract class FireballMixin extends AbstractHurtingProjectile {
                         level().addParticle(ModRegistry.FIREBALL_TRAIL_PARTICLE.get(), p.x, p.y, p.z, 0, 0, 0);
                     }
             );
+            amendments$tumblingAnimation.tick(random);
         }
+
     }
 }

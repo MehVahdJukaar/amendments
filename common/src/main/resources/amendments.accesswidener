@@ -9,7 +9,7 @@ accessible field net/minecraft/world/level/block/AbstractCauldronBlock interacti
 #banner renderer
 accessible field net/minecraft/client/renderer/blockentity/BannerRenderer bar Lnet/minecraft/client/model/geom/ModelPart;
 accessible field net/minecraft/client/renderer/blockentity/BannerRenderer flag Lnet/minecraft/client/model/geom/ModelPart;
-
+accessible field net/minecraft/world/level/Explosion fire Z
 #area of effect
 accessible field net/minecraft/world/entity/AreaEffectCloud effects Ljava/util/List;
 accessible field net/minecraft/world/entity/AreaEffectCloud reapplicationDelay I
