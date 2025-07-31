@@ -1,8 +1,9 @@
 package net.mehvahdjukaar.amendments.common;
 
 import net.mehvahdjukaar.amendments.common.entity.TumblingAnimation;
+import net.mehvahdjukaar.moonlight.api.entity.ParticleTrailEmitter;
 
-public class FireballStats {
+public class ProjectileStats {
 
     public static final Fire BLAZE_FIREBALL = new Fire(
             0.75f,
@@ -36,4 +37,30 @@ public class FireballStats {
         return new TumblingAnimation(
                 4f, 7f, 0.5f);
     }
+
+    public static TumblingAnimation makeFasterTumbler() {
+        return new TumblingAnimation(
+                6f, 9f, 0.5f);
+    }
+
+
+    public static ParticleTrailEmitter makeFireballTrialEmitter() {
+        return ParticleTrailEmitter.builder()
+                .spacing(0.5)
+                .maxParticlesPerTick(20)
+                .minSpeed(0.01)
+                .build();
+    }
+
+
+    public static ParticleTrailEmitter makeSnowballTrialEmitter() {
+        return ParticleTrailEmitter.builder()
+                .spacing(0.7)
+                .maxParticlesPerTick(20)
+                .minSpeed(0.01)
+                .build();
+    }
+
+
+
 }

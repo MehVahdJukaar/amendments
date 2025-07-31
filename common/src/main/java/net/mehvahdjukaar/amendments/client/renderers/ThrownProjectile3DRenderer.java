@@ -1,12 +1,22 @@
 package net.mehvahdjukaar.amendments.client.renderers;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.mehvahdjukaar.amendments.common.entity.IVisualRotationProvider;
+import com.mojang.math.Axis;
+import net.mehvahdjukaar.amendments.common.entity.IVisualTransformationProvider;
+import net.mehvahdjukaar.amendments.configs.ClientConfigs;
+import net.mehvahdjukaar.supplementaries.client.renderers.entities.CannonballRenderer;
+import net.minecraft.client.model.geom.PartPose;
+import net.minecraft.client.model.geom.builders.CubeListBuilder;
+import net.minecraft.client.model.geom.builders.LayerDefinition;
+import net.minecraft.client.model.geom.builders.MeshDefinition;
+import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
+import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 
 public abstract class ThrownProjectile3DRenderer<E extends Entity> extends EntityRenderer<E> {
@@ -30,9 +40,14 @@ public abstract class ThrownProjectile3DRenderer<E extends Entity> extends Entit
             poseStack.translate(0, entity.getBbHeight() / 2f, 0);
             poseStack.scale(scale, scale, scale);
 
-            if (entity instanceof IVisualRotationProvider vp) {
-                Quaternionf rotation = vp.amendments$getVisualRotation(partialTick);
-                poseStack.mulPose(rotation);
+            //face direction? of movement?
+            poseStack.mulPose(Axis.YN.rotationDegrees(180.0F - Mth.rotLerp(partialTick, entity.yRotO, entity.getYRot())));
+            poseStack.mulPose(Axis.XN.rotationDegrees(-Mth.rotLerp(partialTick, entity.xRotO, entity.getXRot())));
+
+
+            if (entity instanceof IVisualTransformationProvider vp && ClientConfigs.PROJECTILE_TUMBLE.get()) {
+                Matrix4f rotation = vp.amendments$getVisualTransformation(partialTick);
+                poseStack.mulPoseMatrix(rotation);
             }
 
             renderBall(entity, partialTick, poseStack, bufferSource, packedLight);
@@ -47,5 +62,26 @@ public abstract class ThrownProjectile3DRenderer<E extends Entity> extends Entit
         return texture;
     }
 
+    public static LayerDefinition createMesh(int size) {
+        int r = size / 2;
+        MeshDefinition mesh = new MeshDefinition();
+        PartDefinition root = mesh.getRoot();
+        root.addOrReplaceChild("cube", CubeListBuilder.create()
+                        .texOffs(0, 0)
+                        .addBox(-r, -r, -r, size, size, size),
+                PartPose.offset(0, 0, 0));
+
+        root.addOrReplaceChild("cube_emissive", CubeListBuilder.create()
+                        .texOffs(32, 0)
+                        .addBox(-r, -r, -r, size, size, size),
+                PartPose.offset(0, 0, 0));
+
+        root.addOrReplaceChild("overlay", CubeListBuilder.create()
+                        .texOffs(0, size*2)
+                        .addBox(-(r + 1), -(r + 1), -(r + 1), (size + 2), (size + 2), (size + 2)),
+                PartPose.offset(0, 0, 0));
+
+        return LayerDefinition.create(mesh, 64, 64);
+    }
 
 }

@@ -58,7 +58,6 @@ public class AmendmentsFabric implements ModInitializer {
     public static ResourceLocation shouldRemap(String namespace, String path) {
         if (Amendments.OLD_MODS.contains(namespace)) {
             if (NAMES.contains(path)) {
-                Explosion
                 return Amendments.res(path);
             }
         }

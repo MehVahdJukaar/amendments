@@ -1,6 +1,7 @@
 package net.mehvahdjukaar.amendments.common.entity;
 
-import net.mehvahdjukaar.amendments.common.FireballStats;
+import net.mehvahdjukaar.amendments.common.ProjectileStats;
+import net.mehvahdjukaar.amendments.configs.ClientConfigs;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.moonlight.api.entity.ImprovedProjectileEntity;
 import net.mehvahdjukaar.moonlight.api.entity.ParticleTrailEmitter;
@@ -15,20 +16,13 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 
-public class MediumFireball extends ImprovedProjectileEntity implements IVisualRotationProvider {
+public class MediumFireball extends ImprovedProjectileEntity implements IVisualTransformationProvider {
 
-    private final ParticleTrailEmitter trailEmitter = makeTrialEmitter();
-    public final TumblingAnimation tumblingAnimation = FireballStats.makeTumbler();
-
-    public static ParticleTrailEmitter makeTrialEmitter() {
-        return ParticleTrailEmitter.builder()
-                .spacing(0.5)
-                .maxParticlesPerTick(20)
-                .minSpeed(0)
-                .build();
-    }
+    private final ParticleTrailEmitter trailEmitter = ProjectileStats.makeFireballTrialEmitter();
+    public final TumblingAnimation tumblingAnimation = ProjectileStats.makeTumbler();
 
     public MediumFireball(Level level, LivingEntity shooter) {
         super(ModRegistry.MEDIUM_FIREBALL.get(), shooter, level);
@@ -51,12 +45,12 @@ public class MediumFireball extends ImprovedProjectileEntity implements IVisualR
             if (this.isInWater()) return;
             level().addParticle(ModRegistry.FIREBALL_TRAIL_PARTICLE.get(), p.x, p.y, p.z, 0, 0, 0);
         });
-        this.tumblingAnimation.tick(random);
+        if (ClientConfigs.CHARGES_TUMBLE.get())  this.tumblingAnimation.tick(random);
     }
 
     @Override
-    public Quaternionf amendments$getVisualRotation(float partialTicks) {
-        return this.tumblingAnimation.getRotation(partialTicks);
+    public Matrix4f amendments$getVisualTransformation(float partialTicks) {
+        return new Matrix4f().rotate(this.tumblingAnimation.getRotation(partialTicks));
 
     }
 

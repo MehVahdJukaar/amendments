@@ -1,0 +1,52 @@
+
+modLoader = "javafml"
+loaderVersion = "${loader_version_range}"
+
+license = "${mod_license}"
+issueTrackerURL = "${mod_github}/issues"
+
+[[mods]]
+    modId = "amendments"
+    version = "${mod_version}"
+    displayName = "${mod_name}"
+    logoFile = "icon.png"
+    authors = "${mod_authors}"
+    credits = "${mod_credits}"
+    description = '''${mod_description}'''
+    modUrl = "${mod_homepage}"
+    itemIcon="minecraft:cauldron" #catalogue icon
+
+[[dependencies.amendments]]
+    modId = "forge"
+    mandatory = true
+    versionRange = "${neo_version_range}"
+    ordering = "NONE"
+    side = "BOTH"
+
+[[dependencies.amendments]]
+    modId = "minecraft"
+    mandatory = true
+    versionRange = "[${minecraft_min_version},${minecraft_max_version})"
+    ordering = "NONE"
+    side = "BOTH"
+
+
+[[dependencies.amendments]]
+    modId = "moonlight"
+    mandatory = true
+    versionRange = "${required_moonlight_version}"
+    ordering = "NONE"
+    side = "BOTH"
+
+[[dependencies.amendments]]
+    modId = "supplementaries"
+    mandatory = false
+    versionRange = "[1.20-2.8.0,)"
+    ordering = "AFTER"
+    side = "BOTH"
+
+[[dependencies.amendments]]
+    modId = "flywheel"
+    mandatory = false
+    versionRange = "(0,)"
+    ordering = "NONE"
