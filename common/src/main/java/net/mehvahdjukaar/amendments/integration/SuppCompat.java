@@ -4,6 +4,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.mehvahdjukaar.amendments.common.block.CeilingBannerBlock;
 import net.mehvahdjukaar.amendments.common.tile.LiquidCauldronBlockTile;
+import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidStack;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidTank;
 import net.mehvahdjukaar.supplementaries.client.ModMaterials;
@@ -11,17 +12,22 @@ import net.mehvahdjukaar.supplementaries.common.block.IRopeConnection;
 import net.mehvahdjukaar.supplementaries.common.block.blocks.*;
 import net.mehvahdjukaar.supplementaries.common.block.faucet.FaucetBehaviorsManager;
 import net.mehvahdjukaar.supplementaries.common.block.faucet.FaucetTarget;
+import net.mehvahdjukaar.supplementaries.common.block.faucet.FluidOffer;
 import net.mehvahdjukaar.supplementaries.common.block.tiles.FaucetBlockTile;
 import net.mehvahdjukaar.supplementaries.common.misc.explosion.GunpowderExplosion;
 import net.mehvahdjukaar.supplementaries.common.utils.BlockUtil;
 import net.mehvahdjukaar.supplementaries.common.utils.MiscUtils;
 import net.mehvahdjukaar.supplementaries.configs.ClientConfigs;
+import net.mehvahdjukaar.supplementaries.reg.ModEntities;
+import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraft.client.resources.model.Material;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.BannerPatternItem;
 import net.minecraft.world.level.Level;
@@ -40,6 +46,7 @@ public class SuppCompat {
         FaucetBehaviorsManager.addRegisterFaucetInteraction(() -> {
             FaucetBlockTile.registerInteraction(new FaucetCauldronConversion());
         });
+
     }
 
     public static boolean canBannerAttachToRope(BlockState state, BlockState above) {
@@ -110,12 +117,18 @@ public class SuppCompat {
         return block instanceof CandleHolderBlock;
     }
 
+    public static EntityType<? extends Entity> getSlimeBall() {
+        return ModEntities.THROWABLE_SLIMEBALL.get();
+    }
+
 
     public static class FaucetCauldronConversion implements FaucetTarget.BlState {
 
         @Override
-        public Integer fill(Level level, BlockPos pos, BlockState target, SoftFluidStack fluid, int minAmount) {
+        public Integer fill(Level level, BlockPos pos, BlockState target, FluidOffer offer) {
             if (target.is(Blocks.CAULDRON)) {
+                SoftFluidStack fluid = offer.fluid();
+                int minAmount = offer.minAmount();
                 BlockState newState = getNewState(pos, level, fluid);
                 if (newState != null) {
                     level.setBlockAndUpdate(pos, newState);

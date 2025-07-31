@@ -64,6 +64,7 @@ public class Amendments {
         RegHelper.addDynamicDispenserBehaviorRegistration(Amendments::registerDispenserBehavior);
         RegHelper.registerSimpleRecipeCondition(res("flag"), CommonConfigs::isFlagOn);
         RegHelper.addItemsToTabsRegistration(Amendments::addItemsToTabs);
+        //TODO:make projectiles orient like cannonballs
         // configurable models for wall lanterns and skulls
         // add wall lantern stand model override instead of texture one
         // mud slows down mobs

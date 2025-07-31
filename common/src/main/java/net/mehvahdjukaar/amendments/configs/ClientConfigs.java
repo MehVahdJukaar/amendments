@@ -1,7 +1,9 @@
 package net.mehvahdjukaar.amendments.configs;
 
 import net.mehvahdjukaar.amendments.Amendments;
+import net.mehvahdjukaar.amendments.client.particles.FireballExplosionParticle;
 import net.mehvahdjukaar.amendments.common.PendulumAnimation;
+import net.mehvahdjukaar.amendments.integration.CompatHandler;
 import net.mehvahdjukaar.moonlight.api.ModSharedVariables;
 import net.mehvahdjukaar.moonlight.api.platform.configs.ConfigBuilder;
 import net.mehvahdjukaar.moonlight.api.platform.configs.ConfigSpec;
@@ -51,6 +53,11 @@ public class ClientConfigs {
     public static final Supplier<Boolean> FIREBALL_3D;
     public static final Supplier<Boolean> DRAGON_BREATH_EMISSIBE;
 
+    public static final Supplier<Boolean> SNOWBALL_3D;
+    public static final Supplier<Boolean> SLIMEBALL_3D;
+    public static final Supplier<Boolean> CHARGES_TUMBLE;
+    public static final Supplier<Boolean> PROJECTILE_TUMBLE;
+
     public static final Supplier<Double> BRIGHTEN_SIGN_TEXT_COLOR;
 
     private static float signColorMult = 1.2f;
@@ -74,11 +81,18 @@ public class ClientConfigs {
                 .define("text_color_multiplier", 1.2d, 0, 5);
         builder.pop();
 
-        builder.push("fireball");
+        builder.push("projectiles");
 
+        SNOWBALL_3D = builder.comment("Makes snowballs render in 3D")
+                .define("snowball_3d", true);
+        SLIMEBALL_3D = CompatHandler.SUPPLEMENTARIES ? builder.comment("Makes slimeballs render in 3D (supplementaries only)")
+                .define("slimeball_3d", true) : () -> false;
         FIREBALL_3D = builder.comment("Makes fireballs render in 3D")
                 .define("fireball_3d", true);
-
+        CHARGES_TUMBLE = builder.comment("Makes 3D charges tumble in the air when moving")
+                .define("charges_tumble", true);
+        PROJECTILE_TUMBLE = builder.comment("Makes 3D snowballs and slimeballs (supp compat) tumble in the air when moving")
+                .define("projectiles_tumble", false);
         builder.push("dragon_fireball");
         DRAGON_BREATH_EMISSIBE = builder.comment("Makes dragon's breath particles emissive to better match new visuals")
                 .define("dragon_breath_emissive", true);
@@ -86,7 +100,6 @@ public class ClientConfigs {
         builder.pop();
 
         builder.pop();
-
 
 
         builder.push("lily_pad");
@@ -143,7 +156,7 @@ public class ClientConfigs {
         LANTERN_HOLDING = builder.comment("Gives a special animation to lanterns when held in hand")
                 .define("lantern_item_holding", true);
         LANTERN_HOLDING_UP = builder.comment("Makes lantern holding animation have the arm angled more upwards. Looks better if you have dynamic lights on")
-                        .define("lantern_item_holding_up", false);
+                .define("lantern_item_holding_up", false);
         builder.pop();
 
         builder.push("cauldron");

@@ -16,6 +16,7 @@ import net.mehvahdjukaar.amendments.configs.ClientConfigs;
 import net.mehvahdjukaar.amendments.integration.CompatHandler;
 import net.mehvahdjukaar.amendments.integration.CompatObjects;
 import net.mehvahdjukaar.amendments.integration.FlywheelCompat;
+import net.mehvahdjukaar.amendments.integration.SuppCompat;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.moonlight.api.client.model.NestedModelLoader;
 import net.mehvahdjukaar.moonlight.api.misc.EventCalled;
@@ -95,8 +96,9 @@ public class AmendmentsClient {
     public static final ModelLayerLocation HANGING_SIGN_EXTENSION = loc("hanging_sign_extension");
     public static final ModelLayerLocation HANGING_SIGN_EXTENSION_CHAINS = loc("hanging_sign_chains");
     public static final ModelLayerLocation SKULL_CANDLE_OVERLAY = loc("skull_candle");
-    public static final ModelLayerLocation FIREBALL_MODEL = loc("fireball_3d");
-    public static final ModelLayerLocation SMALL_FIREBALL_MODEL = loc("small_fireball_3d");
+    public static final ModelLayerLocation BIG_THROWN_BALL = loc("bit_thrown_ball");
+    public static final ModelLayerLocation MEDIUM_THROWN_BALL = loc("medium_thrown_ball");
+    public static final ModelLayerLocation SMALL_THROWN_BALL = loc("small_thrown_ball");
 
     public static final ResourceLocation BELL_ROPE = Amendments.res("block/bell_rope");
     public static final ResourceLocation BELL_CHAIN = Amendments.res("block/bell_chain");
@@ -106,11 +108,13 @@ public class AmendmentsClient {
     public static final ResourceLocation RABBIT_STEW = Amendments.res("block/rabbit_stew_cauldron");
     public static final ResourceLocation BEETROOT_SOUP = Amendments.res("block/beetroot_soup_cauldron");
     public static final ResourceLocation SUS_STEW = Amendments.res("block/suspicious_stew_cauldron");
-    public static final ResourceLocation BLAZE_TEXTURE = Amendments.res("textures/entity/fireball/blazeball_3d.png");
-    public static final ResourceLocation FIREBALL_TEXTURE = Amendments.res("textures/entity/fireball/fireball_3d.png");
-    public static final ResourceLocation FIREBALL_OVERLAY_TEXTURE = Amendments.res("textures/entity/fireball/fireball_3d_overlay.png");
-    public static final ResourceLocation DRAGON_FIREBALL_TEXTURE = Amendments.res("textures/entity/fireball/dragon_fireball_3d.png");
-    public static final ResourceLocation DRAGON_FIREBALL_OVERLAY_TEXTURE = Amendments.res("textures/entity/fireball/dragon_fireball_3d_overlay.png");
+    public static final ResourceLocation BLAZE_TEXTURE = Amendments.res("textures/entity/projectile/blazeball_3d.png");
+    public static final ResourceLocation FIREBALL_TEXTURE = Amendments.res("textures/entity/projectile/fireball_3d.png");
+    public static final ResourceLocation FIREBALL_OVERLAY_TEXTURE = Amendments.res("textures/entity/projectile/fireball_3d_overlay.png");
+    public static final ResourceLocation DRAGON_FIREBALL_TEXTURE = Amendments.res("textures/entity/projectile/dragon_fireball_3d.png");
+    public static final ResourceLocation DRAGON_FIREBALL_OVERLAY_TEXTURE = Amendments.res("textures/entity/projectile/dragon_fireball_3d_overlay.png");
+    public static final ResourceLocation SNOWBALL_TEXTURE = Amendments.res("textures/entity/projectile/snowball_3d.png");
+    public static final ResourceLocation SLIMEBALL_TEXTURE = Amendments.res("textures/entity/projectile/slimeball_3d.png");
 
     private static ModelLayerLocation loc(String name) {
         return new ModelLayerLocation(Amendments.res(name), name);
@@ -194,28 +198,36 @@ public class AmendmentsClient {
         //override vanilla renderers
         if (ClientConfigs.FIREBALL_3D.get()) {
             //same visual scale as the original
-            event.register(EntityType.SMALL_FIREBALL, context -> new FireballRenderer<>(context,
+            event.register(EntityType.SMALL_FIREBALL, context -> new Fireball3DRenderer<>(context,
                     modelScale * 0.75f, BLAZE_TEXTURE, FIREBALL_OVERLAY_TEXTURE,
-                    SMALL_FIREBALL_MODEL, true));
-            event.register(EntityType.FIREBALL, context -> new FireballRenderer(context,
+                    MEDIUM_THROWN_BALL, true));
+            event.register(EntityType.FIREBALL, context -> new Fireball3DRenderer<>(context,
                     modelScale * 2.375f, FIREBALL_TEXTURE, FIREBALL_OVERLAY_TEXTURE,
-                    FIREBALL_MODEL, false));
-            event.register(EntityType.DRAGON_FIREBALL, context -> new FireballRenderer<>(context,
+                    BIG_THROWN_BALL, false));
+            event.register(EntityType.DRAGON_FIREBALL, context -> new Fireball3DRenderer<>(context,
                     modelScale * 2.375f, DRAGON_FIREBALL_TEXTURE, DRAGON_FIREBALL_OVERLAY_TEXTURE,
-                    FIREBALL_MODEL, false));
+                    BIG_THROWN_BALL, false));
 
             //mod own entities
-            event.register(ModRegistry.MEDIUM_DRAGON_FIREBALL.get(), context -> new FireballRenderer<>(context,
+            event.register(ModRegistry.MEDIUM_DRAGON_FIREBALL.get(), context -> new Fireball3DRenderer<>(context,
                     modelScale * 0.75f, DRAGON_FIREBALL_TEXTURE, DRAGON_FIREBALL_OVERLAY_TEXTURE,
-                    FIREBALL_MODEL, false));
+                    BIG_THROWN_BALL, false));
 
-            event.register(ModRegistry.MEDIUM_FIREBALL.get(), context -> new FireballRenderer<>(context,
+            event.register(ModRegistry.MEDIUM_FIREBALL.get(), context -> new Fireball3DRenderer<>(context,
                     modelScale * 0.75f, FIREBALL_TEXTURE, FIREBALL_OVERLAY_TEXTURE,
-                    FIREBALL_MODEL, false));
+                    BIG_THROWN_BALL, false));
 
         } else {
             event.register(ModRegistry.MEDIUM_FIREBALL.get(), ThrownItemRenderer::new);
             event.register(ModRegistry.MEDIUM_DRAGON_FIREBALL.get(), ThrownItemRenderer::new);
+        }
+        if (ClientConfigs.SNOWBALL_3D.get()) {
+            event.register(EntityType.SNOWBALL, context -> new Small3DBallRenderer(context,
+                    modelScale, SNOWBALL_TEXTURE, false));
+        }
+        if (CompatHandler.SUPPLEMENTARIES && ClientConfigs.SLIMEBALL_3D.get()) {
+            event.register(SuppCompat.getSlimeBall(), context -> new Small3DBallRenderer(context,
+                    modelScale, SLIMEBALL_TEXTURE, true));
         }
 
         event.register(ModRegistry.RING_EFFECT_CLOUD.get(), NoopRenderer::new);
@@ -244,8 +256,9 @@ public class AmendmentsClient {
         event.register(HANGING_SIGN_EXTENSION, HangingSignRendererExtension::createMesh);
         event.register(HANGING_SIGN_EXTENSION_CHAINS, HangingSignRendererExtension::createChainMesh);
         event.register(SKULL_CANDLE_OVERLAY, SkullCandleOverlayModel::createMesh);
-        event.register(FIREBALL_MODEL, () -> FireballRenderer.createMesh(8));
-        event.register(SMALL_FIREBALL_MODEL, () -> FireballRenderer.createMesh(6));
+        event.register(BIG_THROWN_BALL, () -> ThrownProjectile3DRenderer.createMesh(8));
+        event.register(MEDIUM_THROWN_BALL, () -> ThrownProjectile3DRenderer.createMesh(6));
+        event.register(SMALL_THROWN_BALL, () -> ThrownProjectile3DRenderer.createMesh(4));
     }
 
     @EventCalled

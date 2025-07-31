@@ -1,13 +1,12 @@
 package net.mehvahdjukaar.amendments.common.entity;
 
-import net.mehvahdjukaar.amendments.common.FireballStats;
+import net.mehvahdjukaar.amendments.common.ProjectileStats;
+import net.mehvahdjukaar.amendments.configs.ClientConfigs;
 import net.mehvahdjukaar.amendments.configs.CommonConfigs;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.moonlight.api.entity.ImprovedProjectileEntity;
 import net.mehvahdjukaar.moonlight.api.entity.ParticleTrailEmitter;
-import net.minecraft.client.particle.DragonBreathParticle;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -20,17 +19,14 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
-import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
-import org.joml.Quaterniond;
+import org.joml.Matrix4f;
 import org.joml.Quaternionf;
-import org.joml.Vector3d;
-import org.joml.Vector3f;
 
-public class MediumDragonFireball extends ImprovedProjectileEntity implements IVisualRotationProvider{
+public class MediumDragonFireball extends ImprovedProjectileEntity implements IVisualTransformationProvider {
 
     private final ParticleTrailEmitter trailEmitter = makeTrialEmitter(false);
-    private final TumblingAnimation tumblingAnimation = FireballStats.makeTumbler();
+    private final TumblingAnimation tumblingAnimation = ProjectileStats.makeTumbler();
     
     public MediumDragonFireball(EntityType<? extends MediumDragonFireball> entityType, Level level) {
         super(entityType, level);
@@ -61,12 +57,12 @@ public class MediumDragonFireball extends ImprovedProjectileEntity implements IV
                     random.nextGaussian() * 0.04,
                     random.nextGaussian() * 0.04);
         });
-        tumblingAnimation.tick(this.random);
+        if (ClientConfigs.CHARGES_TUMBLE.get())  tumblingAnimation.tick(this.random);
     }
 
     @Override
-    public Quaternionf amendments$getVisualRotation(float partialTicks) {
-        return this.tumblingAnimation.getRotation(partialTicks);
+    public Matrix4f amendments$getVisualTransformation(float partialTicks) {
+        return new Matrix4f().rotate(tumblingAnimation.getRotation(partialTicks));
     }
 
     @Override

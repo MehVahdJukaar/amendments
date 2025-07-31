@@ -2,6 +2,7 @@ package net.mehvahdjukaar.amendments.common.entity;
 
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
+import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 
 public class TumblingAnimation {
