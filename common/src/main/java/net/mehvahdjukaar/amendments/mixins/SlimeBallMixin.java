@@ -34,7 +34,7 @@ public abstract class SlimeBallMixin extends ThrowableItemProjectile implements 
 
     @Inject(method = "bounce", at = @At("HEAD"), remap = false)
     public void amendments$addSquish(Vec3 newVel, CallbackInfo ci) {
-        amendments$elasticAnimation.setSquishDownTicks(20); // 1 second of squish
+        amendments$elasticAnimation.setSquishedDown(); // 1 second of squish
     }
 
 

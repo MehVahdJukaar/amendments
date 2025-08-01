@@ -1,5 +1,6 @@
 package net.mehvahdjukaar.amendments.common;
 
+import net.mehvahdjukaar.amendments.common.entity.ParticleTrailEmitter2;
 import net.mehvahdjukaar.amendments.common.entity.TumblingAnimation;
 import net.mehvahdjukaar.moonlight.api.entity.ParticleTrailEmitter;
 
@@ -53,9 +54,19 @@ public class ProjectileStats {
     }
 
 
+    public static ParticleTrailEmitter2 makeFireballTrialEmitter2() {
+        return ParticleTrailEmitter2.builder()
+                .spacing(0.5)
+                .maxParticlesPerTick(20)
+                .minSpeed(0.01)
+                .build();
+    }
+
+
+
     public static ParticleTrailEmitter makeSnowballTrialEmitter() {
         return ParticleTrailEmitter.builder()
-                .spacing(0.7)
+                .spacing(0.35)
                 .maxParticlesPerTick(20)
                 .minSpeed(0.01)
                 .build();

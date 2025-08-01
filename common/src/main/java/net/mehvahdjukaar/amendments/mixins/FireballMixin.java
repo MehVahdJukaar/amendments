@@ -60,10 +60,11 @@ public abstract class FireballMixin extends AbstractHurtingProjectile implements
             amendments$trailEmitter.tick(this,
                     (p, v) -> {
                         if (this.isInWater()) return;
-                        level().addParticle(ModRegistry.FIREBALL_TRAIL_PARTICLE.get(), p.x, p.y, p.z, 0, 0, 0);
+                        level().addParticle(ModRegistry.FIREBALL_TRAIL_PARTICLE.get(), p.x, p.y, p.z,
+                                this.getBbWidth()*0.8, 0, 0);
                     }
             );
-            if (ClientConfigs.CHARGES_TUMBLE.get())  amendments$tumblingAnimation.tick(random);
+            if (ClientConfigs.CHARGES_TUMBLE.get()) amendments$tumblingAnimation.tick(random);
         }
 
     }

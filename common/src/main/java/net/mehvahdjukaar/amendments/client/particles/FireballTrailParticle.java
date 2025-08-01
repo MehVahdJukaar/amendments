@@ -20,9 +20,9 @@ public class FireballTrailParticle extends TextureSheetParticle {
         this.xd *= 0.1;
         this.yd *= 0.1;
         this.zd *= 0.1;
-        this.quadSize *= 0.75F * 3;
+        this.quadSize = (float) (size) + (0.2f * clientLevel.random.nextFloat());
+        this.quadSize = Math.max(0.1f, this.quadSize);
         this.lifetime = 20;
-        this.lifetime = Math.max(this.lifetime, 1);
         this.setSpriteFromAge(sprites);
         this.roll = Mth.PI * clientLevel.random.nextFloat();
         this.oRoll = roll;
