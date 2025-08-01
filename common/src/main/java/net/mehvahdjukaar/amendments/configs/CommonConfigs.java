@@ -1,6 +1,7 @@
 package net.mehvahdjukaar.amendments.configs;
 
 import net.mehvahdjukaar.amendments.Amendments;
+import net.mehvahdjukaar.amendments.client.particles.FireballExplosionParticle;
 import net.mehvahdjukaar.amendments.common.entity.FallingLanternEntity;
 import net.mehvahdjukaar.moonlight.api.platform.configs.ConfigBuilder;
 import net.mehvahdjukaar.moonlight.api.platform.configs.ConfigSpec;
@@ -17,6 +18,7 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 public class CommonConfigs {
+
 
     public enum MixingMode {
         OFF, ONLY_BOILING, ON
@@ -75,6 +77,7 @@ public class CommonConfigs {
     public static final Supplier<Boolean> DEFLECT_FIRE_CHARGES;
     public static final Supplier<Boolean> THROWABLE_FIRE_CHARGES;
 
+    public static final Supplier<Integer> SNOWBALL_FREEZE;
 
     public static final ConfigSpec SPEC;
 
@@ -96,6 +99,11 @@ public class CommonConfigs {
         THROWABLE_FIRE_CHARGES = builder.comment("Allows throwing fire & dragon charges")
                 .define("throwable", true);
 
+        builder.pop();
+
+        builder.push("snowball");
+        SNOWBALL_FREEZE = builder.comment("Allows snowballs to freeze entities on hit. Config is for how many ticks it will freeze")
+                .define("freeze_ticks", 20, 0, 1000);
         builder.pop();
 
         builder.push("hanging_signs");

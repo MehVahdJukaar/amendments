@@ -40,12 +40,11 @@ public abstract class ThrownProjectile3DRenderer<E extends Entity> extends Entit
             poseStack.translate(0, entity.getBbHeight() / 2f, 0);
             poseStack.scale(scale, scale, scale);
 
-            //face direction? of movement?
             poseStack.mulPose(Axis.YN.rotationDegrees(180.0F - Mth.rotLerp(partialTick, entity.yRotO, entity.getYRot())));
             poseStack.mulPose(Axis.XN.rotationDegrees(-Mth.rotLerp(partialTick, entity.xRotO, entity.getXRot())));
 
 
-            if (entity instanceof IVisualTransformationProvider vp && ClientConfigs.PROJECTILE_TUMBLE.get()) {
+            if (entity instanceof IVisualTransformationProvider vp) {
                 Matrix4f rotation = vp.amendments$getVisualTransformation(partialTick);
                 poseStack.mulPoseMatrix(rotation);
             }

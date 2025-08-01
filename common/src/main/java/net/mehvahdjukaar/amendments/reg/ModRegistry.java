@@ -123,16 +123,16 @@ public class ModRegistry {
             RegHelper.registerEntityType(res("medium_dragon_fireball"),
                     () -> EntityType.Builder.<MediumDragonFireball>of(MediumDragonFireball::new, MobCategory.MISC)
                             .sized(0.3125F, 0.3125F)
-                            .clientTrackingRange(4)
+                            .clientTrackingRange(10)
                             .fireImmune()
-                            .updateInterval(10)
+                            .updateInterval(1)
                             .build("medium_dragon_fireball"));
 
     public static final Supplier<EntityType<MediumFireball>> MEDIUM_FIREBALL =
             RegHelper.registerEntityType(res("medium_fireball"),
                     () -> EntityType.Builder.<MediumFireball>of(MediumFireball::new, MobCategory.MISC)
                             .sized(0.3125F, 0.3125F)
-                            .clientTrackingRange(4)
+                            .clientTrackingRange(10)
                             .fireImmune()
                             .updateInterval(10)
                             .build("medium_fireball"));

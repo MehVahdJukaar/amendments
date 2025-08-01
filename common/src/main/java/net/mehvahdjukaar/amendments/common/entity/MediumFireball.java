@@ -5,6 +5,7 @@ import net.mehvahdjukaar.amendments.configs.ClientConfigs;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.moonlight.api.entity.ImprovedProjectileEntity;
 import net.mehvahdjukaar.moonlight.api.entity.ParticleTrailEmitter;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.Entity;
@@ -21,7 +22,7 @@ import org.joml.Quaternionf;
 
 public class MediumFireball extends ImprovedProjectileEntity implements IVisualTransformationProvider {
 
-    private final ParticleTrailEmitter trailEmitter = ProjectileStats.makeFireballTrialEmitter();
+    private final ParticleTrailEmitter2 trailEmitter = ProjectileStats.makeFireballTrialEmitter2();
     public final TumblingAnimation tumblingAnimation = ProjectileStats.makeTumbler();
 
     public MediumFireball(Level level, LivingEntity shooter) {
@@ -43,8 +44,11 @@ public class MediumFireball extends ImprovedProjectileEntity implements IVisualT
         super.spawnTrailParticles();
         trailEmitter.tick(this, (p, v) -> {
             if (this.isInWater()) return;
-            level().addParticle(ModRegistry.FIREBALL_TRAIL_PARTICLE.get(), p.x, p.y, p.z, 0, 0, 0);
+            level().addParticle(ModRegistry.FIREBALL_TRAIL_PARTICLE.get(), p.x, p.y, p.z,
+                    this.getBbWidth(), 0, 0);
         });
+        level().addParticle(ParticleTypes.END_ROD, this.getX(), this.getY(), this.getZ(),
+               0* this.getBbWidth(), 0, 0);
         if (ClientConfigs.CHARGES_TUMBLE.get())  this.tumblingAnimation.tick(random);
     }
 
