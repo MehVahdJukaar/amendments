@@ -1,11 +1,11 @@
 package net.mehvahdjukaar.amendments.common.entity;
 
+import net.mehvahdjukaar.amendments.client.TumblingAnimation;
 import net.mehvahdjukaar.amendments.common.ProjectileStats;
 import net.mehvahdjukaar.amendments.configs.ClientConfigs;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.moonlight.api.entity.ImprovedProjectileEntity;
 import net.mehvahdjukaar.moonlight.api.entity.ParticleTrailEmitter;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.Entity;
@@ -18,11 +18,10 @@ import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
-import org.joml.Quaternionf;
 
 public class MediumFireball extends ImprovedProjectileEntity implements IVisualTransformationProvider {
 
-    private final ParticleTrailEmitter2 trailEmitter = ProjectileStats.makeFireballTrialEmitter2();
+    private final ParticleTrailEmitter trailEmitter = ProjectileStats.makeFireballTrialEmitter();
     public final TumblingAnimation tumblingAnimation = ProjectileStats.makeTumbler();
 
     public MediumFireball(Level level, LivingEntity shooter) {
@@ -39,17 +38,19 @@ public class MediumFireball extends ImprovedProjectileEntity implements IVisualT
         super(mediumFireballEntityType, level);
     }
 
+    boolean a = false;
+
     @Override
     public void spawnTrailParticles() {
         super.spawnTrailParticles();
+        if (!level().isClientSide) return;
         trailEmitter.tick(this, (p, v) -> {
-            if (this.isInWater()) return;
+             if (this.isInWater()) return;
             level().addParticle(ModRegistry.FIREBALL_TRAIL_PARTICLE.get(), p.x, p.y, p.z,
                     this.getBbWidth(), 0, 0);
         });
-        level().addParticle(ParticleTypes.END_ROD, this.getX(), this.getY(), this.getZ(),
-               0* this.getBbWidth(), 0, 0);
-        if (ClientConfigs.CHARGES_TUMBLE.get())  this.tumblingAnimation.tick(random);
+
+        if (ClientConfigs.CHARGES_TUMBLE.get()) this.tumblingAnimation.tick(random);
     }
 
     @Override
@@ -58,12 +59,13 @@ public class MediumFireball extends ImprovedProjectileEntity implements IVisualT
 
     }
 
+
     @Override
     protected void onHit(HitResult result) {
         super.onHit(result);
         //just on client?
         level().addAlwaysVisibleParticle(ModRegistry.FIREBALL_EMITTER_PARTICLE.get(),
-                this.getX(), this.getY(), this.getZ(),
+                0, this.getY(), 0,
                 0, 0, 0);
 
         //create fire only explosion

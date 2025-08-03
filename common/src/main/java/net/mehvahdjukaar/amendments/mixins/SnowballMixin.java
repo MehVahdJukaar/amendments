@@ -2,7 +2,7 @@ package net.mehvahdjukaar.amendments.mixins;
 
 import net.mehvahdjukaar.amendments.common.ProjectileStats;
 import net.mehvahdjukaar.amendments.common.entity.IVisualTransformationProvider;
-import net.mehvahdjukaar.amendments.common.entity.TumblingAnimation;
+import net.mehvahdjukaar.amendments.client.TumblingAnimation;
 import net.mehvahdjukaar.amendments.configs.ClientConfigs;
 import net.mehvahdjukaar.amendments.configs.CommonConfigs;
 import net.mehvahdjukaar.moonlight.api.entity.ParticleTrailEmitter;
@@ -13,7 +13,6 @@ import net.minecraft.world.entity.projectile.Snowball;
 import net.minecraft.world.entity.projectile.ThrowableItemProjectile;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.EntityHitResult;
-import net.minecraft.world.phys.HitResult;
 import org.joml.Matrix4f;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -52,7 +51,7 @@ public abstract class SnowballMixin extends ThrowableItemProjectile implements I
                         var px = random.triangle(-0.2, 0.2);
                         var py = random.triangle(-0.2, 0.2);
                         var pz = random.triangle(-0.2, 0.2);
-                        level().addParticle(ParticleTypes.SNOWFLAKE, p.x + px, p.y + py, p.z + pz,
+                        level().addParticle(ParticleTypes.SNOWFLAKE, p.x + px, p.y + py+ 0.1, p.z + pz,
                                 gx, gy, gz);
                     }
             );

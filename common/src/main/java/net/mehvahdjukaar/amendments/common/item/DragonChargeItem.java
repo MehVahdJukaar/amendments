@@ -1,5 +1,6 @@
 package net.mehvahdjukaar.amendments.common.item;
 
+import net.mehvahdjukaar.amendments.common.ProjectileStats;
 import net.mehvahdjukaar.amendments.common.entity.MediumDragonFireball;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvents;
@@ -28,7 +29,8 @@ public class DragonChargeItem extends Item {
         level.playSound( null, player.getX(),player.getEyeY() - 0.1, player.getZ(), SoundEvents.SNOWBALL_THROW, SoundSource.NEUTRAL, 0.5F, 0.4F / (level.getRandom().nextFloat() * 0.4F + 0.8F));
         if (!level.isClientSide) {
             MediumDragonFireball snowball = new MediumDragonFireball(level, player);
-            snowball.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, 1.5F, 1.0F);
+            snowball.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F,
+                    ProjectileStats.THROWN_SPEED, 1.0F);
             level.addFreshEntity(snowball);
         }
 
