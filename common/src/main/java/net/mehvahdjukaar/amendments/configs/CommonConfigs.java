@@ -99,7 +99,7 @@ public static final Supplier<Integer> SNOWBALL_FREEZE;
 
         builder.push("snowball");
         SNOWBALL_FREEZE = builder.comment("Allows snowballs to freeze entities on hit. Config is for how many ticks it will freeze")
-                .define("freeze_ticks", 20, 0, 1000);
+                .define("freeze_ticks", 35, 0, 1000);
         builder.pop();
 
         builder.push("hanging_signs");

@@ -1,10 +1,13 @@
 package net.mehvahdjukaar.amendments.events.behaviors;
 
+import net.mehvahdjukaar.amendments.common.ProjectileStats;
 import net.mehvahdjukaar.amendments.common.entity.MediumFireball;
 import net.mehvahdjukaar.amendments.configs.CommonConfigs;
+import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -32,11 +35,12 @@ public class FireChargeShoot implements ItemUse{
         ItemStack itemStack = player.getItemInHand(usedHand);
         //   this.playSound(level, blockPos);
         //same as in ThrowableProjectile
+        //TODO:fire charge sound here
         level.playSound(null, player.getX(), player.getEyeY() - 0.1, player.getZ(), SoundEvents.SNOWBALL_THROW, SoundSource.NEUTRAL, 0.5F, 0.4F / (level.getRandom().nextFloat() * 0.4F + 0.8F));
         if (!level.isClientSide) {
-            MediumFireball snowball = new MediumFireball(level, player);
-            snowball.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, 1.5F, 1.0F);
-            level.addFreshEntity(snowball);
+            MediumFireball ball = new MediumFireball(level, player);
+            ball.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, ProjectileStats.THROWN_SPEED, 1f);
+            level.addFreshEntity(ball);
         }
 
         player.awardStat(Stats.ITEM_USED.get(stack.getItem()));
@@ -44,5 +48,10 @@ public class FireChargeShoot implements ItemUse{
             itemStack.shrink(1);
         }
         return InteractionResult.sidedSuccess(level.isClientSide);
+    }
+
+    private void playSound(Level level, BlockPos pos) {
+        RandomSource randomSource = level.getRandom();
+        level.playSound(null, pos, SoundEvents.FIRECHARGE_USE, SoundSource.BLOCKS, 1.0F, (randomSource.nextFloat() - randomSource.nextFloat()) * 0.2F + 1.0F);
     }
 }

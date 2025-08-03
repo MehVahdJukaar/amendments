@@ -1,4 +1,4 @@
-package net.mehvahdjukaar.amendments.common.entity;
+package net.mehvahdjukaar.amendments.client;
 
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
@@ -18,10 +18,10 @@ public class ElasticAnimation {
 
         squishTicks = Math.max(0, squishTicks - 1);
 
-        double speed = Mth.clamp(movement.lengthSqr() * 4, 0, 1);
+        double speed = Mth.clamp(movement.lengthSqr() * 3, 0, 1);
         oldSquosh = squosh;
         oldSquish = squish;
-        squosh = (float) Math.max(0.3, (1 + speed - 1.0f * squishTicks / MAX_SQUISH_TICKS));
+        squosh = (float) Math.max(0.3, (1 + speed - (1.0f * squishTicks / MAX_SQUISH_TICKS)));
         squish = 1 / Mth.sqrt(squosh);
     }
 

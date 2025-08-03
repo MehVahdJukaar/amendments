@@ -142,7 +142,7 @@ public class ClientResourceGenerator extends DynClientResourcesGenerator {
 
             Respriter respriter = Respriter.masked(template, mask);
 
-            for (WoodType w : WoodTypeRegistry.getTypes()) {
+            for (WoodType w : WoodTypeRegistry.INSTANCE.getValues()) {
                 Block sing = w.getBlockOfThis("sign");
                 if (sing == null) continue;
 
@@ -201,7 +201,7 @@ public class ClientResourceGenerator extends DynClientResourcesGenerator {
                 .copyRect(27, 28, 1, 8, 10, 4)
                 .build();
 
-        for (WoodType w : WoodTypeRegistry.getTypes()) {
+        for (WoodType w : WoodTypeRegistry.INSTANCE.getValues()) {
             Block hangingSign = w.getBlockOfThis("hanging_sign");
             if (hangingSign == null) continue;
             //hanging sign extension textures

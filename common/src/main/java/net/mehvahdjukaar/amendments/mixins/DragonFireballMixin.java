@@ -3,7 +3,7 @@ package net.mehvahdjukaar.amendments.mixins;
 import net.mehvahdjukaar.amendments.common.ProjectileStats;
 import net.mehvahdjukaar.amendments.common.entity.IVisualTransformationProvider;
 import net.mehvahdjukaar.amendments.common.entity.MediumDragonFireball;
-import net.mehvahdjukaar.amendments.common.entity.TumblingAnimation;
+import net.mehvahdjukaar.amendments.client.TumblingAnimation;
 import net.mehvahdjukaar.amendments.configs.ClientConfigs;
 import net.mehvahdjukaar.moonlight.api.entity.ParticleTrailEmitter;
 import net.minecraft.core.particles.ParticleTypes;
