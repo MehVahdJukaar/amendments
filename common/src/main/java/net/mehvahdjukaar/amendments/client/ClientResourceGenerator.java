@@ -24,7 +24,6 @@ import net.mehvahdjukaar.moonlight.api.resources.textures.TextureImage;
 import net.mehvahdjukaar.moonlight.api.set.wood.WoodType;
 import net.mehvahdjukaar.moonlight.api.set.wood.WoodTypeRegistry;
 import net.mehvahdjukaar.moonlight.api.util.Utils;
-import net.mehvahdjukaar.supplementaries.client.renderers.color.ColorHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
@@ -78,7 +77,7 @@ public class ClientResourceGenerator extends DynClientResourcesGenerator {
 
         if (ClientConfigs.PIXEL_CONSISTENT_SIGNS.get()) {
             executor.accept(this::generateSignAssets);
-            executor.accept(this::generateFdSignAssets);
+            if (CompatHandler.FARMERS_DELIGHT) executor.accept(this::generateFdSignAssets);
         }
 
         executor.accept((manager, sink) -> {
@@ -128,7 +127,7 @@ public class ClientResourceGenerator extends DynClientResourcesGenerator {
         super.regenerateDynamicAssets(manager);
     }
 
-    private void generateFdSignAssets(ResourceManager manager, ResourceSink sink){
+    private void generateFdSignAssets(ResourceManager manager, ResourceSink sink) {
         ImageTransformer transformer = ImageTransformer.builder(64, 32, 64, 32)
                 .copyRect(0, 12, 28, 2, 0, 9)
                 .copyRect(26, 2, 2, 14, 18, 2)
@@ -141,10 +140,10 @@ public class ClientResourceGenerator extends DynClientResourcesGenerator {
                 .build();
 
         List<String> names = new ArrayList<>();
-        Arrays.stream(DyeColor.values()).forEach(d -> names.add("_"+d.getName()));
+        Arrays.stream(DyeColor.values()).forEach(d -> names.add("_" + d.getName()));
         names.add("");
-        for(var d : names){
-            ResourceLocation res = new ResourceLocation( "farmersdelight:entity/signs/canvas"+ d);
+        for (var d : names) {
+            ResourceLocation res = new ResourceLocation("farmersdelight:entity/signs/canvas" + d);
 
             try (TextureImage vanillaTexture = TextureImage.open(manager, res)) {
                 TextureImage newImage = vanillaTexture.makeCopy();

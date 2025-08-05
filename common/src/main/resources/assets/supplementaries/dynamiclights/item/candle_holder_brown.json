@@ -1,4 +1,10 @@
 {
+  "global_conditions": [
+    {
+      "modid": "supplementaries",
+      "type": "forge:mod_loaded"
+    }
+  ],
   "match": {
     "items": "supplementaries:candle_holder_brown"
   },
