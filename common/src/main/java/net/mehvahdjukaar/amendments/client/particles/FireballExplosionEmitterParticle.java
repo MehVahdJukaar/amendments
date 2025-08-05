@@ -14,7 +14,7 @@ public class FireballExplosionEmitterParticle extends NoRenderParticle {
 
     FireballExplosionEmitterParticle(ClientLevel clientLevel, double x, double y, double z, double size) {
         super(clientLevel, x, y, z, 0.0, 0.0, 0.0);
-        this.size = size+1;
+        this.size = size + 1;
     }
 
     @Override

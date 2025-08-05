@@ -1,0 +1,11 @@
+{
+  "explosion.fireball": {
+    "sounds": [
+      "amendments:fireball_impact_0",
+      "amendments:fireball_impact_1",
+      "amendments:fireball_impact_2",
+      "amendments:fireball_impact_3"
+    ],
+    "subtitle": "subtitles.amendments.fireball_explosion"
+  }
+}

@@ -30,6 +30,7 @@ import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -111,6 +112,8 @@ public class ModRegistry {
     public static final Supplier<SimpleParticleType> FIREBALL_TRAIL_PARTICLE = RegHelper.registerParticle(res("fireball_trail"));
     public static final Supplier<SimpleParticleType> FIREBALL_EMITTER_PARTICLE = RegHelper.registerParticle(res("fireball_explosion_emitter"));
     public static final Supplier<SimpleParticleType> FIREBALL_EXPLOSION_PARTICLE = RegHelper.registerParticle(res("fireball_explosion"));
+
+    public static final Supplier<SoundEvent> FIREBALL_EXPLOSION_SOUND = RegHelper.registerSound(res("explosion.fireball"));
 
     /* todo
     private static final Supplier<RecipeType<CauldronRecipe>> CAULDRON_RECIPE = RegHelper.registerRecipeType(

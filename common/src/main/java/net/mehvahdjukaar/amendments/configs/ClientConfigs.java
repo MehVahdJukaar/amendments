@@ -51,7 +51,9 @@ public class ClientConfigs {
     public static final Supplier<Boolean> FAST_HOOKS;
 
     public static final Supplier<Boolean> FIREBALL_3D;
+    public static final Supplier<Boolean> GHAST_FIREBALL_TRAIL;
     public static final Supplier<Boolean> DRAGON_BREATH_EMISSIBE;
+    public static final Supplier<Boolean> DRAGON_FIREBALL_TRAIL;
 
     public static final Supplier<Boolean> SNOWBALL_3D;
     public static final Supplier<Boolean> SLIMEBALL_3D;
@@ -87,8 +89,12 @@ public class ClientConfigs {
                 .define("snowball_3d", true);
         SLIMEBALL_3D = CompatHandler.SUPPLEMENTARIES ? builder.comment("Makes slimeballs render in 3D (supplementaries only)")
                 .define("slimeball_3d", true) : () -> false;
-        FIREBALL_3D = builder.comment("Makes fireballs render in 3D")
+        FIREBALL_3D = builder.comment("Makes ghast & blazes fireballs render in 3D")
                 .define("fireball_3d", true);
+        GHAST_FIREBALL_TRAIL = builder.comment("Makes ghast & blazes fireballs leave a trail of particles when moving")
+                .define("ghast_fireball_trail", true);
+        DRAGON_FIREBALL_TRAIL = builder.comment("Makes dragon fireballs leave a trail of particles when moving")
+                .define("dragon_fireball_trail", true);
         CHARGES_TUMBLE = builder.comment("Makes 3D charges tumble in the air when moving")
                 .define("charges_tumble", true);
         PROJECTILE_TUMBLE = builder.comment("Makes 3D snowballs and slimeballs (supp compat) tumble in the air when moving")
