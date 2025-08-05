@@ -1,1 +1,6 @@
-- removed flywheel compat. not needed anymore as that bell instance stuff is no longer in flywheel but in vanillin (I believe)
+- Fire Charges can be thrown!
+- Added Dragon Charges
+- Fireballs and Dragon Fireballs have new particles, (some) sounds, and animations
+- Ghast fireballs will now set (more) entities and blocks on fire
+- Added Pixel Consistent Signs. Many Thanks to Vectorwing for the texture!
+- Added 3d Snowballs and Slimeballs projectiles
