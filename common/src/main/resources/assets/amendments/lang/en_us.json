@@ -86,6 +86,8 @@
   "item.amendments.dye_bottle.aqua": "Aqua",
   "item.amendments.dye_bottle.slate": "Slate",
   "item.amendments.dragon_charge": "Dragon Charge",
+  "entity.amendments.medium_fireball": "Fireball",
+  "entity.amendments.medium_dragon_fireball": "Dragon Fireball",
   "fluid.amendments.dye": "Dye",
   "subtitles.amendments.fireball_explosion": "Fireball Explosion",
   "message.amendments.cauldron": "The potion mix seems unstable..."
