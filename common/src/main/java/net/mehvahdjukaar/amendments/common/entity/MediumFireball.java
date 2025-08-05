@@ -3,6 +3,7 @@ package net.mehvahdjukaar.amendments.common.entity;
 import net.mehvahdjukaar.amendments.client.TumblingAnimation;
 import net.mehvahdjukaar.amendments.common.ProjectileStats;
 import net.mehvahdjukaar.amendments.configs.ClientConfigs;
+import net.mehvahdjukaar.amendments.configs.CommonConfigs;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.moonlight.api.entity.ImprovedProjectileEntity;
 import net.mehvahdjukaar.moonlight.api.entity.ParticleTrailEmitter;
@@ -23,20 +24,20 @@ import org.joml.Matrix4f;
 public class MediumFireball extends ImprovedProjectileEntity implements IVisualTransformationProvider {
 
     private final ParticleTrailEmitter trailEmitter = ProjectileStats.makeFireballTrialEmitter();
-    public final TumblingAnimation tumblingAnimation = ProjectileStats.makeTumbler();
+    private final TumblingAnimation tumblingAnimation = ProjectileStats.makeTumbler();
 
     public MediumFireball(Level level, LivingEntity shooter) {
         super(ModRegistry.MEDIUM_FIREBALL.get(), shooter, level);
-
-    }
-
-    public MediumFireball(double x, double y, double z, Level level) {
-        super(ModRegistry.MEDIUM_FIREBALL.get(), x, y, z, level);
-
+        if (!CommonConfigs.FIRE_CHARGE_GRAVITY.get()) {
+            this.setNoGravity(true);
+        }
     }
 
     public MediumFireball(EntityType<MediumFireball> mediumFireballEntityType, Level level) {
         super(mediumFireballEntityType, level);
+        if (!CommonConfigs.FIRE_CHARGE_GRAVITY.get()) {
+            this.setNoGravity(true);
+        }
     }
 
     boolean a = false;
@@ -67,6 +68,7 @@ public class MediumFireball extends ImprovedProjectileEntity implements IVisualT
             boolean bl = this.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING);
             var settings = new FireballExplosion.ExtraSettings();
             settings.hasKnockback = false;
+            settings.soundVolume = ProjectileStats.PLAYER_FIREBALL.soundVolume();
             settings.onFireTicks = ProjectileStats.PLAYER_FIREBALL.indirectHitFireTicks();
             settings.maxDamage = ProjectileStats.PLAYER_FIREBALL.normalExplosionRadius() + 1;
             FireballExplosion.explodeServer(this.level(), this, null, null,

@@ -35,8 +35,7 @@ public class FireChargeShoot implements ItemUse{
         ItemStack itemStack = player.getItemInHand(usedHand);
         //   this.playSound(level, blockPos);
         //same as in ThrowableProjectile
-        //TODO:fire charge sound here
-        level.playSound(null, player.getX(), player.getEyeY() - 0.1, player.getZ(), SoundEvents.SNOWBALL_THROW, SoundSource.NEUTRAL, 0.5F, 0.4F / (level.getRandom().nextFloat() * 0.4F + 0.8F));
+        level.playSound(null, player.getX(), player.getEyeY() - 0.1, player.getZ(), SoundEvents.FIRECHARGE_USE, SoundSource.NEUTRAL, 0.5F, 0.6f+ (0.4F / (level.getRandom().nextFloat() * 0.4F + 0.8F)));
         if (!level.isClientSide) {
             MediumFireball ball = new MediumFireball(level, player);
             ball.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, ProjectileStats.THROWN_SPEED, 1f);
@@ -50,8 +49,4 @@ public class FireChargeShoot implements ItemUse{
         return InteractionResult.sidedSuccess(level.isClientSide);
     }
 
-    private void playSound(Level level, BlockPos pos) {
-        RandomSource randomSource = level.getRandom();
-        level.playSound(null, pos, SoundEvents.FIRECHARGE_USE, SoundSource.BLOCKS, 1.0F, (randomSource.nextFloat() - randomSource.nextFloat()) * 0.2F + 1.0F);
-    }
 }

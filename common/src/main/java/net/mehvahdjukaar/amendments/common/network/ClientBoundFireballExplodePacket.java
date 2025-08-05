@@ -17,23 +17,31 @@ import java.util.List;
 
 public class ClientBoundFireballExplodePacket extends ClientboundExplodePacket implements Message {
 
-    public ClientBoundFireballExplodePacket(double x, double y, double z, float power, List<BlockPos> toBlow, @Nullable Vec3 knockback) {
+    private float soundVolume = 4;
+    public ClientBoundFireballExplodePacket(double x, double y, double z, float power, List<BlockPos> toBlow,
+                                            @Nullable Vec3 knockback, float soundVolume) {
         super(x, y, z, power, toBlow, knockback);
+        this.soundVolume = soundVolume;
     }
 
     public ClientBoundFireballExplodePacket(FriendlyByteBuf buffer) {
         super(buffer);
+        this.soundVolume = buffer.readFloat();
     }
 
     @Override
     public void writeToBuffer(FriendlyByteBuf friendlyByteBuf) {
         this.write(friendlyByteBuf);
+        friendlyByteBuf.writeFloat(this.soundVolume);
     }
 
     @Override
     public void handle(ChannelHandler.Context context) {
         AmendmentsClient.withClientLevel(level -> {
-            FireballExplosion explosion = new FireballExplosion(level,  null, this.getX(), this.getY(), this.getZ(), this.getPower(), this.getToBlow());
+            var settings = new FireballExplosion.ExtraSettings();
+            settings.soundVolume = this.soundVolume;
+            FireballExplosion explosion = new FireballExplosion(level,  null, this.getX(), this.getY(), this.getZ(),
+                    this.getPower(), this.getToBlow(), settings);
             explosion.finalizeExplosion(true);
             context.getSender().setDeltaMovement(context.getSender().getDeltaMovement().add((double) this.getKnockbackX(), (double) this.getKnockbackY(), (double) this.getKnockbackZ()));
 
