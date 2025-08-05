@@ -1,5 +1,13 @@
 {
-  "item": "supplementaries:candle_holder_gray",
+  "global_conditions": [
+    {
+      "modid": "supplementaries",
+      "type": "forge:mod_loaded"
+    }
+  ],
+  "match": {
+    "items": "supplementaries:candle_holder_gray"
+  },
   "luminance": 8,
   "water_sensitive": true
 }

@@ -1,4 +1,10 @@
 {
+  "global_conditions": [
+    {
+      "modid": "supplementaries",
+      "type": "forge:mod_loaded"
+    }
+  ],
   "id": "supplementaries:candle_holder_purple",
   "light": 8,
   "works_underwater": true

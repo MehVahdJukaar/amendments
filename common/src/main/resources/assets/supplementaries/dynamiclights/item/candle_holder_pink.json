@@ -1,5 +1,13 @@
 {
-  "item": "supplementaries:candle_holder_pink",
+  "global_conditions": [
+    {
+      "modid": "supplementaries",
+      "type": "forge:mod_loaded"
+    }
+  ],
+  "match": {
+    "items": "supplementaries:candle_holder_pink"
+  },
   "luminance": 8,
   "water_sensitive": true
 }
