@@ -14,10 +14,14 @@ import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.ExplosionDamageCalculator;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.BaseFireBlock;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 //this is an expanded explosion that does 5 things more than a normal explosion
 //- sets blocks on fire, not just the one it breaks
@@ -32,6 +36,8 @@ public class FireballExplosion extends Explosion {
     private final boolean hasKnockback;
     private final int onFireTicks; //same as blaze charge
     private final float soundVolume; //same as blaze charge
+
+    private final Set<BlockPos> visitedBlock = new HashSet<>();
 
     public static FireballExplosion explodeServer(
             Level serverLevel,
@@ -139,6 +145,7 @@ public class FireballExplosion extends Explosion {
         if (!hasKnockback) {
             this.getHitPlayers().clear();
         }
+
     }
 
     @Override
@@ -149,6 +156,18 @@ public class FireballExplosion extends Explosion {
         if (spawnParticles) {
             this.level.addParticle(ModRegistry.FIREBALL_EMITTER_PARTICLE.get(), this.x, this.y, this.z,
                     radius, 0.0, 0.0);
+        }
+
+        if (!this.fire) return;
+
+        for (BlockPos pos : visitedBlock) {
+            //sets block on fire
+            BlockState state = this.level.getBlockState(pos);
+            if (state.getBlock() instanceof ILightable l) {
+                l.interactWithEntity(level, state, this.getDirectSourceEntity(), pos);
+            } else if(state.getBlock() == Blocks.AIR) {
+                this.level.setBlockAndUpdate(pos, BaseFireBlock.getState(this.level, pos));
+            }
         }
     }
 
@@ -172,11 +191,8 @@ public class FireballExplosion extends Explosion {
     }
 
     public void setBlockOnFire(BlockPos pos, BlockState state) {
-        if (!this.fire) return;
-        //sets block on fire
-        if (state.getBlock() instanceof ILightable l) {
-            l.interactWithEntity(level, state, this.getDirectSourceEntity(), pos);
-        }
+        visitedBlock.add(pos);
+
     }
 
     public boolean playExplosionSound() {
