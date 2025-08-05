@@ -1,17 +1,17 @@
-package net.mehvahdjukaar.amendments.mixins;
+package net.mehvahdjukaar.amendments.mixins.forge;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.mehvahdjukaar.amendments.configs.ClientConfigs;
-import net.minecraft.client.gui.screens.inventory.SignEditScreen;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Pseudo;
 import org.spongepowered.asm.mixin.injection.At;
 import vectorwing.farmersdelight.client.gui.CanvasSignEditScreen;
 
-@Mixin(SignEditScreen.class)
-public class SignEditScreenMixin {
+@Pseudo
+@Mixin(CanvasSignEditScreen.class)
+public class SignEditScreenMixinFD {
 
     @WrapOperation(method = "renderSignBackground",
             remap = true,

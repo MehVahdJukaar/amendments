@@ -17,7 +17,7 @@ dependencies {
 
     modCompileOnly("com.jozufozu.flywheel:flywheel-forge-${flywheel_version}")
 
-    annotationProcessor 'net.fabricmc:sponge-mixin:0.12.5+mixin.0.8.5'
+    annotationProcessor 'net.fabricmc:sponge-mixin:0.15.4+mixin.0.8.7'
 
     modImplementation ("net.mehvahdjukaar:moonlight:${moonlight_version}")
 	

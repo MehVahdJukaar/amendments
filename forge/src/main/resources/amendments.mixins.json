@@ -8,7 +8,8 @@
   ],
   "client": [
     "CompatFarmersDelightCanvasMixin",
-    "CompatFarmersDelightSignMixin"
+    "CompatFarmersDelightSignMixin",
+    "SignEditScreenMixinFD"
   ],
   "injectors": {
     "defaultRequire": 1
