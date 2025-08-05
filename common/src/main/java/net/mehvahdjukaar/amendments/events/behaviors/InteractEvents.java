@@ -59,10 +59,10 @@ public class InteractEvents {
         //registers event stuff
         List<ItemUseOnBlock> itemUseOnBlockHP = new ArrayList<>();
         List<ItemUseOnBlock> itemUseOnBlock = new ArrayList<>();
-        List<ItemUse> itemUse = new ArrayList<>();
+        List<ItemUse> itemUseLP = new ArrayList<>();
         List<BlockUse> blockUse = new ArrayList<>();
 
-        itemUse.add(new FireChargeShoot());
+        itemUseLP.add(new FireChargeShoot());
 
         blockUse.add(new DirectionalCakeConversion());
         blockUse.add(new BellChainRing());
@@ -87,7 +87,7 @@ public class InteractEvents {
                     ITEM_USE_ON_BLOCK.put(i, b);
                 }
             }
-            for (ItemUse b : itemUse) {
+            for (ItemUse b : itemUseLP) {
                 if (b.appliesToItem(i)) {
                     ITEM_USE.put(i, b);
                     continue outer;
@@ -165,7 +165,7 @@ public class InteractEvents {
     }
 
     //item clicked overrides
-    public static InteractionResultHolder<ItemStack> onItemUse(
+    public static InteractionResultHolder<ItemStack> onItemUseLP(
             Player player, Level level, InteractionHand hand, ItemStack stack) {
         Item item = stack.getItem();
 

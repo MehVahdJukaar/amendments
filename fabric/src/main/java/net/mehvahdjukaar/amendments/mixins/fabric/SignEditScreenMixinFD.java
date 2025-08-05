@@ -18,11 +18,10 @@ public class SignEditScreenMixinFD {
             at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/vertex/PoseStack;scale(FFF)V"))
     public void amendments$renderSignBackground(PoseStack instance, float x, float y, float z, Operation<Void> original) {
         if (ClientConfigs.PIXEL_CONSISTENT_SIGNS.get()) {
-            float s = 62.500004F * 3 / 2;
-            instance.scale(s, s, s);
-            instance.translate(0.0D, -7/16f, -0.125D);
-        } else {
-            original.call(instance, x, y, z);
+            float a = 1/(62.500004F * 3/2f);
+            instance.translate(0.0D, -7 / 16f * a, -0.125D * a);
+            instance.scale(3 / 2f, 3 / 2f, 3 / 2f);
         }
+        original.call(instance, x, y, z);
     }
 }

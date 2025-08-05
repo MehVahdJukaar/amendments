@@ -49,7 +49,7 @@ public class ModEvents {
     public static InteractionResultHolder<ItemStack> onUseItem(Player player, Level level, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
         if (!player.isSpectator()) {
-            return InteractEvents.onItemUse(player, level, hand, stack);
+            return InteractEvents.onItemUseLP(player, level, hand, stack);
         }
         return InteractionResultHolder.pass(stack);
     }

@@ -4,4 +4,4 @@
 - Ghast fireballs will now set (more) entities and blocks on fire
 - Added Pixel Consistent Signs. Many Thanks to Vectorwing for the texture!
 - Added 3d Snowballs and Slimeballs projectiles
-- also hotfix for an issue that somehow made the mod work in dev but not in production 
+- improved FD compat

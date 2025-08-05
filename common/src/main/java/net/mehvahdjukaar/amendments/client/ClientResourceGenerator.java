@@ -24,6 +24,7 @@ import net.mehvahdjukaar.moonlight.api.resources.textures.TextureImage;
 import net.mehvahdjukaar.moonlight.api.set.wood.WoodType;
 import net.mehvahdjukaar.moonlight.api.set.wood.WoodTypeRegistry;
 import net.mehvahdjukaar.moonlight.api.util.Utils;
+import net.mehvahdjukaar.supplementaries.client.renderers.color.ColorHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
@@ -31,12 +32,15 @@ import net.minecraft.client.resources.model.Material;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.apache.logging.log4j.Logger;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
@@ -74,6 +78,7 @@ public class ClientResourceGenerator extends DynClientResourcesGenerator {
 
         if (ClientConfigs.PIXEL_CONSISTENT_SIGNS.get()) {
             executor.accept(this::generateSignAssets);
+            executor.accept(this::generateFdSignAssets);
         }
 
         executor.accept((manager, sink) -> {
@@ -121,6 +126,34 @@ public class ClientResourceGenerator extends DynClientResourcesGenerator {
         //need this here for reasons I forgot
         WallLanternModelsManager.refreshModels(manager);
         super.regenerateDynamicAssets(manager);
+    }
+
+    private void generateFdSignAssets(ResourceManager manager, ResourceSink sink){
+        ImageTransformer transformer = ImageTransformer.builder(64, 32, 64, 32)
+                .copyRect(0, 12, 28, 2, 0, 9)
+                .copyRect(26, 2, 2, 14, 18, 2)
+                .copyRect(24, 7, 2, 10, 16, 4)
+
+                .copyRect(23, 2, 3, 3, 15, 2)
+                .copyRect(28, 2, 24, 12, 20, 2)
+                .copyRect(28, 12, 24, 2, 20, 9)
+                .copyRect(50, 2, 2, 8, 34, 2)
+                .build();
+
+        List<String> names = new ArrayList<>();
+        Arrays.stream(DyeColor.values()).forEach(d -> names.add("_"+d.getName()));
+        names.add("");
+        for(var d : names){
+            ResourceLocation res = new ResourceLocation( "farmersdelight:entity/signs/canvas"+ d);
+
+            try (TextureImage vanillaTexture = TextureImage.open(manager, res)) {
+                TextureImage newImage = vanillaTexture.makeCopy();
+                transformer.apply(vanillaTexture, newImage);
+                sink.addAndCloseTexture(res, newImage);
+            } catch (Exception e) {
+                Amendments.LOGGER.warn("Failed to generate Farmers Delight sign extension texture for {}, ", d, e);
+            }
+        }
     }
 
     private void generateSignAssets(ResourceManager manager, ResourceSink sink) {
