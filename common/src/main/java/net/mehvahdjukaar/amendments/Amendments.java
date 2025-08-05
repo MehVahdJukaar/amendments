@@ -69,7 +69,8 @@ public class Amendments {
 
         RegHelper.registerSimpleRecipeCondition(res("flag"), CommonConfigs::isFlagOn);
         RegHelper.addItemsToTabsRegistration(Amendments::addItemsToTabs);
-        //TODO:make projectiles orient like cannonballs
+
+        //TODO: check all fireballs & dispenser
         // configurable models for wall lanterns and skulls
         // todo: finish porting
 
@@ -77,7 +78,6 @@ public class Amendments {
         // make bell connections
 
         // mud slows down mobs
-        //TODO: check bell ringing with rope
         //here we go. ideas part 2
         //carpeted trapdoor
         //flower pot broken color and grass
