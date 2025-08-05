@@ -13,6 +13,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
@@ -45,7 +46,7 @@ public class MediumFireball extends ImprovedProjectileEntity implements IVisualT
         super.spawnTrailParticles();
         if (!level().isClientSide) return;
         trailEmitter.tick(this, (p, v) -> {
-             if (this.isInWater()) return;
+            if (this.isInWater()) return;
             level().addParticle(ModRegistry.FIREBALL_TRAIL_PARTICLE.get(), p.x, p.y, p.z,
                     this.getBbWidth(), 0, 0);
         });
@@ -56,19 +57,23 @@ public class MediumFireball extends ImprovedProjectileEntity implements IVisualT
     @Override
     public Matrix4f amendments$getVisualTransformation(float partialTicks) {
         return new Matrix4f().rotate(this.tumblingAnimation.getRotation(partialTicks));
-
     }
 
 
     @Override
     protected void onHit(HitResult result) {
         super.onHit(result);
-        //just on client?
-        level().addAlwaysVisibleParticle(ModRegistry.FIREBALL_EMITTER_PARTICLE.get(),
-                0, this.getY(), 0,
-                0, 0, 0);
-
-        //create fire only explosion
+        if (!this.level().isClientSide) {
+            boolean bl = this.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING);
+            var settings = new FireballExplosion.ExtraSettings();
+            settings.hasKnockback = false;
+            settings.onFireTicks = ProjectileStats.PLAYER_FIREBALL.indirectHitFireTicks();
+            settings.maxDamage = ProjectileStats.PLAYER_FIREBALL.normalExplosionRadius() + 1;
+            FireballExplosion.explodeServer(this.level(), this, null, null,
+                    this.getX(), this.getY(), this.getZ(), (float) 1,
+                    bl, Level.ExplosionInteraction.NONE, settings);
+            this.discard();
+        }
     }
 
     @Override
@@ -79,9 +84,8 @@ public class MediumFireball extends ImprovedProjectileEntity implements IVisualT
             var entity = result.getEntity();
             Entity fireballOwner = this.getOwner();
             int fireTick = entity.getRemainingFireTicks();
-            entity.setSecondsOnFire(5); //same as blaze charge
-            //TODO: figure out damage types and fire duration for all 3 fireballs + explosion
-            if (!entity.hurt(fireballDamage(fireballOwner), 1.0F)) {
+            entity.setSecondsOnFire(ProjectileStats.PLAYER_FIREBALL.directHitFireTicks()); //same as blaze charge
+            if (!entity.hurt(fireballDamage(fireballOwner), ProjectileStats.PLAYER_FIREBALL.damageOnHit())) {
                 entity.setRemainingFireTicks(fireTick);
             } else if (fireballOwner instanceof LivingEntity le) {
                 this.doEnchantDamageEffects(le, entity);

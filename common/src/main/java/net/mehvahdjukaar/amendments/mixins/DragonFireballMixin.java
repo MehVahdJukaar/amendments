@@ -37,16 +37,18 @@ public abstract class DragonFireballMixin extends AbstractHurtingProjectile impl
     public void tick() {
         super.tick();
         if (level().isClientSide) {
-            amendments$trailEmitter.tick(this, (p, motion) -> {
-                if (this.isInWater()) return;
+            if(ClientConfigs.DRAGON_FIREBALL_TRAIL.get()) {
+                amendments$trailEmitter.tick(this, (p, motion) -> {
+                    if (this.isInWater()) return;
 
-                // Spawn particle with the calculated direction
-                level().addParticle(ParticleTypes.DRAGON_BREATH,
-                        p.x, p.y, p.z,
-                        random.nextGaussian() * 0.05,
-                        random.nextGaussian() * 0.05,
-                        random.nextGaussian() * 0.05);
-            });
+                    // Spawn particle with the calculated direction
+                    level().addParticle(ParticleTypes.DRAGON_BREATH,
+                            p.x, p.y, p.z,
+                            random.nextGaussian() * 0.05,
+                            random.nextGaussian() * 0.05,
+                            random.nextGaussian() * 0.05);
+                });
+            }
             if (ClientConfigs.CHARGES_TUMBLE.get()) amendments$tumblingAnimation.tick(random);
         }
     }

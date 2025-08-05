@@ -35,6 +35,7 @@ import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -116,6 +117,8 @@ public class ModRegistry {
 
     public static final RegSupplier<SimpleParticleType> BOILING_PARTICLE = RegHelper.registerParticle(res("boiling_bubble"));
     public static final RegSupplier<SimpleParticleType> SPLASH_PARTICLE = RegHelper.registerParticle(res("fluid_splash"));
+
+    public static final Supplier<SoundEvent> FIREBALL_EXPLOSION_SOUND = RegHelper.registerSound(res("explosion.fireball"));
 
     /* todo
     private static final Supplier<RecipeType<CauldronRecipe>> CAULDRON_RECIPE = RegHelper.registerRecipeType(

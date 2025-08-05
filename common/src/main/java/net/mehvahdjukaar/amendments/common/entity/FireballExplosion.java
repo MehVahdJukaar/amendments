@@ -2,10 +2,14 @@ package net.mehvahdjukaar.amendments.common.entity;
 
 import net.mehvahdjukaar.amendments.common.network.ClientBoundFireballExplodePacket;
 import net.mehvahdjukaar.amendments.common.network.ModNetwork;
+import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.moonlight.api.block.ILightable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Explosion;
@@ -26,12 +30,12 @@ import java.util.List;
 //done like this instead of fully custom for better compat since we still call the super methods
 public class FireballExplosion extends Explosion {
 
-    public float maxDamage = Float.MAX_VALUE;
-    public boolean hasKnockback = false;
+    private float maxDamage;
+    private boolean hasKnockback;
+    private int onFireTicks; //same as blaze charge
 
-    //same as server level explode
-    public static FireballExplosion explode(
-            ServerLevel serverLevel,
+    public static FireballExplosion explodeServer(
+            Level serverLevel,
             @Nullable Entity source,
             @Nullable DamageSource damageSource,
             @Nullable ExplosionDamageCalculator damageCalculator,
@@ -42,12 +46,35 @@ public class FireballExplosion extends Explosion {
             boolean fire,
             Level.ExplosionInteraction explosionInteraction
     ) {
-        FireballExplosion explosion = explode(serverLevel, source, damageSource, damageCalculator, x, y, z, radius, fire, explosionInteraction, false);
+        return explodeServer(serverLevel, source, damageSource, damageCalculator, x, y, z, radius, fire,
+                explosionInteraction, new ExtraSettings());
+    }
+
+    //same as server level explode
+    public static FireballExplosion explodeServer(
+            Level serverLevel,
+            @Nullable Entity source,
+            @Nullable DamageSource damageSource,
+            @Nullable ExplosionDamageCalculator damageCalculator,
+            double x,
+            double y,
+            double z,
+            float radius,
+            boolean fire,
+            Level.ExplosionInteraction explosionInteraction,
+            ExtraSettings settings
+    ) {
+        FireballExplosion explosion = explode(serverLevel, source, damageSource, damageCalculator, x, y, z,
+                radius, fire, explosionInteraction, false, settings);
+
+        if (!(serverLevel instanceof ServerLevel sl)) {
+            return explosion;
+        }
         if (!explosion.interactsWithBlocks()) {
             explosion.clearToBlow();
         }
 
-        for (ServerPlayer serverPlayer : serverLevel.players()) {
+        for (ServerPlayer serverPlayer : sl.players()) {
             if (serverPlayer.distanceToSqr(x, y, z) < 4096.0) {
                 ModNetwork.CHANNEL.sendToClientPlayer(serverPlayer,
                         new ClientBoundFireballExplodePacket(x, y, z, radius, explosion.getToBlow(),
@@ -70,7 +97,8 @@ public class FireballExplosion extends Explosion {
             float radius,
             boolean fire,
             Level.ExplosionInteraction explosionInteraction,
-            boolean spawnParticles
+            boolean spawnParticles,
+             ExtraSettings settings
     ) {
         Explosion.BlockInteraction blockInteraction = switch (explosionInteraction) {
             case NONE -> Explosion.BlockInteraction.KEEP;
@@ -80,7 +108,8 @@ public class FireballExplosion extends Explosion {
                     : Explosion.BlockInteraction.KEEP;
             case TNT -> level.getDestroyType(GameRules.RULE_TNT_EXPLOSION_DROP_DECAY);
         };
-        FireballExplosion explosion = new FireballExplosion(level, source, damageSource, damageCalculator, x, y, z, radius, fire, blockInteraction);
+        FireballExplosion explosion = new FireballExplosion(level, source, damageSource, damageCalculator,
+                x, y, z, radius, fire, blockInteraction, settings);
         explosion.explode();
         explosion.finalizeExplosion(spawnParticles);
         return explosion;
@@ -90,16 +119,12 @@ public class FireballExplosion extends Explosion {
         super(level, source, toBlowX, toBlowY, toBlowZ, radius, positions);
     }
 
-    public FireballExplosion(Level level, @Nullable Entity source, double toBlowX, double toBlowY, double toBlowZ, float radius, boolean fire, BlockInteraction blockInteraction, List<BlockPos> positions) {
-        super(level, source, toBlowX, toBlowY, toBlowZ, radius, fire, blockInteraction, positions);
-    }
-
-    public FireballExplosion(Level level, @Nullable Entity source, double toBlowX, double toBlowY, double toBlowZ, float radius, boolean fire, BlockInteraction blockInteraction) {
-        super(level, source, toBlowX, toBlowY, toBlowZ, radius, fire, blockInteraction);
-    }
-
-    public FireballExplosion(Level level, @Nullable Entity source, @Nullable DamageSource damageSource, @Nullable ExplosionDamageCalculator damageCalculator, double toBlowX, double toBlowY, double toBlowZ, float radius, boolean fire, BlockInteraction blockInteraction) {
+    public FireballExplosion(Level level, @Nullable Entity source, @Nullable DamageSource damageSource, @Nullable ExplosionDamageCalculator damageCalculator, double toBlowX, double toBlowY, double toBlowZ,
+                             float radius, boolean fire, BlockInteraction blockInteraction, ExtraSettings settings) {
         super(level, source, damageSource, damageCalculator, toBlowX, toBlowY, toBlowZ, radius, fire, blockInteraction);
+        this.onFireTicks = settings.onFireTicks;
+        this.maxDamage = settings.maxDamage;
+        this.hasKnockback = settings.hasKnockback;
     }
 
     @Override
@@ -116,7 +141,8 @@ public class FireballExplosion extends Explosion {
 
         //spawn our own particles
         if (spawnParticles) {
-
+            this.level.addParticle(ModRegistry.FIREBALL_EMITTER_PARTICLE.get(), this.x, this.y, this.z,
+                    radius, 0.0, 0.0);
         }
     }
 
@@ -129,8 +155,14 @@ public class FireballExplosion extends Explosion {
         if (this.maxDamage > 0 && amount > this.maxDamage) {
             amount = this.maxDamage;
         }
-        //TODO: set on fire here
-        return entity.hurt(source, amount);
+        int oldFire = entity.getRemainingFireTicks();
+        entity.setSecondsOnFire(onFireTicks); //same as blaze charge
+        if (!entity.hurt(source, amount)) {
+            entity.setRemainingFireTicks(oldFire);
+            return false;
+        }
+
+        return true;
     }
 
     public void setBlockOnFire(BlockPos pos, BlockState state) {
@@ -140,5 +172,15 @@ public class FireballExplosion extends Explosion {
             l.interactWithEntity(level, state, this.getDirectSourceEntity(), pos);
         }
 
+    }
+
+    public SoundEvent getExplosionSound() {
+        return ModRegistry.FIREBALL_EXPLOSION_SOUND.get();
+    }
+
+    public static class ExtraSettings {
+        public float maxDamage = Float.MAX_VALUE; //max damage cap
+        public int onFireTicks = 0; //same as blaze charge
+        public boolean hasKnockback = false; //if the explosion should have knockback
     }
 }

@@ -7,6 +7,7 @@ public class ProjectileStats {
 
     public static final float THROWN_SPEED = 1.25f;
 
+    //TODO:do better
     public static final Fire BLAZE_FIREBALL = new Fire(
             0.75f,
             5,
@@ -23,14 +24,22 @@ public class ProjectileStats {
             4,
             1);
 
+    public static final Fire PLAYER_FIREBALL = new Fire(
+            2.375f,
+            5,
+            5,
+            1,
+            4,
+            0);
+
 
 
 
     public record Fire(float modelSize,
                        float damageOnHit,
-                       float directHitFireTicks,
+                       int directHitFireTicks,
                        float fireballExpRadius,
-                       float indirectHitFireTicks,
+                       int indirectHitFireTicks,
                        float normalExplosionRadius) {
 
     }
