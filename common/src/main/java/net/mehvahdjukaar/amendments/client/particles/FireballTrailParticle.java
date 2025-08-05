@@ -5,6 +5,7 @@ import net.minecraft.client.particle.*;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.projectile.SmallFireball;
 
 public class FireballTrailParticle extends TextureSheetParticle {
     private final SpriteSet sprites;

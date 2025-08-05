@@ -44,6 +44,7 @@ public class Fireball3DRenderer<E extends Entity> extends ThrownProjectile3DRend
         return entity.level().getBrightness(LightLayer.BLOCK, pos);
     }
 
+    @Override
     public void renderBall(E entity, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {
         ResourceLocation mainTexture = getTextureLocation(entity);
         RenderType mainRedderType = renderTypeFunction.apply(mainTexture);

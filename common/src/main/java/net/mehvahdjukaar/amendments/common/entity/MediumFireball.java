@@ -40,8 +40,6 @@ public class MediumFireball extends ImprovedProjectileEntity implements IVisualT
         }
     }
 
-    boolean a = false;
-
     @Override
     public void spawnTrailParticles() {
         super.spawnTrailParticles();
@@ -60,6 +58,19 @@ public class MediumFireball extends ImprovedProjectileEntity implements IVisualT
         return new Matrix4f().rotate(this.tumblingAnimation.getRotation(partialTicks));
     }
 
+    @Override
+    public void tick() {
+        super.tick();
+        this.setSecondsOnFire(1);
+    }
+
+    @Override
+    public boolean displayFireAnimation() {
+        if (level().isClientSide && ClientConfigs.FIREBALL_3D.get()) {
+            return false;
+        }
+        return super.displayFireAnimation();
+    }
 
     @Override
     protected void onHit(HitResult result) {
