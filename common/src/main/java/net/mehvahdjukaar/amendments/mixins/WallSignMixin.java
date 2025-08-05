@@ -31,6 +31,8 @@ public abstract class WallSignMixin extends Block {
         super(properties);
     }
 
+
+    //technically unsafe
     @Override
     public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         if ((level instanceof Level l) && l.isClientSide && ClientConfigs.PIXEL_CONSISTENT_SIGNS.get()) {

@@ -165,7 +165,7 @@ public class FireballExplosion extends Explosion {
             BlockState state = this.level.getBlockState(pos);
             if (state.getBlock() instanceof ILightable l) {
                 l.interactWithEntity(level, state, this.getDirectSourceEntity(), pos);
-            } else if(state.getBlock() == Blocks.AIR) {
+            } else if (state.getBlock() == Blocks.AIR) {
                 this.level.setBlockAndUpdate(pos, BaseFireBlock.getState(this.level, pos));
             }
         }

@@ -42,6 +42,7 @@ public abstract class SignRendererMixin {
 
     //screw this
 
+    //if you find an incompatibility pls report
     /**
      * @author MehVahDjukaar
      * @reason adding color normal shading and color modifier
