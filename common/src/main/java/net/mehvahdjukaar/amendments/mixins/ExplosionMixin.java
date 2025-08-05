@@ -8,14 +8,15 @@ import com.llamalad7.mixinextras.sugar.Local;
 import net.mehvahdjukaar.amendments.common.entity.FireballExplosion;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Explosion;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.ModifyArg;
 
 //TODO: change in 1.21
 @Mixin(Explosion.class)
@@ -43,11 +44,11 @@ public class ExplosionMixin {
         return original;
     }
 
-    @ModifyArg(method = "finalizeExplosion", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;playLocalSound(DDDLnet/minecraft/sounds/SoundEvent;Lnet/minecraft/sounds/SoundSource;FFZ)V"))
-    public SoundEvent amendments$changeSound(SoundEvent sound) {
+    @WrapWithCondition(method = "finalizeExplosion", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;playLocalSound(DDDLnet/minecraft/sounds/SoundEvent;Lnet/minecraft/sounds/SoundSource;FFZ)V"))
+    public boolean amendments$changeSound(Level instance, double x, double y, double z, SoundEvent sound, SoundSource category, float volume, float pitch, boolean distanceDelay) {
         if (((Object) this) instanceof FireballExplosion fe) {
-            return fe.getExplosionSound();
+            return fe.playExplosionSound();
         }
-        return sound;
+        return true;
     }
 }

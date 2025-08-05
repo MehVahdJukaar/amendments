@@ -261,6 +261,9 @@ public class CommonConfigs {
         if (s.equals("dye_water")) {
             return DYE_WATER.get();
         }
+        if (s.equals("dragon_charge")) {
+            return DRAGON_CHARGE.get();
+        }
         return false;
     }
 }

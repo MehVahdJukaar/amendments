@@ -10,6 +10,7 @@ import net.mehvahdjukaar.amendments.client.gui.LecternBookEditScreen;
 import net.mehvahdjukaar.amendments.client.model.*;
 import net.mehvahdjukaar.amendments.client.particles.*;
 import net.mehvahdjukaar.amendments.client.renderers.*;
+import net.mehvahdjukaar.amendments.common.ProjectileStats;
 import net.mehvahdjukaar.amendments.common.block.BoilingWaterCauldronBlock;
 import net.mehvahdjukaar.amendments.common.item.DyeBottleItem;
 import net.mehvahdjukaar.amendments.configs.ClientConfigs;
@@ -199,23 +200,28 @@ public class AmendmentsClient {
         if (ClientConfigs.FIREBALL_3D.get()) {
             //same visual scale as the original
             event.register(EntityType.SMALL_FIREBALL, context -> new Fireball3DRenderer<>(context,
-                    modelScale * 0.75f, BLAZE_TEXTURE, FIREBALL_OVERLAY_TEXTURE,
+                    modelScale * ProjectileStats.BLAZE_FIREBALL.modelSize(),
+                    BLAZE_TEXTURE, FIREBALL_OVERLAY_TEXTURE,
                     MEDIUM_THROWN_BALL, true));
             event.register(EntityType.FIREBALL, context -> new Fireball3DRenderer<>(context,
-                    modelScale * 2.375f, FIREBALL_TEXTURE, FIREBALL_OVERLAY_TEXTURE,
+                    modelScale * ProjectileStats.GHAST_FIREBALL.modelSize(),
+                    FIREBALL_TEXTURE, FIREBALL_OVERLAY_TEXTURE,
                     BIG_THROWN_BALL, false));
             event.register(EntityType.DRAGON_FIREBALL, context -> new Fireball3DRenderer<>(context,
-                    modelScale * 2.375f, DRAGON_FIREBALL_TEXTURE, DRAGON_FIREBALL_OVERLAY_TEXTURE,
+                    modelScale * ProjectileStats.DRAGON_FIREBALL.modelSize(),
+                    DRAGON_FIREBALL_TEXTURE, DRAGON_FIREBALL_OVERLAY_TEXTURE,
                     BIG_THROWN_BALL, false));
 
             //mod own entities
             event.register(ModRegistry.MEDIUM_DRAGON_FIREBALL.get(), context -> new Fireball3DRenderer<>(context,
-                    modelScale * 0.75f, DRAGON_FIREBALL_TEXTURE, DRAGON_FIREBALL_OVERLAY_TEXTURE,
-                    BIG_THROWN_BALL, false));
+                    modelScale * ProjectileStats.DRAGON_CHARGE.modelSize(),
+                    DRAGON_FIREBALL_TEXTURE, DRAGON_FIREBALL_OVERLAY_TEXTURE,
+                    BIG_THROWN_BALL, true));
 
             event.register(ModRegistry.MEDIUM_FIREBALL.get(), context -> new Fireball3DRenderer<>(context,
-                    modelScale * 0.75f, FIREBALL_TEXTURE, FIREBALL_OVERLAY_TEXTURE,
-                    BIG_THROWN_BALL, false));
+                    modelScale * ProjectileStats.PLAYER_FIREBALL.modelSize(),
+                    FIREBALL_TEXTURE, FIREBALL_OVERLAY_TEXTURE,
+                    BIG_THROWN_BALL, true));
 
         } else {
             event.register(ModRegistry.MEDIUM_FIREBALL.get(), ThrownItemRenderer::new);

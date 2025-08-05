@@ -7,8 +7,6 @@ import net.mehvahdjukaar.moonlight.api.block.ILightable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
@@ -30,9 +28,10 @@ import java.util.List;
 //done like this instead of fully custom for better compat since we still call the super methods
 public class FireballExplosion extends Explosion {
 
-    private float maxDamage;
-    private boolean hasKnockback;
-    private int onFireTicks; //same as blaze charge
+    private final float maxDamage;
+    private final boolean hasKnockback;
+    private final int onFireTicks; //same as blaze charge
+    private final float soundVolume; //same as blaze charge
 
     public static FireballExplosion explodeServer(
             Level serverLevel,
@@ -78,7 +77,7 @@ public class FireballExplosion extends Explosion {
             if (serverPlayer.distanceToSqr(x, y, z) < 4096.0) {
                 ModNetwork.CHANNEL.sendToClientPlayer(serverPlayer,
                         new ClientBoundFireballExplodePacket(x, y, z, radius, explosion.getToBlow(),
-                                explosion.getHitPlayers().get(serverPlayer)));
+                                explosion.getHitPlayers().get(serverPlayer), explosion.soundVolume));
             }
         }
 
@@ -98,7 +97,7 @@ public class FireballExplosion extends Explosion {
             boolean fire,
             Level.ExplosionInteraction explosionInteraction,
             boolean spawnParticles,
-             ExtraSettings settings
+            ExtraSettings settings
     ) {
         Explosion.BlockInteraction blockInteraction = switch (explosionInteraction) {
             case NONE -> Explosion.BlockInteraction.KEEP;
@@ -115,8 +114,14 @@ public class FireballExplosion extends Explosion {
         return explosion;
     }
 
-    public FireballExplosion(Level level, @Nullable Entity source, double toBlowX, double toBlowY, double toBlowZ, float radius, List<BlockPos> positions) {
+    public FireballExplosion(Level level, @Nullable Entity source, double toBlowX, double toBlowY, double toBlowZ,
+                             float radius, List<BlockPos> positions, ExtraSettings settings) {
         super(level, source, toBlowX, toBlowY, toBlowZ, radius, positions);
+        this.onFireTicks = settings.onFireTicks;
+        this.maxDamage = settings.maxDamage;
+        this.hasKnockback = settings.hasKnockback;
+        this.soundVolume = settings.soundVolume;
+
     }
 
     public FireballExplosion(Level level, @Nullable Entity source, @Nullable DamageSource damageSource, @Nullable ExplosionDamageCalculator damageCalculator, double toBlowX, double toBlowY, double toBlowZ,
@@ -125,6 +130,7 @@ public class FireballExplosion extends Explosion {
         this.onFireTicks = settings.onFireTicks;
         this.maxDamage = settings.maxDamage;
         this.hasKnockback = settings.hasKnockback;
+        this.soundVolume = settings.soundVolume;
     }
 
     @Override
@@ -171,14 +177,18 @@ public class FireballExplosion extends Explosion {
         if (state.getBlock() instanceof ILightable l) {
             l.interactWithEntity(level, state, this.getDirectSourceEntity(), pos);
         }
-
     }
 
-    public SoundEvent getExplosionSound() {
-        return ModRegistry.FIREBALL_EXPLOSION_SOUND.get();
+    public boolean playExplosionSound() {
+        this.level.playLocalSound(this.x, this.y, this.z, ModRegistry.FIREBALL_EXPLOSION_SOUND.get(),
+                SoundSource.BLOCKS, 4.0F,
+                (1.0F + (this.level.random.nextFloat() - this.level.random.nextFloat()) * 0.2F) * 0.7F, false);
+
+        return false;
     }
 
     public static class ExtraSettings {
+        public float soundVolume = 4.0f;
         public float maxDamage = Float.MAX_VALUE; //max damage cap
         public int onFireTicks = 0; //same as blaze charge
         public boolean hasKnockback = false; //if the explosion should have knockback

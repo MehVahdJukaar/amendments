@@ -1,9 +1,8 @@
 package net.mehvahdjukaar.amendments.mixins;
 
+import net.mehvahdjukaar.amendments.client.TumblingAnimation;
 import net.mehvahdjukaar.amendments.common.ProjectileStats;
 import net.mehvahdjukaar.amendments.common.entity.IVisualTransformationProvider;
-import net.mehvahdjukaar.amendments.common.entity.MediumDragonFireball;
-import net.mehvahdjukaar.amendments.client.TumblingAnimation;
 import net.mehvahdjukaar.amendments.configs.ClientConfigs;
 import net.mehvahdjukaar.moonlight.api.entity.ParticleTrailEmitter;
 import net.minecraft.core.particles.ParticleTypes;
@@ -20,7 +19,7 @@ public abstract class DragonFireballMixin extends AbstractHurtingProjectile impl
 
     //will spawn twice as many particles. not ideal but the ball is bigger anyway
     @Unique
-    private final ParticleTrailEmitter amendments$trailEmitter = MediumDragonFireball.makeTrialEmitter(true);
+    private final ParticleTrailEmitter amendments$trailEmitter = ProjectileStats.makeDragonTrialEmitter(true);
     @Unique
     private final TumblingAnimation amendments$tumblingAnimation = ProjectileStats.makeTumbler();
 
@@ -37,7 +36,7 @@ public abstract class DragonFireballMixin extends AbstractHurtingProjectile impl
     public void tick() {
         super.tick();
         if (level().isClientSide) {
-            if(ClientConfigs.DRAGON_FIREBALL_TRAIL.get()) {
+            if (ClientConfigs.DRAGON_FIREBALL_TRAIL.get()) {
                 amendments$trailEmitter.tick(this, (p, motion) -> {
                     if (this.isInWater()) return;
 

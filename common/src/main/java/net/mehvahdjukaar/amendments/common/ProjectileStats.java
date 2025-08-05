@@ -14,7 +14,17 @@ public class ProjectileStats {
             5,
             0,
             0,
+            0,
             0);
+
+    public static final Fire PLAYER_FIREBALL = new Fire(
+            0.75f,
+            5,
+            5,
+            1,
+            4,
+            0,
+            1);
 
     public static final Fire GHAST_FIREBALL = new Fire(
             2.375f,
@@ -22,17 +32,15 @@ public class ProjectileStats {
             5,
             1,
             4,
-            1);
-
-    public static final Fire PLAYER_FIREBALL = new Fire(
-            2.375f,
-            5,
-            5,
             1,
-            4,
-            0);
+            4);
 
 
+    public static final Dragon DRAGON_FIREBALL = new Dragon(
+            2.375f);
+
+    public static final Dragon DRAGON_CHARGE = new Dragon(
+            0.75f);
 
 
     public record Fire(float modelSize,
@@ -40,8 +48,12 @@ public class ProjectileStats {
                        int directHitFireTicks,
                        float fireballExpRadius,
                        int indirectHitFireTicks,
-                       float normalExplosionRadius) {
+                       float normalExplosionRadius,
+                       float soundVolume) {
 
+    }
+
+    public record Dragon(float modelSize) {
     }
 
     public static TumblingAnimation makeTumbler() {
@@ -64,6 +76,14 @@ public class ProjectileStats {
     }
 
 
+    public static ParticleTrailEmitter makeDragonTrialEmitter(boolean isLarge) {
+        return ParticleTrailEmitter.builder()
+                .spacing(0.7)
+                .maxParticlesPerTick(5)
+                .minSpeed(0.0)
+                .build();
+    }
+
 
     public static ParticleTrailEmitter makeSnowballTrialEmitter() {
         return ParticleTrailEmitter.builder()
@@ -72,7 +92,6 @@ public class ProjectileStats {
                 .minSpeed(0.01)
                 .build();
     }
-
 
 
 }

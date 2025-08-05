@@ -27,23 +27,21 @@ import org.joml.Matrix4f;
 
 public class MediumDragonFireball extends ImprovedProjectileEntity implements IVisualTransformationProvider {
 
-    private final ParticleTrailEmitter trailEmitter = makeTrialEmitter(false);
+    private final ParticleTrailEmitter trailEmitter = ProjectileStats.makeDragonTrialEmitter(false);
     private final TumblingAnimation tumblingAnimation = ProjectileStats.makeTumbler();
 
     public MediumDragonFireball(EntityType<? extends MediumDragonFireball> entityType, Level level) {
         super(entityType, level);
+        if (!CommonConfigs.FIRE_CHARGE_GRAVITY.get()) {
+            this.setNoGravity(true);
+        }
     }
 
     public MediumDragonFireball(Level level, LivingEntity shooter) {
         super(ModRegistry.MEDIUM_DRAGON_FIREBALL.get(), shooter, level);
-    }
-
-    public static ParticleTrailEmitter makeTrialEmitter(boolean isLarge) {
-        return ParticleTrailEmitter.builder()
-                .spacing(0.7)
-                .maxParticlesPerTick(5)
-                .minSpeed(0.0)
-                .build();
+        if (!CommonConfigs.FIRE_CHARGE_GRAVITY.get()) {
+            this.setNoGravity(true);
+        }
     }
 
     @Override
@@ -74,11 +72,12 @@ public class MediumDragonFireball extends ImprovedProjectileEntity implements IV
             if (!this.level().isClientSide) {
                 if (!this.isSilent()) {
                     level().broadcastEntityEvent(this, (byte) 3);
-                    this.playSound(SoundEvents.DRAGON_FIREBALL_EXPLODE, 1.0F, random.nextFloat() * 0.1F + 0.9F);
+                    this.playSound(SoundEvents.DRAGON_FIREBALL_EXPLODE,
+                            1.0F,  //TODO:sound here is inconsistent with explosion
+                            random.nextFloat() * 0.1F + 0.9F);
                 }
 
                 spawnCloud();
-
                 this.discard();
             }
         }
