@@ -33,6 +33,13 @@ public class MediumFireball extends ImprovedProjectileEntity implements IVisualT
         }
     }
 
+    public MediumFireball(Level level, double x, double y, double z) {
+        super(ModRegistry.MEDIUM_FIREBALL.get(), x, y, z, level);
+        if (!CommonConfigs.FIRE_CHARGE_GRAVITY.get()) {
+            this.setNoGravity(true);
+        }
+    }
+
     public MediumFireball(EntityType<MediumFireball> mediumFireballEntityType, Level level) {
         super(mediumFireballEntityType, level);
         if (!CommonConfigs.FIRE_CHARGE_GRAVITY.get()) {

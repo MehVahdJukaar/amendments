@@ -1,6 +1,8 @@
 package net.mehvahdjukaar.amendments;
 
 import net.mehvahdjukaar.amendments.common.FlowerPotHandler;
+import net.mehvahdjukaar.amendments.common.entity.MediumDragonFireball;
+import net.mehvahdjukaar.amendments.common.entity.MediumFireball;
 import net.mehvahdjukaar.amendments.common.network.ModNetwork;
 import net.mehvahdjukaar.amendments.configs.ClientConfigs;
 import net.mehvahdjukaar.amendments.configs.CommonConfigs;
@@ -15,15 +17,16 @@ import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidRegistry;
 import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
 import net.mehvahdjukaar.moonlight.api.platform.RegHelper;
 import net.mehvahdjukaar.moonlight.api.util.DispenserHelper;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.core.RegistryAccess;
+import net.minecraft.Util;
+import net.minecraft.core.*;
+import net.minecraft.core.dispenser.AbstractProjectileDispenseBehavior;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.projectile.Fireball;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
@@ -123,6 +126,38 @@ public class Amendments {
     private static void registerDispenserBehavior(DispenserHelper.Event event) {
         for (SoftFluid f : SoftFluidRegistry.getRegistry(event.getRegistryAccess())) {
             registerFluidBehavior(f, event);
+        }
+        if (CommonConfigs.FIRE_CHARGE_DISPENSER.get() && CommonConfigs.THROWABLE_FIRE_CHARGES.get()) {
+            event.register(Items.FIRE_CHARGE, new AbstractProjectileDispenseBehavior() {
+                @Override
+                protected MediumFireball getProjectile(Level level, Position position, ItemStack stack) {
+                    return Util.make(new MediumFireball(level, position.x(), position.y(), position.z()), (snowball) -> {
+                        snowball.setItem(stack);
+                    });
+
+                }
+
+                @Override
+                protected void playSound(BlockSource source) {
+                    source.getLevel().levelEvent(1018, source.getPos(), 0);
+                }
+            });
+        }
+        if (CommonConfigs.DRAGON_CHARGE.get()) {
+            event.register(ModRegistry.DRAGON_CHARGE.get(), new AbstractProjectileDispenseBehavior() {
+                @Override
+                protected MediumDragonFireball getProjectile(Level level, Position position, ItemStack stack) {
+                    return Util.make(new MediumDragonFireball(level, position.x(), position.y(), position.z()), (snowball) -> {
+                        snowball.setItem(stack);
+                    });
+                }
+
+                @Override
+                protected void playSound(BlockSource source) {
+                    //TODO:customsound
+                    source.getLevel().levelEvent(1018, source.getPos(), 0);
+                }
+            });
         }
     }
 

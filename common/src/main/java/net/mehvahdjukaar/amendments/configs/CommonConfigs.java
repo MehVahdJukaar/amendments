@@ -75,6 +75,7 @@ public class CommonConfigs {
     public static final Supplier<Boolean> DRAGON_CHARGE;
     public static final Supplier<Boolean> DEFLECT_FIRE_CHARGES;
     public static final Supplier<Boolean> THROWABLE_FIRE_CHARGES;
+    public static final Supplier<Boolean> FIRE_CHARGE_DISPENSER;
     public static final Supplier<Boolean> FIREBALL_EXPLOSION;
 
     public static final Supplier<Integer> SNOWBALL_FREEZE;
@@ -97,7 +98,9 @@ public class CommonConfigs {
         DEFLECT_FIRE_CHARGES = builder.comment("Makes fire charges deflectable by punching")
                 .define("deflectable", false);
         THROWABLE_FIRE_CHARGES = builder.comment("Allows throwing fire & dragon charges")
-                .define("throwable", true);
+                .define("fire_charges_throwable", true);
+        FIRE_CHARGE_DISPENSER = builder.comment("Makes dispensers shoot fire charges (the ones with gravity added by the mod) instead of blaze charges. Technically a breaking changes as it could break existing contraptions while allowing for new ones")
+                .define("fire_charges_dispenser_behavior", true);
         FIREBALL_EXPLOSION = builder.comment("Improves ghast & fire charges fireballs by giving them a unique explosion particles and set on fire on hit")
                 .define("improved_explosions", true);
 

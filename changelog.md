@@ -1,7 +1,3 @@
-- Fire Charges can be thrown!
-- Added Dragon Charges
-- Fireballs and Dragon Fireballs have new particles, some sounds (thanks to Binome), and animations
-- Ghast fireballs will now set (more) entities and blocks on fire
-- Added Pixel Consistent Signs. Many Thanks to Vectorwing for the texture!
-- Added 3d Snowballs and Slimeballs projectiles
-- improved FD compat
+- made fireball sounds in mono
+- added some load conditions to some data files
+- added dispenser behaviors

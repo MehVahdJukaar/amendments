@@ -37,6 +37,13 @@ public class MediumDragonFireball extends ImprovedProjectileEntity implements IV
         }
     }
 
+    public MediumDragonFireball(Level level, double x, double y, double z) {
+        super(ModRegistry.MEDIUM_DRAGON_FIREBALL.get(), x, y, z, level);
+        if (!CommonConfigs.FIRE_CHARGE_GRAVITY.get()) {
+            this.setNoGravity(true);
+        }
+    }
+
     public MediumDragonFireball(Level level, LivingEntity shooter) {
         super(ModRegistry.MEDIUM_DRAGON_FIREBALL.get(), shooter, level);
         if (!CommonConfigs.FIRE_CHARGE_GRAVITY.get()) {
