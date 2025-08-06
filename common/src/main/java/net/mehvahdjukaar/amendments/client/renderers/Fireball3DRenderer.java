@@ -31,7 +31,7 @@ public class Fireball3DRenderer<E extends Entity> extends ThrownProjectile3DRend
                               boolean hasNoShade) {
         super(context, scale, texture);
         this.overlayTexture = overlayTexture;
-        this.renderTypeFunction = hasNoShade ? RenderType::text : RenderType::entityCutout;
+        this.renderTypeFunction = hasNoShade ? RenderType::unlit : RenderType::entityCutout;
         ModelPart model = context.bakeLayer(modelLocation);
         this.cube = model.getChild("cube");
         this.cubeEmissive = model.getChild("cube_emissive");
