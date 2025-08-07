@@ -10,6 +10,7 @@
     "BellMixin",
     "BellTileEntityMixin",
     "BlocksMixin",
+
     "BrewingMixin",
     "BrewingStandMixin",
     "CampfireBlockEntityMixin",

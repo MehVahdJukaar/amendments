@@ -1,3 +1,1 @@
-- made fireball sounds in mono
-- added some load conditions to some data files
-- added dispenser behaviors
+- changed a render type using a vanilla render type to a custom one because iris didnt like it

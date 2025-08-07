@@ -2,6 +2,7 @@ package net.mehvahdjukaar.amendments.client.renderers;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import net.mehvahdjukaar.amendments.client.ModRenderTypes;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.LightTexture;
@@ -31,7 +32,7 @@ public class Fireball3DRenderer<E extends Entity> extends ThrownProjectile3DRend
                               boolean hasNoShade) {
         super(context, scale, texture);
         this.overlayTexture = overlayTexture;
-        this.renderTypeFunction = hasNoShade ? RenderType::text : RenderType::entityCutout;
+        this.renderTypeFunction = hasNoShade ? ModRenderTypes.ENTITY_LIT : RenderType::entityCutout;
         ModelPart model = context.bakeLayer(modelLocation);
         this.cube = model.getChild("cube");
         this.cubeEmissive = model.getChild("cube_emissive");
