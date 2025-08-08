@@ -5,7 +5,7 @@ import net.mehvahdjukaar.moonlight.api.entity.ParticleTrailEmitter;
 
 public class ProjectileStats {
 
-    public static final float THROWN_SPEED = 1.25f;
+    public static final float THROWN_SPEED = 1.1f;
 
     //TODO:do better
     public static final Fire BLAZE_FIREBALL = new Fire(

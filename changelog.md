@@ -1,1 +1,1 @@
-- changed a render type using a vanilla render type to a custom one because iris didnt like it
+added cooldown to fire charges

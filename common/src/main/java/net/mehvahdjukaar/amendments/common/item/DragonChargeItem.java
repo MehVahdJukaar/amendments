@@ -12,7 +12,6 @@ import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.SnowballItem;
 import net.minecraft.world.level.Level;
 
 public class DragonChargeItem extends Item {
@@ -23,10 +22,11 @@ public class DragonChargeItem extends Item {
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand usedHand) {
         ItemStack itemStack = player.getItemInHand(usedHand);
-     //   this.playSound(level, blockPos);
+        //   this.playSound(level, blockPos);
         //same as in ThrowableProjectile
 
-        level.playSound( null, player.getX(),player.getEyeY() - 0.1, player.getZ(), SoundEvents.SNOWBALL_THROW, SoundSource.NEUTRAL, 0.5F, 0.4F / (level.getRandom().nextFloat() * 0.4F + 0.8F));
+        level.playSound(null, player.getX(), player.getEyeY() - 0.1, player.getZ(), SoundEvents.SNOWBALL_THROW, SoundSource.NEUTRAL, 0.5F, 0.4F / (level.getRandom().nextFloat() * 0.4F + 0.8F));
+        player.getCooldowns().addCooldown(this, 10);
         if (!level.isClientSide) {
             MediumDragonFireball snowball = new MediumDragonFireball(level, player);
             snowball.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F,
