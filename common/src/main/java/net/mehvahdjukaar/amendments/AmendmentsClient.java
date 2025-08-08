@@ -111,6 +111,7 @@ public class AmendmentsClient {
     public static final ResourceLocation SUS_STEW = Amendments.res("block/suspicious_stew_cauldron");
     public static final ResourceLocation BLAZE_TEXTURE = Amendments.res("textures/entity/projectile/blazeball_3d.png");
     public static final ResourceLocation FIREBALL_TEXTURE = Amendments.res("textures/entity/projectile/fireball_3d.png");
+    public static final ResourceLocation FIREBALL_OFF_TEXTURE = Amendments.res("textures/entity/projectile/fireball_3d_off.png");
     public static final ResourceLocation FIREBALL_OVERLAY_TEXTURE = Amendments.res("textures/entity/projectile/fireball_3d_overlay.png");
     public static final ResourceLocation DRAGON_FIREBALL_TEXTURE = Amendments.res("textures/entity/projectile/dragon_fireball_3d.png");
     public static final ResourceLocation DRAGON_FIREBALL_OVERLAY_TEXTURE = Amendments.res("textures/entity/projectile/dragon_fireball_3d_overlay.png");
@@ -205,7 +206,7 @@ public class AmendmentsClient {
                     MEDIUM_THROWN_BALL, true));
             event.register(EntityType.FIREBALL, context -> new Fireball3DRenderer<>(context,
                     modelScale * ProjectileStats.GHAST_FIREBALL.modelSize(),
-                    FIREBALL_TEXTURE, FIREBALL_OVERLAY_TEXTURE,
+                    FIREBALL_TEXTURE, FIREBALL_OVERLAY_TEXTURE, FIREBALL_OFF_TEXTURE,
                     BIG_THROWN_BALL, false));
             event.register(EntityType.DRAGON_FIREBALL, context -> new Fireball3DRenderer<>(context,
                     modelScale * ProjectileStats.DRAGON_FIREBALL.modelSize(),
@@ -220,7 +221,7 @@ public class AmendmentsClient {
 
             event.register(ModRegistry.MEDIUM_FIREBALL.get(), context -> new Fireball3DRenderer<>(context,
                     modelScale * ProjectileStats.PLAYER_FIREBALL.modelSize(),
-                    FIREBALL_TEXTURE, FIREBALL_OVERLAY_TEXTURE,
+                    FIREBALL_TEXTURE, FIREBALL_OVERLAY_TEXTURE,FIREBALL_OFF_TEXTURE,
                     BIG_THROWN_BALL, true));
 
         } else {

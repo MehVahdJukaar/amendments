@@ -23,15 +23,18 @@ public class Fireball3DRenderer<E extends Entity> extends ThrownProjectile3DRend
     private final ModelPart cubeEmissive;
     private final ModelPart overlay;
     private final ResourceLocation overlayTexture;
+    private final ResourceLocation offTexture;
     private final Function<ResourceLocation, RenderType> renderTypeFunction;
 
     public Fireball3DRenderer(EntityRendererProvider.Context context, float scale,
                               ResourceLocation texture,
                               ResourceLocation overlayTexture,
+                              ResourceLocation offTexture,
                               ModelLayerLocation modelLocation,
                               boolean hasNoShade) {
         super(context, scale, texture);
         this.overlayTexture = overlayTexture;
+        this.offTexture = offTexture;
         this.renderTypeFunction = hasNoShade ? ModRenderTypes.ENTITY_LIT : RenderType::entityCutout;
         ModelPart model = context.bakeLayer(modelLocation);
         this.cube = model.getChild("cube");
@@ -41,30 +44,33 @@ public class Fireball3DRenderer<E extends Entity> extends ThrownProjectile3DRend
 
     @Override
     protected int getBlockLightLevel(E entity, BlockPos pos) {
+        if (!entity.isOnFire()) return super.getBlockLightLevel(entity, pos);
         // otherwise its always 15 since its on fire
         return entity.level().getBrightness(LightLayer.BLOCK, pos);
     }
 
     @Override
     public void renderBall(E entity, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {
-        ResourceLocation mainTexture = getTextureLocation(entity);
+        boolean onFire = entity.isOnFire();
+        ResourceLocation mainTexture = onFire ? getTextureLocation(entity) : offTexture;
         RenderType mainRedderType = renderTypeFunction.apply(mainTexture);
         VertexConsumer vertexConsumer = bufferSource.getBuffer(mainRedderType);
         cube.render(poseStack, vertexConsumer, packedLight, OverlayTexture.NO_OVERLAY);
         cubeEmissive.render(poseStack, vertexConsumer, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY);
 
-        float f = (float) entity.tickCount + partialTick;
-        RenderType fireRenderType = RenderType.energySwirl(overlayTexture,
-                this.xOffset(f) % 1.0F, f * 0.01F % 1.0F);
-        VertexConsumer outlineVertexConsumer = bufferSource.getBuffer(fireRenderType);
+        if (onFire) {
+            float f = (float) entity.tickCount + partialTick;
+            RenderType fireRenderType = RenderType.energySwirl(overlayTexture,
+                    this.fireXOffset(f) % 1.0F, f * 0.01F % 1.0F);
+            VertexConsumer outlineVertexConsumer = bufferSource.getBuffer(fireRenderType);
 
-        overlay.render(poseStack, outlineVertexConsumer, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY);
+            overlay.render(poseStack, outlineVertexConsumer, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY);
+        }
     }
 
-    private float xOffset(float tickCount) {
+    private float fireXOffset(float tickCount) {
         return tickCount * 0.01F;
     }
-
 
 
 }
