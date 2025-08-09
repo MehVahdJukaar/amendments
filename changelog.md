@@ -1,1 +1,3 @@
-added cooldown to fire charges
+- fireballs that touch water will be extinguished or die off
+- snowball that touch fire will die off
+- yes before both of those would not happen in vanilla

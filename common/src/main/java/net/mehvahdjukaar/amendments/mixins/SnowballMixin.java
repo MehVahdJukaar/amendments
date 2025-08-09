@@ -1,8 +1,8 @@
 package net.mehvahdjukaar.amendments.mixins;
 
+import net.mehvahdjukaar.amendments.client.TumblingAnimation;
 import net.mehvahdjukaar.amendments.common.ProjectileStats;
 import net.mehvahdjukaar.amendments.common.entity.IVisualTransformationProvider;
-import net.mehvahdjukaar.amendments.client.TumblingAnimation;
 import net.mehvahdjukaar.amendments.configs.ClientConfigs;
 import net.mehvahdjukaar.amendments.configs.CommonConfigs;
 import net.mehvahdjukaar.moonlight.api.entity.ParticleTrailEmitter;
@@ -40,6 +40,12 @@ public abstract class SnowballMixin extends ThrowableItemProjectile implements I
     @Override
     public void tick() {
         super.tick();
+        if (this.isOnFire()) {
+            if (!this.level().isClientSide) {
+                level().broadcastEntityEvent(this, (byte) 67);
+                this.discard();
+            }
+        }
         if (level().isClientSide) {
             amendments$trailEmitter.tick(this,
                     (p, v) -> {
@@ -51,7 +57,7 @@ public abstract class SnowballMixin extends ThrowableItemProjectile implements I
                         var px = random.triangle(-0.2, 0.2);
                         var py = random.triangle(-0.2, 0.2);
                         var pz = random.triangle(-0.2, 0.2);
-                        level().addParticle(ParticleTypes.SNOWFLAKE, p.x + px, p.y + py+ 0.1, p.z + pz,
+                        level().addParticle(ParticleTypes.SNOWFLAKE, p.x + px, p.y + py + 0.1, p.z + pz,
                                 gx, gy, gz);
                     }
             );
@@ -73,7 +79,7 @@ public abstract class SnowballMixin extends ThrowableItemProjectile implements I
 
     @Inject(method = "handleEntityEvent", at = @At("HEAD"))
     protected void amendments$addParticles(byte id, CallbackInfo ci) {
-        if(id == 3) {
+        if (id == 3) {
             for (int i = 8; i > 0; --i) {
                 double x = this.getRandomX(1);
                 double y = this.getRandomY();
