@@ -14,6 +14,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.LightLayer;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Function;
 
@@ -23,13 +24,14 @@ public class Fireball3DRenderer<E extends Entity> extends ThrownProjectile3DRend
     private final ModelPart cubeEmissive;
     private final ModelPart overlay;
     private final ResourceLocation overlayTexture;
+    @Nullable
     private final ResourceLocation offTexture;
     private final Function<ResourceLocation, RenderType> renderTypeFunction;
 
     public Fireball3DRenderer(EntityRendererProvider.Context context, float scale,
                               ResourceLocation texture,
                               ResourceLocation overlayTexture,
-                              ResourceLocation offTexture,
+                              @Nullable ResourceLocation offTexture,
                               ModelLayerLocation modelLocation,
                               boolean hasNoShade) {
         super(context, scale, texture);
@@ -51,7 +53,7 @@ public class Fireball3DRenderer<E extends Entity> extends ThrownProjectile3DRend
 
     @Override
     public void renderBall(E entity, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {
-        boolean onFire = entity.isOnFire();
+        boolean onFire = entity.isOnFire() && offTexture != null;
         ResourceLocation mainTexture = onFire ? getTextureLocation(entity) : offTexture;
         RenderType mainRedderType = renderTypeFunction.apply(mainTexture);
         VertexConsumer vertexConsumer = bufferSource.getBuffer(mainRedderType);
