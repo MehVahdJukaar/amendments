@@ -7,6 +7,8 @@ import net.mehvahdjukaar.amendments.configs.CommonConfigs;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.moonlight.api.entity.ImprovedProjectileEntity;
 import net.mehvahdjukaar.moonlight.api.entity.ParticleTrailEmitter;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.Entity;
@@ -25,6 +27,7 @@ public class MediumFireball extends ImprovedProjectileEntity implements IVisualT
 
     private final ParticleTrailEmitter trailEmitter = ProjectileStats.makeFireballTrialEmitter();
     private final TumblingAnimation tumblingAnimation = ProjectileStats.makeTumbler();
+    private boolean isExtinguished = false;
 
     public MediumFireball(Level level, LivingEntity shooter) {
         super(ModRegistry.MEDIUM_FIREBALL.get(), shooter, level);
@@ -68,7 +71,17 @@ public class MediumFireball extends ImprovedProjectileEntity implements IVisualT
     @Override
     public void tick() {
         super.tick();
-        this.setSecondsOnFire(1);
+        if (!this.isExtinguished && this.isInWater()) {
+            this.isExtinguished = true;
+            if (!level().isClientSide()) {
+                level().broadcastEntityEvent(this, (byte) 67);
+                level().playSound(null, this.getX(), this.getY(), this.getZ(), SoundEvents.GENERIC_EXTINGUISH_FIRE, SoundSource.BLOCKS, 0.5F, 1.5F);
+                if (this.getType() == EntityType.SMALL_FIREBALL) {
+                    this.discard();
+                }
+            }
+        }
+        if (!this.isExtinguished) this.setSecondsOnFire(1);
     }
 
     @Override
@@ -83,15 +96,17 @@ public class MediumFireball extends ImprovedProjectileEntity implements IVisualT
     protected void onHit(HitResult result) {
         super.onHit(result);
         if (!this.level().isClientSide) {
-            boolean bl = this.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING);
-            var settings = new FireballExplosion.ExtraSettings();
-            settings.hasKnockback = false;
-            settings.soundVolume = ProjectileStats.PLAYER_FIREBALL.soundVolume();
-            settings.onFireTicks = ProjectileStats.PLAYER_FIREBALL.indirectHitFireTicks();
-            settings.maxDamage = ProjectileStats.PLAYER_FIREBALL.normalExplosionRadius() + 1;
-            FireballExplosion.explodeServer(this.level(), this, null, null,
-                    this.getX(), this.getY(), this.getZ(), (float) 1,
-                    bl, Level.ExplosionInteraction.NONE, settings);
+            if (!this.isExtinguished) {
+                boolean bl = this.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING);
+                var settings = new FireballExplosion.ExtraSettings();
+                settings.hasKnockback = false;
+                settings.soundVolume = ProjectileStats.PLAYER_FIREBALL.soundVolume();
+                settings.onFireTicks = ProjectileStats.PLAYER_FIREBALL.indirectHitFireTicks();
+                settings.maxDamage = ProjectileStats.PLAYER_FIREBALL.normalExplosionRadius() + 1;
+                FireballExplosion.explodeServer(this.level(), this, null, null,
+                        this.getX(), this.getY(), this.getZ(), (float) 1,
+                        bl, Level.ExplosionInteraction.NONE, settings);
+            }
             this.discard();
         }
     }
@@ -100,17 +115,20 @@ public class MediumFireball extends ImprovedProjectileEntity implements IVisualT
     protected void onHitEntity(EntityHitResult result) {
         super.onHitEntity(result);
         if (!this.level().isClientSide) {
-            //actually replace this with explosion
             var entity = result.getEntity();
             Entity fireballOwner = this.getOwner();
-            int fireTick = entity.getRemainingFireTicks();
-            entity.setSecondsOnFire(ProjectileStats.PLAYER_FIREBALL.directHitFireTicks()); //same as blaze charge
-            if (!entity.hurt(fireballDamage(fireballOwner), ProjectileStats.PLAYER_FIREBALL.damageOnHit())) {
-                entity.setRemainingFireTicks(fireTick);
-            } else if (fireballOwner instanceof LivingEntity le) {
-                this.doEnchantDamageEffects(le, entity);
+            if (this.isExtinguished) {
+                entity.hurt(fireballDamage(fireballOwner), ProjectileStats.PLAYER_FIREBALL.damageOnHit());
+            } else {
+                //actually replace this with explosion
+                int fireTick = entity.getRemainingFireTicks();
+                entity.setSecondsOnFire(ProjectileStats.PLAYER_FIREBALL.directHitFireTicks()); //same as blaze charge
+                if (!entity.hurt(fireballDamage(fireballOwner), ProjectileStats.PLAYER_FIREBALL.damageOnHit())) {
+                    entity.setRemainingFireTicks(fireTick);
+                } else if (fireballOwner instanceof LivingEntity le) {
+                    this.doEnchantDamageEffects(le, entity);
+                }
             }
-
         }
     }
 
