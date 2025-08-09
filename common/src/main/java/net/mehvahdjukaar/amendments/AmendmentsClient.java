@@ -198,7 +198,7 @@ public class AmendmentsClient {
             //same visual scale as the original
             event.register(EntityType.SMALL_FIREBALL, context -> new Fireball3DRenderer<>(context,
                     modelScale * ProjectileStats.BLAZE_FIREBALL.modelSize(),
-                    BLAZE_TEXTURE, FIREBALL_OVERLAY_TEXTURE,
+                    BLAZE_TEXTURE, FIREBALL_OVERLAY_TEXTURE, FIREBALL_OFF_TEXTURE,
                     MEDIUM_THROWN_BALL, true));
             event.register(EntityType.FIREBALL, context -> new Fireball3DRenderer<>(context,
                     modelScale * ProjectileStats.GHAST_FIREBALL.modelSize(),
@@ -206,18 +206,18 @@ public class AmendmentsClient {
                     BIG_THROWN_BALL, false));
             event.register(EntityType.DRAGON_FIREBALL, context -> new Fireball3DRenderer<>(context,
                     modelScale * ProjectileStats.DRAGON_FIREBALL.modelSize(),
-                    DRAGON_FIREBALL_TEXTURE, DRAGON_FIREBALL_OVERLAY_TEXTURE,
+                    DRAGON_FIREBALL_TEXTURE, DRAGON_FIREBALL_OVERLAY_TEXTURE, null,
                     BIG_THROWN_BALL, false));
 
             //mod own entities
             event.register(ModRegistry.MEDIUM_DRAGON_FIREBALL.get(), context -> new Fireball3DRenderer<>(context,
                     modelScale * ProjectileStats.DRAGON_CHARGE.modelSize(),
-                    DRAGON_FIREBALL_TEXTURE, DRAGON_FIREBALL_OVERLAY_TEXTURE,
+                    DRAGON_FIREBALL_TEXTURE, DRAGON_FIREBALL_OVERLAY_TEXTURE, null,
                     BIG_THROWN_BALL, true));
 
             event.register(ModRegistry.MEDIUM_FIREBALL.get(), context -> new Fireball3DRenderer<>(context,
                     modelScale * ProjectileStats.PLAYER_FIREBALL.modelSize(),
-                    FIREBALL_TEXTURE, FIREBALL_OVERLAY_TEXTURE,FIREBALL_OFF_TEXTURE,
+                    FIREBALL_TEXTURE, FIREBALL_OVERLAY_TEXTURE, FIREBALL_OFF_TEXTURE,
                     BIG_THROWN_BALL, true));
 
         } else {
