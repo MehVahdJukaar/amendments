@@ -42,7 +42,7 @@ public abstract class SnowballMixin extends ThrowableItemProjectile implements I
         super.tick();
         if (this.isOnFire()) {
             if (!this.level().isClientSide) {
-                level().broadcastEntityEvent(this, (byte) 67);
+                this.playEntityOnFireExtinguishedSound();
                 this.discard();
             }
         }
