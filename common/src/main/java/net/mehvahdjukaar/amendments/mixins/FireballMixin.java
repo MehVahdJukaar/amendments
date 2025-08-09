@@ -6,8 +6,6 @@ import net.mehvahdjukaar.amendments.common.entity.IVisualTransformationProvider;
 import net.mehvahdjukaar.amendments.configs.ClientConfigs;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.moonlight.api.entity.ParticleTrailEmitter;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.projectile.AbstractHurtingProjectile;
 import net.minecraft.world.entity.projectile.Fireball;
@@ -84,8 +82,8 @@ public abstract class FireballMixin extends AbstractHurtingProjectile implements
         if (!this.amendments$isExtinguished && this.isInWater()) {
             this.amendments$isExtinguished = true;
             if (!level().isClientSide()) {
-                level().broadcastEntityEvent(this, (byte) 67);
-                level().playSound(null, this.getX(), this.getY(), this.getZ(), SoundEvents.GENERIC_EXTINGUISH_FIRE, SoundSource.BLOCKS, 0.5F, 1.5F);
+                this.clearFire();
+                this.playEntityOnFireExtinguishedSound();
                 if (this.getType() == EntityType.SMALL_FIREBALL) {
                     this.discard();
                 }
@@ -93,4 +91,8 @@ public abstract class FireballMixin extends AbstractHurtingProjectile implements
         }
     }
 
+    @Override
+    public void clearFire() {
+        super.clearFire();
+    }
 }
