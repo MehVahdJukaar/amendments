@@ -1,8 +1,14 @@
 {
-  "global_conditions": [
+"fabric:load_conditions": [
     {
-      "modid": "supplementaries",
-      "type": "forge:mod_loaded"
+      "condition": "fabric:mod_loaded",
+      "modid": "supplementaries"
+    }
+  ],
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "supplementaries"
     }
   ],
   "id": "supplementaries:candle_holder_blue",

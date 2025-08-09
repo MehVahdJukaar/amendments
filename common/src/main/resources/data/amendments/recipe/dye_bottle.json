@@ -1,6 +1,12 @@
 {
   "type": "amendments:dye_bottle",
-  "conditions": [
+  "fabric:load_conditions": [
+    {
+      "condition": "amendments:flag",
+      "flag": "dye_water"
+    }
+  ],
+  "neoforge:conditions": [
     {
       "type": "amendments:flag",
       "flag": "dye_water"

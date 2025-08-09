@@ -15,7 +15,13 @@
   "result": {
     "item": "amendments:dragon_charge"
   },
-  "conditions": [
+  "fabric:load_conditions": [
+    {
+      "condition": "amendments:flag",
+      "flag": "dragon_charge"
+    }
+  ],
+  "neoforge:conditions": [
     {
       "type": "amendments:flag",
       "flag": "dragon_charge"
