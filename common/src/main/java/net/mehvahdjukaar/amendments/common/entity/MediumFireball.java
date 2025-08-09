@@ -55,7 +55,7 @@ public class MediumFireball extends ImprovedProjectileEntity implements IVisualT
         super.spawnTrailParticles();
         if (!level().isClientSide) return;
         trailEmitter.tick(this, (p, v) -> {
-            if (this.isInWater()) return;
+            if (this.isExtinguished) return;
             level().addParticle(ModRegistry.FIREBALL_TRAIL_PARTICLE.get(), p.x, p.y, p.z,
                     this.getBbWidth(), 0, 0);
         });
@@ -74,8 +74,8 @@ public class MediumFireball extends ImprovedProjectileEntity implements IVisualT
         if (!this.isExtinguished && this.isInWater()) {
             this.isExtinguished = true;
             if (!level().isClientSide()) {
-                level().broadcastEntityEvent(this, (byte) 67);
-                level().playSound(null, this.getX(), this.getY(), this.getZ(), SoundEvents.GENERIC_EXTINGUISH_FIRE, SoundSource.BLOCKS, 0.5F, 1.5F);
+              this.  clearFire();
+                this.playEntityOnFireExtinguishedSound();
                 if (this.getType() == EntityType.SMALL_FIREBALL) {
                     this.discard();
                 }

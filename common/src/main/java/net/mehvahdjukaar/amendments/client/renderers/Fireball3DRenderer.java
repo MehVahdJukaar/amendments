@@ -46,14 +46,14 @@ public class Fireball3DRenderer<E extends Entity> extends ThrownProjectile3DRend
 
     @Override
     protected int getBlockLightLevel(E entity, BlockPos pos) {
-        if (!entity.isOnFire()) return super.getBlockLightLevel(entity, pos);
+        if (entity.getRemainingFireTicks() <= 0 && offTexture != null) return super.getBlockLightLevel(entity, pos);
         // otherwise its always 15 since its on fire
         return entity.level().getBrightness(LightLayer.BLOCK, pos);
     }
 
     @Override
     public void renderBall(E entity, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {
-        boolean onFire = entity.isOnFire() && offTexture != null;
+        boolean onFire = entity.getRemainingFireTicks() > 0 && offTexture != null;
         ResourceLocation mainTexture = onFire ? getTextureLocation(entity) : offTexture;
         RenderType mainRedderType = renderTypeFunction.apply(mainTexture);
         VertexConsumer vertexConsumer = bufferSource.getBuffer(mainRedderType);
