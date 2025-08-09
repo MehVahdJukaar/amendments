@@ -25,7 +25,7 @@ public class Fireball3DRenderer<E extends Entity> extends ThrownProjectile3DRend
     private final ModelPart overlay;
     private final ResourceLocation overlayTexture;
     @Nullable
-    private final ResourceLocation offTexture;
+    private final ResourceLocation noOverlayTexture;
     private final Function<ResourceLocation, RenderType> renderTypeFunction;
 
     public Fireball3DRenderer(EntityRendererProvider.Context context, float scale,
@@ -36,7 +36,7 @@ public class Fireball3DRenderer<E extends Entity> extends ThrownProjectile3DRend
                               boolean hasNoShade) {
         super(context, scale, texture);
         this.overlayTexture = overlayTexture;
-        this.offTexture = offTexture;
+        this.noOverlayTexture = offTexture;
         this.renderTypeFunction = hasNoShade ? ModRenderTypes.ENTITY_LIT : RenderType::entityCutout;
         ModelPart model = context.bakeLayer(modelLocation);
         this.cube = model.getChild("cube");
@@ -46,21 +46,21 @@ public class Fireball3DRenderer<E extends Entity> extends ThrownProjectile3DRend
 
     @Override
     protected int getBlockLightLevel(E entity, BlockPos pos) {
-        if (entity.getRemainingFireTicks() <= 0 && offTexture != null) return super.getBlockLightLevel(entity, pos);
+        if (entity.getRemainingFireTicks() <= 0 && noOverlayTexture != null) return super.getBlockLightLevel(entity, pos);
         // otherwise its always 15 since its on fire
         return entity.level().getBrightness(LightLayer.BLOCK, pos);
     }
 
     @Override
     public void renderBall(E entity, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {
-        boolean onFire = entity.getRemainingFireTicks() > 0 && offTexture != null;
-        ResourceLocation mainTexture = onFire ? getTextureLocation(entity) : offTexture;
+        boolean hasOverlay = entity.getRemainingFireTicks() > 0 || noOverlayTexture == null;
+        ResourceLocation mainTexture = hasOverlay ? getTextureLocation(entity) : noOverlayTexture;
         RenderType mainRedderType = renderTypeFunction.apply(mainTexture);
         VertexConsumer vertexConsumer = bufferSource.getBuffer(mainRedderType);
         cube.render(poseStack, vertexConsumer, packedLight, OverlayTexture.NO_OVERLAY);
         cubeEmissive.render(poseStack, vertexConsumer, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY);
 
-        if (onFire) {
+        if (hasOverlay) {
             float f = (float) entity.tickCount + partialTick;
             RenderType fireRenderType = RenderType.energySwirl(overlayTexture,
                     this.fireXOffset(f) % 1.0F, f * 0.01F % 1.0F);
