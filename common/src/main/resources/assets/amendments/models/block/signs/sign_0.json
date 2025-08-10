@@ -1,0 +1,36 @@
+{
+	"format_version": "1.21.6",
+	"credit": "Made with Blockbench",
+	"parent": "minecraft:block/cube_top",
+	"texture_size": [64, 32],
+	"textures": {
+		"1": "amendments:blocks/signs/sign_oak",
+		"particle": "amendments:entity/signs/sign_oak"
+	},
+	"elements": [
+		{
+			"from": [7, 0, 7],
+			"to": [9, 7, 9],
+			"faces": {
+				"north": {"uv": [0.5, 8, 1, 11.5], "texture": "#1"},
+				"east": {"uv": [1, 8, 1.5, 11.5], "texture": "#1"},
+				"south": {"uv": [1.5, 8, 2, 11.5], "texture": "#1"},
+				"west": {"uv": [0, 8, 0.5, 11.5], "texture": "#1"},
+				"down": {"uv": [0.5, 11.5, 1, 12.5], "texture": "#1", "cullface": "down"}
+			}
+		},
+		{
+			"from": [0, 7, 7],
+			"to": [16, 16, 9],
+			"rotation": {"angle": 0, "axis": "y", "origin": [0, 7, 7]},
+			"faces": {
+				"north": {"uv": [0.5, 1, 4.5, 5.5], "texture": "#1"},
+				"east": {"uv": [0, 1, 0.5, 5.5], "texture": "#1", "cullface": "west"},
+				"south": {"uv": [5, 1, 9, 5.5], "texture": "#1"},
+				"west": {"uv": [4.5, 1, 5, 5.5], "texture": "#1", "cullface": "east"},
+				"up": {"uv": [0.5, 0, 4.5, 1], "texture": "#1", "cullface": "up"},
+				"down": {"uv": [4.5, 0, 8.5, 1], "texture": "#1"}
+			}
+		}
+	]
+}

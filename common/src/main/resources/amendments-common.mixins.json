@@ -29,6 +29,7 @@
     "LecternBlockMixin",
     "PotionTooltipMixin",
     "SignBlockEntityMixin",
+    "SignBlockMixin",
     "SkullBlockEntityMixin",
     "SkullBlockMixin",
     "SlimeBallMixin",
