@@ -2,6 +2,8 @@ package net.mehvahdjukaar.amendments.mixins;
 
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import net.mehvahdjukaar.amendments.AmendmentsClient;
 import net.mehvahdjukaar.amendments.configs.ClientConfigs;
 import net.mehvahdjukaar.moonlight.api.util.math.ColorUtils;
 import net.minecraft.client.model.Model;
@@ -124,4 +126,13 @@ public abstract class SignRendererMixin {
             poseStack.translate(0, 0.125, 0);
         }
     }
+
+    @Inject(method = "renderSignModel", at = @At("HEAD"), cancellable = true)
+    private void amendments$renderSignModel(PoseStack poseStack, int packedLight, int packedOverlay, Model model, VertexConsumer vertexConsumer, CallbackInfo ci) {
+        if (ClientConfigs.PIXEL_CONSISTENT_SIGNS.get()) {
+            ci.cancel();
+        }
+    }
+
+
 }

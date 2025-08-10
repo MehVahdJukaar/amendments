@@ -1,6 +1,7 @@
 package net.mehvahdjukaar.amendments;
 
 import com.google.common.base.Suppliers;
+import com.ibm.icu.impl.CharacterPropertiesImpl;
 import dev.architectury.injectables.annotations.ExpectPlatform;
 import net.mehvahdjukaar.amendments.client.ClientResourceGenerator;
 import net.mehvahdjukaar.amendments.client.ItemHoldingAnimationsManager;
@@ -53,6 +54,8 @@ import java.util.stream.Collectors;
 
 public class AmendmentsClient {
 
+
+    public static final Set<Block> SIGN_THAT_WE_RENDER_AS_BLOCKS = new HashSet<>();
 
     public static final ResourceLocation SIGN_SHEET = new ResourceLocation("textures/atlas/signs.png");
 

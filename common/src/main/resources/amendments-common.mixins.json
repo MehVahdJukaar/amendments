@@ -10,7 +10,6 @@
     "BellMixin",
     "BellTileEntityMixin",
     "BlocksMixin",
-
     "BrewingMixin",
     "BrewingStandMixin",
     "CampfireBlockEntityMixin",
@@ -33,6 +32,7 @@
     "LecternBlockMixin",
     "PotionTooltipMixin",
     "SignBlockEntityMixin",
+    "SignBlockMixin",
     "SkullBlockEntityMixin",
     "SkullBlockMixin",
     "SlimeBallMixin",

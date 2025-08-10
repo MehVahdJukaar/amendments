@@ -21,7 +21,7 @@ public abstract class LargeFireballMixin extends Entity {
 
     public LargeFireballMixin(EntityType<?> entityType, Level level) {
         super(entityType, level);
-    }//TODO:
+    }
 
     @WrapOperation(method = "onHit", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;explode(Lnet/minecraft/world/entity/Entity;DDDFZLnet/minecraft/world/level/Level$ExplosionInteraction;)Lnet/minecraft/world/level/Explosion;"))
     public Explosion amendments$fireballExplosion(Level instance, Entity source, double x, double y, double z,
@@ -36,9 +36,9 @@ public abstract class LargeFireballMixin extends Entity {
         return original.call(instance, source, x, y, z, radius, fire, explosionInteraction);
     }
 
-    @Inject(method = "onHit", at = @At(value = "HEAD"))
+    @Inject(method = "onHit", at = @At(value = "HEAD"), cancellable = true)
     public void amendments$cancelExplosion(HitResult result, CallbackInfo ci) {
-        if (!this.isOnFire()) {
+        if (this.getRemainingFireTicks() <= 0) {
             if (!level().isClientSide) this.discard();
             ci.cancel();
         }

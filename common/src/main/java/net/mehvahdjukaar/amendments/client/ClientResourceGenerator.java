@@ -38,6 +38,7 @@ import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.apache.logging.log4j.Logger;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -45,6 +46,7 @@ import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 public class ClientResourceGenerator extends DynClientResourcesGenerator {
+
     public ClientResourceGenerator() {
         super(new DynamicTexturePack(Amendments.res("generated_pack")));
         this.dynamicPack.addNamespaces("minecraft");
@@ -62,6 +64,8 @@ public class ClientResourceGenerator extends DynClientResourcesGenerator {
 
     @Override
     public void regenerateDynamicAssets(Consumer<ResourceGenTask> executor) {
+        WallLanternModelsManager.refreshModels(Minecraft.getInstance().getResourceManager());
+
 
         if (ClientConfigs.JUKEBOX_MODEL.get()) {
             executor.accept(this::generateJukeboxAssets);
@@ -76,8 +80,9 @@ public class ClientResourceGenerator extends DynClientResourcesGenerator {
         }
 
         if (ClientConfigs.PIXEL_CONSISTENT_SIGNS.get()) {
-            executor.accept(this::generateSignAssets);
+            executor.accept(this::generateSignTextures);
             if (CompatHandler.FARMERS_DELIGHT) executor.accept(this::generateFdSignAssets);
+            executor.accept(this::generateSignBlockModels);
         }
 
         executor.accept((manager, sink) -> {
@@ -119,14 +124,6 @@ public class ClientResourceGenerator extends DynClientResourcesGenerator {
         });
     }
 
-    @Override
-    public void regenerateDynamicAssets(ResourceManager manager) {
-
-        //need this here for reasons I forgot
-        WallLanternModelsManager.refreshModels(manager);
-        super.regenerateDynamicAssets(manager);
-    }
-
     private void generateFdSignAssets(ResourceManager manager, ResourceSink sink) {
         ImageTransformer transformer = ImageTransformer.builder(64, 32, 64, 32)
                 .copyRect(0, 12, 28, 2, 0, 9)
@@ -155,7 +152,40 @@ public class ClientResourceGenerator extends DynClientResourcesGenerator {
         }
     }
 
-    private void generateSignAssets(ResourceManager manager, ResourceSink sink) {
+
+
+    private void generateSignBlockModels(ResourceManager manager, ResourceSink sink) {
+        AmendmentsClient.SIGN_THAT_WE_RENDER_AS_BLOCKS.clear();
+        StaticResource sign0 = StaticResource.getOrFail(manager, ResType.BLOCK_MODELS.getPath(Amendments.res("signs/sign_oak_0")));
+        StaticResource sign1 = StaticResource.getOrFail(manager, ResType.BLOCK_MODELS.getPath(Amendments.res("signs/sign_oak_1")));
+        StaticResource sign2 = StaticResource.getOrFail(manager, ResType.BLOCK_MODELS.getPath(Amendments.res("signs/sign_oak_2")));
+        StaticResource sign3 = StaticResource.getOrFail(manager, ResType.BLOCK_MODELS.getPath(Amendments.res("signs/sign_oak_3")));
+        StaticResource signWall = StaticResource.getOrFail(manager, ResType.BLOCK_MODELS.getPath(Amendments.res("signs/sign_oak_wall")));
+        StaticResource blockState = StaticResource.getOrFail(manager, ResType.BLOCKSTATES.getPath(Amendments.res("sign_oak")));
+        StaticResource blockStateWall = StaticResource.getOrFail(manager, ResType.BLOCKSTATES.getPath(Amendments.res("sign_oak_wall")));
+        String blockStateText = new String(blockState.data, StandardCharsets.UTF_8);
+        String blockStateWallText = new String(blockStateWall.data, StandardCharsets.UTF_8);
+
+        for (WoodType w : WoodTypeRegistry.INSTANCE.getValues()) {
+            Block sign = w.getBlockOfThis("sign");
+            Block wallSign = w.getBlockOfThis("wall_sign");
+            if (sign == null || wallSign == null) continue;
+            String variantId = w.getVariantId("sign");
+            sink.addSimilarJsonResource(manager, sign0, "sign_oak", variantId);
+            sink.addSimilarJsonResource(manager, sign1, "sign_oak", variantId);
+            sink.addSimilarJsonResource(manager, sign2, "sign_oak", variantId);
+            sink.addSimilarJsonResource(manager, sign3, "sign_oak", variantId);
+            sink.addSimilarJsonResource(manager, signWall, "sign_oak", variantId);
+
+            sink.addBytes(Utils.getID(sign), blockStateText.replace("sign_oak", variantId).getBytes(), ResType.BLOCKSTATES);
+            sink.addBytes(Utils.getID(wallSign), blockStateWallText.replace("sign_oak", variantId).getBytes(), ResType.BLOCKSTATES);
+
+            AmendmentsClient.SIGN_THAT_WE_RENDER_AS_BLOCKS.add(sign);
+            AmendmentsClient.SIGN_THAT_WE_RENDER_AS_BLOCKS.add(wallSign);
+        }
+    }
+
+    private void generateSignTextures(ResourceManager manager, ResourceSink sink) {
         ImageTransformer transformer = ImageTransformer.builder(64, 32, 64, 32)
                 .copyRect(0, 16, 16, 16, 0, 16)
                 .build();
@@ -204,14 +234,16 @@ public class ClientResourceGenerator extends DynClientResourcesGenerator {
                     }
                     TextureImage newImage = respriter.recolorWithAnimationOf(modPlankTexture);
                     transformer.apply(vanillaTexture, newImage);
-                    sink.addAndCloseTexture(signMaterial.texture(), newImage);
+                    sink.addAndCloseTexture(signMaterial.texture(), newImage.makeCopy());
+                    ResourceLocation blockTarget = Amendments.res("block/signs/" + w.getVariantId("sign"));
+                    sink.addAndCloseTexture(blockTarget, newImage);
                 } catch (Exception e) {
                     Amendments.LOGGER.warn("Failed to generate hanging sign extension texture for {}, ", w, e);
                 }
 
             }
         } catch (Exception e) {
-            int aa = 1;
+            Amendments.LOGGER.warn("Failed to generate sign extension textures, ", e);
         }
     }
 

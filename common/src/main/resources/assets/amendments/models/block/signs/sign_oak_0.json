@@ -1,0 +1,8 @@
+{
+	"credit": "Made with Blockbench",
+	"parent": "amendments:block/signs/sign_0",
+	"textures": {
+		"1": "amendments:block/signs/sign_oak",
+		"particle": "amendments:block/signs/sign_oak"
+	}
+}

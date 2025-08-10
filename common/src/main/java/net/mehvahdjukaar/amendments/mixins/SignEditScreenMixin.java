@@ -17,7 +17,7 @@ public class SignEditScreenMixin {
     public void amendments$renderSignBackground(PoseStack instance, float x, float y, float z, Operation<Void> original) {
         if (ClientConfigs.PIXEL_CONSISTENT_SIGNS.get()) {
             float a =  (62.500004F * 3 / 2f);
-            instance.translate(0.0D, -7 / 16f * a, -0.125D * a);
+            instance.translate(0.0D, -9 / 16f * a, -0.125D * a);
             instance.scale(3 / 2f, 3 / 2f, 3 / 2f);
         }
         original.call(instance, x, y, z);
