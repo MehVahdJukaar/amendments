@@ -194,6 +194,11 @@ public class ClientResourceGenerator extends DynClientResourcesGenerator {
         }
     }
 
+    private static String joinNonEmpty(String first, String second) {
+        if (first.isEmpty()) return second;
+        if (second.isEmpty()) return first;
+        return first + "_" + second;
+    }
 
     private void generateFdSignTextures(ResourceManager manager, ResourceSink sink) {
         ImageTransformer transformer = ImageTransformer.builder(64, 32, 64, 32)
@@ -208,16 +213,18 @@ public class ClientResourceGenerator extends DynClientResourcesGenerator {
                 .build();
 
         List<String> names = new ArrayList<>();
-        Arrays.stream(DyeColor.values()).forEach(d -> names.add("_" + d.getName()));
+        Arrays.stream(DyeColor.values()).forEach(d -> names.add(d.getName()));
         names.add("");
-        for (var d : names) {
-            ResourceLocation res = new ResourceLocation("farmersdelight:entity/signs/canvas" + d);
+        for (String d : names) {
+            ResourceLocation res = new ResourceLocation(
+                    joinNonEmpty("farmersdelight:entity/signs/canvas", d));
 
             try (TextureImage vanillaTexture = TextureImage.open(manager, res)) {
                 TextureImage newImage = vanillaTexture.makeCopy();
                 transformer.apply(vanillaTexture, newImage);
                 sink.addAndCloseTexture(res, newImage.makeCopy());
-                ResourceLocation blockTarget = Amendments.res("block/signs/farmersdelight/" + d + "canvas_sign");
+                ResourceLocation blockTarget = Amendments.res("block/signs/farmersdelight/" +
+                        joinNonEmpty(d, "canvas_sign"));
                 sink.addAndCloseTexture(blockTarget, newImage);
             } catch (Exception e) {
                 Amendments.LOGGER.warn("Failed to generate Farmers Delight sign extension texture for {}, ", d, e);
