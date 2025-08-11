@@ -2,7 +2,7 @@
 	"credit": "Made with Blockbench",
 	"parent": "amendments:block/signs/sign_wall",
 	"textures": {
-		"1": "amendments:blocks/signs/sign_oak",
-		"particle": "amendments:blocks/signs/sign_oak"
+		"1": "amendments:block/signs/sign_oak",
+		"particle": "amendments:block/signs/sign_oak"
 	}
 }
