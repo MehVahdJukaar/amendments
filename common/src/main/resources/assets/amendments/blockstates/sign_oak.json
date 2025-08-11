@@ -10,7 +10,8 @@
       "model": "amendments:block/signs/sign_oak_2"
     },
     "rotation=3": {
-      "model": "amendments:block/signs/sign_oak_3"
+      "model": "amendments:block/signs/sign_oak_3",
+      "y": 90
     },
     "rotation=4": {
       "model": "amendments:block/signs/sign_oak_0",
@@ -26,7 +27,7 @@
     },
     "rotation=7": {
       "model": "amendments:block/signs/sign_oak_3",
-      "y": 90
+      "y": 180
     },
     "rotation=8": {
       "model": "amendments:block/signs/sign_oak_0",
@@ -42,7 +43,7 @@
     },
     "rotation=11": {
       "model": "amendments:block/signs/sign_oak_3",
-      "y": 180
+      "y": 270
     },
     "rotation=12": {
       "model": "amendments:block/signs/sign_oak_0",
@@ -58,7 +59,7 @@
     },
     "rotation=15": {
       "model": "amendments:block/signs/sign_oak_3",
-      "y": 270
+      "y": 0
     }
   }
 }

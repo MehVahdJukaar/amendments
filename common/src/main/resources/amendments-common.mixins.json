@@ -30,6 +30,7 @@
     "PotionTooltipMixin",
     "SignBlockEntityMixin",
     "SignBlockMixin",
+    "WallSignBlockMixin",
     "SkullBlockEntityMixin",
     "SkullBlockMixin",
     "SlimeBallMixin",
