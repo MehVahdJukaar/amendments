@@ -29,6 +29,7 @@ import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.resources.model.Material;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.world.item.DyeColor;
@@ -81,7 +82,7 @@ public class ClientResourceGenerator extends DynClientResourcesGenerator {
 
         if (ClientConfigs.PIXEL_CONSISTENT_SIGNS.get()) {
             executor.accept(this::generateSignTextures);
-            if (CompatHandler.FARMERS_DELIGHT) executor.accept(this::generateFdSignAssets);
+            if (CompatHandler.FARMERS_DELIGHT) executor.accept(this::generateFdSignTextures);
             executor.accept(this::generateSignBlockModels);
         }
 
@@ -122,67 +123,6 @@ public class ClientResourceGenerator extends DynClientResourcesGenerator {
                                 """));
             }
         });
-    }
-
-    private void generateFdSignAssets(ResourceManager manager, ResourceSink sink) {
-        ImageTransformer transformer = ImageTransformer.builder(64, 32, 64, 32)
-                .copyRect(0, 12, 28, 2, 0, 9)
-                .copyRect(26, 2, 2, 14, 18, 2)
-                .copyRect(24, 7, 2, 10, 16, 4)
-
-                .copyRect(23, 2, 3, 3, 15, 2)
-                .copyRect(28, 2, 24, 12, 20, 2)
-                .copyRect(28, 12, 24, 2, 20, 9)
-                .copyRect(50, 2, 2, 8, 34, 2)
-                .build();
-
-        List<String> names = new ArrayList<>();
-        Arrays.stream(DyeColor.values()).forEach(d -> names.add("_" + d.getName()));
-        names.add("");
-        for (var d : names) {
-            ResourceLocation res = new ResourceLocation("farmersdelight:entity/signs/canvas" + d);
-
-            try (TextureImage vanillaTexture = TextureImage.open(manager, res)) {
-                TextureImage newImage = vanillaTexture.makeCopy();
-                transformer.apply(vanillaTexture, newImage);
-                sink.addAndCloseTexture(res, newImage);
-            } catch (Exception e) {
-                Amendments.LOGGER.warn("Failed to generate Farmers Delight sign extension texture for {}, ", d, e);
-            }
-        }
-    }
-
-
-
-    private void generateSignBlockModels(ResourceManager manager, ResourceSink sink) {
-        AmendmentsClient.SIGN_THAT_WE_RENDER_AS_BLOCKS.clear();
-        StaticResource sign0 = StaticResource.getOrFail(manager, ResType.BLOCK_MODELS.getPath(Amendments.res("signs/sign_oak_0")));
-        StaticResource sign1 = StaticResource.getOrFail(manager, ResType.BLOCK_MODELS.getPath(Amendments.res("signs/sign_oak_1")));
-        StaticResource sign2 = StaticResource.getOrFail(manager, ResType.BLOCK_MODELS.getPath(Amendments.res("signs/sign_oak_2")));
-        StaticResource sign3 = StaticResource.getOrFail(manager, ResType.BLOCK_MODELS.getPath(Amendments.res("signs/sign_oak_3")));
-        StaticResource signWall = StaticResource.getOrFail(manager, ResType.BLOCK_MODELS.getPath(Amendments.res("signs/sign_oak_wall")));
-        StaticResource blockState = StaticResource.getOrFail(manager, ResType.BLOCKSTATES.getPath(Amendments.res("sign_oak")));
-        StaticResource blockStateWall = StaticResource.getOrFail(manager, ResType.BLOCKSTATES.getPath(Amendments.res("sign_oak_wall")));
-        String blockStateText = new String(blockState.data, StandardCharsets.UTF_8);
-        String blockStateWallText = new String(blockStateWall.data, StandardCharsets.UTF_8);
-
-        for (WoodType w : WoodTypeRegistry.INSTANCE.getValues()) {
-            Block sign = w.getBlockOfThis("sign");
-            Block wallSign = w.getBlockOfThis("wall_sign");
-            if (sign == null || wallSign == null) continue;
-            String variantId = w.getVariantId("sign");
-            sink.addSimilarJsonResource(manager, sign0, "sign_oak", variantId);
-            sink.addSimilarJsonResource(manager, sign1, "sign_oak", variantId);
-            sink.addSimilarJsonResource(manager, sign2, "sign_oak", variantId);
-            sink.addSimilarJsonResource(manager, sign3, "sign_oak", variantId);
-            sink.addSimilarJsonResource(manager, signWall, "sign_oak", variantId);
-
-            sink.addBytes(Utils.getID(sign), blockStateText.replace("sign_oak", variantId).getBytes(), ResType.BLOCKSTATES);
-            sink.addBytes(Utils.getID(wallSign), blockStateWallText.replace("sign_oak", variantId).getBytes(), ResType.BLOCKSTATES);
-
-            AmendmentsClient.SIGN_THAT_WE_RENDER_AS_BLOCKS.add(sign);
-            AmendmentsClient.SIGN_THAT_WE_RENDER_AS_BLOCKS.add(wallSign);
-        }
     }
 
     private void generateSignTextures(ResourceManager manager, ResourceSink sink) {
@@ -246,6 +186,99 @@ public class ClientResourceGenerator extends DynClientResourcesGenerator {
             Amendments.LOGGER.warn("Failed to generate sign extension textures, ", e);
         }
     }
+
+
+    private void generateFdSignTextures(ResourceManager manager, ResourceSink sink) {
+        ImageTransformer transformer = ImageTransformer.builder(64, 32, 64, 32)
+                .copyRect(0, 12, 28, 2, 0, 9)
+                .copyRect(26, 2, 2, 14, 18, 2)
+                .copyRect(24, 7, 2, 10, 16, 4)
+
+                .copyRect(23, 2, 3, 3, 15, 2)
+                .copyRect(28, 2, 24, 12, 20, 2)
+                .copyRect(28, 12, 24, 2, 20, 9)
+                .copyRect(50, 2, 2, 8, 34, 2)
+                .build();
+
+        List<String> names = new ArrayList<>();
+        Arrays.stream(DyeColor.values()).forEach(d -> names.add("_" + d.getName()));
+        names.add("");
+        for (var d : names) {
+            ResourceLocation res = new ResourceLocation("farmersdelight:entity/signs/canvas" + d);
+
+            try (TextureImage vanillaTexture = TextureImage.open(manager, res)) {
+                TextureImage newImage = vanillaTexture.makeCopy();
+                transformer.apply(vanillaTexture, newImage);
+                sink.addAndCloseTexture(res, newImage.makeCopy());
+                ResourceLocation blockTarget = Amendments.res("block/signs/farmersdelight/" + d + "canvas_sign");
+                sink.addAndCloseTexture(blockTarget, newImage);
+            } catch (Exception e) {
+                Amendments.LOGGER.warn("Failed to generate Farmers Delight sign extension texture for {}, ", d, e);
+            }
+        }
+    }
+
+
+    private void generateSignBlockModels(ResourceManager manager, ResourceSink sink) {
+        AmendmentsClient.SIGN_THAT_WE_RENDER_AS_BLOCKS.clear();
+        StaticResource sign0 = StaticResource.getOrFail(manager, ResType.BLOCK_MODELS.getPath(Amendments.res("signs/sign_oak_0")));
+        StaticResource sign1 = StaticResource.getOrFail(manager, ResType.BLOCK_MODELS.getPath(Amendments.res("signs/sign_oak_1")));
+        StaticResource sign2 = StaticResource.getOrFail(manager, ResType.BLOCK_MODELS.getPath(Amendments.res("signs/sign_oak_2")));
+        StaticResource sign3 = StaticResource.getOrFail(manager, ResType.BLOCK_MODELS.getPath(Amendments.res("signs/sign_oak_3")));
+        StaticResource signWall = StaticResource.getOrFail(manager, ResType.BLOCK_MODELS.getPath(Amendments.res("signs/sign_oak_wall")));
+        StaticResource blockState = StaticResource.getOrFail(manager, ResType.BLOCKSTATES.getPath(Amendments.res("sign_oak")));
+        StaticResource blockStateWall = StaticResource.getOrFail(manager, ResType.BLOCKSTATES.getPath(Amendments.res("sign_oak_wall")));
+        String blockStateText = new String(blockState.data, StandardCharsets.UTF_8);
+        String blockStateWallText = new String(blockStateWall.data, StandardCharsets.UTF_8);
+
+        for (WoodType w : WoodTypeRegistry.INSTANCE.getValues()) {
+            Block sign = w.getBlockOfThis("sign");
+            Block wallSign = w.getBlockOfThis("wall_sign");
+            if (sign == null || wallSign == null) continue;
+            String variantId = w.getVariantId("sign");
+            sink.addSimilarJsonResource(manager, sign0, "sign_oak", variantId);
+            sink.addSimilarJsonResource(manager, sign1, "sign_oak", variantId);
+            sink.addSimilarJsonResource(manager, sign2, "sign_oak", variantId);
+            sink.addSimilarJsonResource(manager, sign3, "sign_oak", variantId);
+            sink.addSimilarJsonResource(manager, signWall, "sign_oak", variantId);
+
+            sink.addBytes(Utils.getID(sign), blockStateText.replace("sign_oak", variantId).getBytes(), ResType.BLOCKSTATES);
+            sink.addBytes(Utils.getID(wallSign), blockStateWallText.replace("sign_oak", variantId).getBytes(), ResType.BLOCKSTATES);
+
+            AmendmentsClient.SIGN_THAT_WE_RENDER_AS_BLOCKS.add(sign);
+            AmendmentsClient.SIGN_THAT_WE_RENDER_AS_BLOCKS.add(wallSign);
+        }
+
+        List<String> names = new ArrayList<>();
+        Arrays.stream(DyeColor.values()).forEach(d -> names.add(d.getName() + "_"));
+        names.add("");
+        if (CompatHandler.FARMERS_DELIGHT) {
+            for (var d : names) {
+                var canvas = BuiltInRegistries.BLOCK.getOptional(
+                        new ResourceLocation("farmersdelight", d + "canvas_sign")
+                ).orElse(null);
+                var canvasWall = BuiltInRegistries.BLOCK.getOptional(
+                        new ResourceLocation("farmersdelight", d + "canvas_wall_sign")
+                ).orElse(null);
+                if (canvas == null || canvasWall == null) continue;
+                ResourceLocation canvasId = Utils.getID(canvas);
+                ResourceLocation canvasWallId = Utils.getID(canvasWall);
+                String variantId = "farmersdelight/" + canvasId.getPath();
+                sink.addSimilarJsonResource(manager, sign0, "sign_oak", variantId);
+                sink.addSimilarJsonResource(manager, sign1, "sign_oak", variantId);
+                sink.addSimilarJsonResource(manager, sign2, "sign_oak", variantId);
+                sink.addSimilarJsonResource(manager, sign3, "sign_oak", variantId);
+                sink.addSimilarJsonResource(manager, signWall, "sign_oak", variantId);
+
+                sink.addBytes(canvasId, blockStateText.replace("sign_oak", variantId).getBytes(), ResType.BLOCKSTATES);
+                sink.addBytes(canvasWallId, blockStateWallText.replace("sign_oak", variantId).getBytes(), ResType.BLOCKSTATES);
+
+                AmendmentsClient.SIGN_THAT_WE_RENDER_AS_BLOCKS.add(canvas);
+                AmendmentsClient.SIGN_THAT_WE_RENDER_AS_BLOCKS.add(canvasWall);
+            }
+        }
+    }
+
 
     private void generateHangingSignAssets(ResourceManager manager, ResourceSink sink) {
         ImageTransformer transformer = ImageTransformer.builder(32, 64, 16, 16)

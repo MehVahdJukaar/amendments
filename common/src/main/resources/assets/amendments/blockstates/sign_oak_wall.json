@@ -1,17 +1,17 @@
 {
   "variants": {
-    "direction=north": {
+    "facing=north": {
       "model": "amendments:block/signs/sign_oak_wall"
     },
-    "direction=south": {
+    "facing=south": {
       "model": "amendments:block/signs/sign_oak_wall",
       "y": 180
     },
-    "direction=east": {
+    "facing=east": {
       "model": "amendments:block/signs/sign_oak_wall",
       "y": 90
     },
-    "direction=west": {
+    "facing=west": {
       "model": "amendments:block/signs/sign_oak_wall",
       "y": 270
     }

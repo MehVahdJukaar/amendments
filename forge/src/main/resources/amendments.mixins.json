@@ -4,12 +4,14 @@
   "compatibilityLevel": "JAVA_17",
   "package": "net.mehvahdjukaar.amendments.mixins.forge",
   "mixins": [
+    "CompatFDSignBlockEntityMixin",
+    "CompatFDWallSignBlockEntityMixin",
     "SelfCauldronMixin"
   ],
   "client": [
     "CompatFarmersDelightCanvasMixin",
-    "CompatFarmersDelightSignMixin",
-    "SignEditScreenMixinFD"
+    "CompatFarmersDelightSignRendererMixin",
+    "CompatFDSignEditScreenMixin"
   ],
   "injectors": {
     "defaultRequire": 1

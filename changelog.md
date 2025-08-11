@@ -1,3 +1,4 @@
-- fireballs that touch water will be extinguished or die off
-- snowball that touch fire will die off
-- yes before both of those would not happen in vanilla
+- signs will now render as block models.
+- this counds as an optimization over vanilla actually
+- fixed a crash with fireballs
+- fixed sign edit screen sign being offset

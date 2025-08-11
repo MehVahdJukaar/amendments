@@ -3,6 +3,6 @@
 	"parent": "amendments:block/signs/sign_wall",
 	"textures": {
 		"1": "amendments:blocks/signs/sign_oak",
-		"particle": "amendments:entity/signs/sign_oak"
+		"particle": "amendments:blocks/signs/sign_oak"
 	}
 }

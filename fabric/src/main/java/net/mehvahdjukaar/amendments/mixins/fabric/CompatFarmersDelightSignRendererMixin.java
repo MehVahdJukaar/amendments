@@ -1,6 +1,7 @@
 package net.mehvahdjukaar.amendments.mixins.fabric;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.mehvahdjukaar.amendments.configs.ClientConfigs;
 import net.mehvahdjukaar.moonlight.api.util.math.ColorUtils;
 import net.minecraft.client.model.Model;
@@ -9,6 +10,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.block.SignBlock;
+import net.minecraft.world.level.block.StandingSignBlock;
 import net.minecraft.world.level.block.entity.SignBlockEntity;
 import net.minecraft.world.level.block.entity.SignText;
 import net.minecraft.world.level.block.state.BlockState;
@@ -25,7 +27,7 @@ import vectorwing.farmersdelight.client.renderer.CanvasSignRenderer;
 //fixes plain text shade
 @Pseudo
 @Mixin(CanvasSignRenderer.class)
-public abstract class CompatFarmersDelightSignMixin {
+public abstract class CompatFarmersDelightSignRendererMixin {
 
     @Unique
     private static Float amendments$canvasSignYaw;
@@ -68,5 +70,20 @@ public abstract class CompatFarmersDelightSignMixin {
     @Inject(method = "renderSignWithText", at = @At("TAIL"), remap = false)
     private void resetYaw(SignBlockEntity signBlockEntity, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, int packedOverlay, BlockState state, SignBlock block, DyeColor dye, Model model, CallbackInfo ci) {
         amendments$canvasSignYaw = null;
+    }
+
+    @Inject(method = "translateSign",
+            at = @At(value = "TAIL"))
+    private void amendments$signTranslate(PoseStack poseStack, float yRot, BlockState state, CallbackInfo ci) {
+        if (ClientConfigs.PIXEL_CONSISTENT_SIGNS.get() && !(state.getBlock() instanceof StandingSignBlock)) {
+            poseStack.translate(0, 0.125, 0);
+        }
+    }
+
+    @Inject(method = "renderSignModel", at = @At("HEAD"), cancellable = true)
+    private void amendments$renderSignModel(PoseStack poseStack, int packedLight, int packedOverlay, Model model, VertexConsumer vertexConsumer, CallbackInfo ci) {
+        if (ClientConfigs.PIXEL_CONSISTENT_SIGNS.get()) {
+            ci.cancel();
+        }
     }
 }

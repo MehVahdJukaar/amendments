@@ -8,6 +8,7 @@ import net.mehvahdjukaar.moonlight.api.ModSharedVariables;
 import net.mehvahdjukaar.moonlight.api.platform.configs.ConfigBuilder;
 import net.mehvahdjukaar.moonlight.api.platform.configs.ConfigSpec;
 import net.mehvahdjukaar.moonlight.api.platform.configs.ConfigType;
+import vectorwing.farmersdelight.client.renderer.CanvasSignRenderer;
 
 import java.util.function.Supplier;
 
@@ -77,7 +78,7 @@ public class ClientConfigs {
         builder.pop();
 
         builder.push("sign");
-        PIXEL_CONSISTENT_SIGNS = builder.comment("Gives signs a pixel consistent model and texture. Also affects other mods")
+        PIXEL_CONSISTENT_SIGNS = builder.comment("Gives signs a pixel consistent model and texture. Also affects other mods. This also makes them use a Block Model, making them render much much much faster than as block entities")
                 .define("pixel_consistent", true);
         BRIGHTEN_SIGN_TEXT_COLOR = builder.comment("A scalar multiplier that will be applied to sign text making it brighter, supposedly more legible")
                 .define("text_color_multiplier", 1.2d, 0, 5);
