@@ -83,6 +83,7 @@ public abstract class SignRendererMixin {
         amendments$signYaw = null;
     }
 
+
     @Inject(method = "createSignLayer", at = @At("HEAD"), cancellable = true)
     private static void amendments$makePixelConsistentModel(CallbackInfoReturnable<LayerDefinition> cir) {
         if (ClientConfigs.PIXEL_CONSISTENT_SIGNS.get()) {

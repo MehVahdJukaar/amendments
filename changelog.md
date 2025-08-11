@@ -1,4 +1,1 @@
-- signs will now render as block models.
-- this counds as an optimization over vanilla actually
-- fixed a crash with fireballs
-- fixed sign edit screen sign being offset
+- fixed some issues with the signs
