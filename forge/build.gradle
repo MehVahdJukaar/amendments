@@ -166,7 +166,10 @@ dependencies {
     modCompileOnly("curse.maven:puzzles-lib-495476:5330447")
     modCompileOnly("curse.maven:new-thin-air-878379:5068247")
     modImplementation("com.jozufozu.flywheel:flywheel-forge-${flywheel_version}")
+    modRuntimeOnly("curse.maven:autumnity-365045:5292346") // Blueprint
 
+    modRuntimeOnly("curse.maven:blue-skies-312918:5010316") // structure-gel-api
+    modRuntimeOnly("curse.maven:structure-gel-api-378802:5188368") // Blue-Skies
 
     modCompileOnly ("maven.modrinth:dye-depot:1.0.0-forge")
 

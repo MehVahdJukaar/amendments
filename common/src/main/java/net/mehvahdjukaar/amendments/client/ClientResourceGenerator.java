@@ -38,6 +38,7 @@ import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.Nullable;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -141,31 +142,9 @@ public class ClientResourceGenerator extends DynClientResourcesGenerator {
                 Block sing = w.getBlockOfThis("sign");
                 if (sing == null) continue;
 
-                net.minecraft.world.level.block.state.properties.WoodType vanilla = w.toVanilla();
-                if (vanilla == null) {
-                    Amendments.LOGGER.error("Vanilla wood type for wood {} was null. This is a bug", w);
-                    continue;
-                }
-                Material signMaterial = Sheets.getSignMaterial(vanilla);
-                if (signMaterial == null) {
-                    try {
-                        BlockEntity be = ((EntityBlock) sing).newBlockEntity(BlockPos.ZERO, sing.defaultBlockState());
-                        BlockEntityRenderer<?> renderer = Minecraft.getInstance().getBlockEntityRenderDispatcher().getRenderer(be);
-                        if (renderer instanceof SignRendererAccessor sr) {
-                            signMaterial = sr.invokeGetSignMaterial(vanilla);
-                        }
-                    } catch (Exception e) {
-                        Amendments.LOGGER.error("Failed to get sign material for wood (from block entity renderer) {}, ", w, e);
-                        continue;
-                    }
-                }
-                if (signMaterial == null) {
-                    Amendments.LOGGER.error("Sign material for wood {} was null. " +
-                            "This is likely due to some mod calling Sheets.getSignMaterial too early or by some wood mod not registering their wood type properly by not adding it to the vanilla texture map. Sheets.getSignMaterial is NOT Nullable, i shouldn't even have this check.", w);
-                    continue;
-                }
-                try (TextureImage vanillaTexture = TextureImage.open(manager,
-                        signMaterial.texture());
+                ResourceLocation signTexture = findSignTexture(manager, w, sing, false);
+                if (signTexture == null) continue;
+                try (TextureImage vanillaTexture = TextureImage.open(manager, signTexture);
                      TextureImage modPlankTexture = TextureImage.open(manager,
                              RPUtils.findFirstBlockTextureLocation(manager, w.planks));) {
                     List<Palette> palette = Palette.fromAnimatedImage(modPlankTexture);
@@ -174,7 +153,7 @@ public class ClientResourceGenerator extends DynClientResourcesGenerator {
                     }
                     TextureImage newImage = respriter.recolorWithAnimationOf(modPlankTexture);
                     transformer.apply(vanillaTexture, newImage);
-                    sink.addAndCloseTexture(signMaterial.texture(), newImage.makeCopy());
+                    sink.addAndCloseTexture(signTexture, newImage.makeCopy());
                     ResourceLocation blockTarget = Amendments.res("block/signs/" + w.getVariantId("sign"));
                     sink.addAndCloseTexture(blockTarget, newImage);
                 } catch (Exception e) {
@@ -185,6 +164,40 @@ public class ClientResourceGenerator extends DynClientResourcesGenerator {
         } catch (Exception e) {
             Amendments.LOGGER.warn("Failed to generate sign extension textures, ", e);
         }
+    }
+
+    @Nullable
+    private static ResourceLocation findSignTexture(ResourceManager manager, WoodType w, Block sing, boolean hanging) {
+        var vanilla = w.toVanilla();
+        if (vanilla == null) {
+            Amendments.LOGGER.error("Vanilla wood type for wood {} was null. This is a bug", w);
+            return null;
+        }
+        Material signMaterial = hanging ? Sheets.getHangingSignMaterial(vanilla) :
+                Sheets.getSignMaterial(vanilla);
+        if (signMaterial == null) {
+            try {
+                BlockEntity be = ((EntityBlock) sing).newBlockEntity(BlockPos.ZERO, sing.defaultBlockState());
+                BlockEntityRenderer<?> renderer = Minecraft.getInstance().getBlockEntityRenderDispatcher().getRenderer(be);
+                if (renderer instanceof SignRendererAccessor sr) {
+                    signMaterial = sr.invokeGetSignMaterial(vanilla);
+                }
+            } catch (Exception e) {
+                Amendments.LOGGER.error("Failed to get sign material for wood (from block entity renderer) {}, ", w, e);
+            }
+        }
+        //when all else fails, guess
+        if (signMaterial == null) {
+            ResourceLocation relativeLocation = w.getId().withPrefix("entity/signs/" + (hanging ? "hanging/" : ""));
+            ResourceLocation id = ResType.TEXTURES.getPath(relativeLocation);
+            if (manager.getResource(id).isPresent()) return relativeLocation;
+        } else {
+            return signMaterial.texture();
+        }
+
+        Amendments.LOGGER.error("Sign material for wood {} was null. " +
+                "This is likely due to some mod calling Sheets.getSignMaterial too early or by some wood mod not registering their wood type properly by not adding it to the vanilla texture map. Sheets.getSignMaterial is NOT Nullable, i shouldn't even have this check.", w);
+        return null;
     }
 
     private static String joinNonEmpty(String first, String second) {
@@ -302,31 +315,9 @@ public class ClientResourceGenerator extends DynClientResourcesGenerator {
             Block hangingSign = w.getBlockOfThis("hanging_sign");
             if (hangingSign == null) continue;
             //hanging sign extension textures
-            net.minecraft.world.level.block.state.properties.WoodType vanilla = w.toVanilla();
-            if (vanilla == null) {
-                Amendments.LOGGER.error("Vanilla wood type for wood {} was null. This is a bug", w);
-                continue;
-            }
-            Material hangingSignMaterial = Sheets.getHangingSignMaterial(vanilla);
-            if (hangingSignMaterial == null) {
-                try {
-                    BlockEntity be = ((EntityBlock) hangingSign).newBlockEntity(BlockPos.ZERO, hangingSign.defaultBlockState());
-                    BlockEntityRenderer<?> renderer = Minecraft.getInstance().getBlockEntityRenderDispatcher().getRenderer(be);
-                    if (renderer instanceof SignRendererAccessor sr) {
-                        hangingSignMaterial = sr.invokeGetSignMaterial(vanilla);
-                    }
-                } catch (Exception e) {
-                    Amendments.LOGGER.error("Failed to get hanging sign material for wood (from block entity renderer) {}, ", w, e);
-                    continue;
-                }
-            }
-            if (hangingSignMaterial == null) {
-                Amendments.LOGGER.error("Hanging sign material for wood {} was null. " +
-                        "This is likely due to some mod calling Sheets.getHangingSignMaterial too early or by some wood mod not registering their wood type properly by not adding it to the vanilla texture map. Sheets.getHangingSignMaterial is NOT Nullable, i shouldn't even have this check.", w);
-                continue;
-            }
-            try (TextureImage vanillaTexture = TextureImage.open(manager,
-                    hangingSignMaterial.texture())) {
+            ResourceLocation signTexture = findSignTexture(manager, w, hangingSign, true);
+            if (signTexture == null) continue;
+            try (TextureImage vanillaTexture = TextureImage.open(manager, signTexture)) {
                 TextureImage flipped = vanillaTexture.createRotated(Rotation.CLOCKWISE_90);
                 TextureImage newIm = flipped.createResized(0.5f, 0.25f);
                 newIm.clear();
