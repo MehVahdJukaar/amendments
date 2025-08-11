@@ -15,13 +15,10 @@ import net.mehvahdjukaar.amendments.common.item.placement.WallLanternPlacement;
 import net.mehvahdjukaar.amendments.common.recipe.DyeBottleRecipe;
 import net.mehvahdjukaar.amendments.common.tile.*;
 import net.mehvahdjukaar.amendments.configs.CommonConfigs;
-import net.mehvahdjukaar.amendments.integration.CompatHandler;
-import net.mehvahdjukaar.amendments.integration.CompatObjects;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluid;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidRegistry;
 import net.mehvahdjukaar.moonlight.api.item.additional_placements.AdditionalItemPlacementsAPI;
-import net.mehvahdjukaar.moonlight.api.misc.DataObjectReference;
-import net.mehvahdjukaar.moonlight.api.misc.DynamicHolder;
+import net.mehvahdjukaar.moonlight.api.misc.HolderReference;
 import net.mehvahdjukaar.moonlight.api.misc.RegSupplier;
 import net.mehvahdjukaar.moonlight.api.misc.Registrator;
 import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
@@ -30,7 +27,6 @@ import net.mehvahdjukaar.moonlight.api.set.BlockSetAPI;
 import net.mehvahdjukaar.moonlight.api.set.BlocksColorAPI;
 import net.minecraft.Util;
 import net.minecraft.core.component.DataComponents;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
@@ -92,8 +88,8 @@ public class ModRegistry {
         if (CommonConfigs.CEILING_BANNERS.get()) {
             for (var e : CEILING_BANNERS.entrySet()) {
                 Item item = BannerBlock.byColor(e.getKey()).asItem();
-                if(item == Items.AIR){
-                    throw new IllegalStateException("Block " + e.getValue().get() + " has no corresponding item! How did this happen? Some OTHER mod must have screwed up the block to items map!" );
+                if (item == Items.AIR) {
+                    throw new IllegalStateException("Block " + e.getValue().get() + " has no corresponding item! How did this happen? Some OTHER mod must have screwed up the block to items map!");
                 }
                 event.registerSimple(Preconditions.checkNotNull(item),
                         e.getValue().get());
@@ -101,11 +97,11 @@ public class ModRegistry {
         }
     }
 
-    public static final DynamicHolder<DamageType> BOILING_DAMAGE = DynamicHolder.of(
+    public static final HolderReference<DamageType> BOILING_DAMAGE = HolderReference.of(
             res("boiling"), Registries.DAMAGE_TYPE);
 
 
-    public static final DynamicHolder<SoftFluid> DYE_SOFT_FLUID = DynamicHolder.of(res("dye"),
+    public static final HolderReference<SoftFluid> DYE_SOFT_FLUID = HolderReference.of(res("dye"),
             SoftFluidRegistry.KEY);
 
     public static final RegSupplier<RecipeSerializer<DyeBottleRecipe>> DYE_BOTTLE_RECIPE = RegHelper.registerSpecialRecipe(
@@ -128,31 +124,28 @@ public class ModRegistry {
             res("cauldron_recipe"), CauldronRecipe::new);*/
 
     public static final Supplier<EntityType<MediumDragonFireball>> MEDIUM_DRAGON_FIREBALL =
-            RegHelper.registerEntityType(res("medium_dragon_fireball"),
-                    () -> EntityType.Builder.<MediumDragonFireball>of(MediumDragonFireball::new, MobCategory.MISC)
+            regEntity("medium_dragon_fireball",
+                    EntityType.Builder.<MediumDragonFireball>of(MediumDragonFireball::new, MobCategory.MISC)
                             .sized(0.3125F, 0.3125F)
                             .clientTrackingRange(16)
                             .fireImmune()
-                            .updateInterval(5)
-                            .build("medium_dragon_fireball"));
+                            .updateInterval(5));
 
     public static final Supplier<EntityType<MediumFireball>> MEDIUM_FIREBALL =
-            RegHelper.registerEntityType(res("medium_fireball"),
-                    () -> EntityType.Builder.<MediumFireball>of(MediumFireball::new, MobCategory.MISC)
+            regEntity("medium_fireball",
+                    EntityType.Builder.<MediumFireball>of(MediumFireball::new, MobCategory.MISC)
                             .sized(0.3125F, 0.3125F)
                             .clientTrackingRange(16)
                             .fireImmune()
-                            .updateInterval(5)
-                            .build("medium_fireball"));
+                            .updateInterval(5));
 
     public static final Supplier<EntityType<RingEffectCloud>> RING_EFFECT_CLOUD =
-            RegHelper.registerEntityType(res("ring_effect_cloud"),
-                    () -> EntityType.Builder.<RingEffectCloud>of(RingEffectCloud::new, MobCategory.MISC)
+            regEntity("ring_effect_cloud",
+                    EntityType.Builder.<RingEffectCloud>of(RingEffectCloud::new, MobCategory.MISC)
                             .fireImmune()
                             .sized(6.0F, 0.5F)
                             .clientTrackingRange(10)
-                            .updateInterval(Integer.MAX_VALUE)
-                            .build("ring_effect_cloud"));
+                            .updateInterval(Integer.MAX_VALUE));
 
     public static final Supplier<Item> DRAGON_CHARGE = regItem(DRAGON_CHARGE_NAME,
             () -> new DragonChargeItem(new Item.Properties()));
@@ -246,7 +239,7 @@ public class ModRegistry {
             WALL_LANTERN_NAME, () -> PlatHelper.newBlockEntityType(
                     WallLanternBlockTile::new, WALL_LANTERN.get()));
 
-    public static final Supplier<EntityType<FallingLanternEntity>> FALLING_LANTERN = regEntity(FALLING_LANTERN_NAME, () ->
+    public static final Supplier<EntityType<FallingLanternEntity>> FALLING_LANTERN = regEntity(FALLING_LANTERN_NAME,
             EntityType.Builder.<FallingLanternEntity>of(FallingLanternEntity::new, MobCategory.MISC)
                     .sized(0.98F, 0.98F)
                     .clientTrackingRange(10)
@@ -327,9 +320,8 @@ public class ModRegistry {
         return RegHelper.registerItem(res(name), sup);
     }
 
-    public static <T extends
-            Entity> Supplier<EntityType<T>> regEntity(String name, Supplier<EntityType.Builder<T>> builder) {
-        return RegHelper.registerEntityType(res(name), () -> builder.get().build(name));
+    public static <T extends Entity> Supplier<EntityType<T>> regEntity(String name, EntityType.Builder<T> builder) {
+        return RegHelper.registerEntityType(res(name), builder);
     }
 
 }
