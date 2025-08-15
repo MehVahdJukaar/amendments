@@ -1,1 +1,2 @@
-- fixed wall sign cullface
+- item thrown in cauldrons will not be immediately picked up and will have increase pickup delay so long they are there
+- fixed fireball explosion not having variable sound volume

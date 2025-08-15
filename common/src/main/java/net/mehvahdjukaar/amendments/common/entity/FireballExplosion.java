@@ -197,7 +197,7 @@ public class FireballExplosion extends Explosion {
 
     public boolean playExplosionSound() {
         this.level.playLocalSound(this.x, this.y, this.z, ModRegistry.FIREBALL_EXPLOSION_SOUND.get(),
-                SoundSource.BLOCKS, 4.0F,
+                SoundSource.BLOCKS, soundVolume,
                 (1.0F + (this.level.random.nextFloat() - this.level.random.nextFloat()) * 0.2F) * 0.7F, false);
 
         return false;
