@@ -17,10 +17,7 @@ import net.mehvahdjukaar.moonlight.api.resources.pack.DynClientResourcesGenerato
 import net.mehvahdjukaar.moonlight.api.resources.pack.DynamicTexturePack;
 import net.mehvahdjukaar.moonlight.api.resources.pack.ResourceGenTask;
 import net.mehvahdjukaar.moonlight.api.resources.pack.ResourceSink;
-import net.mehvahdjukaar.moonlight.api.resources.textures.ImageTransformer;
-import net.mehvahdjukaar.moonlight.api.resources.textures.Palette;
-import net.mehvahdjukaar.moonlight.api.resources.textures.Respriter;
-import net.mehvahdjukaar.moonlight.api.resources.textures.TextureImage;
+import net.mehvahdjukaar.moonlight.api.resources.textures.*;
 import net.mehvahdjukaar.moonlight.api.set.wood.WoodType;
 import net.mehvahdjukaar.moonlight.api.set.wood.WoodTypeRegistry;
 import net.mehvahdjukaar.moonlight.api.util.Utils;
@@ -30,6 +27,7 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.resources.model.Material;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.data.models.blockstates.BlockStateGenerator;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.world.item.DyeColor;
@@ -67,8 +65,6 @@ public class ClientResourceGenerator extends DynClientResourcesGenerator {
     @Override
     public void regenerateDynamicAssets(Consumer<ResourceGenTask> executor) {
         WallLanternModelsManager.refreshModels(Minecraft.getInstance().getResourceManager());
-
-
         if (ClientConfigs.JUKEBOX_MODEL.get()) {
             executor.accept(this::generateJukeboxAssets);
         }
@@ -109,6 +105,7 @@ public class ClientResourceGenerator extends DynClientResourcesGenerator {
                                   "parent": "amendments:block/jukebox"
                                 }
                                 """));
+
                 sink.addBlockState(new ResourceLocation("jukebox"), JsonParser.parseString(
                         """ 
                                 {
@@ -127,8 +124,9 @@ public class ClientResourceGenerator extends DynClientResourcesGenerator {
     }
 
     private void generateSignTextures(ResourceManager manager, ResourceSink sink) {
-        ImageTransformer transformer = ImageTransformer.builder(64, 32, 64, 32)
-                .copyRect(0, 16, 16, 16, 0, 16)
+        TextureCollager transformer = TextureCollager.builder(64, 32, 64, 32)
+                .copyFrom(0, 16, 16, 16)
+                .to(0, 16)
                 .build();
 
         try (TextureImage template = TextureImage.open(manager,
@@ -142,24 +140,26 @@ public class ClientResourceGenerator extends DynClientResourcesGenerator {
                 Block sing = w.getBlockOfThis("sign");
                 if (sing == null) continue;
 
-                ResourceLocation signTexture = findSignTexture(manager, w, sing, false);
-                if (signTexture == null) continue;
-                try (TextureImage vanillaTexture = TextureImage.open(manager, signTexture);
+                ResourceLocation signTextureLocation = findSignTexture(manager, w, sing, false);
+                if (signTextureLocation == null) continue;
+                try (TextureImage signTexture = TextureImage.open(manager, signTextureLocation);
                      TextureImage modPlankTexture = TextureImage.open(manager,
                              RPUtils.findFirstBlockTextureLocation(manager, w.planks));) {
                     List<Palette> palette = Palette.fromAnimatedImage(modPlankTexture);
                     for (var p : palette) {
                         p.remove(p.getLightest());
                     }
-                    TextureImage newImage = respriter.recolorWithAnimationOf(modPlankTexture);
-                    transformer.apply(vanillaTexture, newImage);
-                    sink.addAndCloseTexture(signTexture, newImage.makeCopy());
-                    ResourceLocation blockTarget = Amendments.res("block/signs/" + w.getVariantId("sign"));
-                    sink.addAndCloseTexture(blockTarget, newImage);
+
+                    try (TextureImage newImage = respriter.recolorWithAnimation(palette,
+                            modPlankTexture.getMcMeta())) {
+                        transformer.apply(signTexture, newImage);
+                        ResourceLocation blockLocation = Amendments.res("block/signs/" + w.getVariantId("sign"));
+                        sink.addTexture(signTextureLocation, newImage);
+                        sink.addTexture(blockLocation, newImage);
+                    }
                 } catch (Exception e) {
                     Amendments.LOGGER.warn("Failed to generate hanging sign extension texture for {}, ", w, e);
                 }
-
             }
         } catch (Exception e) {
             Amendments.LOGGER.warn("Failed to generate sign extension textures, ", e);
@@ -207,31 +207,38 @@ public class ClientResourceGenerator extends DynClientResourcesGenerator {
     }
 
     private void generateFdSignTextures(ResourceManager manager, ResourceSink sink) {
-        ImageTransformer transformer = ImageTransformer.builder(64, 32, 64, 32)
-                .copyRect(0, 12, 28, 2, 0, 9)
-                .copyRect(26, 2, 2, 14, 18, 2)
-                .copyRect(24, 7, 2, 10, 16, 4)
+        TextureCollager transformer = TextureCollager.builder(64, 32, 64, 32)
+                .copyFrom(0, 12, 28, 2)
+                .to(0, 9)
+                .copyFrom(26, 2, 2, 14)
+                .to(18, 2)
+                .copyFrom(24, 7, 2, 10)
+                .to(16, 4)
 
-                .copyRect(23, 2, 3, 3, 15, 2)
-                .copyRect(28, 2, 24, 12, 20, 2)
-                .copyRect(28, 12, 24, 2, 20, 9)
-                .copyRect(50, 2, 2, 8, 34, 2)
+                .copyFrom(23, 2, 3, 3)
+                .to(15, 2)
+                .copyFrom(28, 2, 24, 12)
+                .to(20, 2)
+                .copyFrom(28, 12, 24, 2)
+                .to(20, 9)
+                .copyFrom(50, 2, 2, 8)
+                .to(34, 2)
                 .build();
 
         List<String> names = new ArrayList<>();
         Arrays.stream(DyeColor.values()).forEach(d -> names.add(d.getName()));
         names.add("");
         for (String d : names) {
-            ResourceLocation res = new ResourceLocation(
+            ResourceLocation texturePath = new ResourceLocation(
                     joinNonEmpty("farmersdelight:entity/signs/canvas", d));
 
-            try (TextureImage vanillaTexture = TextureImage.open(manager, res)) {
-                TextureImage newImage = vanillaTexture.makeCopy();
+            try (TextureImage vanillaTexture = TextureImage.open(manager, texturePath);
+                 TextureImage newImage = vanillaTexture.makeCopy()) {
+
                 transformer.apply(vanillaTexture, newImage);
-                sink.addAndCloseTexture(res, newImage.makeCopy());
-                ResourceLocation blockTarget = Amendments.res("block/signs/farmersdelight/" +
-                        joinNonEmpty(d, "canvas_sign"));
-                sink.addAndCloseTexture(blockTarget, newImage);
+                ResourceLocation blockTexturePath = Amendments.res("block/signs/farmersdelight/" + joinNonEmpty(d, "canvas_sign"));
+                sink.addTexture(texturePath, newImage);
+                sink.addTexture(blockTexturePath, newImage);
             } catch (Exception e) {
                 Amendments.LOGGER.warn("Failed to generate Farmers Delight sign extension texture for {}, ", d, e);
             }
@@ -241,13 +248,13 @@ public class ClientResourceGenerator extends DynClientResourcesGenerator {
 
     private void generateSignBlockModels(ResourceManager manager, ResourceSink sink) {
         AmendmentsClient.SIGN_THAT_WE_RENDER_AS_BLOCKS.clear();
-        StaticResource sign0 = StaticResource.getOrFail(manager, ResType.BLOCK_MODELS.getPath(Amendments.res("signs/sign_oak_0")));
-        StaticResource sign1 = StaticResource.getOrFail(manager, ResType.BLOCK_MODELS.getPath(Amendments.res("signs/sign_oak_1")));
-        StaticResource sign2 = StaticResource.getOrFail(manager, ResType.BLOCK_MODELS.getPath(Amendments.res("signs/sign_oak_2")));
-        StaticResource sign3 = StaticResource.getOrFail(manager, ResType.BLOCK_MODELS.getPath(Amendments.res("signs/sign_oak_3")));
-        StaticResource signWall = StaticResource.getOrFail(manager, ResType.BLOCK_MODELS.getPath(Amendments.res("signs/sign_oak_wall")));
-        StaticResource blockState = StaticResource.getOrFail(manager, ResType.BLOCKSTATES.getPath(Amendments.res("sign_oak")));
-        StaticResource blockStateWall = StaticResource.getOrFail(manager, ResType.BLOCKSTATES.getPath(Amendments.res("sign_oak_wall")));
+        StaticResource sign0 = StaticResource.getOrThrow(manager, ResType.BLOCK_MODELS.getPath(Amendments.res("signs/sign_oak_0")));
+        StaticResource sign1 = StaticResource.getOrThrow(manager, ResType.BLOCK_MODELS.getPath(Amendments.res("signs/sign_oak_1")));
+        StaticResource sign2 = StaticResource.getOrThrow(manager, ResType.BLOCK_MODELS.getPath(Amendments.res("signs/sign_oak_2")));
+        StaticResource sign3 = StaticResource.getOrThrow(manager, ResType.BLOCK_MODELS.getPath(Amendments.res("signs/sign_oak_3")));
+        StaticResource signWall = StaticResource.getOrThrow(manager, ResType.BLOCK_MODELS.getPath(Amendments.res("signs/sign_oak_wall")));
+        StaticResource blockState = StaticResource.getOrThrow(manager, ResType.BLOCKSTATES.getPath(Amendments.res("sign_oak")));
+        StaticResource blockStateWall = StaticResource.getOrThrow(manager, ResType.BLOCKSTATES.getPath(Amendments.res("sign_oak_wall")));
         String blockStateText = new String(blockState.data, StandardCharsets.UTF_8);
         String blockStateWallText = new String(blockStateWall.data, StandardCharsets.UTF_8);
 
@@ -301,30 +308,29 @@ public class ClientResourceGenerator extends DynClientResourcesGenerator {
 
 
     private void generateHangingSignAssets(ResourceManager manager, ResourceSink sink) {
-        ImageTransformer transformer = ImageTransformer.builder(32, 64, 16, 16)
-                .copyRect(26, 0, 2, 4, 4, 0)
-                .copyRect(26, 8, 6, 8, 4, 4)
-                .copyRect(28, 24, 4, 8, 0, 4)
-                .copyRect(26, 20, 2, 4, 6, 0)
-                //cheaty as it has to be flipped. todo: find a way to rotate it instead as this work wotk with packs
-                .copyRect(26, 28, 1, 8, 11, 4)
-                .copyRect(27, 28, 1, 8, 10, 4)
+        TextureCollager transformer = TextureCollager.builder(32, 64, 16, 16)
+                .copyFrom(26, 0, 2, 4).to(4, 0)
+                .copyFrom(26, 8, 6, 8).to(4, 4)
+                .copyFrom(28, 24, 4, 8).to(0, 4)
+                .copyFrom(26, 20, 2, 4).to(6, 0)
+                .copyFrom(26, 28, 2, 8).to(10, 4)
+                .flippedX()
                 .build();
 
         for (WoodType w : WoodTypeRegistry.INSTANCE.getValues()) {
             Block hangingSign = w.getBlockOfThis("hanging_sign");
             if (hangingSign == null) continue;
             //hanging sign extension textures
-            ResourceLocation signTexture = findSignTexture(manager, w, hangingSign, true);
-            if (signTexture == null) continue;
-            try (TextureImage vanillaTexture = TextureImage.open(manager, signTexture)) {
-                TextureImage flipped = vanillaTexture.createRotated(Rotation.CLOCKWISE_90);
-                TextureImage newIm = flipped.createResized(0.5f, 0.25f);
-                newIm.clear();
+            ResourceLocation signTexturePath = findSignTexture(manager, w, hangingSign, true);
+            if (signTexturePath == null) continue;
+            try (TextureImage vanillaTexture = TextureImage.open(manager, signTexturePath);
+                 TextureImage rotated = TextureOps.createRotated(vanillaTexture, Rotation.CLOCKWISE_90);
+                 TextureImage newIm = TextureOps.createScaled(vanillaTexture, 0.25f, 0.5f)) {
 
-                transformer.apply(flipped, newIm);
-                flipped.close();
-                sink.addAndCloseTexture(Amendments.res("entity/signs/hanging/" + w.getVariantId("extension")), newIm);
+                newIm.clear();
+                transformer.apply(rotated, newIm);
+
+                sink.addTexture(Amendments.res("entity/signs/hanging/" + w.getVariantId("extension")), newIm);
             } catch (Exception e) {
                 Amendments.LOGGER.warn("Failed to generate hanging sign extension texture for {}, ", w, e);
             }
@@ -332,14 +338,13 @@ public class ClientResourceGenerator extends DynClientResourcesGenerator {
         if (CompatHandler.FARMERS_DELIGHT) {
             //hanging sign extension textures
             try (TextureImage vanillaTexture = TextureImage.open(manager,
-                    new ResourceLocation("farmersdelight:entity/signs/hanging/canvas"))) {
-                TextureImage flipped = vanillaTexture.createRotated(Rotation.CLOCKWISE_90);
-                TextureImage newIm = flipped.createResized(0.5f, 0.25f);
-                newIm.clear();
+                    new ResourceLocation("farmersdelight:entity/signs/hanging/canvas"));
+                 TextureImage rotated = TextureOps.createRotated(vanillaTexture, Rotation.CLOCKWISE_90);
+                 TextureImage newIm = TextureOps.createScaled(rotated, 0.5f, 0.25f)) {
 
-                transformer.apply(flipped, newIm);
-                flipped.close();
-                sink.addAndCloseTexture(Amendments.res("entity/signs/hanging/farmersdelight/extension_canvas"), newIm);
+                newIm.clear();
+                transformer.apply(rotated, newIm);
+                sink.addTexture(Amendments.res("entity/signs/hanging/farmersdelight/extension_canvas"), newIm);
             } catch (Exception e) {
                 Amendments.LOGGER.warn("Failed to generate hanging sign extension texture for {}, ", "canvas sign", e);
             }
@@ -347,15 +352,22 @@ public class ClientResourceGenerator extends DynClientResourcesGenerator {
     }
 
     private void generateJukeboxAssets(ResourceManager manager, ResourceSink sink) {
-
-        ImageTransformer transformer = ImageTransformer.builder(16, 16, 16, 16)
-                .copyRect(5, 6, 3, 2, 6, 6)
-                .copyRect(8, 6, 1, 1, 9, 7)
-                .copyRect(7, 7, 3, 2, 7, 8)
-                .copyRect(6, 8, 1, 1, 6, 8)
-                .copyRect(9, 6, 1, 1, 9, 6)
-                .copyRect(5, 8, 1, 1, 6, 9)
+        TextureCollager transformer = TextureCollager.builder(16, 16, 16, 16)
+                .copyFrom(5, 6, 3, 2)
+                .to(6, 6)
+                .copyFrom(8, 6, 1, 1)
+                .to(9, 7)
+                .copyFrom(7, 7, 3, 2)
+                .to(7, 8)
+                .copyFrom(6, 8, 1, 1)
+                .to(6, 8)
+                .copyFrom(9, 6, 1, 1)
+                .to(9, 6)
+                .copyFrom(5, 8, 1, 1)
+                .to(6, 9)
                 .build();
+
+
         try (TextureImage fallback = TextureImage.open(manager,
                 Amendments.res("block/music_discs/music_disc_generic"));
              TextureImage template = TextureImage.open(manager,
@@ -365,31 +377,33 @@ public class ClientResourceGenerator extends DynClientResourcesGenerator {
             Respriter respriter = Respriter.of(template);
 
             for (var e : AmendmentsClient.getAllRecords().entrySet()) {
-                ResourceLocation res = Amendments.res(e.getValue().texture().getPath());
-                if (sink.alreadyHasTextureAtLocation(manager, res)) continue;
+                ResourceLocation texturePath = Amendments.res(e.getValue().texture().getPath());
+                if (sink.alreadyHasTextureAtLocation(manager, texturePath)) continue;
                 //hanging sign extension textures
                 try (TextureImage vanillaTexture = TextureImage.open(manager,
                         RPUtils.findFirstItemTextureLocation(manager, e.getKey()))) {
 
-                    var p = Palette.fromImage(vanillaTexture, mask);
-                    amendPalette(p);
-                    TextureImage newImage = respriter.recolor(p);
-                    transformer.apply(vanillaTexture, newImage);
-                    if (newImage.getImage().getPixelRGBA(6, 6) == p.get(p.size() - 2).rgb().toInt()) {
-                        newImage.setFramePixel(0, 6, 6, p.getLightest().rgb().toInt());
-                        newImage.setFramePixel(0, 9, 9, p.getLightest().rgb().toInt());
+                    Palette p = Palette.fromImage(vanillaTexture, mask);
+                    amendJukeboxPalette(p);
+                    try (TextureImage newImage = respriter.recolor(p)) {
+                        transformer.apply(vanillaTexture, newImage);
+
+                        if (newImage.getPixel(6, 6) == p.get(p.size() - 2).rgb().toInt()) {
+                            newImage.setPixel(6, 6, p.getLightest().value());
+                            newImage.setPixel(9, 9, p.getLightest().value());
+                        }
+                        sink.addTexture(texturePath, newImage);
                     }
-                    sink.addAndCloseTexture(res, newImage);
                 } catch (Exception ex) {
                     getLogger().warn("Failed to generate record item texture for {}. No model / texture found", e.getKey());
-                    sink.addAndCloseTexture(res, fallback.makeCopy());
+                    sink.addTexture(texturePath, fallback);
                 }
             }
         } catch (Exception ignored) {
         }
     }
 
-    public static void amendPalette(Palette p) {
+    public static void amendJukeboxPalette(Palette p) {
         float averLum = p.getAverageLuminanceStep();
         if (averLum > 0.06) {
             p.increaseInner();
