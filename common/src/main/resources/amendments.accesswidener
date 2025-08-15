@@ -8,12 +8,14 @@ accessible method net/minecraft/client/renderer/blockentity/SignRenderer getText
 
 accessible field net/minecraft/world/level/block/AbstractCauldronBlock interactions Lnet/minecraft/core/cauldron/CauldronInteraction$InteractionMap;
 
+#explode
+accessible method net/minecraft/network/protocol/game/ClientboundExplodePacket write (Lnet/minecraft/network/RegistryFriendlyByteBuf;)V
+
 #banner renderer
 accessible field net/minecraft/client/renderer/blockentity/BannerRenderer bar Lnet/minecraft/client/model/geom/ModelPart;
 accessible field net/minecraft/client/renderer/blockentity/BannerRenderer flag Lnet/minecraft/client/model/geom/ModelPart;
 accessible field net/minecraft/world/level/Explosion fire Z
 #area of effect
-accessible field net/minecraft/world/entity/AreaEffectCloud effects Ljava/util/List;
 accessible field net/minecraft/world/entity/AreaEffectCloud reapplicationDelay I
 accessible method net/minecraft/world/damagesource/DamageSources source (Lnet/minecraft/resources/ResourceKey;Lnet/minecraft/world/entity/Entity;)Lnet/minecraft/world/damagesource/DamageSource;
 accessible method net/minecraft/world/damagesource/DamageSources source (Lnet/minecraft/resources/ResourceKey;Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/entity/Entity;)Lnet/minecraft/world/damagesource/DamageSource;

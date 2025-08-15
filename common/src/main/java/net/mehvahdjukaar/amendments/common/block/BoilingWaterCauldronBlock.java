@@ -7,6 +7,7 @@ import net.mehvahdjukaar.amendments.common.tile.LiquidCauldronBlockTile;
 import net.mehvahdjukaar.amendments.reg.ModBlockProperties;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.moonlight.api.fluids.BuiltInSoftFluids;
+import net.mehvahdjukaar.moonlight.api.fluids.MLBuiltinSoftFluids;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidStack;
 import net.minecraft.client.renderer.BiomeColors;
 import net.minecraft.core.BlockPos;
@@ -75,7 +76,7 @@ public class BoilingWaterCauldronBlock extends LayeredCauldronBlock {
         super.entityInside(state, level, pos, entity);
         if (!level.isClientSide && this.isEntityInsideContent(state, pos, entity)) {
             if (state.getValue(BOILING) && entity instanceof LivingEntity) {
-                entity.hurt(new DamageSource(ModRegistry.BOILING_DAMAGE), 1.0F);
+                entity.hurt(new DamageSource(ModRegistry.BOILING_DAMAGE.getHolder(entity)), 1.0F);
             }
             if (entity.isOnFire()) LiquidCauldronBlock.playExtinguishSound(level, pos, entity);
 
@@ -88,7 +89,8 @@ public class BoilingWaterCauldronBlock extends LayeredCauldronBlock {
     public BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor level, BlockPos currentPos, BlockPos neighborPos) {
         var s = super.updateShape(state, direction, neighborState, level, currentPos, neighborPos);
         if (direction == Direction.DOWN) {
-            boolean isFire = LiquidCauldronBlock.shouldBoil(neighborState, SoftFluidStack.of(BuiltInSoftFluids.WATER),
+            boolean isFire = LiquidCauldronBlock.shouldBoil(neighborState, SoftFluidStack.of(
+                    MLBuiltinSoftFluids.WATER.getHolder(level.registryAccess())),
                     level, neighborPos);
             s = s.setValue(BOILING, isFire);
         }

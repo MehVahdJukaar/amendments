@@ -8,7 +8,6 @@ import net.mehvahdjukaar.amendments.common.block.*;
 import net.mehvahdjukaar.amendments.common.entity.FallingLanternEntity;
 import net.mehvahdjukaar.amendments.common.entity.MediumDragonFireball;
 import net.mehvahdjukaar.amendments.common.entity.MediumFireball;
-import net.mehvahdjukaar.amendments.common.entity.RingEffectCloud;
 import net.mehvahdjukaar.amendments.common.item.DragonChargeItem;
 import net.mehvahdjukaar.amendments.common.item.DyeBottleItem;
 import net.mehvahdjukaar.amendments.common.item.placement.WallLanternPlacement;
@@ -113,6 +112,10 @@ public class ModRegistry {
 
     public static final RegSupplier<SimpleParticleType> BOILING_PARTICLE = RegHelper.registerParticle(res("boiling_bubble"));
     public static final RegSupplier<SimpleParticleType> SPLASH_PARTICLE = RegHelper.registerParticle(res("fluid_splash"));
+    public static final Supplier<SimpleParticleType> DRAGON_FIREBALL_TRAIL_PARTICLE = RegHelper.registerParticle(res("dragon_fireball_trail"));
+    public static final Supplier<SimpleParticleType> FIREBALL_TRAIL_PARTICLE = RegHelper.registerParticle(res("fireball_trail"));
+    public static final Supplier<SimpleParticleType> FIREBALL_EMITTER_PARTICLE = RegHelper.registerParticle(res("fireball_explosion_emitter"));
+    public static final Supplier<SimpleParticleType> FIREBALL_EXPLOSION_PARTICLE = RegHelper.registerParticle(res("fireball_explosion"));
 
     public static final Supplier<SoundEvent> FIREBALL_EXPLOSION_SOUND = RegHelper.registerSound(res("explosion.fireball"));
 
@@ -138,14 +141,6 @@ public class ModRegistry {
                             .clientTrackingRange(16)
                             .fireImmune()
                             .updateInterval(5));
-
-    public static final Supplier<EntityType<RingEffectCloud>> RING_EFFECT_CLOUD =
-            regEntity("ring_effect_cloud",
-                    EntityType.Builder.<RingEffectCloud>of(RingEffectCloud::new, MobCategory.MISC)
-                            .fireImmune()
-                            .sized(6.0F, 0.5F)
-                            .clientTrackingRange(10)
-                            .updateInterval(Integer.MAX_VALUE));
 
     public static final Supplier<Item> DRAGON_CHARGE = regItem(DRAGON_CHARGE_NAME,
             () -> new DragonChargeItem(new Item.Properties()));

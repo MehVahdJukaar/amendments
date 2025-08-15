@@ -7,6 +7,7 @@ import net.mehvahdjukaar.amendments.integration.CompatHandler;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.amendments.reg.ModTags;
 import net.mehvahdjukaar.moonlight.api.fluids.BuiltInSoftFluids;
+import net.mehvahdjukaar.moonlight.api.fluids.MLBuiltinSoftFluids;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidStack;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidTank;
 import net.mehvahdjukaar.moonlight.api.util.DispenserHelper;
@@ -84,7 +85,7 @@ public class CauldronConversion implements BlockUse {
         SoftFluidStack first = fluid.getFirst();
 
         if (checkCauldronInteractions && ((CauldronBlock) Blocks.CAULDRON).interactions.map().containsKey(stack.getItem())
-                && !first.is(BuiltInSoftFluids.POTION.get())) return null;
+                && !first.is(MLBuiltinSoftFluids.POTION)) return null;
         if (CompatHandler.RATS && stack.is(Items.MILK_BUCKET)) return null;
         return getNewState(pos, level, first);
     }
@@ -93,7 +94,7 @@ public class CauldronConversion implements BlockUse {
     public static BlockState getNewState(BlockPos pos, Level level, SoftFluidStack fluid) {
         if (fluid != null && !fluid.is(ModTags.CAULDRON_BLACKLIST)) {
             BlockState newState;
-            if (fluid.is(ModRegistry.DYE_SOFT_FLUID.get())) {
+            if (fluid.is(ModRegistry.DYE_SOFT_FLUID)) {
                 newState = ModRegistry.DYE_CAULDRON.get().defaultBlockState();
             } else {
                 BlockPos belowPos = pos.below();

@@ -42,7 +42,7 @@ public class CauldronDyeWater implements BlockUse {
                 level.setBlockAndUpdate(pos, ModRegistry.DYE_CAULDRON.get().defaultBlockState().setValue(DyeCauldronBlock.LEVEL, l));
                 if (level.getBlockEntity(pos) instanceof LiquidCauldronBlockTile te) {
                     level.gameEvent(player, GameEvent.BLOCK_CHANGE, pos);
-                    te.getSoftFluidTank().setFluid(DyeBottleItem.createFluidStack(dye.getDyeColor(), l));
+                    te.getSoftFluidTank().setFluid(DyeBottleItem.createFluidStack(dye.getDyeColor(), l, level));
                 }
 
                 DyeCauldronBlock.playDyeSoundAndConsume(state, pos, level, player, stack);

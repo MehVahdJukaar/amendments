@@ -47,7 +47,7 @@ public abstract class ThrownProjectile3DRenderer<E extends Entity> extends Entit
 
             if (entity instanceof IVisualTransformationProvider vp) {
                 Matrix4f rotation = vp.amendments$getVisualTransformation(partialTick);
-                poseStack.mulPoseMatrix(rotation);
+                poseStack.mulPose(rotation);
             }
 
             renderBall(entity, partialTick, poseStack, bufferSource, packedLight);

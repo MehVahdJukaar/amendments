@@ -235,8 +235,6 @@ public class AmendmentsClient {
             event.register(SuppCompat.getSlimeBall(), context -> new Small3DBallRenderer(context,
                     modelScale, SLIMEBALL_TEXTURE, true));
         }
-
-        event.register(ModRegistry.RING_EFFECT_CLOUD.get(), NoopRenderer::new);
     }
 
     @EventCalled

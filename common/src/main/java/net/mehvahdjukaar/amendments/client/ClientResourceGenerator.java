@@ -16,7 +16,6 @@ import net.mehvahdjukaar.moonlight.api.resources.StaticResource;
 import net.mehvahdjukaar.moonlight.api.resources.pack.DynClientResourcesGenerator;
 import net.mehvahdjukaar.moonlight.api.resources.pack.DynamicTexturePack;
 import net.mehvahdjukaar.moonlight.api.resources.pack.ResourceGenTask;
-import net.mehvahdjukaar.moonlight.api.resources.pack.ResourceGenTask;
 import net.mehvahdjukaar.moonlight.api.resources.pack.ResourceSink;
 import net.mehvahdjukaar.moonlight.api.resources.textures.*;
 import net.mehvahdjukaar.moonlight.api.set.wood.WoodType;
@@ -28,7 +27,6 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.resources.model.Material;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.data.models.blockstates.BlockStateGenerator;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.world.item.DyeColor;
@@ -43,8 +41,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.List;
-import java.util.function.Consumer;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
@@ -59,14 +55,9 @@ public class ClientResourceGenerator extends DynClientResourcesGenerator {
         }
     }
 
-
     @Override
     public Logger getLogger() {
         return Amendments.LOGGER;
-    }
-
-    @Override
-    public void regenerateDynamicAssets(Consumer<ResourceGenTask> executor) {
     }
 
     @Override
@@ -236,8 +227,8 @@ public class ClientResourceGenerator extends DynClientResourcesGenerator {
         Arrays.stream(DyeColor.values()).forEach(d -> names.add(d.getName()));
         names.add("");
         for (String d : names) {
-            ResourceLocation texturePath = new ResourceLocation(
-                    joinNonEmpty("farmersdelight:entity/signs/canvas", d));
+            ResourceLocation texturePath = ResourceLocation.fromNamespaceAndPath("farmersdelight",
+                    joinNonEmpty("entity/signs/canvas", d));
 
             try (TextureImage vanillaTexture = TextureImage.open(manager, texturePath);
                  TextureImage newImage = vanillaTexture.makeCopy()) {
@@ -288,11 +279,11 @@ public class ClientResourceGenerator extends DynClientResourcesGenerator {
         names.add("");
         if (CompatHandler.FARMERS_DELIGHT) {
             for (var d : names) {
-                var canvas = BuiltInRegistries.BLOCK.getOptional(
-                        new ResourceLocation("farmersdelight", d + "canvas_sign")
+                Block canvas = BuiltInRegistries.BLOCK.getOptional(
+                        ResourceLocation.fromNamespaceAndPath("farmersdelight", d + "canvas_sign")
                 ).orElse(null);
-                var canvasWall = BuiltInRegistries.BLOCK.getOptional(
-                        new ResourceLocation("farmersdelight", d + "canvas_wall_sign")
+                Block canvasWall = BuiltInRegistries.BLOCK.getOptional(
+                        ResourceLocation.fromNamespaceAndPath("farmersdelight", d + "canvas_wall_sign")
                 ).orElse(null);
                 if (canvas == null || canvasWall == null) continue;
                 ResourceLocation canvasId = Utils.getID(canvas);

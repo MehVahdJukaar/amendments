@@ -20,11 +20,10 @@ import net.mehvahdjukaar.moonlight.api.platform.RegHelper;
 import net.mehvahdjukaar.moonlight.api.util.DispenserHelper;
 import net.minecraft.Util;
 import net.minecraft.core.*;
-import net.minecraft.core.dispenser.AbstractProjectileDispenseBehavior;
+import net.minecraft.core.dispenser.BlockSource;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.ai.village.poi.PoiTypes;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -98,6 +97,17 @@ public class Amendments {
         //low tech mod?
     }
 
+    private static void addItemsToTabs(RegHelper.ItemToTabEvent itemToTabEvent) {
+        if (CommonConfigs.THROWABLE_FIRE_CHARGES.get()) {
+            itemToTabEvent.addBefore(CreativeModeTabs.COMBAT,
+                    i -> i.is(Items.SNOWBALL), Items.FIRE_CHARGE);
+            if (CommonConfigs.DRAGON_CHARGE.get()) {
+                itemToTabEvent.addBefore(CreativeModeTabs.COMBAT,
+                        i -> i.is(Items.SNOWBALL), ModRegistry.DRAGON_CHARGE.get());
+            }
+        }
+    }
+
 
     private static void setup() {
         if (CommonConfigs.INVERSE_POTIONS.get() == null) {
@@ -126,7 +136,7 @@ public class Amendments {
 
     @EventCalled
     private static void registerDispenserBehaviors(DispenserHelper.Event event) {
-        for (SoftFluid f : SoftFluidRegistry.getRegistry(event.getRegistryAccess())) {
+        for (SoftFluid f : SoftFluidRegistry.get(event.getRegistryAccess())) {
             Set<Item> itemSet = new HashSet<>();
             Collection<FluidContainerList.Category> categories = f.getContainerList().getCategories();
             for (FluidContainerList.Category c : categories) {
@@ -154,7 +164,7 @@ public class Amendments {
     }
 
     private static void registerDispenserBehavior(DispenserHelper.Event event) {
-        for (SoftFluid f : SoftFluidRegistry.getRegistry(event.getRegistryAccess())) {
+        for (SoftFluid f : SoftFluidRegistry.get(event.getRegistryAccess())) {
             registerFluidBehavior(f, event);
         }
         if (CommonConfigs.FIRE_CHARGE_DISPENSER.get() && CommonConfigs.THROWABLE_FIRE_CHARGES.get()) {

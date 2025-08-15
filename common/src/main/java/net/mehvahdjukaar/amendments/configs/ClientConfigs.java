@@ -1,14 +1,12 @@
 package net.mehvahdjukaar.amendments.configs;
 
 import net.mehvahdjukaar.amendments.Amendments;
-import net.mehvahdjukaar.amendments.client.particles.FireballExplosionParticle;
 import net.mehvahdjukaar.amendments.common.PendulumAnimation;
 import net.mehvahdjukaar.amendments.integration.CompatHandler;
 import net.mehvahdjukaar.moonlight.api.ModSharedVariables;
 import net.mehvahdjukaar.moonlight.api.platform.configs.ConfigBuilder;
 import net.mehvahdjukaar.moonlight.api.platform.configs.ConfigType;
 import net.mehvahdjukaar.moonlight.api.platform.configs.ModConfigHolder;
-import vectorwing.farmersdelight.client.renderer.CanvasSignRenderer;
 
 import java.util.function.Supplier;
 

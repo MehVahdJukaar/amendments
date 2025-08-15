@@ -4,6 +4,7 @@ import net.mehvahdjukaar.amendments.common.network.ClientBoundFireballExplodePac
 import net.mehvahdjukaar.amendments.common.network.ModNetwork;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.moonlight.api.block.ILightable;
+import net.mehvahdjukaar.moonlight.api.platform.network.NetworkHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -81,7 +82,7 @@ public class FireballExplosion extends Explosion {
 
         for (ServerPlayer serverPlayer : sl.players()) {
             if (serverPlayer.distanceToSqr(x, y, z) < 4096.0) {
-                ModNetwork.CHANNEL.sendToClientPlayer(serverPlayer,
+                NetworkHelper.sendToClientPlayer(serverPlayer,
                         new ClientBoundFireballExplodePacket(x, y, z, radius, explosion.getToBlow(),
                                 explosion.getHitPlayers().get(serverPlayer), explosion.soundVolume));
             }

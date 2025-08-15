@@ -20,6 +20,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.DyedItemColor;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -41,8 +42,8 @@ public class DyeBottleItem extends Item {
         super(properties);
     }
 
-    public static SoftFluidStack createFluidStack(DyeColor color, int amount) {
-        SoftFluidStack stack = SoftFluidStack.of(ModRegistry.DYE_SOFT_FLUID, amount);
+    public static SoftFluidStack createFluidStack(DyeColor color, int amount, Level level) {
+        SoftFluidStack stack = SoftFluidStack.of(ModRegistry.DYE_SOFT_FLUID.getHolder(level), amount);
         stack.set(DataComponents.DYED_COLOR, new DyedItemColor(getDyeInt(color), true));
         return stack;
     }

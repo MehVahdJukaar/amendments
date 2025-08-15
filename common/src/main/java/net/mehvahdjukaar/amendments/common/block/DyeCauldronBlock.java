@@ -93,7 +93,7 @@ public class DyeCauldronBlock extends ModCauldronBlock {
             SoftFluidTank tank = te.getSoftFluidTank();
             SoftFluidStack fluid = tank.getFluid();
 
-            if (fluid.is(ModRegistry.DYE_SOFT_FLUID.get())) {
+            if (fluid.is(ModRegistry.DYE_SOFT_FLUID)) {
                 //always allows adding dye. they dont add water
                 if (stack.getItem() instanceof DyeItem di) {
                     return addDye(level, te, stack, player, di);
@@ -117,7 +117,7 @@ public class DyeCauldronBlock extends ModCauldronBlock {
     protected void handleEntityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
         if (entity instanceof Sheep sheep && level.getBlockEntity(pos) instanceof LiquidCauldronBlockTile te) {
             SoftFluidStack fluid = te.getSoftFluidTank().getFluid();
-            if (fluid.is(ModRegistry.DYE_SOFT_FLUID.get())) {
+            if (fluid.is(ModRegistry.DYE_SOFT_FLUID)) {
                 DyeColor dye = DyeBottleItem.getClosestDye(fluid);
                 if (sheep.getColor() != dye) {
                     sheep.setColor(dye);
@@ -157,7 +157,7 @@ public class DyeCauldronBlock extends ModCauldronBlock {
         if (!level.isClientSide()) {
             int count = fluid.getCount();
             if (count == 3) fluid.setCount(2); //hack!!
-            SoftFluidStack dummyStack = DyeBottleItem.createFluidStack(dyeItem.getDyeColor(), 1);
+            SoftFluidStack dummyStack = DyeBottleItem.createFluidStack(dyeItem.getDyeColor(), 1, level);
 
             var mixed = LiquidMixer.mixDye(fluid, dummyStack);
             if (mixed != null) {
