@@ -6,6 +6,8 @@ accessible method net/minecraft/world/level/Level getDestroyType (Lnet/minecraft
 accessible method net/minecraft/client/renderer/blockentity/SignRenderer translateSignText (Lcom/mojang/blaze3d/vertex/PoseStack;ZLnet/minecraft/world/phys/Vec3;)V
 accessible method net/minecraft/client/renderer/blockentity/SignRenderer getTextOffset ()Lnet/minecraft/world/phys/Vec3;
 
+accessible field net/minecraft/world/entity/item/ItemEntity pickupDelay I
+
 accessible field net/minecraft/world/level/block/AbstractCauldronBlock interactions Lnet/minecraft/core/cauldron/CauldronInteraction$InteractionMap;
 
 #explode

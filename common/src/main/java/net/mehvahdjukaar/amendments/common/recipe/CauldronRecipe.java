@@ -1,5 +1,6 @@
 package net.mehvahdjukaar.amendments.common.recipe;
 
+import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidStack;
 import net.minecraft.core.NonNullList;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
@@ -13,3 +14,4 @@ public class CauldronRecipe extends ShapelessRecipe {
         super(group, category, result, ingredients);
     }
 }
+

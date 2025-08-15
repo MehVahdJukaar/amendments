@@ -100,6 +100,9 @@ public class BoilingWaterCauldronBlock extends LayeredCauldronBlock {
     @Override
     public void fallOn(Level level, BlockState state, BlockPos pos, Entity entity, float fallDistance) {
         if (this.isEntityInsideContent(state, pos, entity)) {
+            if (entity instanceof ItemEntity ie) {
+                ie.setDefaultPickUpDelay();
+            }
             if (!level.isClientSide) {
                 ModCauldronBlock.playSplashEffects(entity, this.getContentHeight(state));
             }
@@ -122,7 +125,12 @@ public class BoilingWaterCauldronBlock extends LayeredCauldronBlock {
 
     //todo: optional potion crafting...
     private void attemptStewCrafting(BlockState state, Level level, BlockPos pos, Entity entity) {
-        if (!(state.getValue(BOILING) && entity instanceof ItemEntity && entity.tickCount % 10 == 0)) return;
+        if (!state.getValue(BOILING) || !(entity instanceof ItemEntity ie)) return;
+        if (ie.tickCount % 3 != 0) {
+            //age sloower
+            ie.setPickUpDelay(ie.pickupDelay + 1);
+        }
+        if (ie.tickCount % 10 != 0) return;
 
         var entities = level.getEntitiesOfClass(ItemEntity.class, new AABB(
                 pos.getX() + 0.125, pos.getY() + 6 / 16f, pos.getZ() + 0.125,
