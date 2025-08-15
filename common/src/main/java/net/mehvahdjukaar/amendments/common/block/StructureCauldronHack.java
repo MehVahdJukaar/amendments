@@ -6,7 +6,7 @@ import net.mehvahdjukaar.amendments.common.item.DyeBottleItem;
 import net.mehvahdjukaar.amendments.common.tile.LiquidCauldronBlockTile;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.moonlight.api.MoonlightRegistry;
-import net.mehvahdjukaar.moonlight.api.fluids.BuiltInSoftFluids;
+import net.mehvahdjukaar.moonlight.api.fluids.MLBuiltinSoftFluids;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidStack;
 import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
 import net.mehvahdjukaar.moonlight.api.platform.RegHelper;
@@ -92,7 +92,7 @@ public class StructureCauldronHack extends Block implements EntityBlock {
                     var list = HARMFUL_POTS.get();
                     var pot = list.get(level.random.nextInt(list.size()));
                     SoftFluidStack fluidStack = SoftFluidStack.of(
-                            BuiltInSoftFluids.POTION,
+                            MLBuiltinSoftFluids.POTION.getHolder(level),
                             level.random.nextIntBetweenInclusive(1, 4));
                     fluidStack.set(DataComponents.POTION_CONTENTS,
                             new PotionContents(BuiltInRegistries.POTION.wrapAsHolder(pot)));

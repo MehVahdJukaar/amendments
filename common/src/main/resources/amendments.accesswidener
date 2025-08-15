@@ -10,6 +10,8 @@ accessible field net/minecraft/world/level/block/AbstractCauldronBlock interacti
 
 #explode
 accessible method net/minecraft/network/protocol/game/ClientboundExplodePacket write (Lnet/minecraft/network/RegistryFriendlyByteBuf;)V
+extendable method net/minecraft/network/protocol/game/ClientboundExplodePacket write (Lnet/minecraft/network/RegistryFriendlyByteBuf;)V
+accessible method net/minecraft/network/protocol/game/ClientboundExplodePacket <init> (Lnet/minecraft/network/RegistryFriendlyByteBuf;)V
 
 #banner renderer
 accessible field net/minecraft/client/renderer/blockentity/BannerRenderer bar Lnet/minecraft/client/model/geom/ModelPart;

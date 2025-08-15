@@ -45,9 +45,9 @@ public class ProjectileStats {
 
     public record Fire(float modelSize,
                        float damageOnHit,
-                       int directHitFireTicks,
-                       float fireballExpRadius,
-                       int indirectHitFireTicks,
+                       int directHitFireSeconds,
+                    float fireballExpRadius,
+                       int indirectHitFireSeconds,
                        float normalExplosionRadius,
                        float soundVolume) {
 

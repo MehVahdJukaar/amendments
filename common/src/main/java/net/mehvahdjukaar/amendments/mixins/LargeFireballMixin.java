@@ -28,7 +28,7 @@ public abstract class LargeFireballMixin extends Entity {
                                                   float radius, boolean fire, Level.ExplosionInteraction explosionInteraction, Operation<Explosion> original) {
         if (CommonConfigs.FIREBALL_EXPLOSION.get()) {
             var settings = new FireballExplosion.ExtraSettings();
-            settings.onFireTicks = ProjectileStats.GHAST_FIREBALL.indirectHitFireTicks();
+            settings.onFireSeconds = ProjectileStats.GHAST_FIREBALL.indirectHitFireSeconds();
             settings.soundVolume = ProjectileStats.GHAST_FIREBALL.soundVolume();
             return FireballExplosion.explodeServer(instance, source, null, null,
                     x, y, z, radius, fire, explosionInteraction, settings);

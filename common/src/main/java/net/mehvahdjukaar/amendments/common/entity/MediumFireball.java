@@ -7,8 +7,7 @@ import net.mehvahdjukaar.amendments.configs.CommonConfigs;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.moonlight.api.entity.ImprovedProjectileEntity;
 import net.mehvahdjukaar.moonlight.api.entity.ParticleTrailEmitter;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.Entity;
@@ -16,6 +15,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.EntityHitResult;
@@ -81,7 +81,7 @@ public class MediumFireball extends ImprovedProjectileEntity implements IVisualT
                 }
             }
         }
-        if (!this.isExtinguished) this.setSecondsOnFire(1);
+        if (!this.isExtinguished) this.igniteForSeconds(1);
     }
 
     @Override
@@ -101,7 +101,7 @@ public class MediumFireball extends ImprovedProjectileEntity implements IVisualT
                 var settings = new FireballExplosion.ExtraSettings();
                 settings.hasKnockback = false;
                 settings.soundVolume = ProjectileStats.PLAYER_FIREBALL.soundVolume();
-                settings.onFireTicks = ProjectileStats.PLAYER_FIREBALL.indirectHitFireTicks();
+                settings.onFireSeconds = ProjectileStats.PLAYER_FIREBALL.indirectHitFireSeconds();
                 settings.maxDamage = ProjectileStats.PLAYER_FIREBALL.normalExplosionRadius() + 1;
                 FireballExplosion.explodeServer(this.level(), this, null, null,
                         this.getX(), this.getY(), this.getZ(), (float) 1,
@@ -114,19 +114,20 @@ public class MediumFireball extends ImprovedProjectileEntity implements IVisualT
     @Override
     protected void onHitEntity(EntityHitResult result) {
         super.onHitEntity(result);
-        if (!this.level().isClientSide) {
+        if (level() instanceof ServerLevel serverLevel) {
             var entity = result.getEntity();
             Entity fireballOwner = this.getOwner();
+            DamageSource source = fireballDamage(fireballOwner);
             if (this.isExtinguished) {
-                entity.hurt(fireballDamage(fireballOwner), ProjectileStats.PLAYER_FIREBALL.damageOnHit());
+                entity.hurt(source, ProjectileStats.PLAYER_FIREBALL.damageOnHit());
             } else {
                 //actually replace this with explosion
                 int fireTick = entity.getRemainingFireTicks();
-                entity.setSecondsOnFire(ProjectileStats.PLAYER_FIREBALL.directHitFireTicks()); //same as blaze charge
-                if (!entity.hurt(fireballDamage(fireballOwner), ProjectileStats.PLAYER_FIREBALL.damageOnHit())) {
+                entity.igniteForSeconds(ProjectileStats.PLAYER_FIREBALL.directHitFireSeconds()); //same as blaze charge
+                if (!entity.hurt(source, ProjectileStats.PLAYER_FIREBALL.damageOnHit())) {
                     entity.setRemainingFireTicks(fireTick);
-                } else if (fireballOwner instanceof LivingEntity le) {
-                    this.doEnchantDamageEffects(le, entity);
+                } else {
+                    EnchantmentHelper.doPostAttackEffects(serverLevel, entity, source);
                 }
             }
         }

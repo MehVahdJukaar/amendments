@@ -1,14 +1,15 @@
 package net.mehvahdjukaar.amendments.common.entity;
 
 import net.mehvahdjukaar.amendments.common.network.ClientBoundFireballExplodePacket;
-import net.mehvahdjukaar.amendments.common.network.ModNetwork;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.moonlight.api.block.ILightable;
 import net.mehvahdjukaar.moonlight.api.platform.network.NetworkHelper;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
+import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundSource;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Explosion;
@@ -35,7 +36,7 @@ public class FireballExplosion extends Explosion {
 
     private final float maxDamage;
     private final boolean hasKnockback;
-    private final int onFireTicks; //same as blaze charge
+    private final int onFireSeconds; //same as blaze charge
     private final float soundVolume; //same as blaze charge
 
     private final Set<BlockPos> visitedBlock = new HashSet<>();
@@ -84,7 +85,10 @@ public class FireballExplosion extends Explosion {
             if (serverPlayer.distanceToSqr(x, y, z) < 4096.0) {
                 NetworkHelper.sendToClientPlayer(serverPlayer,
                         new ClientBoundFireballExplodePacket(x, y, z, radius, explosion.getToBlow(),
-                                explosion.getHitPlayers().get(serverPlayer), explosion.soundVolume));
+                                explosion.getHitPlayers().get(serverPlayer),
+                                explosion.getBlockInteraction(), explosion.getSmallExplosionParticles(),
+                                explosion.getLargeExplosionParticles(), explosion.getExplosionSound(),
+                                explosion.soundVolume));
             }
         }
 
@@ -122,24 +126,34 @@ public class FireballExplosion extends Explosion {
     }
 
     public FireballExplosion(Level level, @Nullable Entity source, double toBlowX, double toBlowY, double toBlowZ,
-                             float radius, List<BlockPos> positions, ExtraSettings settings) {
-        super(level, source, toBlowX, toBlowY, toBlowZ, radius, positions);
-        this.onFireTicks = settings.onFireTicks;
+                             float radius, List<BlockPos> positions, BlockInteraction blockInteraction,
+                             ParticleOptions smallExplosionParticles,
+                             ParticleOptions largeExplosionParticles, Holder<SoundEvent> explosionSound,
+                             ExtraSettings settings) {
+        super(level, source, toBlowX, toBlowY, toBlowZ, radius, positions,
+                blockInteraction, smallExplosionParticles, largeExplosionParticles, explosionSound);
+        this.onFireSeconds = settings.onFireSeconds;
         this.maxDamage = settings.maxDamage;
         this.hasKnockback = settings.hasKnockback;
         this.soundVolume = settings.soundVolume;
 
     }
 
-    public FireballExplosion(Level level, @Nullable Entity source, @Nullable DamageSource damageSource, @Nullable ExplosionDamageCalculator damageCalculator, double toBlowX, double toBlowY, double toBlowZ,
-                             float radius, boolean fire, BlockInteraction blockInteraction, ExtraSettings settings) {
-        super(level, source, damageSource, damageCalculator, toBlowX, toBlowY, toBlowZ, radius, fire, blockInteraction);
-        this.onFireTicks = settings.onFireTicks;
+    public FireballExplosion(Level level, @Nullable Entity source, @Nullable DamageSource damageSource, @Nullable ExplosionDamageCalculator damageCalculator,
+                             double toBlowX, double toBlowY, double toBlowZ,
+                             float radius, boolean fire, BlockInteraction blockInteraction,
+                             ParticleOptions smallExplosionParticles,
+                             ParticleOptions largeExplosionParticles, Holder<SoundEvent> explosionSound,
+                             ExtraSettings settings) {
+        super(level, source, damageSource, damageCalculator, toBlowX, toBlowY, toBlowZ, radius, fire, blockInteraction,
+                smallExplosionParticles, largeExplosionParticles, explosionSound);
+        this.onFireSeconds = settings.onFireSeconds;
         this.maxDamage = settings.maxDamage;
         this.hasKnockback = settings.hasKnockback;
         this.soundVolume = settings.soundVolume;
     }
 
+    //remove knockback on client by clearing the list
     @Override
     public void explode() {
         super.explode();
@@ -165,13 +179,14 @@ public class FireballExplosion extends Explosion {
             //sets block on fire
             BlockState state = this.level.getBlockState(pos);
             if (state.getBlock() instanceof ILightable l) {
-                l.interactWithEntity(level, state, this.getDirectSourceEntity(), pos);
+                l.lightableInteractWithEntity(level, state, this.getDirectSourceEntity(), pos);
             } else if (state.getBlock() == Blocks.AIR) {
                 this.level.setBlockAndUpdate(pos, BaseFireBlock.getState(this.level, pos));
             }
         }
     }
 
+    //for knockback on server
     public boolean hasKnockback() {
         return hasKnockback;
     }
@@ -182,7 +197,7 @@ public class FireballExplosion extends Explosion {
             amount = this.maxDamage;
         }
         int oldFire = entity.getRemainingFireTicks();
-        entity.setSecondsOnFire(onFireTicks); //same as blaze charge
+        entity.igniteForSeconds(onFireSeconds); //same as blaze charge
         if (!entity.hurt(source, amount)) {
             entity.setRemainingFireTicks(oldFire);
             return false;
@@ -191,23 +206,20 @@ public class FireballExplosion extends Explosion {
         return true;
     }
 
-    public void setBlockOnFire(BlockPos pos, BlockState state) {
+    public void addVisitedBlock(BlockPos pos, BlockState state) {
         visitedBlock.add(pos);
-
     }
 
-    public boolean playExplosionSound() {
-        this.level.playLocalSound(this.x, this.y, this.z, ModRegistry.FIREBALL_EXPLOSION_SOUND.get(),
-                SoundSource.BLOCKS, 4.0F,
-                (1.0F + (this.level.random.nextFloat() - this.level.random.nextFloat()) * 0.2F) * 0.7F, false);
-
-        return false;
+    //so basically the only reason w
+    public float getExplosionVolume() {
+        return soundVolume;
     }
 
     public static class ExtraSettings {
         public float soundVolume = 4.0f;
         public float maxDamage = Float.MAX_VALUE; //max damage cap
-        public int onFireTicks = 0; //same as blaze charge
+        public int onFireSeconds = 0; //same as blaze charge
         public boolean hasKnockback = false; //if the explosion should have knockback
     }
+
 }
