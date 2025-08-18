@@ -22,7 +22,6 @@ import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -30,6 +29,7 @@ import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.material.Fluid;
 
+//split mainly needed since on forge we need a 4 layer cauldron
 public class DyeCauldronBlock extends ModCauldronBlock {
 
     public static final MapCodec<DyeCauldronBlock> CODEC = simpleCodec(DyeCauldronBlock::new);
@@ -38,7 +38,7 @@ public class DyeCauldronBlock extends ModCauldronBlock {
 
     public DyeCauldronBlock(Properties properties) {
         super(properties);
-        this.registerDefaultState(this.getStateDefinition().any().setValue(LEVEL, 1));
+        this.registerDefaultState(this.defaultBlockState().setValue(BOILING, false).setValue(LEVEL, 1));
     }
 
     @Override
@@ -58,18 +58,8 @@ public class DyeCauldronBlock extends ModCauldronBlock {
     }
 
     @Override
-    public boolean isFull(BlockState state) {
-        return state.getValue(LEVEL) == 3;
-    }
-
-    @Override
     protected boolean canReceiveStalactiteDrip(Fluid fluid) {
         return false;
-    }
-
-    @Override
-    protected double getContentHeight(BlockState state) {
-        return (6.0 + (double) state.getValue(LEVEL) * 3.0) / 16.0;
     }
 
     @Override
@@ -89,17 +79,6 @@ public class DyeCauldronBlock extends ModCauldronBlock {
                 }
             }
         }
-    }
-
-    @Override
-    public BlockState updateStateOnFluidChange(BlockState state, Level level, BlockPos pos, SoftFluidStack fluid) {
-        int height = fluid.getCount();
-        if (fluid.isEmpty()) {
-            state = Blocks.CAULDRON.defaultBlockState();
-        } else {
-            state = state.setValue(DyeCauldronBlock.LEVEL, height);
-        }
-        return state;
     }
 
     public static void playDyeSoundAndConsume(BlockState state, BlockPos pos, Level level, Player player, ItemStack stack) {

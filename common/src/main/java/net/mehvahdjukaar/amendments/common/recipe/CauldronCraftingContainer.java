@@ -155,19 +155,19 @@ public class CauldronCraftingContainer implements CraftingContainer {
     public FluidAndItemCraftResult craftWithCraftingRecipes(Level level) {
         for (var c : equivalentFluidContainers.entries()) {
             var category = c.getKey();
-            setupFluidItem(c);
+            setupFluidItem(c.getValue());
             List<CraftingRecipe> recipes = level.getRecipeManager().getRecipesFor(RecipeType.CRAFTING, this, level);
             for (var r : recipes) {
                 if (!r.matches(this, level)) continue;
                 int newFluidCount = fluid.getCount() - category.getCapacity();
-                if(newFluidCount >= 0 && newFluidCount <= fluidContainerSize)continue;
+                if (newFluidCount >= 0 && newFluidCount <= fluidContainerSize) continue;
                 ItemStack craftedItem = r.assemble(this, level.registryAccess());
                 if (!craftedItem.isEmpty()) {
                     var remainingItems = r.getRemainingItems(this);
                     //is this correct?
                     Item emptyContainer = category.getEmptyContainer();
                     remainingItems.remove(emptyContainer.getDefaultInstance());
-                    if (remainingItems.stream().allMatch(ItemStack::isEmpty) ) {
+                    if (remainingItems.stream().allMatch(ItemStack::isEmpty)) {
                         return FluidAndItemCraftResult.of(craftedItem, fluid.copyWithCount(newFluidCount));
                     }
                 }
@@ -177,10 +177,17 @@ public class CauldronCraftingContainer implements CraftingContainer {
         return null;
     }
 
-    private void setupFluidItem(Map.Entry<FluidContainerList.Category, ItemStack> c) {
+    private void setupFluidItem(ItemStack filledFluidBottle) {
         this.items.clear();
-        this.items.addAll(this.originalItems);
-        this.items.add(fluidPosition, c.getValue());
+        int j = 0;
+        for(ItemStack item : this.originalItems) {
+            if(j == fluidPosition){
+                j++;
+            }
+            this.items.set(j, item);
+            j++;
+        }
+        this.items.set(fluidPosition, filledFluidBottle);
     }
 
 

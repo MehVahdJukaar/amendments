@@ -217,13 +217,16 @@ public class LiquidCauldronBlockTile extends BlockEntity implements IExtraModelD
             public @Nullable ItemStack interactWithItem(ItemStack stack, Level world, @Nullable BlockPos pos, boolean simulate) {
                 //always allows adding dye. they dont add water
                 if (stack.getItem() instanceof DyeItem di) {
-                    return addDye(di, stack, world, pos, simulate);
+                    if (!simulate) {
+                        //can always add dye
+                        addDye(di, world, pos);
+                    }
+                    return ItemStack.EMPTY;
                 }
                 return super.interactWithItem(stack, world, pos, simulate);
             }
 
-            private ItemStack addDye(DyeItem dyeItem, ItemStack stack, Level world, @Nullable BlockPos pos, boolean simulate) {
-                if (!simulate) {
+            private void addDye(DyeItem dyeItem, Level world, @Nullable BlockPos pos) {
                     SoftFluidStack fluid = this.getFluid();
                     if (!world.isClientSide()) {
                         int count = fluid.getCount();
@@ -238,8 +241,6 @@ public class LiquidCauldronBlockTile extends BlockEntity implements IExtraModelD
                         world.playSound(null, pos, SoundEvents.DYE_USE, SoundSource.BLOCKS, 1.0F, 1.0F);
                         world.playSound(null, pos, SoundEvents.BUCKET_EMPTY, SoundSource.BLOCKS, 1.0F, 1.3f);
                     }
-                }
-                return stack.copyWithCount(stack.getCount() - 1);
 
             }
         };

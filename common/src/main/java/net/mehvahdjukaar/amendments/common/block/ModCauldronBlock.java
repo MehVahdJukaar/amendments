@@ -7,6 +7,10 @@ import net.mehvahdjukaar.amendments.common.recipe.CauldronRecipeUtils;
 import net.mehvahdjukaar.amendments.common.recipe.FluidAndItemsCraftResult;
 import net.mehvahdjukaar.amendments.common.tile.LiquidCauldronBlockTile;
 import net.mehvahdjukaar.amendments.configs.CommonConfigs;
+import net.mehvahdjukaar.amendments.reg.ModBlockProperties;
+import net.mehvahdjukaar.amendments.reg.ModRegistry;
+import net.mehvahdjukaar.amendments.reg.ModTags;
+import net.mehvahdjukaar.moonlight.api.block.ILightable;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidStack;
 import net.mehvahdjukaar.moonlight.api.platform.network.NetworkHelper;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidTank;
@@ -15,8 +19,8 @@ import net.mehvahdjukaar.moonlight.api.util.Utils;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.cauldron.CauldronInteraction;
+import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleOptions;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -24,20 +28,23 @@ import net.minecraft.stats.Stats;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.decoration.ItemFrame;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.biome.Biome;
-import net.minecraft.world.level.block.AbstractCauldronBlock;
-import net.minecraft.world.level.block.EntityBlock;
+import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.BlockHitResult;
@@ -49,9 +56,39 @@ import java.util.Map;
 
 public abstract class ModCauldronBlock extends AbstractCauldronBlock implements EntityBlock {
 
+    public static final BooleanProperty BOILING = ModBlockProperties.BOILING;
+    private final int maxLevel;
+
     public ModCauldronBlock(BlockBehaviour.Properties properties) {
         super(properties, new CauldronInteraction.InteractionMap("amendments_empty", Map.of()));
+        this.registerDefaultState(this.defaultBlockState()
+                .setValue(BOILING, false));
+        this.maxLevel = this.getLevelProperty().getPossibleValues().size(); //assumes it counts from 1
     }
+
+    @Override
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+        super.createBlockStateDefinition(builder);
+        builder.add(BOILING);
+    }
+
+    @Override
+    public boolean isFull(BlockState state) {
+        return state.getValue(getLevelProperty()) == maxLevel;
+    }
+
+    @Override
+    public BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor level, BlockPos currentPos, BlockPos neighborPos) {
+        var s = super.updateShape(state, direction, neighborState, level, currentPos, neighborPos);
+        if (direction == Direction.DOWN) {
+            if (level.getBlockEntity(currentPos) instanceof LiquidCauldronBlockTile te) {
+                boolean isFire = shouldBoil(neighborState, te.getSoftFluidTank().getFluid(), level, neighborPos);
+                s = s.setValue(BOILING, isFire);
+            }
+        }
+        return s;
+    }
+
 
     @Override
     public Item asItem() {
@@ -73,6 +110,16 @@ public abstract class ModCauldronBlock extends AbstractCauldronBlock implements 
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
         return new LiquidCauldronBlockTile(pos, state);
+    }
+
+    @Override
+    protected double getContentHeight(BlockState state) {
+        double start = 0.5625;
+        double end = 0.9375;
+        IntegerProperty levelProperty = getLevelProperty();
+        int level = state.getValue(levelProperty);
+        if (maxLevel <= 1) return start; // avoid divide-by-zero
+        return start + (end - start) * (level - 1) / (maxLevel - 1);
     }
 
     @Override
@@ -107,8 +154,24 @@ public abstract class ModCauldronBlock extends AbstractCauldronBlock implements 
         }
     }
 
+    @Override
+    public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource random) {
+        super.animateTick(state, level, pos, random);
+        if (level.getBlockEntity(pos) instanceof LiquidCauldronBlockTile te) {
+            SoftFluidTank tank = te.getSoftFluidTank();
+            if (state.getValue(BOILING)) {
+                int color = tank.getCachedParticleColor(level, pos);
+                int light = tank.getFluidValue().getEmissivity();
+                playBubblingAnimation(level, pos, getContentHeight(state), random, color, light);
+            }
+        }
+    }
 
-    protected abstract void handleEntityInsideFluid(BlockState state, Level level, BlockPos pos, Entity entity);
+    protected void handleEntityInsideFluid(BlockState state, Level level, BlockPos pos, Entity entity){
+        if (state.getValue(BOILING) && entity instanceof LivingEntity) {
+            entity.hurt(new DamageSource(ModRegistry.BOILING_DAMAGE), 1.0F);
+        }
+    };
 
 
     @Override
@@ -140,7 +203,7 @@ public abstract class ModCauldronBlock extends AbstractCauldronBlock implements 
     }
 
 
-    public void onPlayerCrafted(Level level, BlockPos pos, Player player, InteractionHand hand, ItemStack playerItem,
+    private void onPlayerCrafted(Level level, BlockPos pos, Player player, InteractionHand hand, ItemStack playerItem,
                                 List<ItemStack> craftedItems) {
 
         level.playSound(player, pos, SoundEvents.BUCKET_EMPTY, SoundSource.BLOCKS, 1.0F, 1.3f);
@@ -155,7 +218,15 @@ public abstract class ModCauldronBlock extends AbstractCauldronBlock implements 
         }
     }
 
-    public abstract BlockState updateStateOnFluidChange(BlockState state, Level level, BlockPos pos, SoftFluidStack fluid);
+    public   BlockState updateStateOnFluidChange(BlockState state, Level level, BlockPos pos, SoftFluidStack fluid){
+            int height = fluid.getCount();
+            if (fluid.isEmpty()) {
+                state = Blocks.CAULDRON.defaultBlockState();
+            } else {
+                state = state.setValue(getLevelProperty(), height);
+            }
+            return state;
+    };
 
 
     public static void playExtinguishSound(Level level, BlockPos pos, Entity entity) {
@@ -214,5 +285,32 @@ public abstract class ModCauldronBlock extends AbstractCauldronBlock implements 
             iteEntity.setDefaultPickUpDelay();
             iteEntity.setDeltaMovement(0, 0.5, 0);
         }
+    }
+
+    public static void playBubblingAnimation(Level level, BlockPos pos,
+                                             double surface, RandomSource rand, int color, int light) {
+
+        var type = ModRegistry.BOILING_PARTICLE.get();
+        int count = 2;
+        addSurfaceParticles(type, level, pos, count, surface, rand, color, pos.getY() + 5 / 16f, light);
+
+        if (level.random.nextInt(4) == 0) {
+            level.playLocalSound(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5,
+                    SoundEvents.BUBBLE_COLUMN_UPWARDS_AMBIENT, SoundSource.BLOCKS,
+                    0.4F + level.random.nextFloat() * 0.2F,
+                    0.35F + level.random.nextFloat() * 0.2F, false);
+        }
+    }
+
+    public static boolean shouldBoil(BlockState belowState, SoftFluidStack fluid, LevelAccessor level, BlockPos pos) {
+        if (!belowState.is(ModTags.HEAT_SOURCES) || !fluid.is(ModTags.CANT_BOIL)) return false;
+
+        if (belowState.hasProperty(CampfireBlock.LIT)) {
+            return belowState.getValue(CampfireBlock.LIT);
+        }
+        if (belowState.getBlock() instanceof ILightable il) {
+            return il.isLitUp(belowState, level, pos);
+        }
+        return true;
     }
 }

@@ -7,7 +7,6 @@ import net.mehvahdjukaar.amendments.configs.CommonConfigs;
 import net.mehvahdjukaar.amendments.integration.AlexCavesCompat;
 import net.mehvahdjukaar.amendments.integration.CompatHandler;
 import net.mehvahdjukaar.amendments.reg.ModBlockProperties;
-import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.amendments.reg.ModTags;
 import net.mehvahdjukaar.moonlight.api.MoonlightRegistry;
 import net.mehvahdjukaar.moonlight.api.block.ILightable;
@@ -41,15 +40,12 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.CampfireBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.material.Fluid;
@@ -64,16 +60,14 @@ public class LiquidCauldronBlock extends ModCauldronBlock {
 
     public static final MapCodec<LiquidCauldronBlock> CODEC = simpleCodec(LiquidCauldronBlock::new);
 
-    public static final int MAX_LEVEL = PlatHelper.getPlatform().isFabric() ? 3 : 4;
     public static final IntegerProperty LEVEL = PlatHelper.getPlatform().isFabric() ?
             BlockStateProperties.LEVEL_CAULDRON : ModBlockProperties.LEVEL_1_4;
 
     public static final IntegerProperty LIGHT_LEVEL = ModBlockProperties.LIGHT_LEVEL;
-    public static final BooleanProperty BOILING = ModBlockProperties.BOILING;
 
     public LiquidCauldronBlock(Properties properties) {
         super(properties.lightLevel(value -> value.getValue(LIGHT_LEVEL)));
-        this.registerDefaultState(this.getStateDefinition().any()
+        this.registerDefaultState(this.defaultBlockState()
                 .setValue(LEVEL, 1).setValue(LIGHT_LEVEL, 0).setValue(BOILING, false));
     }
 
@@ -90,7 +84,7 @@ public class LiquidCauldronBlock extends ModCauldronBlock {
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         super.createBlockStateDefinition(builder);
-        builder.add(LEVEL, LIGHT_LEVEL, BOILING);
+        builder.add(LEVEL, LIGHT_LEVEL);
     }
 
     @Override
@@ -135,33 +129,13 @@ public class LiquidCauldronBlock extends ModCauldronBlock {
     }
 
     @Override
-    public boolean isFull(BlockState state) {
-        return state.getValue(LEVEL) == MAX_LEVEL;
-    }
-
-    @Override
     protected double getContentHeight(BlockState state) {
         return 0.4375 + 0.125 * state.getValue(LEVEL);
     }
 
     @Override
-    public BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor level, BlockPos currentPos, BlockPos neighborPos) {
-        var s = super.updateShape(state, direction, neighborState, level, currentPos, neighborPos);
-        if (direction == Direction.DOWN) {
-            if (level.getBlockEntity(currentPos) instanceof LiquidCauldronBlockTile te) {
-                boolean isFire = shouldBoil(neighborState, te.getSoftFluidTank().getFluid(), level, neighborPos);
-                s = s.setValue(BOILING, isFire);
-            }
-        }
-        return s;
-    }
-
-
-    @Override
     protected void handleEntityInsideFluid(BlockState state, Level level, BlockPos pos, Entity entity) {
-        if (state.getValue(BOILING) && entity instanceof LivingEntity) {
-            entity.hurt(new DamageSource(ModRegistry.BOILING_DAMAGE.getHolder(level)), 1.0F);
-        }
+
         if (entity.mayInteract(level, pos) && level.getBlockEntity(pos) instanceof LiquidCauldronBlockTile tile) {
 
             SoftFluidStack fluid = tile.getSoftFluidTank().getFluid();
@@ -178,10 +152,12 @@ public class LiquidCauldronBlock extends ModCauldronBlock {
                 }
             }
 
-            if (!tile.isGlowing() && potType != null && entity instanceof ItemEntity ie
+            //TODO: improve
+            if (!tile.isGlowing() && fluid.is(ModTags.CAN_GLOW) && entity instanceof ItemEntity ie
                     && ie.getItem().is(Items.GLOW_INK_SAC)
                     && isEntityInsideContent(state, pos, entity)
             ) {
+                //only potions can glow
                 ModCauldronBlock.playSplashEffects(entity, getContentHeight(state));
 
                 tile.setGlowing(true);
@@ -219,14 +195,10 @@ public class LiquidCauldronBlock extends ModCauldronBlock {
 
     @Override
     public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource rand) {
+        super.animateTick(state, level, pos, rand);
 
         if (level.getBlockEntity(pos) instanceof LiquidCauldronBlockTile te) {
             SoftFluidTank tank = te.getSoftFluidTank();
-            if (state.getValue(BOILING)) {
-                int color = tank.getCachedParticleColor(level, pos);
-                int light = tank.getFluidValue().getEmissivity();
-                playBubblingAnimation(level, pos, getContentHeight(state), rand, color, light);
-            }
 
             if (level.random.nextInt(4) == 0) {
                 SoftFluidStack fluid = tank.getFluid();
@@ -298,13 +270,8 @@ public class LiquidCauldronBlock extends ModCauldronBlock {
         if (light != state.getValue(ModBlockProperties.LIGHT_LEVEL)) {
             state = state.setValue(ModBlockProperties.LIGHT_LEVEL, light);
         }
-        int height = fluid.getCount();
-        if (fluid.isEmpty()) {
-            state = Blocks.CAULDRON.defaultBlockState();
-        } else {
-            state = state.setValue(LiquidCauldronBlock.LEVEL, height);
-        }
-        return state;
+
+        return super.updateStateOnFluidChange(state, level, pos, fluid);
     }
 
     @Nullable
@@ -343,32 +310,5 @@ public class LiquidCauldronBlock extends ModCauldronBlock {
         return null;
     }
 
-
-    public static boolean shouldBoil(BlockState belowState, SoftFluidStack fluid, LevelAccessor level, BlockPos pos) {
-        if (!belowState.is(ModTags.HEAT_SOURCES) || !fluid.is(ModTags.CAN_BOIL)) return false;
-
-        if (belowState.hasProperty(CampfireBlock.LIT)) {
-            return belowState.getValue(CampfireBlock.LIT);
-        }
-        if (belowState.getBlock() instanceof ILightable il) {
-            return il.isLitUp(belowState, level, pos);
-        }
-        return true;
-    }
-
-    public static void playBubblingAnimation(Level level, BlockPos pos,
-                                             double surface, RandomSource rand, int color, int light) {
-
-        var type = ModRegistry.BOILING_PARTICLE.get();
-        int count = 2;
-        addSurfaceParticles(type, level, pos, count, surface, rand, color, pos.getY() + 5 / 16f, light);
-
-        if (level.random.nextInt(4) == 0) {
-            level.playLocalSound(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5,
-                    SoundEvents.BUBBLE_COLUMN_UPWARDS_AMBIENT, SoundSource.BLOCKS,
-                    0.4F + level.random.nextFloat() * 0.2F,
-                    0.35F + level.random.nextFloat() * 0.2F, false);
-        }
-    }
 
 }
