@@ -12,6 +12,7 @@ import net.mehvahdjukaar.amendments.common.entity.RingEffectCloud;
 import net.mehvahdjukaar.amendments.common.item.DragonChargeItem;
 import net.mehvahdjukaar.amendments.common.item.DyeBottleItem;
 import net.mehvahdjukaar.amendments.common.item.placement.WallLanternPlacement;
+import net.mehvahdjukaar.amendments.common.recipe.CauldronRecipe;
 import net.mehvahdjukaar.amendments.common.recipe.DyeBottleRecipe;
 import net.mehvahdjukaar.amendments.common.tile.*;
 import net.mehvahdjukaar.amendments.configs.CommonConfigs;
@@ -41,6 +42,7 @@ import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.BannerBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -115,12 +117,11 @@ public class ModRegistry {
 
     public static final Supplier<SoundEvent> FIREBALL_EXPLOSION_SOUND = RegHelper.registerSound(res("explosion.fireball"));
 
-    /* todo
-    private static final Supplier<RecipeType<CauldronRecipe>> CAULDRON_RECIPE = RegHelper.registerRecipeType(
-            res("cauldron_recipe"));
+    public static final Supplier<RecipeType<CauldronRecipe>> CAULDRON_RECIPE_TYPE = RegHelper.registerRecipeType(
+            res("cauldron_crafting"));
 
-    private static final Supplier<RecipeSerializer<CauldronRecipe>> CAULDRON_RECIPE_SERIALIZER = RegHelper.registerSpecialRecipe(
-            res("cauldron_recipe"), CauldronRecipe::new);*/
+    public static final Supplier<RecipeSerializer<CauldronRecipe>> CAULDRON_RECIPE_SERIALIZER = RegHelper.registerRecipeSerializer(
+            res("cauldron_crafting"), CauldronRecipe.Serializer::new);
 
     public static final Supplier<EntityType<MediumDragonFireball>> MEDIUM_DRAGON_FIREBALL =
             RegHelper.registerEntityType(res("medium_dragon_fireball"),

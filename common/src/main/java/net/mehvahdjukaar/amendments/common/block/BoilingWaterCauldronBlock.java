@@ -1,6 +1,7 @@
 package net.mehvahdjukaar.amendments.common.block;
 
-import net.mehvahdjukaar.amendments.common.recipe.DummyContainer;
+import net.mehvahdjukaar.amendments.common.recipe.CauldronRecipeUtils;
+import net.mehvahdjukaar.amendments.common.recipe.FluidAndItemCraftResult;
 import net.mehvahdjukaar.amendments.common.tile.LiquidCauldronBlockTile;
 import net.mehvahdjukaar.amendments.reg.ModBlockProperties;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
@@ -17,11 +18,9 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
@@ -108,7 +107,6 @@ public class BoilingWaterCauldronBlock extends LayeredCauldronBlock {
         }
     }
 
-    //todo: optional potion crafting...
     private void attemptStewCrafting(BlockState state, Level level, BlockPos pos, Entity entity) {
         if (!state.getValue(BOILING) || !(entity instanceof ItemEntity ie)) return;
         if (ie.tickCount % 3 != 0) {
@@ -130,49 +128,35 @@ public class BoilingWaterCauldronBlock extends LayeredCauldronBlock {
 
         ingredients.add(Items.BOWL.getDefaultInstance());
 
-        CraftingContainer container = DummyContainer.of(ingredients);
-        var recipes = level.getRecipeManager().getRecipesFor(RecipeType.CRAFTING, container, level);
-        for (var r : recipes) {
-            ItemStack result = r.assemble(container, level.registryAccess());
-            if (result.isEmpty()) continue;
-            var fluid = SoftFluidStack.fromItem(result);
-            if (fluid == null) continue;
-            BlockState newState = getNewState(pos, level, fluid.getFirst());
+        FluidAndItemCraftResult craftResult = CauldronRecipeUtils.craft(level, 3,
+                SoftFluidStack.of(BuiltInSoftFluids.WATER.getHolder()), ingredients);
+        if (craftResult != null) {
+            SoftFluidStack resultFluid = craftResult.resultFluid();
+            BlockState newState = getNewState(pos, level, resultFluid);
             if (newState != null) {
                 level.setBlockAndUpdate(pos, newState);
                 if (level.getBlockEntity(pos) instanceof LiquidCauldronBlockTile te) {
                     int lev = state.getValue(LEVEL); //water cauldron block
                     // yes this can give 1 bottle free on forge. not an issue since water is free anyway
                     int newLev = lev == 3 ? te.getSoftFluidTank().getCapacity() : lev;
-                    te.getSoftFluidTank().setFluid(fluid.getFirst().copyWithCount(newLev));
+                    te.getSoftFluidTank().setFluid(resultFluid.copyWithCount(newLev));
                     te.setChanged();
                     level.gameEvent(entity, GameEvent.BLOCK_CHANGE, pos);
                     level.playSound(null, pos,
                             SoundEvents.BREWING_STAND_BREW,
                             SoundSource.BLOCKS, 0.9f, 0.6F);
                 }
-                clearUsedIngredients(entities, ingredients);
             }
-        }
-    }
-
-    private static void clearUsedIngredients(List<ItemEntity> entities, List<ItemStack> ingredients) {
-        //clear items
-        //all these have count of 1
-        for (var v : ingredients) {
-            var iter = entities.iterator();
-            while (iter.hasNext()) {
-                ItemEntity e = iter.next();
-                ItemStack itemEntityItem = e.getItem();
-                if (ItemStack.isSameItemSameTags(itemEntityItem, v)) {
-                    itemEntityItem.shrink(1);
-                    if (itemEntityItem.isEmpty()) {
-                        e.discard();
-                        iter.remove();
-                    }
+            ModCauldronBlock.spawnResultItems(level, pos, List.of(craftResult.craftedItem()));
+            //clear items
+            //all these have count of 1
+            for (var e : entities) {
+                if (e.getItem().isEmpty()) {
+                    e.discard();
                 }
             }
         }
     }
+
 }
 
