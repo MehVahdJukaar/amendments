@@ -6,3 +6,4 @@
 - added unique amendments:cauldron_crafting recipes specific to cauldrons
 - these allow outputting items or changing cauldron fluid starting from cauldron own fluid and contained items
 - check out mod data pack for an example
+- 1.21.1 coming soon
