@@ -26,10 +26,10 @@ public abstract class WallSignMixin extends Block {
 
     @Unique
     private static final EnumMap<Direction, VoxelShape> AMENDMENTS_VISUAL_SHAPE = Maps.newEnumMap(ImmutableMap.of(
-            Direction.NORTH, Block.box(0.0, 4, 14.0, 16.0, 13, 16.0),
-            Direction.SOUTH, Block.box(0.0, 4, 0.0, 16.0, 13, 2.0),
-            Direction.EAST, Block.box(0.0, 4, 0.0, 2.0, 13, 16.0),
-            Direction.WEST, Block.box(14.0, 4, 0.0, 16.0, 13, 16.0)));
+            Direction.NORTH, Block.box(0.0, 3, 14.0, 16.0, 13, 16.0),
+            Direction.SOUTH, Block.box(0.0, 3, 0.0, 16.0, 13, 2.0),
+            Direction.EAST, Block.box(0.0, 3, 0.0, 2.0, 13, 16.0),
+            Direction.WEST, Block.box(14.0, 3, 0.0, 16.0, 13, 16.0)));
 
     public WallSignMixin(Properties properties) {
         super(properties);
