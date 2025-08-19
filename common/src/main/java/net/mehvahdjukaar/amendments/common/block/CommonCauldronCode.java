@@ -12,8 +12,10 @@ import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.amendments.reg.ModTags;
 import net.mehvahdjukaar.moonlight.api.block.ILightable;
 import net.mehvahdjukaar.moonlight.api.fluids.BuiltInSoftFluids;
+import net.mehvahdjukaar.moonlight.api.fluids.MLBuiltinSoftFluids;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidStack;
 import net.mehvahdjukaar.moonlight.api.misc.InvPlacer;
+import net.mehvahdjukaar.moonlight.api.platform.network.NetworkHelper;
 import net.mehvahdjukaar.moonlight.api.util.Utils;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
@@ -62,7 +64,7 @@ public final class CommonCauldronCode {
         if (level.isClientSide) return;
 
         if (state.getValue(ModCauldronBlock.BOILING) && entity instanceof LivingEntity) {
-            entity.hurt(new DamageSource(ModRegistry.BOILING_DAMAGE), 1.0F);
+            entity.hurt(new DamageSource(ModRegistry.BOILING_DAMAGE.getHolder(level)), 1.0F);
         }
         if (entity.isOnFire() && canFluidExtinguish) {
             playExtinguishSound(level, pos, entity);
@@ -105,7 +107,8 @@ public final class CommonCauldronCode {
         if (newState.getBlock() instanceof ModCauldronBlock && level.getBlockEntity(pos) instanceof LiquidCauldronBlockTile te) {
             return te.getSoftFluidTank().getFluid();
         } else {
-            return SoftFluidStack.of(BuiltInSoftFluids.WATER.getHolder(), newState.getValue(LayeredCauldronBlock.LEVEL));
+            return SoftFluidStack.of(MLBuiltinSoftFluids.WATER.getHolder(level.registryAccess()),
+                    newState.getValue(LayeredCauldronBlock.LEVEL));
         }
     }
 
@@ -187,7 +190,7 @@ public final class CommonCauldronCode {
 
         var particlePacket = new ClientBoundPlaySplashParticlesMessage(hitPos, speed, feetEntity.getBbWidth());
 
-        ModNetwork.CHANNEL.sentToAllClientPlayersTrackingEntityAndSelf(entity, particlePacket);
+        NetworkHelper.sendToAllClientPlayersTrackingEntityAndSelf(entity, particlePacket);
     }
 
 

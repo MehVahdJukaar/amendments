@@ -14,7 +14,7 @@ public class CompactItemSet {
         item = item.copy(); //make sure we don't modify the original item
         //add an item merging onto existing if possible. if not add a new item. remeber items have a max size so add all you can and add remainder later
         for (ItemStack existing : items) {
-            if (ItemStack.isSameItemSameTags(existing, item)) {
+            if (ItemStack.isSameItemSameComponents(existing, item)) {
                 int maxSize = existing.getMaxStackSize();
                 int newCount = existing.getCount() + item.getCount();
                 if (newCount <= maxSize) {

@@ -2,12 +2,7 @@ package net.mehvahdjukaar.amendments.common.block;
 
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.mehvahdjukaar.amendments.common.recipe.CauldronRecipeInput;
-import net.mehvahdjukaar.amendments.common.recipe.CauldronRecipeUtils;
-import net.mehvahdjukaar.amendments.common.recipe.FluidAndItemCraftResult;
-import net.mehvahdjukaar.amendments.common.tile.LiquidCauldronBlockTile;
 import net.mehvahdjukaar.amendments.reg.ModBlockProperties;
-import net.mehvahdjukaar.moonlight.api.fluids.BuiltInSoftFluids;
 import net.mehvahdjukaar.moonlight.api.fluids.MLBuiltinSoftFluids;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidStack;
 import net.minecraft.client.renderer.BiomeColors;
@@ -16,15 +11,10 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.cauldron.CauldronInteraction;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.item.crafting.CraftingInput;
-import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
@@ -35,11 +25,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.phys.BlockHitResult;
-
-import java.util.Map;
-import java.util.function.Predicate;
-import java.util.ArrayList;
-import java.util.List;
 
 public class BoilingWaterCauldronBlock extends LayeredCauldronBlock {
     public static final MapCodec<BoilingWaterCauldronBlock> CODEC = RecordCodecBuilder.mapCodec((i) -> i.group(
@@ -104,13 +89,15 @@ public class BoilingWaterCauldronBlock extends LayeredCauldronBlock {
         }
     }
 
+
     @Override
-    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
         if (CommonCauldronCode.attemptPlayerCrafting(state, level, pos, player, hand, 3,
-                SoftFluidStack.of(BuiltInSoftFluids.WATER.getHolder(), state.getValue(LEVEL)))) {
-            return InteractionResult.sidedSuccess(level.isClientSide);
+                SoftFluidStack.of(MLBuiltinSoftFluids.WATER.getHolder(level), state.getValue(LEVEL)))) {
+            return ItemInteractionResult.sidedSuccess(level.isClientSide);
         }
-        return super.use(state, level, pos, player, hand, hit);
+        return super.useItemOn(stack, state, level, pos, player, hand, hitResult);
+
     }
 }
 

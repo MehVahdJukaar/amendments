@@ -4,12 +4,16 @@ import net.mehvahdjukaar.amendments.common.network.ClientBoundFireballExplodePac
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.moonlight.api.block.ILightable;
 import net.mehvahdjukaar.moonlight.api.platform.network.NetworkHelper;
+import net.mehvahdjukaar.supplementaries.reg.ModParticles;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Explosion;
@@ -72,7 +76,9 @@ public class FireballExplosion extends Explosion {
             ExtraSettings settings
     ) {
         FireballExplosion explosion = explode(serverLevel, source, damageSource, damageCalculator, x, y, z,
-                radius, fire, explosionInteraction, false, settings);
+                radius, fire, explosionInteraction, false,
+                BuiltInRegistries.SOUND_EVENT.wrapAsHolder(SoundEvents.EMPTY),
+                settings);
 
         if (!(serverLevel instanceof ServerLevel sl)) {
             return explosion;
@@ -95,35 +101,37 @@ public class FireballExplosion extends Explosion {
         return explosion;
     }
 
-    //same as level explode
+    // same as Level.explode
     public static FireballExplosion explode(
             Level level,
-            @Nullable Entity source,
+                                     @Nullable Entity source,
             @Nullable DamageSource damageSource,
             @Nullable ExplosionDamageCalculator damageCalculator,
-            double x,
-            double y,
-            double z,
-            float radius,
-            boolean fire,
+            double x, double y, double z,
+            float radius, boolean fire,
             Level.ExplosionInteraction explosionInteraction,
             boolean spawnParticles,
-            ExtraSettings settings
-    ) {
-        Explosion.BlockInteraction blockInteraction = switch (explosionInteraction) {
-            case NONE -> Explosion.BlockInteraction.KEEP;
-            case BLOCK -> level.getDestroyType(GameRules.RULE_BLOCK_EXPLOSION_DROP_DECAY);
-            case MOB -> level.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)
-                    ? level.getDestroyType(GameRules.RULE_MOB_EXPLOSION_DROP_DECAY)
-                    : Explosion.BlockInteraction.KEEP;
-            case TNT -> level.getDestroyType(GameRules.RULE_TNT_EXPLOSION_DROP_DECAY);
-        };
-        FireballExplosion explosion = new FireballExplosion(level, source, damageSource, damageCalculator,
-                x, y, z, radius, fire, blockInteraction, settings);
+            Holder<SoundEvent> explosionSound,
+            ExtraSettings settings) {
+        Explosion.BlockInteraction inter;
+        switch (explosionInteraction) {
+            case NONE -> inter = BlockInteraction.KEEP;
+            case BLOCK -> inter = level.getDestroyType(GameRules.RULE_BLOCK_EXPLOSION_DROP_DECAY);
+            case MOB -> inter = level.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING) ? level.getDestroyType(GameRules.RULE_MOB_EXPLOSION_DROP_DECAY) : BlockInteraction.KEEP;
+            case TNT -> inter = level.getDestroyType(GameRules.RULE_TNT_EXPLOSION_DROP_DECAY);
+            case TRIGGER -> inter = BlockInteraction.TRIGGER_BLOCK;
+            default -> throw new MatchException(null, null);
+        }
+
+        Explosion.BlockInteraction blockInteraction = inter;
+        FireballExplosion explosion = new FireballExplosion(level, source, damageSource, damageCalculator, x, y, z, radius, fire, blockInteraction,
+                ParticleTypes.EXPLOSION_EMITTER, ParticleTypes.EXPLOSION_EMITTER, //unused
+                explosionSound, settings);
         explosion.explode();
         explosion.finalizeExplosion(spawnParticles);
         return explosion;
     }
+
 
     public FireballExplosion(Level level, @Nullable Entity source, double toBlowX, double toBlowY, double toBlowZ,
                              float radius, List<BlockPos> positions, BlockInteraction blockInteraction,

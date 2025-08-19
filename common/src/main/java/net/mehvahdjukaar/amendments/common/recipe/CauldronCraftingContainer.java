@@ -7,28 +7,21 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.mojang.serialization.JsonOps;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
-import net.mehvahdjukaar.moonlight.api.fluids.BuiltInSoftFluids;
-import net.mehvahdjukaar.moonlight.api.fluids.FluidContainerList;
-import net.mehvahdjukaar.moonlight.api.fluids.SoftFluid;
-import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidStack;
+import net.mehvahdjukaar.moonlight.api.fluids.*;
 import net.minecraft.Util;
 import net.minecraft.core.NonNullList;
 import net.minecraft.util.Mth;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.player.StackedContents;
-import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.crafting.CraftingRecipe;
-import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.List;
 
-public class CauldronCraftingContainer implements CraftingContainer {
+public class CauldronCraftingContainer implements RecipeInput{
 
     private final List<ItemStack> originalItems;
     private final NonNullList<ItemStack> items;
@@ -47,7 +40,7 @@ public class CauldronCraftingContainer implements CraftingContainer {
         this.fluid = fluidStack;
         //fill all containers that it can fill.
         this.equivalentFluidContainers = fluidStack.toAllPossibleFilledItems();
-        if (fluidStack.is(BuiltInSoftFluids.WATER)) {
+        if (fluidStack.is(MLBuiltinSoftFluids.WATER)) {
             equivalentFluidContainers.put(DUMMY_WATER_BOWL_CATEGORY, Items.BOWL.getDefaultInstance());
         }
         this.fluidPosition = fluidPosition;
@@ -68,8 +61,7 @@ public class CauldronCraftingContainer implements CraftingContainer {
                             }
                         """);
 
-        return FluidContainerList.Category.CODEC.decode(JsonOps.INSTANCE, j).getOrThrow(false, s -> {
-        }).getFirst();
+        return FluidContainerList.Category.CODEC.decode(JsonOps.INSTANCE, j).getOrThrow().getFirst();
     });
 
     //hack
@@ -91,7 +83,7 @@ public class CauldronCraftingContainer implements CraftingContainer {
     }
 
     @Override
-    public int getContainerSize() {
+    public int size() {
         return items.size();
     }
 
@@ -102,25 +94,9 @@ public class CauldronCraftingContainer implements CraftingContainer {
 
     @Override
     public ItemStack getItem(int slot) {
-        if (slot >= this.getContainerSize()) return ItemStack.EMPTY;
+        if (slot >= this.size()) return ItemStack.EMPTY;
         return items.get(slot);
     }
-
-    @Override
-    public int getWidth() {
-        return dimension;
-    }
-
-    @Override
-    public int getHeight() {
-        return dimension;
-    }
-
-    @Override
-    public List<ItemStack> getItems() {
-        return items;
-    }
-
 
     public SoftFluidStack getFluid() {
         return fluid;
@@ -130,36 +106,8 @@ public class CauldronCraftingContainer implements CraftingContainer {
         return fluidContainerSize;
     }
 
-    //why is this stuff here??
-    @Override
-    public ItemStack removeItem(int slot, int amount) {
-        return ItemStack.EMPTY;
-    }
-
-    @Override
-    public ItemStack removeItemNoUpdate(int slot) {
-        return ItemStack.EMPTY;
-    }
-
-    @Override
-    public void setItem(int slot, ItemStack stack) {
-    }
-
-    @Override
-    public void setChanged() {
-    }
-
-    @Override
-    public boolean stillValid(Player player) {
-        return true;
-    }
-
-    @Override
-    public void clearContent() {
-    }
-
-    @Override
-    public void fillStackedContents(StackedContents helper) {
+    protected CraftingInput makeCraftingInput() {
+        return CraftingInput.of(this.dimension, this.dimension, this.items);
     }
 
     @Nullable
@@ -167,8 +115,10 @@ public class CauldronCraftingContainer implements CraftingContainer {
         for (int j = 0; j < this.originalItems.size(); j++) {
             this.items.set(j, this.originalItems.get(j));
         }
-        List<CauldronRecipe> recipes = level.getRecipeManager().getRecipesFor(ModRegistry.CAULDRON_RECIPE_TYPE.get(), this, level);
-        for (var r : recipes) {
+        List<RecipeHolder<CauldronRecipe>> recipes = level.getRecipeManager()
+                .getRecipesFor(ModRegistry.CAULDRON_RECIPE_TYPE.get(), this, level);
+        for (var h : recipes) {
+            CauldronRecipe r = h.value();
             if (!r.matches(this, level)) continue;
             FluidAndItemCraftResult resultFluid = r.assembleFluid(this, level.registryAccess());
             var remainingItems = r.getRemainingItems(this);
@@ -188,14 +138,16 @@ public class CauldronCraftingContainer implements CraftingContainer {
             var category = cont.getKey();
             ItemStack fluidInBottle = cont.getValue();
             setupFluidItem(fluidInBottle);
-            List<CraftingRecipe> recipes = level.getRecipeManager().getRecipesFor(RecipeType.CRAFTING, this, level);
-            for (var r : recipes) {
-                if (!r.matches(this, level)) continue;
+            CraftingInput input = this.makeCraftingInput();
+            List<RecipeHolder<CraftingRecipe>> recipes = level.getRecipeManager().getRecipesFor(RecipeType.CRAFTING, input, level);
+            for (var h : recipes) {
+                CraftingRecipe r = h.value();
+                if (!r.matches(input, level)) continue;
                 int newFluidCount = fluid.getCount() - category.getCapacity();
                 if (newFluidCount < 0 || newFluidCount > fluidContainerSize) continue;
-                ItemStack craftedItem = r.assemble(this, level.registryAccess());
+                ItemStack craftedItem = r.assemble(input, level.registryAccess());
                 if (!craftedItem.isEmpty()) {
-                    var remainingItems = r.getRemainingItems(this);
+                    var remainingItems = r.getRemainingItems(input);
                     //is this correct?
                     Item emptyContainer = category.getEmptyContainer();
 

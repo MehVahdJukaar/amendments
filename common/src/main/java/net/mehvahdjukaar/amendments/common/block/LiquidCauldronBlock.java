@@ -1,7 +1,7 @@
 package net.mehvahdjukaar.amendments.common.block;
 
+import com.google.common.collect.Lists;
 import com.mojang.serialization.MapCodec;
-import net.mehvahdjukaar.amendments.common.recipe.RecipeUtils;
 import net.mehvahdjukaar.amendments.common.tile.LiquidCauldronBlockTile;
 import net.mehvahdjukaar.amendments.configs.CommonConfigs;
 import net.mehvahdjukaar.amendments.integration.AlexCavesCompat;
@@ -9,16 +9,13 @@ import net.mehvahdjukaar.amendments.integration.CompatHandler;
 import net.mehvahdjukaar.amendments.reg.ModBlockProperties;
 import net.mehvahdjukaar.amendments.reg.ModTags;
 import net.mehvahdjukaar.moonlight.api.MoonlightRegistry;
-import net.mehvahdjukaar.moonlight.api.block.ILightable;
 import net.mehvahdjukaar.moonlight.api.fluids.MLBuiltinSoftFluids;
-import net.mehvahdjukaar.moonlight.api.fluids.BuiltInSoftFluids;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluid;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidStack;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidTank;
 import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
 import net.mehvahdjukaar.moonlight.api.util.PotionBottleType;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ColorParticleOption;
@@ -29,9 +26,6 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.FastColor;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.ItemInteractionResult;
-import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
@@ -51,8 +45,10 @@ import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.StreamSupport;
 
@@ -200,7 +196,7 @@ public class LiquidCauldronBlock extends ModCauldronBlock {
                 PotionBottleType type = getPotType(fluid);
                 double height = getContentHeight(state);
                 if (type != null) {
-                    if (PotionUtils.getAllEffects(fluid.getTag()).size() >= CommonConfigs.POTION_MIXING_LIMIT.get()) {
+                    if (getAllPotionEffects(fluid).size() >= CommonConfigs.POTION_MIXING_LIMIT.get()) {
                         CommonCauldronCode.addSurfaceParticles(ParticleTypes.SMOKE, level, pos, 2, height, rand, 0, 0, 0);
                     }
                     if (type != PotionBottleType.REGULAR) {
@@ -230,6 +226,10 @@ public class LiquidCauldronBlock extends ModCauldronBlock {
                 }
             }
         }
+    }
+
+    public static @NotNull ArrayList<MobEffectInstance> getAllPotionEffects(SoftFluidStack fluid) {
+        return Lists.newArrayList(fluid.getOrDefault(DataComponents.POTION_CONTENTS, PotionContents.EMPTY).getAllEffects());
     }
 
     @Nullable
@@ -271,7 +271,7 @@ public class LiquidCauldronBlock extends ModCauldronBlock {
 
     @Nullable
     private BlockState maybeExplode(BlockState state, Level level, BlockPos pos, SoftFluidStack fluid) {
-        List<MobEffectInstance> potionEffects = PotionUtils.getAllEffects(fluid.getTag());
+        List<MobEffectInstance> potionEffects = getAllPotionEffects(fluid);
         int potionEffectAmount = potionEffects.size();
         if (potionEffectAmount >= CommonConfigs.POTION_MIXING_LIMIT.get()) {
             if (potionEffectAmount > CommonConfigs.POTION_MIXING_LIMIT.get()) {
