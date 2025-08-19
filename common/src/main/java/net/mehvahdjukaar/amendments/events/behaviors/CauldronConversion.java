@@ -89,6 +89,9 @@ public class CauldronConversion implements BlockUse {
 
     @Nullable
     public static BlockState getNewState(BlockPos pos, Level level, SoftFluidStack fluid) {
+        if(fluid.isEmpty()){
+            return Blocks.CAULDRON.defaultBlockState();
+        }
         //compat stuff here?
         if (fluid.is(MLBuiltinSoftFluids.WATER)) {
             return Blocks.WATER_CAULDRON.defaultBlockState().setValue(LayeredCauldronBlock.LEVEL,
