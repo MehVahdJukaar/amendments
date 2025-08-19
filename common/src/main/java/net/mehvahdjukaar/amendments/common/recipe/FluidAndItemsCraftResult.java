@@ -5,9 +5,9 @@ import net.minecraft.world.item.ItemStack;
 
 import java.util.List;
 
-public record FluidAndItemsCraftResult( List<ItemStack> craftedItems, SoftFluidStack currentFluid) {
+public record FluidAndItemsCraftResult( List<ItemStack> craftedItems, SoftFluidStack resultFluid) {
 
-    public static FluidAndItemsCraftResult of(List<ItemStack> craftedItem, SoftFluidStack resultFluid){
-        return new FluidAndItemsCraftResult(craftedItem, resultFluid);
+    public static FluidAndItemsCraftResult of(List<ItemStack> craftedItem, SoftFluidStack newFluid){
+        return new FluidAndItemsCraftResult(craftedItem, newFluid);
     }
 }

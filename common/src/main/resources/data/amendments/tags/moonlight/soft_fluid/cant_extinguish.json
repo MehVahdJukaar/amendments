@@ -1,0 +1,7 @@
+{
+  "replace": false,
+  "values": [
+    {"id":"moonlight:lava","required":false},
+    {"id":"alexscaves:acid","required":false}
+  ]
+}

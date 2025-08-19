@@ -1,7 +1,7 @@
 package net.mehvahdjukaar.amendments.client.colors;
 
+import net.mehvahdjukaar.amendments.reg.ModTags;
 import net.mehvahdjukaar.moonlight.api.block.ISoftFluidTankProvider;
-import net.mehvahdjukaar.moonlight.api.fluids.BuiltInSoftFluids;
 import net.minecraft.client.color.block.BlockColor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.BlockAndTintGetter;
@@ -16,11 +16,9 @@ public class SoftFluidColor implements BlockColor {
             if (level.getBlockEntity(pos) instanceof ISoftFluidTankProvider bh) {
                 if (tint == 1) {
                     var tank = bh.getSoftFluidTank();
-                    if (tank.getFluid().is(BuiltInSoftFluids.MUSHROOM_STEW.get())) return -1;
-                    if (tank.getFluid().is(BuiltInSoftFluids.SUS_STEW.get())) return -1;
-                    if (tank.getFluid().is(BuiltInSoftFluids.RABBIT_STEW.get())) return -1;
-                    if (tank.getFluid().is(BuiltInSoftFluids.MUSHROOM_STEW.get())) return -1;
-                    return tank.getCachedStillColor(level, pos);
+                    if (!tank.getFluid().is(ModTags.NO_TINT_IN_CAULDRON)) {
+                        return tank.getCachedStillColor(level, pos);
+                    }
                 }
             }
         }
