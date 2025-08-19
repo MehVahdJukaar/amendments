@@ -51,7 +51,7 @@ public abstract class CompatFarmersDelightCanvasMixin extends SignRenderer {
     @Inject(method = "render(Lnet/minecraft/world/level/block/entity/SignBlockEntity;FLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;II)V",
             at = @At(value = "INVOKE", target = "Lvectorwing/farmersdelight/client/renderer/HangingCanvasSignRenderer;renderSignWithText(Lnet/minecraft/world/level/block/entity/SignBlockEntity;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;IILnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/block/SignBlock;Lnet/minecraft/world/item/DyeColor;Lnet/minecraft/client/model/Model;)V"),
             locals = LocalCapture.CAPTURE_FAILHARD, cancellable = true)
-    protected void renderSignWithText(SignBlockEntity tile, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource,
+    protected void amendments$renderSignWithText(SignBlockEntity tile, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource,
                                       int packedLight, int packedOverlay, CallbackInfo ci,
                                       BlockState state, SignBlock sign, HangingSignRenderer.HangingSignModel model,
                                       DyeColor dye) {

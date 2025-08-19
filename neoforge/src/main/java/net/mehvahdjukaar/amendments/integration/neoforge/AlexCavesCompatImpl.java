@@ -1,5 +1,10 @@
 package net.mehvahdjukaar.amendments.integration.neoforge;
 
+import com.github.alexmodguy.alexscaves.client.particle.ACParticleRegistry;
+import com.github.alexmodguy.alexscaves.server.block.ACBlockRegistry;
+import com.github.alexmodguy.alexscaves.server.block.fluid.ACFluidRegistry;
+import com.github.alexmodguy.alexscaves.server.misc.ACSoundRegistry;
+import net.mehvahdjukaar.amendments.common.block.CommonCauldronCode;
 import net.mehvahdjukaar.amendments.common.block.LiquidCauldronBlock;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluid;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidRegistry;
@@ -19,8 +24,11 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.fluids.FluidType;
+import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
 import net.neoforged.fml.util.ObfuscationReflectionHelper;
 import net.neoforged.neoforge.fluids.FluidType;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
@@ -78,7 +86,7 @@ public class AlexCavesCompatImpl {
                 level.playLocalSound(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, ACID_IDLE.get(level),
                         SoundSource.BLOCKS, 0.5F, rand.nextFloat() * 0.4F + 0.8F, false);
             }
-            LiquidCauldronBlock.addSurfaceParticles((ParticleOptions) ACID_BUBBLE.get(level),
+            CommonCauldronCode.addSurfaceParticles((ParticleOptions) ACID_BUBBLE.get(level),
                     level, pos, 1, height, rand,
                     (rand.nextFloat() - 0.5f) * 0.1f,
                     0.05F + rand.nextFloat() * 0.1f,
