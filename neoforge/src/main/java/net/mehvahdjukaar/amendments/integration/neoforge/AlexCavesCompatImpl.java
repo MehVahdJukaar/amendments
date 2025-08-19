@@ -9,10 +9,6 @@ import net.mehvahdjukaar.amendments.common.block.LiquidCauldronBlock;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluid;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidRegistry;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidStack;
-import net.mehvahdjukaar.moonlight.api.misc.DataObjectReference;
-import net.mehvahdjukaar.moonlight.api.platform.ClientHelper;
-import net.mehvahdjukaar.moonlight.api.resources.recipe.BlockTypeSwapIngredient;
-import net.mehvahdjukaar.supplementaries.client.renderers.entities.CannonballRenderer;
 import net.mehvahdjukaar.moonlight.api.misc.HolderReference;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleOptions;
@@ -24,12 +20,8 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.fluids.FluidType;
-import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
-import net.neoforged.fml.util.ObfuscationReflectionHelper;
 import net.neoforged.neoforge.fluids.FluidType;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
 
@@ -53,9 +45,16 @@ public class AlexCavesCompatImpl {
             ResourceLocation.fromNamespaceAndPath("alexscaves", "acid_idle"), Registries.SOUND_EVENT);
 
 
-    public static final Method SET_H = ObfuscationReflectionHelper.findMethod(
-            Entity.class, "setFluidTypeHeight",
-            FluidType.class, double.class);
+    public static final Method SET_H;
+
+    static {
+        try {
+            SET_H = Entity.class.getDeclaredMethod("setFluidTypeHeight",
+                    FluidType.class, double.class);
+        } catch (NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     static {
         SET_H.setAccessible(true);

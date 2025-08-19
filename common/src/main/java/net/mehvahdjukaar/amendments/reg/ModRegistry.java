@@ -119,7 +119,7 @@ public class ModRegistry {
     public static final Supplier<SimpleParticleType> FIREBALL_EMITTER_PARTICLE = RegHelper.registerParticle(res("fireball_explosion_emitter"));
     public static final Supplier<SimpleParticleType> FIREBALL_EXPLOSION_PARTICLE = RegHelper.registerParticle(res("fireball_explosion"));
 
-    public static final Supplier<SoundEvent> FIREBALL_EXPLOSION_SOUND = RegHelper.registerSound(res("explosion.fireball"));
+    public static final RegSupplier<SoundEvent> FIREBALL_EXPLOSION_SOUND = RegHelper.registerSound(res("explosion.fireball"));
 
     public static final Supplier<RecipeType<CauldronRecipe>> CAULDRON_RECIPE_TYPE = RegHelper.registerRecipeType(
             res("cauldron_crafting"));

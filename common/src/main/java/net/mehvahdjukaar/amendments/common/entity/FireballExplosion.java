@@ -77,7 +77,7 @@ public class FireballExplosion extends Explosion {
     ) {
         FireballExplosion explosion = explode(serverLevel, source, damageSource, damageCalculator, x, y, z,
                 radius, fire, explosionInteraction, false,
-                BuiltInRegistries.SOUND_EVENT.wrapAsHolder(SoundEvents.EMPTY),
+                ModRegistry.FIREBALL_EXPLOSION_SOUND.getHolder(),
                 settings);
 
         if (!(serverLevel instanceof ServerLevel sl)) {
@@ -124,7 +124,8 @@ public class FireballExplosion extends Explosion {
         }
 
         Explosion.BlockInteraction blockInteraction = inter;
-        FireballExplosion explosion = new FireballExplosion(level, source, damageSource, damageCalculator, x, y, z, radius, fire, blockInteraction,
+        FireballExplosion explosion = new FireballExplosion(level, source, damageSource, damageCalculator, x, y, z, radius,
+                fire, blockInteraction,
                 ParticleTypes.EXPLOSION_EMITTER, ParticleTypes.EXPLOSION_EMITTER, //unused
                 explosionSound, settings);
         explosion.explode();

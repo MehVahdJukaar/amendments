@@ -1,4 +1,4 @@
-package net.mehvahdjukaar.amendments.mixins.forge;
+package net.mehvahdjukaar.amendments.mixins.neoforge;
 
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.mojang.blaze3d.vertex.PoseStack;

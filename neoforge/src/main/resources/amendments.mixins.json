@@ -5,13 +5,13 @@
   "package": "net.mehvahdjukaar.amendments.mixins.neoforge",
   "mixins": [
     "CompatFDSignBlockEntityMixin",
-    "CompatFDWallSignBlockEntityMixin",
-    "SelfCauldronMixin"
+    "CompatFDWallSignBlockEntityMixin"
   ],
   "client": [
     "CompatFarmersDelightCanvasMixin",
     "CompatFarmersDelightSignRendererMixin",
-    "CompatFDSignEditScreenMixin"
+    "CompatFDSignEditScreenMixin",
+    "SignEditScreenMixinFD"
   ],
   "injectors": {
     "defaultRequire": 1

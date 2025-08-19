@@ -5,7 +5,6 @@ import net.minecraft.client.particle.*;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.util.Mth;
-import net.minecraft.world.entity.projectile.SmallFireball;
 
 public class FireballTrailParticle extends TextureSheetParticle {
     private final SpriteSet sprites;
@@ -53,10 +52,10 @@ public class FireballTrailParticle extends TextureSheetParticle {
         this.setSpriteFromAge(this.sprites);
     }
 
-    public static class Factory implements ParticleProvider<SimpleParticleType> {
+    public static class Provider implements ParticleProvider<SimpleParticleType> {
         private final SpriteSet sprites;
 
-        public Factory(SpriteSet sprite) {
+        public Provider(SpriteSet sprite) {
             this.sprites = sprite;
         }
 

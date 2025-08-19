@@ -30,8 +30,7 @@ import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.Nullable;
 
-//TODO:
-@Deprecated(forRemoval = true)
+//TODO: improve or remove
 public class CauldronConversion implements BlockUse {
 
     //block use as it has way too many items that could trigger

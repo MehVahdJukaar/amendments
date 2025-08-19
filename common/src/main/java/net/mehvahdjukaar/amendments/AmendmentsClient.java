@@ -1,7 +1,6 @@
 package net.mehvahdjukaar.amendments;
 
 import com.google.common.base.Suppliers;
-import com.ibm.icu.impl.CharacterPropertiesImpl;
 import dev.architectury.injectables.annotations.ExpectPlatform;
 import net.mehvahdjukaar.amendments.client.ClientResourceGenerator;
 import net.mehvahdjukaar.amendments.client.ItemHoldingAnimationsManager;
@@ -9,8 +8,7 @@ import net.mehvahdjukaar.amendments.client.WallLanternModelsManager;
 import net.mehvahdjukaar.amendments.client.colors.*;
 import net.mehvahdjukaar.amendments.client.gui.LecternBookEditScreen;
 import net.mehvahdjukaar.amendments.client.model.*;
-import net.mehvahdjukaar.amendments.client.particles.BoilingParticle;
-import net.mehvahdjukaar.amendments.client.particles.ColoredSplashParticle;
+import net.mehvahdjukaar.amendments.client.particles.*;
 import net.mehvahdjukaar.amendments.client.renderers.*;
 import net.mehvahdjukaar.amendments.common.ProjectileStats;
 import net.mehvahdjukaar.amendments.common.block.BoilingWaterCauldronBlock;
@@ -30,7 +28,6 @@ import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.FallingBlockRenderer;
-import net.minecraft.client.renderer.entity.NoopRenderer;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.resources.model.Material;
@@ -189,6 +186,9 @@ public class AmendmentsClient {
     private static void registerParticles(ClientHelper.ParticleEvent event) {
         event.register(ModRegistry.BOILING_PARTICLE.get(), BoilingParticle.Provider::new);
         event.register(ModRegistry.SPLASH_PARTICLE.get(), ColoredSplashParticle.Provider::new);
+        event.register(ModRegistry.FIREBALL_TRAIL_PARTICLE.get(), FireballTrailParticle.Provider::new);
+        event.register(ModRegistry.FIREBALL_EMITTER_PARTICLE.get(), FireballExplosionEmitterParticle.Provider::new);
+        event.register(ModRegistry.FIREBALL_EXPLOSION_PARTICLE.get(), FireballExplosionParticle.Provider::new);
     }
 
     @EventCalled

@@ -108,7 +108,7 @@ public abstract class SignRendererMixin {
     }
 
     @Unique
-    private static final Vec3 NEW_OFFSET = new Vec3(0.0D, -1 / 32f, 1 / 16f + 0.001);
+    private static final Vec3 NEW_OFFSET = new Vec3(0.0D, -1 / 32f - (1/32f)/3, 1 / 16f + 0.001);
     @Unique
     private static final Vec3 OLD_OFFSET = new Vec3(0.0, 0.3333333432674408, 0.046666666865348816);
 

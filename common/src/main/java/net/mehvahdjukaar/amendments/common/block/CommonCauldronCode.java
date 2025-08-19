@@ -1,7 +1,6 @@
 package net.mehvahdjukaar.amendments.common.block;
 
 import net.mehvahdjukaar.amendments.common.network.ClientBoundPlaySplashParticlesMessage;
-import net.mehvahdjukaar.amendments.common.network.ModNetwork;
 import net.mehvahdjukaar.amendments.common.recipe.CauldronRecipeUtils;
 import net.mehvahdjukaar.amendments.common.recipe.FluidAndItemCraftResult;
 import net.mehvahdjukaar.amendments.common.recipe.FluidAndItemsCraftResult;
@@ -11,7 +10,6 @@ import net.mehvahdjukaar.amendments.events.behaviors.CauldronConversion;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.amendments.reg.ModTags;
 import net.mehvahdjukaar.moonlight.api.block.ILightable;
-import net.mehvahdjukaar.moonlight.api.fluids.BuiltInSoftFluids;
 import net.mehvahdjukaar.moonlight.api.fluids.MLBuiltinSoftFluids;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidStack;
 import net.mehvahdjukaar.moonlight.api.misc.InvPlacer;
@@ -224,12 +222,12 @@ public final class CommonCauldronCode {
         if (craftResult == null) return;
 
         SoftFluidStack resultFluid = craftResult.resultFluid();
+
+        playCraftSound(pos, level, cauldronFluid, resultFluid);
+
         CauldronConversion.setCorrectCauldronStateAndTile(state, level, pos, resultFluid);
 
         level.gameEvent(entity, GameEvent.BLOCK_CHANGE, pos);
-        level.playSound(null, pos,
-                SoundEvents.BREWING_STAND_BREW,
-                SoundSource.BLOCKS, 0.9f, 0.6F);
 
         spawnResultItems(level, pos, List.of(craftResult.craftedItem()));
         //clear items
@@ -265,6 +263,7 @@ public final class CommonCauldronCode {
                 tankCapacity, currentFluid, List.of(playerStack));
 
         if (result != null) {
+            playCraftSound(pos, level, currentFluid, result.resultFluid());
             CauldronConversion.setCorrectCauldronStateAndTile(state, level, pos, result.resultFluid());
 
             onPlayerCrafted(level, pos, player, hand, playerStack, result.craftedItems());
@@ -277,8 +276,6 @@ public final class CommonCauldronCode {
     private static void onPlayerCrafted(Level level, BlockPos pos, Player player, InteractionHand hand, ItemStack playerItem,
                                         List<ItemStack> craftedItems) {
 
-        level.playSound(player, pos, SoundEvents.BUCKET_EMPTY, SoundSource.BLOCKS, 1.0F, 1.3f);
-
         if (player instanceof ServerPlayer serverPlayer) {
             player.awardStat(Stats.ITEM_USED.get(playerItem.getItem()));
             CriteriaTriggers.ITEM_USED_ON_BLOCK.trigger(serverPlayer, pos, playerItem);
@@ -289,4 +286,13 @@ public final class CommonCauldronCode {
         }
     }
 
+    private static void playCraftSound(BlockPos pos, Level level, SoftFluidStack oldStack, SoftFluidStack newStack) {
+        if (oldStack.fluid() != newStack.fluid()) {
+            level.playSound(null, pos,
+                    SoundEvents.BREWING_STAND_BREW,
+                    SoundSource.BLOCKS, 0.9f, 0.6F);
+        } else {
+            level.playSound(null, pos, SoundEvents.BUCKET_EMPTY, SoundSource.BLOCKS, 1.0F, 1.3f);
+        }
+    }
 }

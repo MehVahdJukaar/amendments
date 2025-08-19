@@ -1,8 +1,6 @@
 package net.mehvahdjukaar.amendments;
 
 import net.mehvahdjukaar.amendments.common.FlowerPotHandler;
-import net.mehvahdjukaar.amendments.common.entity.MediumDragonFireball;
-import net.mehvahdjukaar.amendments.common.entity.MediumFireball;
 import net.mehvahdjukaar.amendments.common.network.ModNetwork;
 import net.mehvahdjukaar.amendments.configs.ClientConfigs;
 import net.mehvahdjukaar.amendments.configs.CommonConfigs;
@@ -18,23 +16,20 @@ import net.mehvahdjukaar.moonlight.api.misc.EventCalled;
 import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
 import net.mehvahdjukaar.moonlight.api.platform.RegHelper;
 import net.mehvahdjukaar.moonlight.api.util.DispenserHelper;
-import net.minecraft.Util;
-import net.minecraft.core.*;
-import net.minecraft.core.dispenser.BlockSource;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.ai.village.poi.PoiTypes;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SupportType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.RailShape;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -79,6 +74,9 @@ public class Amendments {
         // register 1 wall lantern per type
         // make bell connections
 
+        // TODO: add sound for wind change and improve fire charge sounds
+        //improved entity sync time
+        //improved range at which sound plays and such
         // mud slows down mobs
         //here we go. ideas part 2
         //carpeted trapdoor
@@ -137,38 +135,14 @@ public class Amendments {
     @EventCalled
     private static void registerDispenserBehaviors(DispenserHelper.Event event) {
         for (SoftFluid f : SoftFluidRegistry.get(event.getRegistryAccess())) {
-            Set<Item> itemSet = new HashSet<>();
-            Collection<FluidContainerList.Category> categories = f.getContainerList().getCategories();
-            for (FluidContainerList.Category c : categories) {
-                for (Item full : c.getFilledItems()) {
-                    if (full != Items.AIR && !itemSet.contains(full)) {
-                        event.register(new CauldronConversion.DispenserBehavior(full));
-                        itemSet.add(full);
-                    }
-                }
-            }
-        }
-    }
-
-    public static void registerFluidBehavior(SoftFluid f, DispenserHelper.Event event) {
-        Set<Item> itemSet = new HashSet<>();
-        Collection<FluidContainerList.Category> categories = f.getContainerList().getCategories();
-        for (FluidContainerList.Category c : categories) {
-            for (Item full : c.getFilledItems()) {
-                if (full != Items.AIR && !itemSet.contains(full)) {
-                    event.register(new CauldronDispenserBehavior(full));
-                    itemSet.add(full);
-                }
-            }
-        }
-    }
-
-    private static void registerDispenserBehavior(DispenserHelper.Event event) {
-        for (SoftFluid f : SoftFluidRegistry.get(event.getRegistryAccess())) {
             registerFluidBehavior(f, event);
         }
+        ;
+//!!!!. also do for cauldron with bucket and dispensers and such
+        //TODO:add dispenser config to these 2 via mixin
+        /*
         if (CommonConfigs.FIRE_CHARGE_DISPENSER.get() && CommonConfigs.THROWABLE_FIRE_CHARGES.get()) {
-            event.register(Items.FIRE_CHARGE, new AbstractProjectileDispenseBehavior() {
+            event.register(Items.FIRE_CHARGE, new ProjectileDispenseBehavior() {
                 @Override
                 protected MediumFireball getProjectile(Level level, Position position, ItemStack stack) {
                     return Util.make(new MediumFireball(level, position.x(), position.y(), position.z()), (snowball) -> {
@@ -198,8 +172,26 @@ public class Amendments {
                     source.getLevel().levelEvent(1018, source.getPos(), 0);
                 }
             });
+
+        }
+         */
+    }
+
+
+    public static void registerFluidBehavior(SoftFluid f, DispenserHelper.Event event) {
+        Set<Item> itemSet = new HashSet<>();
+        Collection<FluidContainerList.Category> categories = f.getContainerList().getCategories();
+        for (FluidContainerList.Category c : categories) {
+            for (Item full : c.getFilledItems()) {
+                if (full != Items.AIR && !itemSet.contains(full)) {
+                    event.register(new CauldronConversion.DispenserBehavior(full));
+                    itemSet.add(full);
+                }
+            }
         }
     }
+
+
     public static boolean isSupportingCeiling(BlockPos pos, LevelReader world) {
         return isSupportingCeiling(world.getBlockState(pos), pos, world);
     }
