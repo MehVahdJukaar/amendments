@@ -1,1 +1,8 @@
-- fixed wall sign cullface
+- cauldrons have received a major rewrite. 
+- all liquids can bubble
+- added many liquid tags to control cauldron interactions
+- streamlined cauldron crafting
+- all recipes now both work in world and with hand interaction
+- added unique amendments:cauldron_crafting recipes specific to cauldrons
+- these allow outputting items or changing cauldron fluid starting from cauldron own fluid and contained items
+- check out mod data pack for an example
