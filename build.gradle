@@ -68,7 +68,7 @@ subprojects {
                 loaders = ["neoforge"]
             } else loaders = [modLoader]
             changelog = changelogText
-            versionNumber = modLoader +"_"+ mod_version
+            versionNumber = modLoader + "_" + mod_version
             versionType = release_type
             if (modLoader == "fabric") {
                 dependencies {
@@ -90,7 +90,7 @@ subprojects {
                 id = project_id
                 changelog = changelogText
                 releaseType = release_type
-                for (var ver : versions){
+                for (var ver : versions) {
                     addGameVersion ver
                 }
 
@@ -107,7 +107,9 @@ subprojects {
                         requiredDependency "selene"
                     }
                 } else {
-                    requiredDependency "selene"
+                    relations {
+                        requiredDependency "selene"
+                    }
                 }
             }
         }
@@ -185,7 +187,7 @@ allprojects {
 }
 
 
-ext{
+ext {
     replaceProperties = [
             minecraft_version    : minecraft_version,
             minecraft_min_version: minecraft_min_version,

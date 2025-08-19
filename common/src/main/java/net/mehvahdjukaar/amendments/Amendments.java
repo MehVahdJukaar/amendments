@@ -74,6 +74,7 @@ public class Amendments {
         // register 1 wall lantern per type
         // make bell connections
 
+        //TODO: fix candle holder particle
         // TODO: add sound for wind change and improve fire charge sounds
         //improved entity sync time
         //improved range at which sound plays and such

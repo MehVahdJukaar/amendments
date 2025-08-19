@@ -5,7 +5,6 @@
   "package": "net.mehvahdjukaar.amendments.mixins.fabric",
   "mixins": [
     "CompatFDWallSignBlockEntityMixin",
-    "IHateFabricMixin",
     "SelfCauldronMixin"
   ],
   "client": [
