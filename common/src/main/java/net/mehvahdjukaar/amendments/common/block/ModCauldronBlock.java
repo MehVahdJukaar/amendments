@@ -125,11 +125,7 @@ public abstract class ModCauldronBlock extends AbstractCauldronBlock implements 
         }
     }
 
-    protected void handleEntityInsideFluidSpecial(BlockState state, Level level, BlockPos pos, Entity entity) {
-        if (state.getValue(BOILING) && entity instanceof LivingEntity) {
-            entity.hurt(new DamageSource(ModRegistry.BOILING_DAMAGE), 1.0F);
-        }
-    }
+    protected abstract void handleEntityInsideFluidSpecial(BlockState state, Level level, BlockPos pos, Entity entity);
 
 
     @Override
