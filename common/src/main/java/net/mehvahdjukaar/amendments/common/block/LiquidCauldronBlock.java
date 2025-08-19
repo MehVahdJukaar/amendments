@@ -107,12 +107,7 @@ public class LiquidCauldronBlock extends ModCauldronBlock {
     }
 
     @Override
-    protected double getContentHeight(BlockState state) {
-        return 0.4375 + 0.125 * state.getValue(LEVEL);
-    }
-
-    @Override
-    protected void handleEntityInsideFluid(BlockState state, Level level, BlockPos pos, Entity entity) {
+    protected void handleEntityInsideFluidSpecial(BlockState state, Level level, BlockPos pos, Entity entity) {
 
         if (entity.mayInteract(level, pos) && level.getBlockEntity(pos) instanceof LiquidCauldronBlockTile tile) {
 
@@ -136,7 +131,7 @@ public class LiquidCauldronBlock extends ModCauldronBlock {
                     && isEntityInsideContent(state, pos, entity)
             ) {
                 //only potions can glow
-                ModCauldronBlock.playSplashEffects(entity, getContentHeight(state));
+                CommonCauldronCode.playSplashEffects(entity, getContentHeight(state));
 
                 tile.setGlowing(true);
                 level.gameEvent(entity, GameEvent.BLOCK_CHANGE, pos);
@@ -184,7 +179,7 @@ public class LiquidCauldronBlock extends ModCauldronBlock {
                 double height = getContentHeight(state);
                 if (type != null) {
                     if (PotionUtils.getAllEffects(fluid.getTag()).size() >= CommonConfigs.POTION_MIXING_LIMIT.get()) {
-                        addSurfaceParticles(ParticleTypes.SMOKE, level, pos, 2, height, rand, 0, 0, 0);
+                        CommonCauldronCode.addSurfaceParticles(ParticleTypes.SMOKE, level, pos, 2, height, rand, 0, 0, 0);
                     }
                     if (type != PotionNBTHelper.Type.REGULAR) {
 
@@ -205,7 +200,7 @@ public class LiquidCauldronBlock extends ModCauldronBlock {
                 if (fluid.is(BuiltInSoftFluids.LAVA) && level.getBlockState(blockPos).isAir() && !level.getBlockState(blockPos).isSolidRender(level, blockPos)) {
                     var c = pos.getCenter();
                     if (rand.nextInt(20) == 0) {
-                        addSurfaceParticles(ParticleTypes.LAVA, level, pos, 1, height, rand, 0, 0, 0);
+                        CommonCauldronCode.addSurfaceParticles(ParticleTypes.LAVA, level, pos, 1, height, rand, 0, 0, 0);
                         level.playLocalSound(c.x, height, c.z, SoundEvents.LAVA_POP, SoundSource.BLOCKS, 0.2F + rand.nextFloat() * 0.2F, 0.9F + rand.nextFloat() * 0.15F, false);
                     }
                     if (rand.nextInt(40) == 0) {
@@ -230,7 +225,7 @@ public class LiquidCauldronBlock extends ModCauldronBlock {
         float r = FastColor.ARGB32.red(color) / 255f;
         float g = FastColor.ARGB32.green(color) / 255f;
         float b = FastColor.ARGB32.blue(color) / 255f;
-        addSurfaceParticles(type, level, pos, count, surface, rand, r, g, b);
+        CommonCauldronCode.addSurfaceParticles(type, level, pos, count, surface, rand, r, g, b);
     }
 
     @Override
@@ -261,7 +256,7 @@ public class LiquidCauldronBlock extends ModCauldronBlock {
                 return state;
             } else {
                 if (level.isClientSide)
-                    addSurfaceParticles(ParticleTypes.SMOKE, level, pos, 12, getContentHeight(state), level.random, 0, 0, 0);
+                    CommonCauldronCode.addSurfaceParticles(ParticleTypes.SMOKE, level, pos, 12, getContentHeight(state), level.random, 0, 0, 0);
                 level.playSound(null, pos, SoundEvents.GENERIC_EXTINGUISH_FIRE, SoundSource.BLOCKS, 1.0f, 1.0f);
                 return null;
             }
@@ -273,7 +268,7 @@ public class LiquidCauldronBlock extends ModCauldronBlock {
             var inv = inverse.get(effect);
             if (inv != null && effects.contains(inv)) {
                 if (level.isClientSide)
-                    addSurfaceParticles(ParticleTypes.POOF, level, pos, 8, getContentHeight(state), level.random,
+                    CommonCauldronCode.addSurfaceParticles(ParticleTypes.POOF, level, pos, 8, getContentHeight(state), level.random,
                             0, 0.01f + level.random.nextFloat() * 0.1f, 0);
                 level.playSound(null, pos, SoundEvents.GENERIC_EXTINGUISH_FIRE, SoundSource.BLOCKS, 1.0f, 1.0f);
                 return Blocks.CAULDRON.defaultBlockState();

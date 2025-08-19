@@ -1,0 +1,22 @@
+{
+  "type": "amendments:cauldron_crafting",
+  "input_items": [
+    {
+      "item": "minecraft:obsidian"
+    },
+    {
+      "item": "minecraft:gunpowder"
+    }
+  ],
+  "input_fluid": {
+    "id": "moonlight:honey"
+  },
+  "output_fluid": {
+    "id": "moonlight:water"
+  },
+  "output_item": {
+    "id": "minecraft:diamond",
+    "Count": 1
+  },
+  "fluid_amount_difference": -1
+}

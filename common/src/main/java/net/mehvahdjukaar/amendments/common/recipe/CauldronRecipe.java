@@ -30,11 +30,13 @@ public class CauldronRecipe implements Recipe<CauldronCraftingContainer> {
     private final SoftFluidIngredient outputFluid; //amount is unused
     private final ItemStack outputItem;
 
+    private final boolean requireBoiling = false; //if true, recipe can only be crafted in boiling cauldron
+
     private final int fluidAmountDifference; //amount difference from before and after crafting
 
     protected CauldronRecipe(ResourceLocation id, String group, SoftFluidIngredient inputFluid,
                              NonNullList<Ingredient> inputItems, SoftFluidIngredient outputFluid, ItemStack outputItem,
-                             int fluidAmountDifference) {
+                             int fluidAmountDifference, boolean requireBoiling) {
         this.id = id;
         this.group = group;
         this.inputItems = inputItems;
@@ -76,6 +78,9 @@ public class CauldronRecipe implements Recipe<CauldronCraftingContainer> {
 
     @Override
     public boolean matches(CauldronCraftingContainer inv, Level level) {
+        if (this.requireBoiling && !inv.isBoiling()) {
+            return false; //if recipe requires boiling, but cauldron is not boiling
+        }
         StackedContents stackedContents = new StackedContents();
         int i = 0;
 
@@ -88,7 +93,7 @@ public class CauldronRecipe implements Recipe<CauldronCraftingContainer> {
         }
         SoftFluidStack tankFluid = inv.getFluid();
         int newCount = tankFluid.getCount() + this.fluidAmountDifference;
-        if (!this.inputFluid.matches(tankFluid) && newCount >= 0 && newCount <= inv.getFluidContainerSize()) {
+        if (!this.inputFluid.matches(tankFluid) || newCount < 0 || newCount > inv.getMaxAllowedFluidCount()) {
             return false;
         }
 
@@ -106,7 +111,7 @@ public class CauldronRecipe implements Recipe<CauldronCraftingContainer> {
 
         ItemStack craftedItem = outputItem.copy();
         SoftFluidStack newTankFluid = outputFluid.isEmpty() ? tankFluid : outputFluid.createStack();
-        newTankFluid.setCount(tankFluid.getCount());
+        newTankFluid.setCount(tankFluid.getCount() + fluidAmountDifference);
 
         return FluidAndItemCraftResult.of(craftedItem, newTankFluid);
     }
@@ -129,6 +134,9 @@ public class CauldronRecipe implements Recipe<CauldronCraftingContainer> {
                 SoftFluidStack inputFluid = SoftFluidStack.CODEC.decode(ops, GsonHelper.getAsJsonObject(json, "input_fluid"))
                         .getOrThrow(false, (s) -> {
                         }).getFirst();
+                if (inputFluid.getCount() != 1) {
+                    throw new JsonParseException("Input fluid amount must be 1 for cauldron recipes, got: " + inputFluid.getCount());
+                }
                 var fiJson = GsonHelper.getAsJsonObject(json, "output_fluid", null);
                 SoftFluidStack outputFluid = fiJson == null ? SoftFluidStack.empty() :
                         SoftFluidStack.CODEC.decode(ops, fiJson)
@@ -140,8 +148,9 @@ public class CauldronRecipe implements Recipe<CauldronCraftingContainer> {
                         })
                         .getFirst();
                 int fluidDifference = GsonHelper.getAsInt(json, "fluid_amount_difference", 0);
+                boolean requireBoiling = GsonHelper.getAsBoolean(json, "require_boiling", false);
                 return new CauldronRecipe(recipeId, group, SoftFluidIngredient.containing(inputFluid), inputItems,
-                        SoftFluidIngredient.containing(outputFluid), outputItem, fluidDifference);
+                        SoftFluidIngredient.containing(outputFluid), outputItem, fluidDifference, requireBoiling);
             }
         }
 
@@ -170,8 +179,9 @@ public class CauldronRecipe implements Recipe<CauldronCraftingContainer> {
             SoftFluidIngredient outputIFluid = SoftFluidIngredient.loadFromBuffer(buffer);
             ItemStack outputItem = buffer.readItem();
             int differenceAmount = buffer.readVarInt();
+            boolean requireBoiling = buffer.readBoolean();
 
-            return new CauldronRecipe(recipeId, string, inputFluid, inputItems, outputIFluid, outputItem, differenceAmount);
+            return new CauldronRecipe(recipeId, string, inputFluid, inputItems, outputIFluid, outputItem, differenceAmount, requireBoiling);
         }
 
         @Override
@@ -187,6 +197,7 @@ public class CauldronRecipe implements Recipe<CauldronCraftingContainer> {
             recipe.inputFluid.saveToBuffer(buffer);
             buffer.writeItem(recipe.outputItem);
             buffer.writeVarInt(recipe.fluidAmountDifference);
+            buffer.writeBoolean(recipe.requireBoiling);
 
         }
     }

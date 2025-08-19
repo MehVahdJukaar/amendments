@@ -3,6 +3,7 @@ package net.mehvahdjukaar.amendments.mixins;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.sugar.Local;
 import net.mehvahdjukaar.amendments.common.block.BoilingWaterCauldronBlock;
+import net.mehvahdjukaar.amendments.common.block.CommonCauldronCode;
 import net.mehvahdjukaar.amendments.common.block.LiquidCauldronBlock;
 import net.mehvahdjukaar.amendments.configs.CommonConfigs;
 import net.mehvahdjukaar.amendments.events.behaviors.CauldronConversion;
@@ -38,10 +39,11 @@ public class AbstractCauldronBlockMixin extends Block {
         if (original == InteractionResult.PASS && this == Blocks.CAULDRON && CommonConfigs.LIQUID_CAULDRON.get()) {
             return CauldronConversion.convert(state, pos, level, player, hand, stack, false);
         }
+        //for convert interaction to water cauldron from normal one
         BlockState newState = level.getBlockState(pos);
         if (newState.getBlock() instanceof BoilingWaterCauldronBlock) {
             BlockPos belowPos = pos.below();
-            boolean isFire = LiquidCauldronBlock.shouldBoil(level.getBlockState(belowPos),
+            boolean isFire = CommonCauldronCode.shouldBoil(level.getBlockState(belowPos),
                     SoftFluidStack.of(BuiltInSoftFluids.WATER.getHolder()), level, belowPos);
             if (isFire) {
                 level.setBlockAndUpdate(pos, newState.setValue(BoilingWaterCauldronBlock.BOILING, true));

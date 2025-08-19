@@ -32,7 +32,8 @@ public class CommonConfigs {
     public static final Supplier<Integer> POTION_MIXING_LIMIT;
     public static final Supplier<Map<MobEffect, MobEffect>> INVERSE_POTIONS;
     public static final Supplier<Boolean> DYE_WATER;
-    public static final Supplier<Boolean> CAULDRON_CRAFTING;
+    public static final Supplier<Boolean> CAULDRON_HAND_CRAFTING;
+    public static final Supplier<Boolean> CAULDRON_IN_WORLD_CRAFTING;
     public static final Supplier<Integer> DYE_RECIPES_PER_LAYER;
     public static final Supplier<Integer> POTION_RECIPES_PER_LAYER;
     //TODO: more cauldron configs
@@ -119,8 +120,10 @@ public class CommonConfigs {
         builder.push("cauldron");
         LIQUID_CAULDRON = builder.comment("Enables enhanced cauldron")
                 .define("enhanced_cauldron", true);
-        CAULDRON_CRAFTING = builder.comment("Allows crafting items using cauldrons by clicking on them")
-                .define("crafting", true);
+        CAULDRON_HAND_CRAFTING = builder.comment("Allows crafting items using cauldrons by clicking on them")
+                .define("hand_crafting", true);
+        CAULDRON_IN_WORLD_CRAFTING = builder.comment("Allows crafting items using cauldrons by throwing items in them")
+                .define("in_world_crafting", true);
         DYE_WATER = builder.comment("Allows dying cauldron water bedrock style and mixing them too")
                 .define("dye_water", true);
         DYE_RECIPES_PER_LAYER = builder.comment("Max amount of items that 1 cauldron layer can recolor." +

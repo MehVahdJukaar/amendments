@@ -1,0 +1,9 @@
+{
+  "replace": false,
+  "values": [
+    {"id":"moonlight:mushroom_stew","required":false},
+    {"id":"moonlight:suspicious_stew","required":false},
+    {"id":"moonlight:rabbit_stew","required":false},
+    {"id":"moonlight:beetroot_soup","required":false}
+  ]
+}

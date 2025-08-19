@@ -54,7 +54,7 @@ public class DyeCauldronBlock extends ModCauldronBlock {
     }
 
     @Override
-    protected void handleEntityInsideFluid(BlockState state, Level level, BlockPos pos, Entity entity) {
+    protected void handleEntityInsideFluidSpecial(BlockState state, Level level, BlockPos pos, Entity entity) {
         if (entity instanceof Sheep sheep && level.getBlockEntity(pos) instanceof LiquidCauldronBlockTile te) {
             SoftFluidStack fluid = te.getSoftFluidTank().getFluid();
             if (fluid.is(ModRegistry.DYE_SOFT_FLUID)) {
