@@ -1,6 +1,6 @@
 {
-  "block.amendments.carpet_stairs": "地毯楼梯",
-  "block.amendments.carpet_slab": "地毯台阶",
+  "block.amendments.carpet_stairs": "盖有地毯的楼梯",
+  "block.amendments.carpet_slab": "盖有地毯的台阶",
   "block.amendments.liquid_cauldron": "装有液体的炼药锅",
   "block.amendments.dye_cauldron": "装有染料的炼药锅",
   "block.amendments.tool_hook": "工具钩",
@@ -87,5 +87,6 @@
   "item.amendments.dye_bottle.slate": "岩蓝色",
   "item.amendments.dragon_charge": "龙弹",
   "fluid.amendments.dye": "染料",
+  "subtitles.amendments.fireball_explosion": "火球：爆炸",
   "message.amendments.cauldron": "这种混合药水似乎不太稳定……"
 }
