@@ -13,7 +13,7 @@
     }
   ],
   "result": {
-    "item": "amendments:dragon_charge"
+    "id": "amendments:dragon_charge"
   },
   "fabric:load_conditions": [
     {

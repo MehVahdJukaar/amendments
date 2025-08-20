@@ -78,6 +78,7 @@ public class CommonConfigs {
     public static final Supplier<Boolean> THROWABLE_FIRE_CHARGES;
     public static final Supplier<Boolean> FIRE_CHARGE_DISPENSER;
     public static final Supplier<Boolean> FIREBALL_EXPLOSION;
+    public static final Supplier<Integer> CHARGES_COOLDOWN;
 
 public static final Supplier<Integer> SNOWBALL_FREEZE;
 
@@ -92,6 +93,8 @@ public static final Supplier<Integer> SNOWBALL_FREEZE;
         builder.pop();
 
         builder.push("fireball");
+        CHARGES_COOLDOWN = builder.comment("Cooldown for fire & dragon charges in ticks")
+                .define("thrown_cooldown", 10, 0, 1000);
         DRAGON_CHARGE = builder.comment("Adds dragons charge item")
                 .define("dragon_charge", true);
         FIRE_CHARGE_GRAVITY = builder.comment("Makes fire & dragon charges have gravity")

@@ -18,6 +18,7 @@
     "DragonFireballMixin",
     "ExplosionMixin",
     "FenceBlockMixin",
+    "FireChargeMixin",
     "FlowerPotBlockMixin",
     "HangingSignBlockEntityMixin",
     "JukeboxBlockEntityMixin",

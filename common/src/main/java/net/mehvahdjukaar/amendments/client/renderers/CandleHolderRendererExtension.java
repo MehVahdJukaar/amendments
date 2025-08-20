@@ -11,7 +11,6 @@ import net.mehvahdjukaar.moonlight.api.item.IFirstPersonSpecialItemRenderer;
 import net.mehvahdjukaar.moonlight.api.item.IThirdPersonAnimationProvider;
 import net.mehvahdjukaar.moonlight.api.item.IThirdPersonSpecialItemRenderer;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.model.ArmedModel;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.HeadedModel;
@@ -24,7 +23,6 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.ItemTransform;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
@@ -89,7 +87,7 @@ public class CandleHolderRendererExtension implements IThirdPersonAnimationProvi
 
             transform.apply(left, poseStack);
 
-            renderLanternModel(entity, stack, poseStack, bufferSource, light, left);
+            renderModel(entity, stack, poseStack, bufferSource, light, left);
 
             if (!entity.isInWater()) {
 
@@ -150,8 +148,8 @@ public class CandleHolderRendererExtension implements IThirdPersonAnimationProvi
                 r, g, b, a, lu, lv);
     }
 
-    private static void renderLanternModel(LivingEntity entity, ItemStack itemStack, PoseStack poseStack,
-                                           MultiBufferSource buffer, int light, boolean left) {
+    private static void renderModel(LivingEntity entity, ItemStack itemStack, PoseStack poseStack,
+                                    MultiBufferSource buffer, int light, boolean left) {
         Minecraft mc = Minecraft.getInstance();
         ItemRenderer itemRenderer = mc.getItemRenderer();
         BlockState state = ((BlockItem) itemStack.getItem()).getBlock().defaultBlockState();
@@ -194,7 +192,7 @@ public class CandleHolderRendererExtension implements IThirdPersonAnimationProvi
 
         poseStack.scale(-scale, scale, -scale);
 
-        renderLanternModel(player, stack, poseStack, buffer, light, left);
+        renderModel(player, stack, poseStack, buffer, light, left);
 
         if (!player.isInWater()) {
             poseStack.translate(f * 0.03, 0, -0.04f);

@@ -1,0 +1,25 @@
+{
+  "fabric:load_conditions": [
+    {
+      "condition": "fabric:mod_loaded",
+      "modid": "supplementaries"
+    },
+    {
+      "condition": "fabric:mod_loaded",
+      "modid": "buzzier_bees"
+    }
+  ],
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "supplementaries"
+    },
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "buzzier_bees"
+    }
+  ],
+  "item": "supplementaries:candle_holder_soul",
+  "luminance": "block",
+  "water_sensitive": true
+}

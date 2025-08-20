@@ -1,0 +1,33 @@
+{
+  "fabric:load_conditions": [
+    {
+      "condition": "fabric:mod_loaded",
+      "modid": "supplementaries"
+    },
+    {
+      "condition": "fabric:mod_loaded",
+      "modid": "buzzier_bees"
+    },
+    {
+      "condition": "fabric:mod_loaded",
+      "modid": "endergetic"
+    }
+  ],
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "supplementaries"
+    },
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "buzzier_bees"
+    },
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "endergetic"
+    }
+  ],
+  "item": "supplementaries:candle_holder_ender",
+  "luminance": "block",
+  "water_sensitive": true
+}

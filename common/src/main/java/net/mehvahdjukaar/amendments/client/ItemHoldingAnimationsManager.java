@@ -33,6 +33,7 @@ public class ItemHoldingAnimationsManager {
                     .collect(Collectors.toSet()).forEach(item ->
                             IThirdPersonSpecialItemRenderer.attachToItem(item, anim));
         }
+        IThirdPersonSpecialItemRenderer.attachToItem(Items.CYAN_CANDLE,new CandleHolderRendererExtension());
         if (ClientConfigs.CANDLE_HOLDER_HOLDING.get()) {
             var anim = new CandleHolderRendererExtension();
             BlockScanner.getCandleHolders()

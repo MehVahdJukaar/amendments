@@ -29,11 +29,10 @@ public class FireChargeShoot implements ItemUse {
 
     @Override
     public InteractionResult tryPerformingAction(Level level, Player player, InteractionHand usedHand, ItemStack stack, BlockHitResult hit) {
-        ItemStack itemStack = player.getItemInHand(usedHand);
         //   this.playSound(level, blockPos);
         //same as in ThrowableProjectile
         level.playSound(null, player.getX(), player.getEyeY() - 0.1, player.getZ(), SoundEvents.FIRECHARGE_USE, SoundSource.NEUTRAL, 0.5F, 0.6f + (0.4F / (level.getRandom().nextFloat() * 0.4F + 0.8F)));
-        player.getCooldowns().addCooldown(itemStack.getItem(), 10);
+        player.getCooldowns().addCooldown(stack.getItem(), CommonConfigs.CHARGES_COOLDOWN.get());
         if (!level.isClientSide) {
             MediumFireball ball = new MediumFireball(level, player);
             ball.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, ProjectileStats.THROWN_SPEED, 1f);
@@ -42,7 +41,7 @@ public class FireChargeShoot implements ItemUse {
 
         player.awardStat(Stats.ITEM_USED.get(stack.getItem()));
         if (!player.getAbilities().instabuild) {
-            itemStack.shrink(1);
+            stack.shrink(1);
         }
         return InteractionResult.sidedSuccess(level.isClientSide);
     }

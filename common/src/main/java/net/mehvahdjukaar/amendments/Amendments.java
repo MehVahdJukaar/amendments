@@ -19,6 +19,8 @@ import net.mehvahdjukaar.moonlight.api.util.DispenserHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.dispenser.BlockSource;
+import net.minecraft.core.dispenser.ProjectileDispenseBehavior;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.ai.village.poi.PoiTypes;
@@ -138,44 +140,28 @@ public class Amendments {
         for (SoftFluid f : SoftFluidRegistry.get(event.getRegistryAccess())) {
             registerFluidBehavior(f, event);
         }
-        ;
-//!!!!. also do for cauldron with bucket and dispensers and such
-        //TODO:add dispenser config to these 2 via mixin
-        /*
-        if (CommonConfigs.FIRE_CHARGE_DISPENSER.get() && CommonConfigs.THROWABLE_FIRE_CHARGES.get()) {
-            event.register(Items.FIRE_CHARGE, new ProjectileDispenseBehavior() {
-                @Override
-                protected MediumFireball getProjectile(Level level, Position position, ItemStack stack) {
-                    return Util.make(new MediumFireball(level, position.x(), position.y(), position.z()), (snowball) -> {
-                        snowball.setItem(stack);
-                    });
 
-                }
+        //todo: also do for cauldron with bucket and dispensers and such
+        if (CommonConfigs.FIRE_CHARGE_DISPENSER.get() && CommonConfigs.THROWABLE_FIRE_CHARGES.get()) {
+            event.register(Items.FIRE_CHARGE, new ProjectileDispenseBehavior(Items.FIRE_CHARGE) {
 
                 @Override
                 protected void playSound(BlockSource source) {
-                    source.getLevel().levelEvent(1018, source.getPos(), 0);
+                    source.level().levelEvent(1018, source.pos(), 0);
                 }
             });
         }
         if (CommonConfigs.DRAGON_CHARGE.get()) {
-            event.register(ModRegistry.DRAGON_CHARGE.get(), new AbstractProjectileDispenseBehavior() {
-                @Override
-                protected MediumDragonFireball getProjectile(Level level, Position position, ItemStack stack) {
-                    return Util.make(new MediumDragonFireball(level, position.x(), position.y(), position.z()), (snowball) -> {
-                        snowball.setItem(stack);
-                    });
-                }
+            event.register(ModRegistry.DRAGON_CHARGE.get(), new ProjectileDispenseBehavior(ModRegistry.DRAGON_CHARGE.get()) {
 
                 @Override
                 protected void playSound(BlockSource source) {
                     //TODO:customsound
-                    source.getLevel().levelEvent(1018, source.getPos(), 0);
+                    source.level().levelEvent(1018, source.pos(), 0);
                 }
             });
 
         }
-         */
     }
 
 
