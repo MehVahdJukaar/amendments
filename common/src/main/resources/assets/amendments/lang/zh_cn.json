@@ -7,6 +7,7 @@
   "block.amendments.wall_lantern": "墙上的灯笼",
   "item.minecraft.lingering_potion.effect.empty": "滞留型混合药水",
   "item.minecraft.splash_potion.effect.empty": "喷溅型混合药水",
+  "item.amendments.dragon_charge": "龙弹",
   "item.minecraft.potion.effect.empty": "混合药水",
   "item.minecraft.lingering_potion.effect.mixed": "滞留型混合药水",
   "item.minecraft.splash_potion.effect.mixed": "喷溅型混合药水",
@@ -89,6 +90,7 @@
   "item.amendments.dye_bottle.aqua": "水蓝色",
   "item.amendments.dye_bottle.slate": "岩蓝色",
   "fluid.amendments.dye": "染料",
+  "subtitles.amendments.fireball_explosion": "火球：爆炸",
   "message.amendments.cauldron": "这种混合药水似乎不太稳定……",
 
 
