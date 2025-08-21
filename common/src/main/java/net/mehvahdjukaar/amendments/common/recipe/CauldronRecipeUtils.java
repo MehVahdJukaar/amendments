@@ -1,6 +1,7 @@
 package net.mehvahdjukaar.amendments.common.recipe;
 
 import net.mehvahdjukaar.moonlight.api.fluids.BuiltInSoftFluids;
+import net.mehvahdjukaar.moonlight.api.fluids.MLBuiltinSoftFluids;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidStack;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -43,7 +44,7 @@ public class CauldronRecipeUtils {
         if (crafted != null) return crafted;
 
         //can only craft crafting table stuff when its boiling
-        if (boiling || !fluidStack.is(BuiltInSoftFluids.WATER)) {
+        if (boiling || !fluidStack.is(MLBuiltinSoftFluids.WATER)) {
             crafted = craftItemSingle(level, true, tankCapacity, fluidStack, items);
             if (crafted != null) return crafted;
 

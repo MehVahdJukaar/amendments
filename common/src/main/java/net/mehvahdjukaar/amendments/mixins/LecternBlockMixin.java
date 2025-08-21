@@ -24,7 +24,7 @@ public abstract class LecternBlockMixin {
         BlockEntity blockEntity = level.getBlockEntity(pos);
         if (blockEntity instanceof LecternBlockEntity be && be.getBook().getItem() instanceof WritableBookItem
                 && CommonConfigs.LECTERN_STUFF.get() && !player.isSpectator()) {
-            PlatHelper.openCustomMenu((ServerPlayer) player, be, pos);
+            PlatHelper.openCustomMenu((ServerPlayer) player, be);
             player.awardStat(Stats.INTERACT_WITH_LECTERN);
             ci.cancel();
         }

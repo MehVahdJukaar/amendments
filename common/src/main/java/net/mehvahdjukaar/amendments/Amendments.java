@@ -123,6 +123,8 @@ public class Amendments {
         set.addAll(extraStates);
         holder.value().matchingStates = set;
         PoiTypes.registerBlockStates(holder, extraStates);
+
+        ModRegistry.registerAdditionalPlacements();
     }
 
     private static void setupAsync() {

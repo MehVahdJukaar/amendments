@@ -67,10 +67,9 @@ public class ModRegistry {
     public static void init() {
         BlockSetAPI.registerBlockSetDefinition(CakeRegistry.INSTANCE);
         BlockSetAPI.addDynamicBlockRegistration(ModRegistry::registerDoubleCakes, CakeRegistry.CakeType.class);
-        AdditionalItemPlacementsAPI.addRegistration(ModRegistry::registerAdditionalPlacements);
     }
 
-    public static void registerAdditionalPlacements(AdditionalItemPlacementsAPI.Event event) {
+    public static void registerAdditionalPlacements() {
         // this is specifically for things that place a new block in air. Stuff that modifiers blocks is in events.
         // reason is more complicated than this
         var wallLanternPlacement = new WallLanternPlacement();
@@ -79,12 +78,12 @@ public class ModRegistry {
                 Block block = bi.getBlock();
                 Preconditions.checkNotNull(block, "BlockItem " + i + " has a NULL block! This is not an amendments issue and its likely caused by some bigger underlying issue");
                 if (CommonConfigs.WALL_LANTERN.get() && WallLanternBlock.isValidBlock(block)) {
-                    event.register(i, wallLanternPlacement);
+                    AdditionalItemPlacementsAPI.registerPlacement(i, wallLanternPlacement);
                 }
             }
         }
         if (CommonConfigs.HANGING_POT.get()) {
-            event.registerSimple(Items.FLOWER_POT, HANGING_FLOWER_POT.get());
+            AdditionalItemPlacementsAPI.registerSimplePlacement(Items.FLOWER_POT, HANGING_FLOWER_POT.get());
         }
         if (CommonConfigs.CEILING_BANNERS.get()) {
             for (var e : CEILING_BANNERS.entrySet()) {
@@ -92,7 +91,7 @@ public class ModRegistry {
                 if (item == Items.AIR) {
                     throw new IllegalStateException("Block " + e.getValue().get() + " has no corresponding item! How did this happen? Some OTHER mod must have screwed up the block to items map!");
                 }
-                event.registerSimple(Preconditions.checkNotNull(item),
+                AdditionalItemPlacementsAPI.registerSimplePlacement(Preconditions.checkNotNull(item),
                         e.getValue().get());
             }
         }

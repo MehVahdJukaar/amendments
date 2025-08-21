@@ -23,7 +23,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.BlockHitResult;
 
-@Deprecated(forRemoval = true)
+//@Deprecated(forRemoval = true)
 public class HangingSignDisplayItem implements BlockUse {
 
     //TODO: change

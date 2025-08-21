@@ -1,17 +1,14 @@
 package net.mehvahdjukaar.amendments.mixins;
 
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
-import com.llamalad7.mixinextras.sugar.Local;
 import net.mehvahdjukaar.amendments.common.block.BoilingWaterCauldronBlock;
 import net.mehvahdjukaar.amendments.common.block.CommonCauldronCode;
-import net.mehvahdjukaar.amendments.common.block.LiquidCauldronBlock;
 import net.mehvahdjukaar.amendments.configs.CommonConfigs;
 import net.mehvahdjukaar.amendments.events.behaviors.CauldronConversion;
-import net.mehvahdjukaar.moonlight.api.fluids.BuiltInSoftFluids;
+import net.mehvahdjukaar.moonlight.api.fluids.MLBuiltinSoftFluids;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidStack;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -45,7 +42,7 @@ public class AbstractCauldronBlockMixin extends Block {
         if (newState.getBlock() instanceof BoilingWaterCauldronBlock) {
             BlockPos belowPos = pos.below();
             boolean isFire = CommonCauldronCode.shouldBoil(level.getBlockState(belowPos),
-                    SoftFluidStack.of(BuiltInSoftFluids.WATER), level, belowPos);
+                    SoftFluidStack.of(MLBuiltinSoftFluids.WATER.getHolder(level)), level, belowPos);
             if (isFire) {
                 level.setBlockAndUpdate(pos, newState.setValue(BoilingWaterCauldronBlock.BOILING, true));
             }
