@@ -1,2 +1,4 @@
-- fixed compat with blueprint (again since i somehow rolled it back to 1.20)
-- fixed a bug with custom cauldron recipes that wouldnt clear a cauldron properly
+- fixed a recipe
+- added back dispensers behaviors
+- added ryoamic lights compat
+- fixed candle holder in hand flame

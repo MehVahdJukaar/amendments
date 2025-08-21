@@ -4,7 +4,6 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.mehvahdjukaar.amendments.common.block.CeilingBannerBlock;
 import net.mehvahdjukaar.amendments.common.tile.LiquidCauldronBlockTile;
-import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidStack;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidTank;
 import net.mehvahdjukaar.supplementaries.client.ModMaterials;
@@ -17,7 +16,6 @@ import net.mehvahdjukaar.supplementaries.common.misc.explosion.GunpowderExplosio
 import net.mehvahdjukaar.supplementaries.common.utils.MiscUtils;
 import net.mehvahdjukaar.supplementaries.configs.ClientConfigs;
 import net.mehvahdjukaar.supplementaries.reg.ModEntities;
-import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraft.client.resources.model.Material;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -26,14 +24,18 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.BannerPatternItem;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
+
+import java.lang.reflect.Field;
+import java.util.List;
+import java.util.function.Function;
 
 import static net.mehvahdjukaar.amendments.events.behaviors.CauldronConversion.getNewState;
 
@@ -110,6 +112,35 @@ public class SuppCompat {
 
     public static EntityType<? extends Entity> getSlimeBall() {
         return ModEntities.THROWABLE_SLIMEBALL.get();
+    }
+
+    @Deprecated(forRemoval = true)
+    private static final Field OFFSETS;
+
+    static {
+        try {
+            OFFSETS = CandleHolderBlock.class.getDeclaredField("particleOffsets");
+            OFFSETS.setAccessible(true);
+        } catch (NoSuchFieldException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static Vec3 getCandleHolderParticleOffset(BlockState state) {
+        if (state.getBlock() instanceof CandleHolderBlock cb) {
+            try{
+                @SuppressWarnings("unchecked")
+                Function<BlockState, List<Vec3>> offsets = (Function<BlockState, List<Vec3>>) OFFSETS.get(cb);
+                List<Vec3> particleOffsets = offsets.apply(state);
+                if (!particleOffsets.isEmpty()) {
+                    return particleOffsets.getFirst().subtract(0.5, 0.5, 0.5); //center it
+                }
+            }catch (Exception ignored){
+
+            }
+            //return cb.particleOffsets.apply(state).get(0);
+        }
+        return Vec3.ZERO;
     }
 
 

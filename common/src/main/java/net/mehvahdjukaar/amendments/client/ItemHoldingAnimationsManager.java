@@ -5,6 +5,7 @@ import net.mehvahdjukaar.amendments.client.renderers.LanternRendererExtension;
 import net.mehvahdjukaar.amendments.client.renderers.TorchRendererExtension;
 import net.mehvahdjukaar.amendments.configs.ClientConfigs;
 import net.mehvahdjukaar.moonlight.api.item.IThirdPersonSpecialItemRenderer;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 
@@ -33,13 +34,15 @@ public class ItemHoldingAnimationsManager {
                     .collect(Collectors.toSet()).forEach(item ->
                             IThirdPersonSpecialItemRenderer.attachToItem(item, anim));
         }
-        IThirdPersonSpecialItemRenderer.attachToItem(Items.CYAN_CANDLE,new CandleHolderRendererExtension());
         if (ClientConfigs.CANDLE_HOLDER_HOLDING.get()) {
-            var anim = new CandleHolderRendererExtension();
             BlockScanner.getCandleHolders()
-                    .stream().map(Block::asItem).filter(i -> i != Items.AIR)
+                    .stream()
+                    .map(Block::asItem)
+                    .filter(i -> i instanceof BlockItem)
+                    .map(i -> (BlockItem) i)
                     .collect(Collectors.toSet()).forEach(item ->
-                            IThirdPersonSpecialItemRenderer.attachToItem(item, anim));
+                            IThirdPersonSpecialItemRenderer.attachToItem(item,
+                                    new CandleHolderRendererExtension(item)));
         }
     }
 }

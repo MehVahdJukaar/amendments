@@ -29,18 +29,6 @@ public abstract class DragonFireballMixin extends AbstractHurtingProjectile impl
         super(entityType, level);
     }
 
-    protected DragonFireballMixin(EntityType<? extends AbstractHurtingProjectile> entityType, double x, double y, double z, Level level) {
-        super(entityType, x, y, z, level);
-    }
-
-    public DragonFireballMixin(EntityType<? extends AbstractHurtingProjectile> entityType, double x, double y, double z, Vec3 movement, Level level) {
-        super(entityType, x, y, z, movement, level);
-    }
-
-    public DragonFireballMixin(EntityType<? extends AbstractHurtingProjectile> entityType, LivingEntity owner, Vec3 movement, Level level) {
-        super(entityType, owner, movement, level);
-    }
-
     @Override
     public Matrix4f amendments$getVisualTransformation(float partialTicks) {
         return new Matrix4f().rotate(amendments$tumblingAnimation.getRotation(partialTicks));
