@@ -15,7 +15,6 @@ import net.mehvahdjukaar.moonlight.api.fluids.BuiltInSoftFluids;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidStack;
 import net.mehvahdjukaar.moonlight.api.misc.InvPlacer;
 import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
-import net.mehvahdjukaar.moonlight.api.platform.network.NetworkHelper;
 import net.mehvahdjukaar.moonlight.api.util.Utils;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
@@ -222,7 +221,7 @@ public final class CommonCauldronCode {
 
         SoftFluidStack resultFluid = craftResult.resultFluid();
         //stupid for water
-        if (cauldronFluid.is(MLBuiltinSoftFluids.WATER) && cauldronFluid.getCount() == 3
+        if (cauldronFluid.is(BuiltInSoftFluids.WATER) && cauldronFluid.getCount() == 3
                 && resultFluid.getCount() == 3
                 && PlatHelper.getPlatform().isForge()) {
             resultFluid.setCount(4);

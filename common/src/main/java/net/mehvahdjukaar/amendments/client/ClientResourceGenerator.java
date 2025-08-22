@@ -207,6 +207,7 @@ public class ClientResourceGenerator extends DynClientResourcesGenerator {
     }
 
     private void generateFdSignTextures(ResourceManager manager, ResourceSink sink) {
+     //TODO:fix flip in top texture
         TextureCollager transformer = TextureCollager.builder(64, 32, 64, 32)
                 .copyFrom(0, 12, 28, 2)
                 .to(0, 9)

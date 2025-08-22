@@ -33,14 +33,14 @@ import java.util.List;
 // freaking arch cant remap in common...
 @Pseudo
 @Mixin(HangingCanvasSignRenderer.class)
-public abstract class CompatFarmersDelightCanvasMixin extends SignRenderer {
+public abstract class CompatFarmersDelightHangingCanvasMixin extends SignRenderer {
 
     @Unique
     private List<ModelPart> amendments$barModel;
     @Unique
     private ModelPart amendments$chains;
 
-    protected CompatFarmersDelightCanvasMixin(BlockEntityRendererProvider.Context arg) {
+    protected CompatFarmersDelightHangingCanvasMixin(BlockEntityRendererProvider.Context arg) {
         super(arg);
     }
 
