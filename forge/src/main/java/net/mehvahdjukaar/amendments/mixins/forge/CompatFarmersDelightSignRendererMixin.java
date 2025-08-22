@@ -3,6 +3,7 @@ package net.mehvahdjukaar.amendments.mixins.forge;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import net.mehvahdjukaar.amendments.client.renderers.SignRendererExtension;
 import net.mehvahdjukaar.amendments.configs.ClientConfigs;
 import net.mehvahdjukaar.moonlight.api.util.math.ColorUtils;
 import net.minecraft.client.model.Model;
@@ -73,29 +74,27 @@ public abstract class CompatFarmersDelightSignRendererMixin {
     private void resetYaw(SignBlockEntity signBlockEntity, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, int packedOverlay, BlockState state, SignBlock block, DyeColor dye, Model model, CallbackInfo ci) {
         amendments$canvasSignYaw = null;
     }
-    @Unique
-    private static final Vec3 NEW_OFFSET = new Vec3(0.0D, -1 / 32f, 1 / 16f + 0.001);
 
     @ModifyReturnValue(method = "getTextOffset", at = @At("RETURN"))
     private Vec3 amendments$signTextOffset(Vec3 scale) {
         if (ClientConfigs.PIXEL_CONSISTENT_SIGNS.get()) {
-            return NEW_OFFSET;
+            return SignRendererExtension.TEXT_OFFSET;
         }
         return scale;
-    }
-
-    @Inject(method = "translateSign",
-            at = @At(value = "TAIL"))
-    private void amendments$signTranslate(PoseStack poseStack, float yRot, BlockState state, CallbackInfo ci) {
-        if (ClientConfigs.PIXEL_CONSISTENT_SIGNS.get() && !(state.getBlock() instanceof StandingSignBlock)) {
-            poseStack.translate(0, 0.125, 0);
-        }
     }
 
     @Inject(method = "renderSignModel", at = @At("HEAD"), cancellable = true)
     private void amendments$renderSignModel(PoseStack poseStack, int packedLight, int packedOverlay, Model model, VertexConsumer vertexConsumer, CallbackInfo ci) {
         if (ClientConfigs.PIXEL_CONSISTENT_SIGNS.get()) {
             ci.cancel();
+        }
+    }
+
+    @Inject(method = "translateSign",
+            at = @At(value = "TAIL"))
+    private void amendments$signTranslate(PoseStack poseStack, float yRot, BlockState state, CallbackInfo ci) {
+        if (ClientConfigs.PIXEL_CONSISTENT_SIGNS.get() && !(state.getBlock() instanceof StandingSignBlock)) {
+            SignRendererExtension.translateWall(poseStack);
         }
     }
 }

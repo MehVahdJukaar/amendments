@@ -68,6 +68,7 @@ public class Amendments {
         RegHelper.registerSimpleRecipeCondition(res("flag"), CommonConfigs::isFlagOn);
         RegHelper.addItemsToTabsRegistration(Amendments::addItemsToTabs);
 
+        //TODO: fix sign y offset on FD one and wall signs have weird scale
         //TODO: check all fireballs & dispenser
         // configurable models for wall lanterns and skulls
         // add wall lantern stand model override instead of texture one
