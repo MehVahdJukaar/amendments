@@ -7,6 +7,7 @@ accessible method net/minecraft/client/renderer/blockentity/SignRenderer transla
 accessible method net/minecraft/client/renderer/blockentity/SignRenderer getTextOffset ()Lnet/minecraft/world/phys/Vec3;
 
 accessible field net/minecraft/world/entity/item/ItemEntity pickupDelay I
+accessible field net/minecraft/client/gui/screens/inventory/AbstractSignEditScreen isFrontText Z
 
 accessible field net/minecraft/world/entity/EntityType fireImmune Z
 mutable field net/minecraft/world/entity/EntityType fireImmune Z
