@@ -1,25 +1,34 @@
 package net.mehvahdjukaar.amendments.mixins;
 
-import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
-import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
-import com.mojang.blaze3d.vertex.PoseStack;
+import net.mehvahdjukaar.amendments.AmendmentsClient;
+import net.mehvahdjukaar.amendments.client.renderers.SignRendererExtension;
 import net.mehvahdjukaar.amendments.configs.ClientConfigs;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.SignEditScreen;
+import net.minecraft.core.Direction;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.StandingSignBlock;
+import net.minecraft.world.level.block.WallHangingSignBlock;
+import net.minecraft.world.level.block.WallSignBlock;
+import net.minecraft.world.level.block.state.BlockState;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(SignEditScreen.class)
 public class SignEditScreenMixin {
 
-    @WrapOperation(method = "renderSignBackground",
-            remap = true,
-            at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/vertex/PoseStack;scale(FFF)V"))
-    public void amendments$renderSignBackground(PoseStack instance, float x, float y, float z, Operation<Void> original) {
+    @Inject(method = "renderSignBackground",
+            at = @At("HEAD"), cancellable = true)
+    public void amendments$renderSignBlockModel(GuiGraphics guiGraphics, BlockState state, CallbackInfo ci) {
         if (ClientConfigs.PIXEL_CONSISTENT_SIGNS.get()) {
-            float a =  (62.500004F * 3 / 2f);
-            instance.translate(0.0D, -6 / 16f * a, -0.125D * a);
-            instance.scale(3 / 2f, 3 / 2f, 3 / 2f);
+            Block block = state.getBlock();
+            boolean b = block instanceof WallSignBlock;
+            if (b || block instanceof StandingSignBlock) {
+                SignRendererExtension.renderSignBlockModelInGui(guiGraphics, b, state, false);
+                ci.cancel();
+            }
         }
-        original.call(instance, x, y, z);
     }
 }

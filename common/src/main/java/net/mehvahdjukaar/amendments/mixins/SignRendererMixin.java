@@ -4,6 +4,7 @@ import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.mehvahdjukaar.amendments.AmendmentsClient;
+import net.mehvahdjukaar.amendments.client.renderers.SignRendererExtension;
 import net.mehvahdjukaar.amendments.configs.ClientConfigs;
 import net.mehvahdjukaar.moonlight.api.util.math.ColorUtils;
 import net.minecraft.client.model.Model;
@@ -84,6 +85,20 @@ public abstract class SignRendererMixin {
     }
 
 
+
+
+
+
+
+    @Inject(method = "renderSignModel", at = @At("HEAD"), cancellable = true)
+    private void amendments$renderSignModel(PoseStack poseStack, int packedLight, int packedOverlay, Model model, VertexConsumer vertexConsumer, CallbackInfo ci) {
+        if (ClientConfigs.PIXEL_CONSISTENT_SIGNS.get()) {
+            ci.cancel();
+        }
+    }
+
+    //yes all this below isnt even used anymore since we dont render the model anymore. TODO: delete?
+
     @Inject(method = "createSignLayer", at = @At("HEAD"), cancellable = true)
     private static void amendments$makePixelConsistentModel(CallbackInfoReturnable<LayerDefinition> cir) {
         if (ClientConfigs.PIXEL_CONSISTENT_SIGNS.get()) {
@@ -107,33 +122,26 @@ public abstract class SignRendererMixin {
         return scale;
     }
 
-    @Unique
-    private static final Vec3 NEW_OFFSET = new Vec3(0.0D, -1 / 32f - (1/32f)/3, 1 / 16f + 0.001);
+
     @Unique
     private static final Vec3 OLD_OFFSET = new Vec3(0.0, 0.3333333432674408, 0.046666666865348816);
 
     @ModifyReturnValue(method = "getTextOffset", at = @At("RETURN"))
     private Vec3 amendments$signTextOffset(Vec3 scale) {
         if (ClientConfigs.PIXEL_CONSISTENT_SIGNS.get() && scale.equals(OLD_OFFSET)) {
-            return NEW_OFFSET;
+            return SignRendererExtension.TEXT_OFFSET;
         }
         return scale;
     }
 
+    //TODO: wall signs have a weird y scale, fix that somehow
     @Inject(method = "translateSign",
             at = @At(value = "TAIL"))
     private void amendments$signTranslate(PoseStack poseStack, float yRot, BlockState state, CallbackInfo ci) {
         if (ClientConfigs.PIXEL_CONSISTENT_SIGNS.get() && !(state.getBlock() instanceof StandingSignBlock)) {
-            poseStack.translate(0, 0.125, 0);
+            SignRendererExtension.translateWall(poseStack);
+
         }
     }
-
-    @Inject(method = "renderSignModel", at = @At("HEAD"), cancellable = true)
-    private void amendments$renderSignModel(PoseStack poseStack, int packedLight, int packedOverlay, Model model, VertexConsumer vertexConsumer, CallbackInfo ci) {
-        if (ClientConfigs.PIXEL_CONSISTENT_SIGNS.get()) {
-            ci.cancel();
-        }
-    }
-
 
 }

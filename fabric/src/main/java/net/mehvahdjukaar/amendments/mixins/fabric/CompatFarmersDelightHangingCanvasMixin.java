@@ -1,4 +1,4 @@
-package net.mehvahdjukaar.amendments.mixins.neoforge;
+package net.mehvahdjukaar.amendments.mixins.fabric;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.mehvahdjukaar.amendments.AmendmentsClient;
@@ -16,6 +16,7 @@ import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.block.SignBlock;
 import net.minecraft.world.level.block.entity.SignBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Pseudo;
 import org.spongepowered.asm.mixin.Shadow;
@@ -26,21 +27,19 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 import vectorwing.farmersdelight.client.renderer.HangingCanvasSignRenderer;
 
-import javax.annotation.Nullable;
 import java.util.List;
 
 
-// freaking arch cant remap in common...
 @Pseudo
 @Mixin(HangingCanvasSignRenderer.class)
-public abstract class CompatFarmersDelightCanvasMixin extends SignRenderer {
+public abstract class CompatFarmersDelightHangingCanvasMixin extends SignRenderer {
 
     @Unique
     private List<ModelPart> amendments$barModel;
     @Unique
     private ModelPart amendments$chains;
 
-    protected CompatFarmersDelightCanvasMixin(BlockEntityRendererProvider.Context arg) {
+    protected CompatFarmersDelightHangingCanvasMixin(BlockEntityRendererProvider.Context arg) {
         super(arg);
     }
 
@@ -50,12 +49,13 @@ public abstract class CompatFarmersDelightCanvasMixin extends SignRenderer {
 
     @Inject(method = "render(Lnet/minecraft/world/level/block/entity/SignBlockEntity;FLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;II)V",
             at = @At(value = "INVOKE", target = "Lvectorwing/farmersdelight/client/renderer/HangingCanvasSignRenderer;renderSignWithText(Lnet/minecraft/world/level/block/entity/SignBlockEntity;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;IILnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/block/SignBlock;Lnet/minecraft/world/item/DyeColor;Lnet/minecraft/client/model/Model;)V"),
-            locals = LocalCapture.CAPTURE_FAILHARD, cancellable = true)
-    protected void amendments$renderSignWithText(SignBlockEntity tile, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource,
+            locals = LocalCapture.CAPTURE_FAILEXCEPTION, cancellable = true)
+    protected void renderSignWithText(SignBlockEntity tile, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource,
                                       int packedLight, int packedOverlay, CallbackInfo ci,
                                       BlockState state, SignBlock sign, HangingSignRenderer.HangingSignModel model,
                                       DyeColor dye) {
         if ((ClientConfigs.SIGN_ATTACHMENT.get() || ClientConfigs.SWINGING_SIGNS.get()) && tile instanceof ExtendedHangingSign ext) {
+
             BlockState blockState = tile.getBlockState();
 
             HangingSignRendererExtension.render(tile, ext.amendments$getExtension(), partialTick,

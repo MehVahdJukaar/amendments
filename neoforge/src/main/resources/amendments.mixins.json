@@ -8,10 +8,9 @@
     "CompatFDWallSignBlockEntityMixin"
   ],
   "client": [
-    "CompatFarmersDelightCanvasMixin",
+    "CompatFarmersDelightHangingCanvasMixin",
     "CompatFarmersDelightSignRendererMixin",
-    "CompatFDSignEditScreenMixin",
-    "SignEditScreenMixinFD"
+    "CompatFDSignEditScreenMixin"
   ],
   "injectors": {
     "defaultRequire": 1

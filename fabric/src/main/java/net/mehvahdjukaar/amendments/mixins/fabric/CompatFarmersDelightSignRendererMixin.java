@@ -1,7 +1,9 @@
 package net.mehvahdjukaar.amendments.mixins.fabric;
 
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import net.mehvahdjukaar.amendments.client.renderers.SignRendererExtension;
 import net.mehvahdjukaar.amendments.configs.ClientConfigs;
 import net.mehvahdjukaar.moonlight.api.util.math.ColorUtils;
 import net.minecraft.client.model.Model;
@@ -14,6 +16,7 @@ import net.minecraft.world.level.block.StandingSignBlock;
 import net.minecraft.world.level.block.entity.SignBlockEntity;
 import net.minecraft.world.level.block.entity.SignText;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3f;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
@@ -72,12 +75,13 @@ public abstract class CompatFarmersDelightSignRendererMixin {
         amendments$canvasSignYaw = null;
     }
 
-    @Inject(method = "translateSign",
-            at = @At(value = "TAIL"))
-    private void amendments$signTranslate(PoseStack poseStack, float yRot, BlockState state, CallbackInfo ci) {
-        if (ClientConfigs.PIXEL_CONSISTENT_SIGNS.get() && !(state.getBlock() instanceof StandingSignBlock)) {
-            poseStack.translate(0, 0.125, 0);
+
+    @ModifyReturnValue(method = "getTextOffset", at = @At("RETURN"))
+    private Vec3 amendments$signTextOffset(Vec3 scale) {
+        if (ClientConfigs.PIXEL_CONSISTENT_SIGNS.get()) {
+            return SignRendererExtension.TEXT_OFFSET;
         }
+        return scale;
     }
 
     @Inject(method = "renderSignModel", at = @At("HEAD"), cancellable = true)
@@ -86,4 +90,14 @@ public abstract class CompatFarmersDelightSignRendererMixin {
             ci.cancel();
         }
     }
+
+    @Inject(method = "translateSign",
+            at = @At(value = "TAIL"))
+    private void amendments$signTranslate(PoseStack poseStack, float yRot, BlockState state, CallbackInfo ci) {
+        if (ClientConfigs.PIXEL_CONSISTENT_SIGNS.get() && !(state.getBlock() instanceof StandingSignBlock)) {
+            SignRendererExtension.translateWall(poseStack);
+
+        }
+    }
+
 }
