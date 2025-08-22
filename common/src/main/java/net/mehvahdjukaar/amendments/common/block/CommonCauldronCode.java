@@ -13,6 +13,7 @@ import net.mehvahdjukaar.moonlight.api.block.ILightable;
 import net.mehvahdjukaar.moonlight.api.fluids.MLBuiltinSoftFluids;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidStack;
 import net.mehvahdjukaar.moonlight.api.misc.InvPlacer;
+import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
 import net.mehvahdjukaar.moonlight.api.platform.network.NetworkHelper;
 import net.mehvahdjukaar.moonlight.api.util.Utils;
 import net.minecraft.advancements.CriteriaTriggers;
@@ -199,10 +200,8 @@ public final class CommonCauldronCode {
         if (!CommonConfigs.CAULDRON_HAND_CRAFTING.get()) return;
 
         if (!(entity instanceof ItemEntity ie)) return;
-        if (ie.tickCount % 3 != 0) {
-            //age sloower
-            ie.setPickUpDelay(ie.pickupDelay + 1);
-        }
+        //age sloower
+        ie.setPickUpDelay(ie.pickupDelay + 1);
         // if (ie.tickCount % 10 != 0) return;
 
         var entities = level.getEntitiesOfClass(ItemEntity.class, new AABB(
@@ -222,6 +221,12 @@ public final class CommonCauldronCode {
         if (craftResult == null) return;
 
         SoftFluidStack resultFluid = craftResult.resultFluid();
+        //stupid for water
+        if (cauldronFluid.is(MLBuiltinSoftFluids.WATER) && cauldronFluid.getCount() == 3
+                && resultFluid.getCount() == 3
+                && PlatHelper.getPlatform().isForge()) {
+            resultFluid.setCount(4);
+        }
 
         playCraftSound(pos, level, cauldronFluid, resultFluid);
 
