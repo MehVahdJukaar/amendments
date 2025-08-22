@@ -1,25 +1,16 @@
 package net.mehvahdjukaar.amendments.mixins.fabric;
 
-import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
-import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Axis;
-import net.mehvahdjukaar.amendments.AmendmentsClient;
 import net.mehvahdjukaar.amendments.client.renderers.SignRendererExtension;
 import net.mehvahdjukaar.amendments.configs.ClientConfigs;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractSignEditScreen;
-import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.StandingSignBlock;
-import net.minecraft.world.level.block.WallHangingSignBlock;
 import net.minecraft.world.level.block.WallSignBlock;
 import net.minecraft.world.level.block.entity.SignBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Pseudo;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -27,7 +18,7 @@ import vectorwing.farmersdelight.client.gui.CanvasSignEditScreen;
 
 @Pseudo
 @Mixin(CanvasSignEditScreen.class)
-public abstract     class CompatFDSignEditScreenMixin extends AbstractSignEditScreen {
+public abstract class CompatFDSignEditScreenMixin extends AbstractSignEditScreen {
 
     public CompatFDSignEditScreenMixin(SignBlockEntity sign, boolean isFrontText, boolean isFiltered) {
         super(sign, isFrontText, isFiltered);

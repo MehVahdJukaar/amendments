@@ -4,8 +4,8 @@
 	"parent": "minecraft:block/cube_top",
 	"texture_size": [64, 32],
 	"textures": {
-		"1": "amendments:block/signs/sign_oak",
-		"particle": "amendments:block/signs/sign_oak"
+		"1": "amendments:black_canvas_sign",
+		"particle": "amendments:black_canvas_sign"
 	},
 	"elements": [
 		{
@@ -17,7 +17,7 @@
 				"east": {"uv": [0, 1, 0.5, 5.5], "texture": "#1", "cullface": "east"},
 				"south": {"uv": [5, 1, 9, 5.5], "texture": "#1", "cullface": "south"},
 				"west": {"uv": [4.5, 1, 5, 5.5], "texture": "#1", "cullface": "west"},
-				"up": {"uv": [0.5, 0, 4.5, 1], "texture": "#1"},
+				"up": {"uv": [0.5, 1, 4.5, 0], "texture": "#1"},
 				"down": {"uv": [4.5, 0, 8.5, 1], "texture": "#1"}
 			}
 		}

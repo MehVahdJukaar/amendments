@@ -1,6 +1,2 @@
-- fixed a recipe
-- added back dispensers behaviors
-- added ryoamic lights compat
-- fixed candle holder in hand flame
-- improved sign screen renderer to render block model
-- fixed wall sign model being 1 pixel too tall
+- fixed stew recipes giving less than intended
+- flipped top uv of sign
