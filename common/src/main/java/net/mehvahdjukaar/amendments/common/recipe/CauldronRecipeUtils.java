@@ -1,6 +1,7 @@
 package net.mehvahdjukaar.amendments.common.recipe;
 
 import net.mehvahdjukaar.moonlight.api.fluids.BuiltInSoftFluids;
+import net.mehvahdjukaar.moonlight.api.fluids.MLBuiltinSoftFluids;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidStack;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
