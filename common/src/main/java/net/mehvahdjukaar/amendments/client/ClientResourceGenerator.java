@@ -278,24 +278,21 @@ public class ClientResourceGenerator extends DynClientResourcesGenerator {
         Arrays.stream(DyeColor.values()).forEach(d -> names.add(d.getName() + "_"));
         names.add("");
         if (CompatHandler.FARMERS_DELIGHT) {
-            for (var d : names) {
-                Block canvas = BuiltInRegistries.BLOCK.getOptional(
-                        ResourceLocation.fromNamespaceAndPath("farmersdelight", d + "canvas_sign")
-                ).orElse(null);
+            for (Block canvas : BlockScanner.getFdSigns()) {
+                ResourceLocation id = Utils.getID(canvas);
                 Block canvasWall = BuiltInRegistries.BLOCK.getOptional(
-                        ResourceLocation.fromNamespaceAndPath("farmersdelight", d + "canvas_wall_sign")
-                ).orElse(null);
-                if (canvas == null || canvasWall == null) continue;
-                ResourceLocation canvasId = Utils.getID(canvas);
+                                id.withPath(p -> p.replace("sign", "wall_sign")))
+                        .orElse(null);
+                if (canvasWall == null) continue;
                 ResourceLocation canvasWallId = Utils.getID(canvasWall);
-                String variantId = "farmersdelight/" + canvasId.getPath();
+                String variantId = id.toString().replace(":", "/");
                 sink.addSimilarJsonResource(manager, sign0, "sign_oak", variantId);
                 sink.addSimilarJsonResource(manager, sign1, "sign_oak", variantId);
                 sink.addSimilarJsonResource(manager, sign2, "sign_oak", variantId);
                 sink.addSimilarJsonResource(manager, sign3, "sign_oak", variantId);
                 sink.addSimilarJsonResource(manager, signWall, "sign_oak", variantId);
 
-                sink.addBytes(canvasId, blockStateText.replace("sign_oak", variantId).getBytes(), ResType.BLOCKSTATES);
+                sink.addBytes(id, blockStateText.replace("sign_oak", variantId).getBytes(), ResType.BLOCKSTATES);
                 sink.addBytes(canvasWallId, blockStateWallText.replace("sign_oak", variantId).getBytes(), ResType.BLOCKSTATES);
 
                 AmendmentsClient.SIGN_THAT_WE_RENDER_AS_BLOCKS.add(canvas);
