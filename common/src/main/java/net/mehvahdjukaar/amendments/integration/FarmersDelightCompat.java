@@ -9,10 +9,13 @@ import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.CakeBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
+
+import vectorwing.farmersdelight.common.block.StandingCanvasSignBlock;
 import vectorwing.farmersdelight.common.registry.ModItems;
 import vectorwing.farmersdelight.common.tag.ModTags;
 
@@ -35,5 +38,9 @@ public class FarmersDelightCompat {
             return InteractionResult.sidedSuccess(level.isClientSide);
         }
         return InteractionResult.PASS;
+    }
+
+    public static boolean isStandingSign(Block block) {
+        return block instanceof StandingCanvasSignBlock;
     }
 }
