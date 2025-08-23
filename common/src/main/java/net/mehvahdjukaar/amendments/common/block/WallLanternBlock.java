@@ -1,15 +1,11 @@
 package net.mehvahdjukaar.amendments.common.block;
 
-import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import net.mehvahdjukaar.amendments.common.network.ClientBoundEntityHitSwayingBlockMessage;
-import net.mehvahdjukaar.amendments.common.network.ModNetwork;
 import net.mehvahdjukaar.amendments.common.tile.SwayingBlockTile;
 import net.mehvahdjukaar.amendments.common.tile.WallLanternBlockTile;
 import net.mehvahdjukaar.amendments.configs.CommonConfigs;
 import net.mehvahdjukaar.amendments.integration.CompatHandler;
-import net.mehvahdjukaar.amendments.integration.SuppCompat;
-import net.mehvahdjukaar.amendments.integration.SuppSquaredCompat;
 import net.mehvahdjukaar.amendments.integration.ThinAirCompat;
 import net.mehvahdjukaar.amendments.reg.ModBlockProperties;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
@@ -20,6 +16,7 @@ import net.mehvahdjukaar.moonlight.api.util.Utils;
 import net.mehvahdjukaar.moonlight.api.util.math.MthUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
@@ -46,11 +43,9 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.*;
 import net.minecraft.world.level.gameevent.GameEvent;
-import net.minecraft.world.level.pathfinder.PathComputationType;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
@@ -87,14 +82,40 @@ public class WallLanternBlock extends WaterBlock implements EntityBlock {
     protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
         if (level.getBlockEntity(pos) instanceof WallLanternBlockTile te) {
             BlockState lantern = te.getHeldBlock();
-            if (CompatHandler.SUPPSQUARED) {
-                ItemInteractionResult res = SuppSquaredCompat.lightUpLantern(level, pos, player, hand, stack, te, lantern);
-                if (res.consumesAction()) return res;
-            }
+
+            CompoundTag oldTag = te.saveWithoutMetadata(level.registryAccess());
+            ItemInteractionResult blockRes = lantern.useItemOn(stack, level, player, hand, hitResult);
+            restoreTileAfterInteract(state, level, pos, te, oldTag);
+            return blockRes;
         }
         return super.useItemOn(stack, state, level, pos, player, hand, hitResult);
     }
 
+    @Override
+    protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
+        if (level.getBlockEntity(pos) instanceof WallLanternBlockTile te) {
+            BlockState lantern = te.getHeldBlock();
+
+            CompoundTag oldTag = te.saveWithoutMetadata(level.registryAccess());
+            var useResult = lantern.useWithoutItem(level, player, hitResult);
+            restoreTileAfterInteract(state, level, pos, te, oldTag);
+            return useResult;
+        }
+        return super.useWithoutItem(state, level, pos, player, hitResult);
+    }
+
+    private static void restoreTileAfterInteract(BlockState state, Level level, BlockPos pos, WallLanternBlockTile te, CompoundTag oldTag) {
+        BlockState newState = level.getBlockState(pos);
+        if (newState != state) {
+            //restore tile
+            level.setBlockAndUpdate(pos, state);
+            if (level.getBlockEntity(pos) instanceof WallLanternBlockTile newTile) {
+                newTile.loadWithComponents(oldTag, level.registryAccess());
+                te.setHeldBlock(newState);
+                newTile.setChanged();
+            }
+        }
+    }
 
     @Nullable
     @Override
@@ -241,8 +262,8 @@ public class WallLanternBlock extends WaterBlock implements EntityBlock {
 
     @Nullable
     @Override
-    public BlockEntity newBlockEntity(BlockPos pPos, BlockState pState) {
-        return new WallLanternBlockTile(pPos, pState);
+    public BlockEntity newBlockEntity(BlockPos pos, BlockState pState) {
+        return new WallLanternBlockTile(pos, pState);
     }
 
     @Override
@@ -252,7 +273,7 @@ public class WallLanternBlock extends WaterBlock implements EntityBlock {
             if (level.getBlockEntity(pos) instanceof WallLanternBlockTile tile) {
                 tile.amendments$getAnimation().hitByEntity(entity, state, pos);
             }
-        } else  {
+        } else {
             if (entity.xo != entity.getX() || entity.zo != entity.getZ() || entity.yo != entity.getY()) {
                 level.gameEvent(entity, GameEvent.BLOCK_ACTIVATE, pos);
             }
@@ -284,6 +305,7 @@ public class WallLanternBlock extends WaterBlock implements EntityBlock {
         }
     }
 
+    //TODO: turn into dynamic reg
     public static boolean isValidBlock(@NotNull Block b) {
         if (b.asItem() == Items.AIR) return false;
         ResourceLocation id = Utils.getID(b);
@@ -295,7 +317,7 @@ public class WallLanternBlock extends WaterBlock implements EntityBlock {
         if (namespace.equals("skinnedlanterns") || (namespace.equals("twigs") && id.getPath().contains("paper_lantern")))
             return true;
         if (b instanceof LanternBlock) {
-            return !b.defaultBlockState().hasBlockEntity() || (CompatHandler.SUPPSQUARED && SuppSquaredCompat.isLightableLantern(b));
+            return !b.defaultBlockState().hasBlockEntity();
         }
         return false;
     }

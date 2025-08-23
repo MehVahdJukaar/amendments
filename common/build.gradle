@@ -18,10 +18,11 @@ dependencies {
 
     modImplementation ("net.mehvahdjukaar:supplementaries:${supplementaries_version}")
 
+    modImplementation ("net.mehvahdjukaar:suppsquared:${suppsquared_version}")
+
    // modImplementation("curse.maven:supplementaries-412082:6905076")
     modCompileOnly("curse.maven:flan-404578:5290167")
     modCompileOnly("com.jozufozu.flywheel:flywheel-forge-${flywheel_version}")
-    modCompileOnly("curse.maven:supplementaries-squared-838411:5130385")
     modCompileOnly("curse.maven:cave-enhancements-597562:4388535")
     modCompileOnly("com.lowdragmc.shimmer:Shimmer-common:1.19.2-0.1.14")
     modCompileOnly("curse.maven:farmers-delight-398521:5051242")

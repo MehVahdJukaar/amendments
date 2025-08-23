@@ -1,2 +1,4 @@
-- fixed stew recipes giving less than intended
-- flipped top uv of sign
+- updated suppsquared compat
+- fixed a crash with lectern menu
+- added some compat tags
+- improved wall lantern interact logic
