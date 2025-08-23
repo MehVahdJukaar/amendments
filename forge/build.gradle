@@ -161,6 +161,8 @@ dependencies {
     modCompileOnly("curse.maven:scholar-961802:5214379")
     modCompileOnly("curse.maven:map-atlases-forge-519759:5307805")
     modCompileOnly("curse.maven:soul-fire-d-662413:5448803")
+   // modImplementation("curse.maven:dye-depot-988504:5204263")
+   // modImplementation("curse.maven:dye-the-world-1135725:6341300")
     modCompileOnly("curse.maven:cobweb-968456:5441209")
 	//testing thin air compatibility
     modCompileOnly("curse.maven:puzzles-lib-495476:5330447")
