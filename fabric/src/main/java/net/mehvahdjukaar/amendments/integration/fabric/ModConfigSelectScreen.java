@@ -5,6 +5,7 @@ import net.mehvahdjukaar.amendments.configs.ClientConfigs;
 import net.mehvahdjukaar.amendments.configs.CommonConfigs;
 import net.mehvahdjukaar.moonlight.api.client.gui.LinkButton;
 import net.mehvahdjukaar.moonlight.api.platform.configs.fabric.FabricConfigListScreen;
+import net.mehvahdjukaar.moonlight.fabric.ResourceConditionsBridge;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
@@ -22,7 +23,6 @@ public class ModConfigSelectScreen extends FabricConfigListScreen {
 
     @Override
     protected void addExtraButtons() {
-
         int y = this.height - 27;
         int centerX = this.width / 2;
 

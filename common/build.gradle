@@ -25,6 +25,7 @@ dependencies {
 	modCompileOnly("curse.maven:supplementaries-412082:6373937")
 	
     modImplementation("curse.maven:supplementaries-squared-838411:5130385")
+    modImplementation("curse.maven:lambdynamiclights-393442:6639151")
     modImplementation("curse.maven:cave-enhancements-597562:4388535")
     modImplementation("com.lowdragmc.shimmer:Shimmer-common:1.19.2-0.1.14")
     modImplementation("curse.maven:farmers-delight-398521:5051242")

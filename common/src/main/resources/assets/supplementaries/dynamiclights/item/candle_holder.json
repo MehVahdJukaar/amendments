@@ -6,7 +6,7 @@
     }
   ],
   "match": {
-    "items": "supplementaries:candle_holder"
+    "items": "#supplementaries:candle_holders"
   },
   "luminance": 8,
   "water_sensitive": true
