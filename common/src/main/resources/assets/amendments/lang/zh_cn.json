@@ -86,6 +86,8 @@
   "item.amendments.dye_bottle.aqua": "水蓝色",
   "item.amendments.dye_bottle.slate": "岩蓝色",
   "item.amendments.dragon_charge": "龙弹",
+  "entity.amendments.medium_fireball": "火球",
+  "entity.amendments.medium_dragon_fireball": "龙弹火球",
   "fluid.amendments.dye": "染料",
   "subtitles.amendments.fireball_explosion": "火球：爆炸",
   "message.amendments.cauldron": "这种混合药水似乎不太稳定……"
