@@ -40,6 +40,7 @@ import org.jetbrains.annotations.Nullable;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
@@ -48,11 +49,17 @@ public class ClientResourceGenerator extends DynClientResourcesGenerator {
 
     public ClientResourceGenerator() {
         super(new DynamicTexturePack(Amendments.res("generated_pack")));
-        this.dynamicPack.addNamespaces("minecraft");
+    }
+
+    @Override
+    public Collection<String> additionalNamespaces() {
+        List<String> namespaces = new ArrayList<>();
+        namespaces.add("minecraft");
         if (ClientConfigs.PIXEL_CONSISTENT_SIGNS.get()) {
             //super hack and not ideal at all
-            PlatHelper.getInstalledMods().forEach(this.dynamicPack::addNamespaces);
+            PlatHelper.getInstalledMods().forEach(namespaces::add);
         }
+        return namespaces;
     }
 
     @Override
