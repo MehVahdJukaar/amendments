@@ -35,7 +35,7 @@ public class WallLanternModelsManager {
 
     private static void reloadModels(ResourceManager manager) {
         SPECIAL_LANTERN_MODELS.clear();
-        for (Block l : BlockScanner.getLanterns()) {
+        for (Block l : BlockScanner.getInstance().getLanterns()) {
 
             ResourceLocation reg = Utils.getID(l);
             String namespace = (reg.getNamespace().equals("minecraft") || reg.getNamespace().equals(Amendments.MOD_ID)) ? "" : reg.getNamespace() + "/";
@@ -50,7 +50,7 @@ public class WallLanternModelsManager {
 
     private static void reloadTextures(ResourceManager manager) {
         SPECIAL_MOUNT_TEXTURES.clear();
-        for (Block l : BlockScanner.getLanterns()) {
+        for (Block l : BlockScanner.getInstance().getLanterns()) {
 
             ResourceLocation reg = Utils.getID(l);
             String namespace = (reg.getNamespace().equals("minecraft") || reg.getNamespace().equals(Amendments.MOD_ID)) ? "" : reg.getNamespace() + "/";

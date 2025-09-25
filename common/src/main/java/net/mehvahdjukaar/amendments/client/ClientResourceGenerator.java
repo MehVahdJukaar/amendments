@@ -285,7 +285,7 @@ public class ClientResourceGenerator extends DynClientResourcesGenerator {
         Arrays.stream(DyeColor.values()).forEach(d -> names.add(d.getName() + "_"));
         names.add("");
         if (CompatHandler.FARMERS_DELIGHT) {
-            for (Block canvas : BlockScanner.getFdSigns()) {
+            for (Block canvas : BlockScanner.getInstance().getFdSigns()) {
                 ResourceLocation id = Utils.getID(canvas);
                 Block canvasWall = BuiltInRegistries.BLOCK.getOptional(
                                 id.withPath(p -> p.replace("sign", "wall_sign")))

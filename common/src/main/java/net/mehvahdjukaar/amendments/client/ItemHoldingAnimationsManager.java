@@ -22,20 +22,20 @@ public class ItemHoldingAnimationsManager {
         //bad
         if (ClientConfigs.LANTERN_HOLDING.get()) {
             var anim = new LanternRendererExtension();
-            BlockScanner.getLanterns()
+            BlockScanner.getInstance().getLanterns()
                     .stream().map(Block::asItem).filter(i -> i != Items.AIR)
                     .collect(Collectors.toSet()).forEach(item ->
                             IThirdPersonSpecialItemRenderer.attachToItem(item, anim));
         }
         if (ClientConfigs.TORCH_HOLDING.get()) {
             var anim = new TorchRendererExtension();
-            BlockScanner.getTorches()
+            BlockScanner.getInstance().getTorches()
                     .stream().map(Block::asItem).filter(i -> i != Items.AIR)
                     .collect(Collectors.toSet()).forEach(item ->
                             IThirdPersonSpecialItemRenderer.attachToItem(item, anim));
         }
         if (ClientConfigs.CANDLE_HOLDER_HOLDING.get()) {
-            BlockScanner.getCandleHolders()
+            BlockScanner.getInstance().getCandleHolders()
                     .stream()
                     .map(Block::asItem)
                     .filter(i -> i instanceof BlockItem)
