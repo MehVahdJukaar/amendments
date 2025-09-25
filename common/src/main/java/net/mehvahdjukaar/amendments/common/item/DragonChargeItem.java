@@ -2,7 +2,6 @@ package net.mehvahdjukaar.amendments.common.item;
 
 import net.mehvahdjukaar.amendments.common.ProjectileStats;
 import net.mehvahdjukaar.amendments.common.entity.MediumDragonFireball;
-import net.mehvahdjukaar.amendments.common.entity.MediumFireball;
 import net.mehvahdjukaar.amendments.configs.CommonConfigs;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -28,7 +27,7 @@ public class DragonChargeItem extends Item implements ProjectileItem {
 
     @Override
     public Projectile asProjectile(Level level, Position pos, ItemStack stack, Direction direction) {
-        MediumFireball snowball = new MediumFireball(level, pos.x(), pos.y(), pos.z());
+        MediumDragonFireball snowball = new MediumDragonFireball(level, pos.x(), pos.y(), pos.z());
         snowball.setItem(stack);
         return snowball;
     }
