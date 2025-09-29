@@ -1,4 +1,3 @@
-- updated suppsquared compat
-- fixed a crash with lectern menu
-- added some compat tags
-- improved wall lantern interact logic
+- fixed torch fire config not working
+- fixed fireballs from dispensers having no velocity
+- fixed fireball config not working properly with dispensers

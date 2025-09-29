@@ -80,7 +80,7 @@ public class CommonConfigs {
     public static final Supplier<Boolean> FIREBALL_EXPLOSION;
     public static final Supplier<Integer> CHARGES_COOLDOWN;
 
-public static final Supplier<Integer> SNOWBALL_FREEZE;
+    public static final Supplier<Integer> SNOWBALL_FREEZE;
 
     public static final ModConfigHolder SPEC;
 

@@ -54,6 +54,7 @@ public class Amendments {
     }
 
     public static void init() {
+        Dummy.MOD_LOADED = true;
         CommonConfigs.init();
         ModRegistry.init();
         ModNetwork.init();

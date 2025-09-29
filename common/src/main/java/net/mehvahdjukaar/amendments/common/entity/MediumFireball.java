@@ -15,6 +15,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.SnowballItem;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
@@ -74,7 +75,7 @@ public class MediumFireball extends ImprovedProjectileEntity implements IVisualT
         if (!this.isExtinguished && this.isInWater()) {
             this.isExtinguished = true;
             if (!level().isClientSide()) {
-              this.  clearFire();
+                this.clearFire();
                 this.playEntityOnFireExtinguishedSound();
                 if (this.getType() == EntityType.SMALL_FIREBALL) {
                     this.discard();
@@ -143,4 +144,5 @@ public class MediumFireball extends ImprovedProjectileEntity implements IVisualT
     protected Item getDefaultItem() {
         return Items.FIRE_CHARGE.asItem();
     }
+
 }
