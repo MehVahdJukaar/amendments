@@ -159,7 +159,7 @@ public class ClientResourceGenerator extends DynClientResourcesGenerator {
                             modPlankTexture.getMcMeta())) {
                         transformer.apply(signTexture, newImage);
                         ResourceLocation blockLocation = Amendments.res("block/signs/" + w.getVariantId("sign"));
-                        sink.addTexture(signTextureLocation, newImage);
+                        // sink.addTexture(signTextureLocation, newImage);
                         sink.addTexture(blockLocation, newImage);
                     }
                 } catch (Exception e) {
@@ -242,7 +242,7 @@ public class ClientResourceGenerator extends DynClientResourcesGenerator {
 
                 transformer.apply(vanillaTexture, newImage);
                 ResourceLocation blockTexturePath = Amendments.res("block/signs/farmersdelight/" + joinNonEmpty(d, "canvas_sign"));
-                sink.addTexture(texturePath, newImage);
+                //sink.addTexture(texturePath, newImage);
                 sink.addTexture(blockTexturePath, newImage);
             } catch (Exception e) {
                 Amendments.LOGGER.warn("Failed to generate Farmers Delight sign extension texture for {}, ", d, e);

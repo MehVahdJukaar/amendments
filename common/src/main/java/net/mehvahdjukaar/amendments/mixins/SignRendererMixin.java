@@ -97,8 +97,20 @@ public abstract class SignRendererMixin {
         }
     }
 
+    @Unique
+    private static final Vec3 OLD_OFFSET = new Vec3(0.0, 0.3333333432674408, 0.046666666865348816);
+
+    @ModifyReturnValue(method = "getTextOffset", at = @At("RETURN"))
+    private Vec3 amendments$signTextOffset(Vec3 scale) {
+        if (ClientConfigs.PIXEL_CONSISTENT_SIGNS.get() && scale.equals(OLD_OFFSET)) {
+            return SignRendererExtension.TEXT_OFFSET;
+        }
+        return scale;
+    }
+
     //yes all this below isnt even used anymore since we dont render the model anymore. TODO: delete?
 
+    /*
     @Inject(method = "createSignLayer", at = @At("HEAD"), cancellable = true)
     private static void amendments$makePixelConsistentModel(CallbackInfoReturnable<LayerDefinition> cir) {
         if (ClientConfigs.PIXEL_CONSISTENT_SIGNS.get()) {
@@ -122,26 +134,13 @@ public abstract class SignRendererMixin {
         return scale;
     }
 
-
-    @Unique
-    private static final Vec3 OLD_OFFSET = new Vec3(0.0, 0.3333333432674408, 0.046666666865348816);
-
-    @ModifyReturnValue(method = "getTextOffset", at = @At("RETURN"))
-    private Vec3 amendments$signTextOffset(Vec3 scale) {
-        if (ClientConfigs.PIXEL_CONSISTENT_SIGNS.get() && scale.equals(OLD_OFFSET)) {
-            return SignRendererExtension.TEXT_OFFSET;
-        }
-        return scale;
-    }
-
     //TODO: wall signs have a weird y scale, fix that somehow
     @Inject(method = "translateSign",
             at = @At(value = "TAIL"))
     private void amendments$signTranslate(PoseStack poseStack, float yRot, BlockState state, CallbackInfo ci) {
         if (ClientConfigs.PIXEL_CONSISTENT_SIGNS.get() && !(state.getBlock() instanceof StandingSignBlock)) {
             SignRendererExtension.translateWall(poseStack);
-
         }
-    }
+    }*/
 
 }
