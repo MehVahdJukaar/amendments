@@ -74,6 +74,7 @@ public class CauldronConversion implements BlockUse {
         var fluid = SoftFluidStack.fromItem(fluidBottle);
         if (fluid == null) return null;
         SoftFluidStack first = fluid.getFirst();
+        if (first.is(BuiltInSoftFluids.WATER)) return null;
 
         if (checkCauldronInteractions && ((CauldronBlock) Blocks.CAULDRON).interactions.containsKey(fluidBottle.getItem())
                 && !first.is(BuiltInSoftFluids.POTION)) return null;
@@ -83,20 +84,18 @@ public class CauldronConversion implements BlockUse {
 
     @Nullable
     public static BlockState getNewState(BlockPos pos, Level level, SoftFluidStack fluid) {
-        if(fluid.isEmpty()){
+        if (fluid.isEmpty()) {
             return Blocks.CAULDRON.defaultBlockState();
         }
         //compat stuff here?
-        if(fluid.is(BuiltInSoftFluids.WATER)){
+        if (fluid.is(BuiltInSoftFluids.WATER)) {
             return Blocks.WATER_CAULDRON.defaultBlockState().setValue(LayeredCauldronBlock.LEVEL,
-                   Math.min(3,  fluid.getCount()))
+                            Math.min(3, fluid.getCount()))
                     .setValue(LiquidCauldronBlock.BOILING,
                             CommonCauldronCode.shouldBoil(level.getBlockState(pos.below()), fluid, level, pos.below()));
-        }
-        else if(fluid.is(BuiltInSoftFluids.POWDERED_SNOW) && fluid.getCount() == 4){
+        } else if (fluid.is(BuiltInSoftFluids.POWDERED_SNOW) && fluid.getCount() == 4) {
             return Blocks.POWDER_SNOW_CAULDRON.defaultBlockState();
-        }
-        else if (fluid.is(BuiltInSoftFluids.LAVA) && fluid.getCount() == 4) {
+        } else if (fluid.is(BuiltInSoftFluids.LAVA) && fluid.getCount() == 4) {
             return Blocks.LAVA_CAULDRON.defaultBlockState();
         }
         if (!fluid.is(ModTags.CAULDRON_BLACKLIST)) {
