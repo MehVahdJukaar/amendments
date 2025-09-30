@@ -27,7 +27,6 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.resources.model.Material;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.data.models.blockstates.BlockStateGenerator;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.world.item.DyeColor;
@@ -207,7 +206,7 @@ public class ClientResourceGenerator extends DynClientResourcesGenerator {
     }
 
     private void generateFdSignTextures(ResourceManager manager, ResourceSink sink) {
-     //TODO:fix flip in top texture
+        //TODO:fix flip in top texture
         TextureCollager transformer = TextureCollager.builder(64, 32, 64, 32)
                 .copyFrom(0, 12, 28, 2)
                 .to(0, 9)
@@ -288,7 +287,7 @@ public class ClientResourceGenerator extends DynClientResourcesGenerator {
                         .orElse(null);
                 if (canvasWall == null) continue;
                 ResourceLocation canvasWallId = Utils.getID(canvasWall);
-                String variantId = "farmersdelight/"+ id.getPath();
+                String variantId = "farmersdelight/" + id.getPath();
                 sink.addSimilarJsonResource(manager, sign0, "sign_oak", variantId);
                 sink.addSimilarJsonResource(manager, sign1, "sign_oak", variantId);
                 sink.addSimilarJsonResource(manager, sign2, "sign_oak", variantId);

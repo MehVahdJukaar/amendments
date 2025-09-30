@@ -1,1 +1,1 @@
-- backported some fixes
+better compat with dye depot and other dye mods
