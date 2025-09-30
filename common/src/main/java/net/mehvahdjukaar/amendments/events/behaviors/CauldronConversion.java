@@ -80,6 +80,7 @@ public class CauldronConversion implements BlockUse {
         var fluid = SoftFluidStack.fromItem(fluidBottle);
         if (fluid == null) return null;
         SoftFluidStack first = fluid.getFirst();
+        if (first.is(BuiltInSoftFluids.WATER) && (fluidBottle.is(Items.LINGERING_POTION) || fluidBottle.is(Items.SPLASH_POTION))) return null;
 
         if (checkCauldronInteractions && ((CauldronBlock) Blocks.CAULDRON).interactions.map().containsKey(fluidBottle.getItem())
                 && !first.is(MLBuiltinSoftFluids.POTION)) return null;
@@ -89,7 +90,7 @@ public class CauldronConversion implements BlockUse {
 
     @Nullable
     public static BlockState getNewState(BlockPos pos, Level level, SoftFluidStack fluid) {
-        if(fluid.isEmpty()){
+        if (fluid.isEmpty()) {
             return Blocks.CAULDRON.defaultBlockState();
         }
         //compat stuff here?
