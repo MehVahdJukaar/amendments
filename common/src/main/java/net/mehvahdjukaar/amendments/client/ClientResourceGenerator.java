@@ -292,7 +292,8 @@ public class ClientResourceGenerator extends DynClientResourcesGenerator {
                         .orElse(null);
                 if (canvasWall == null) continue;
                 ResourceLocation canvasWallId = Utils.getID(canvasWall);
-                String variantId = id.toString().replace(":", "/");
+                String variantId = "farmersdelight/" + id.getPath();
+
                 sink.addSimilarJsonResource(manager, sign0, "sign_oak", variantId);
                 sink.addSimilarJsonResource(manager, sign1, "sign_oak", variantId);
                 sink.addSimilarJsonResource(manager, sign2, "sign_oak", variantId);
