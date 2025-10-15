@@ -124,7 +124,7 @@ public abstract class SignRendererMixin {
                     .addBox(-1.0F, -7.0F + 12, -1.0F, 2.0F, 7, 2.0F), PartPose.ZERO);
             cir.setReturnValue(LayerDefinition.create(meshDefinition, 64, 32));
         }
-    }
+    }*/
 
     @ModifyReturnValue(method = "getSignModelRenderScale", at = @At("RETURN"))
     private float amendments$signScale(float scale) {
@@ -134,6 +134,7 @@ public abstract class SignRendererMixin {
         return scale;
     }
 
+    //actually still needed
     //TODO: wall signs have a weird y scale, fix that somehow
     @Inject(method = "translateSign",
             at = @At(value = "TAIL"))
@@ -141,6 +142,6 @@ public abstract class SignRendererMixin {
         if (ClientConfigs.PIXEL_CONSISTENT_SIGNS.get() && !(state.getBlock() instanceof StandingSignBlock)) {
             SignRendererExtension.translateWall(poseStack);
         }
-    }*/
+    }
 
 }

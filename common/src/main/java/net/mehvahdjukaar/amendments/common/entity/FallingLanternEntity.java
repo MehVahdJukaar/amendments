@@ -1,6 +1,5 @@
 package net.mehvahdjukaar.amendments.common.entity;
 
-import net.mehvahdjukaar.amendments.Amendments;
 import net.mehvahdjukaar.amendments.configs.CommonConfigs;
 import net.mehvahdjukaar.amendments.integration.CompatHandler;
 import net.mehvahdjukaar.amendments.integration.SuppCompat;
@@ -71,15 +70,14 @@ public class FallingLanternEntity extends ImprovedFallingBlockEntity {
 
     //TODO: hitting sounds
     //called by mixin
-    public static boolean canSurviveCeilingAndMaybeFall(BlockState state, BlockPos pos, LevelReader worldIn) {
-        if (!Amendments.isSupportingCeiling(pos.above(), worldIn) && worldIn instanceof Level l) {
+    public static boolean maybeFall(boolean canSurvive, BlockState state, BlockPos pos, LevelReader worldIn) {
+        if (!canSurvive && worldIn instanceof Level l) {
             if (CommonConfigs.FALLING_LANTERNS.get().isOn() && l.getBlockState(pos).is(state.getBlock())
                     && !state.is(ModTags.FALLING_LANTERNS_BLACKLIST)) {
                 return createFallingLantern(state, pos, l);
             }
-            return false;
         }
-        return true;
+        return false;
     }
 
     public static boolean createFallingLantern(BlockState state, BlockPos pos, Level level) {

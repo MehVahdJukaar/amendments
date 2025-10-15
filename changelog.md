@@ -1,3 +1,2 @@
-- fixed torch fire config not working
-- fixed fireballs from dispensers having no velocity
-- fixed fireball config not working properly with dispensers
+ported some fixes
+no longer changing sign entity textures and models as those arent used anymore
