@@ -1,11 +1,34 @@
 architectury {
-    common(enabled_platforms.split(",")){
-        //it.platformPackage("neoforge", "forge")
-    }
+    common(enabled_platforms.split(","))
 }
+
 loom {
     accessWidenerPath = file("src/main/resources/${mod_id}.accesswidener")
 }
+
+
+
+publishing {
+    publications {
+        mavenCommon(MavenPublication) {
+            artifactId = rootProject.mod_id
+            from components.java
+        }
+    }
+
+    repositories {
+        // Add repositories to publish to here.
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    it.options.compilerArgs.add("-Acrafttweaker.processor.document.output_directory=${new File(rootProject.buildDir, "docsOut")}")
+    it.options.compilerArgs.add("-Acrafttweaker.processor.document.multi_source=true")
+
+    it.options.compilerArgs << "-Xmaxerrs" << "4000"
+
+}
+
 
 dependencies {
     // We depend on fabric loader here to use the fabric @Environment annotations and get the mixin dependencies
@@ -20,7 +43,7 @@ dependencies {
 
     modImplementation ("net.mehvahdjukaar:suppsquared:${suppsquared_version}")
 
-   // modImplementation("curse.maven:supplementaries-412082:6905076")
+    // modImplementation("curse.maven:supplementaries-412082:6905076")
     modCompileOnly("curse.maven:flan-404578:5290167")
     modCompileOnly("com.jozufozu.flywheel:flywheel-forge-${flywheel_version}")
     modCompileOnly("curse.maven:cave-enhancements-597562:4388535")
@@ -33,17 +56,4 @@ dependencies {
     modCompileOnly("curse.maven:zeta-968868:5078215")
     modImplementation("curse.maven:etched-491890:5998004")
 
-}
-
-publishing {
-    publications {
-        mavenCommon(MavenPublication) {
-            artifactId = rootProject.mod_id
-            from components.java
-        }
-    }
-
-    repositories {
-        // Add repositories to publish to here.
-    }
 }
