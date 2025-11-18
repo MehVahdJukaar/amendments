@@ -1,17 +1,16 @@
 package net.mehvahdjukaar.amendments.client.renderers;
 
-import com.google.common.base.Supplier;
-import com.google.common.base.Suppliers;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import net.mehvahdjukaar.amendments.configs.ClientConfigs;
-import net.mehvahdjukaar.amendments.integration.CompatObjects;
+import net.mehvahdjukaar.amendments.integration.SuppCompat;
 import net.mehvahdjukaar.moonlight.api.client.util.VertexUtil;
 import net.mehvahdjukaar.moonlight.api.item.IFirstPersonSpecialItemRenderer;
 import net.mehvahdjukaar.moonlight.api.item.IThirdPersonAnimationProvider;
 import net.mehvahdjukaar.moonlight.api.item.IThirdPersonSpecialItemRenderer;
+import net.mehvahdjukaar.moonlight.api.util.Utils;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.model.ArmedModel;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.HeadedModel;
@@ -24,27 +23,67 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.ItemTransform;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.core.particles.DustParticleOptions;
+import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.*;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.ItemDisplayContext;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.CandleBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
+import org.joml.Matrix4f;
+import org.joml.Quaternionf;
 import org.joml.Vector3f;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class CandleHolderRendererExtension implements IThirdPersonAnimationProvider, IThirdPersonSpecialItemRenderer,
         IFirstPersonSpecialItemRenderer {
 
+    private static final ResourceLocation FLAME_TEXTURE =
+            ResourceLocation.withDefaultNamespace("textures/particle/flame.png");
+    private static final ResourceLocation SOUL_FLAME_TEXTURE =
+            ResourceLocation.withDefaultNamespace("textures/particle/soul_fire_flame.png");
+    private static final ResourceLocation ENDER_FLAME_TEXTURE =
+            ResourceLocation.fromNamespaceAndPath("endergetic",
+                    "textures/particle/ender_fire_flame.png");
+    private static final ResourceLocation CUPRIC_FLAME_TEXTURE =
+            ResourceLocation.fromNamespaceAndPath("caverns_and_chasms",
+                    "textures/particle/cupric_fire_flame.png");
+    private static final ResourceLocation REDSTONE_FLAME_TEXTURE =
+            ResourceLocation.withDefaultNamespace("textures/particle/generic_6.png");
+
+    private final BlockState offState;
+    private final BlockState litState;
+    private final Vec3 candleParticleOffset;
+    private final ResourceLocation flameTexture;
+
+    public CandleHolderRendererExtension(BlockItem blockItem) {
+        offState = blockItem.getBlock().defaultBlockState();
+        litState = offState.setValue(CandleBlock.LIT, true);
+        candleParticleOffset = SuppCompat.getCandleHolderParticleOffset(offState);
+
+        ResourceLocation id = Utils.getID(blockItem);
+        String path = id.getPath();
+        if (path.endsWith("soul") || path.startsWith("soul")) {
+            this.flameTexture = SOUL_FLAME_TEXTURE;
+        } else if (path.endsWith("ender") || path.startsWith("ender")) {
+            this.flameTexture = ENDER_FLAME_TEXTURE;
+        } else if (path.endsWith("cupric") || path.startsWith("cupric")) {
+            this.flameTexture = CUPRIC_FLAME_TEXTURE;
+        } else if (path.endsWith("redstone") || path.startsWith("redstone")) {
+            this.flameTexture = REDSTONE_FLAME_TEXTURE;
+        } else {
+            this.flameTexture = FLAME_TEXTURE;
+        }
+    }
+
     @Override
     public <T extends LivingEntity> boolean poseRightArm(ItemStack itemStack, HumanoidModel<T> model, T t, HumanoidArm arm) {
-        //model.rightArm.yRot = Mth.clamp(MthUtils.wrapRad(0F + model.head.yRot), -0.5f, 1);
+        // model.rightArm.yRot = Mth.clamp(MthUtils.wrapRad(0F + model.head.yRot), -0.5f, 1);
         // model.rightArm.xRot = Mth.clamp(MthUtils.wrapRad(-1.4f + model.head.xRot), -2.4f, -0.2f);
         model.rightArm.xRot = (float) -Math.toRadians(20 + 20);
         return true;
@@ -52,8 +91,8 @@ public class CandleHolderRendererExtension implements IThirdPersonAnimationProvi
 
     @Override
     public <T extends LivingEntity> boolean poseLeftArm(ItemStack itemStack, HumanoidModel<T> model, T t, HumanoidArm arm) {
-        //model.leftArm.yRot = Mth.clamp(MthUtils.wrapRad(0F + model.head.yRot), -1f, 0.5);
-        //model.leftArm.xRot = Mth.clamp(MthUtils.wrapRad(-1.4f + model.head.xRot), -2.4f, -0.2f);
+        // model.leftArm.yRot = Mth.clamp(MthUtils.wrapRad(0F + model.head.yRot), -1f, 0.5);
+        // model.leftArm.xRot = Mth.clamp(MthUtils.wrapRad(-1.4f + model.head.xRot), -2.4f, -0.2f);
         model.leftArm.xRot = (float) -Math.toRadians(20 + 20);
         return true;
     }
@@ -89,10 +128,9 @@ public class CandleHolderRendererExtension implements IThirdPersonAnimationProvi
 
             transform.apply(left, poseStack);
 
-            renderLanternModel(entity, stack, poseStack, bufferSource, light, left);
+            renderBlockModel(entity, stack, poseStack, bufferSource, light, left);
 
             if (!entity.isInWater()) {
-
                 renderFlame(entity, poseStack, bufferSource, stack);
             }
 
@@ -101,25 +139,9 @@ public class CandleHolderRendererExtension implements IThirdPersonAnimationProvi
     }
 
     //TODO: improve for animated textures
-    private static final Supplier<Map<Item, ResourceLocation>> FLAMES = Suppliers.memoize(() -> {
-        Map<Item, ResourceLocation> map = new HashMap<>();
-        Item s = CompatObjects.SOUL_CANDLE_ITEM.get();
-        if (s != null) map.put(s.asItem(), new ResourceLocation("textures/particle/soul_fire_flame.png"));
-        Item c = CompatObjects.CUPRIC_CANDLE_ITEM.get();
-        if (c != null) map.put(c, new ResourceLocation("caverns_and_chasms",
-                "textures/particle/cupric_fire_flame.png"));
-        Item e = CompatObjects.ENDER_CANDLE_ITEM.get();
-        if (e != null) map.put(e, new ResourceLocation("endergetic",
-                "textures/particle/ender_fire_flame.png"));
-        //map.put(Items.REDSTONE_TORCH,
-        //        new ResourceLocation("textures/particle/generic_6.png"));
-        return map;
-    });
-    private static final ResourceLocation FLAME = new ResourceLocation("textures/particle/flame.png");
 
-    private static void renderFlame(LivingEntity entity, PoseStack poseStack, MultiBufferSource bufferSource, ItemStack stack) {
-        var builder = bufferSource.getBuffer(RenderType.text(
-                FLAMES.get().getOrDefault(stack.getItem(), FLAME)));
+    private void renderFlame(LivingEntity entity, PoseStack poseStack, MultiBufferSource bufferSource, ItemStack stack) {
+        VertexConsumer builder = bufferSource.getBuffer(RenderType.text(this.flameTexture));
 
         int lu = LightTexture.FULL_BRIGHT & '\uffff';
         int lv = LightTexture.FULL_BRIGHT >> 16 & '\uffff';
@@ -135,13 +157,18 @@ public class CandleHolderRendererExtension implements IThirdPersonAnimationProvi
         }*/
 
         float period = 20;
-        float t = ((entity.tickCount + Minecraft.getInstance().getFrameTime()) % period) / period;
+        float t = ((entity.tickCount + Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(false)) % period) / period;
         float ss = (1.0F - t * t * 0.4F);
 
         float scale = ss * 2 / 16f;
+        Matrix4f mat = new Matrix4f();
+        Quaternionf cameraRot = Minecraft.getInstance().gameRenderer.getMainCamera().rotation();
 
-        poseStack.translate(0, 3 / 16f, 0);
-        poseStack.last().pose().setRotationXYZ(0, 0, 0);
+        poseStack.translate(candleParticleOffset.x, candleParticleOffset.y, candleParticleOffset.z);
+        mat.setTranslation(poseStack.last().pose().getTranslation(new Vector3f()));
+        mat.rotate(cameraRot);
+
+        poseStack.last().pose().set(mat);
         poseStack.scale(-scale, scale, -scale);
 
         //TODO: fix for animated particles
@@ -150,16 +177,13 @@ public class CandleHolderRendererExtension implements IThirdPersonAnimationProvi
                 r, g, b, a, lu, lv);
     }
 
-    private static void renderLanternModel(LivingEntity entity, ItemStack itemStack, PoseStack poseStack,
-                                           MultiBufferSource buffer, int light, boolean left) {
+    private void renderBlockModel(LivingEntity entity, ItemStack itemStack, PoseStack poseStack,
+                                  MultiBufferSource buffer, int light, boolean left) {
         Minecraft mc = Minecraft.getInstance();
         ItemRenderer itemRenderer = mc.getItemRenderer();
-        BlockState state = ((BlockItem) itemStack.getItem()).getBlock().defaultBlockState();
+        BlockState state = entity.isInWater() ? this.offState : this.litState;
 
-        if (!entity.isInWater()) {
-            state = state.setValue(CandleBlock.LIT, true);
-        }
-        var model = mc.getBlockRenderer().getBlockModel(state);
+        BakedModel model = mc.getBlockRenderer().getBlockModel(state);
 
         itemRenderer.render(itemStack, ItemDisplayContext.NONE, left, poseStack,
                 buffer, light, OverlayTexture.NO_OVERLAY, model);
@@ -194,7 +218,7 @@ public class CandleHolderRendererExtension implements IThirdPersonAnimationProvi
 
         poseStack.scale(-scale, scale, -scale);
 
-        renderLanternModel(player, stack, poseStack, buffer, light, left);
+        renderBlockModel(player, stack, poseStack, buffer, light, left);
 
         if (!player.isInWater()) {
             poseStack.translate(f * 0.03, 0, -0.04f);

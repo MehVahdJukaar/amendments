@@ -35,7 +35,10 @@ import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 import static net.mehvahdjukaar.amendments.events.behaviors.CauldronConversion.getNewState;
 
@@ -144,4 +147,20 @@ public class SuppCompat {
     }
 
 
+    public static Vec3 getCandleHolderParticleOffset(BlockState state) {
+        if (state.getBlock() instanceof CandleHolderBlock cb) {
+            try{
+                @SuppressWarnings("unchecked")
+                Function<BlockState, List<Vec3>> offsets = (Function<BlockState, List<Vec3>>) OFFSETS.get(cb);
+                List<Vec3> particleOffsets = offsets.apply(state);
+                if (!particleOffsets.isEmpty()) {
+                    return particleOffsets.getFirst().subtract(0.5, 0.5, 0.5); //center it
+                }
+            }catch (Exception ignored){
+
+            }
+            //return cb.particleOffsets.apply(state).get(0);
+        }
+        return Vec3.ZERO;
+    }
 }
