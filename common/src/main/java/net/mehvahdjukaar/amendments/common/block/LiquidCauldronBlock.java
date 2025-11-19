@@ -17,6 +17,7 @@ import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
 import net.mehvahdjukaar.moonlight.api.util.PotionBottleType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
+import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ColorParticleOption;
 import net.minecraft.core.particles.ParticleOptions;
@@ -96,7 +97,7 @@ public class LiquidCauldronBlock extends ModCauldronBlock {
             if (!CommonConfigs.LAVA_LAYERS.get() && fluid == Fluids.LAVA) {
                 amount = SoftFluid.BUCKET_COUNT;
             }
-            var sf = SoftFluidStack.fromFluid(fluid, amount, null);
+            var sf = SoftFluidStack.fromFluid(fluid, amount, DataComponentPatch.EMPTY, level.registryAccess());
             if (!sf.isEmpty() && te.getSoftFluidTank().addFluid(sf, false) != 0) {
                 te.setChanged();
                 level.gameEvent(GameEvent.BLOCK_CHANGE, pos, GameEvent.Context.of(state));
@@ -117,7 +118,8 @@ public class LiquidCauldronBlock extends ModCauldronBlock {
             SoftFluidTank softFluidTank = te.getSoftFluidTank();
             var sf = softFluidTank.getFluid();
             if (precipitation == Biome.Precipitation.RAIN && sf.is(MLBuiltinSoftFluids.WATER) &&
-                    softFluidTank.addFluid(SoftFluidStack.fromFluid(Fluids.WATER, 1, null), false) > 0) {
+                    softFluidTank.addFluid(SoftFluidStack.fromFluid(Fluids.WATER,
+                            1, DataComponentPatch.EMPTY, level.registryAccess()), false) > 0) {
                 level.gameEvent(GameEvent.BLOCK_CHANGE, pos, GameEvent.Context.of(state));
                 te.setChanged();
             }

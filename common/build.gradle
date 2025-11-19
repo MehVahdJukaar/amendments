@@ -30,30 +30,33 @@ tasks.withType(JavaCompile).configureEach {
 }
 
 
+
 dependencies {
     // We depend on fabric loader here to use the fabric @Environment annotations and get the mixin dependencies
     // Do NOT use other classes from fabric loader
     modImplementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
+    implementation(annotationProcessor("io.github.llamalad7:mixinextras-common:0.5.0"))
 
-    modImplementation ("net.mehvahdjukaar:moonlight:${moonlight_version}")
+    modApi("net.mehvahdjukaar:moonlight:${moonlight_version}")
+    //modImplementation("curse.maven:selene-499980:7113116")
+    modCompileOnly("curse.maven:supplementaries-412082:5981094")
 
-    modImplementation("curse.maven:farmers-delight-398521:5566383")
-
-    modImplementation ("net.mehvahdjukaar:supplementaries:${supplementaries_version}")
-
-    modImplementation ("net.mehvahdjukaar:suppsquared:${suppsquared_version}")
+    modCompileOnly("com.jozufozu.flywheel:flywheel-forge-${flywheel_version}")
+    modCompileOnly("curse.maven:flan-404578:5290167")
+    modCompileOnly("curse.maven:farmers-delight-398521:5051242")
+    modCompileOnly("curse.maven:etched-491890:5998004")
+    modCompileOnly("com.lowdragmc.shimmer:Shimmer-common:1.19.2-0.1.14")
+    modCompileOnly("curse.maven:new-thin-air-878379:5068247")
+    modCompileOnly("curse.maven:quark-243121:5093415")
+    modCompileOnly("curse.maven:cave-enhancements-597562:4388535")
+    modImplementation("curse.maven:soul-fire-d-662413:6248772")
+    /*
+        modImplementation ("net.mehvahdjukaar:suppsquared:${suppsquared_version}")
 
     // modImplementation("curse.maven:supplementaries-412082:6905076")
-    modCompileOnly("curse.maven:flan-404578:5290167")
-    modCompileOnly("com.jozufozu.flywheel:flywheel-forge-${flywheel_version}")
-    modCompileOnly("curse.maven:cave-enhancements-597562:4388535")
-    modCompileOnly("com.lowdragmc.shimmer:Shimmer-common:1.19.2-0.1.14")
-    modCompileOnly("curse.maven:farmers-delight-398521:5051242")
     modCompileOnly("curse.maven:scholar-961802:5214379")
-    modCompileOnly("curse.maven:new-thin-air-878379:5068247")
-    modCompileOnly("it.crystalnest:soul-fire-d-common:$minecraft_min_version-$soul_fire_d_version")
-    modCompileOnly("curse.maven:quark-243121:5093415")
     modCompileOnly("curse.maven:zeta-968868:5078215")
-    modImplementation("curse.maven:etched-491890:5998004")
+     */
 
 }
+

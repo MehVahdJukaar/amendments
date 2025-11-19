@@ -13,10 +13,7 @@ import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
 import net.mehvahdjukaar.moonlight.api.resources.RPUtils;
 import net.mehvahdjukaar.moonlight.api.resources.ResType;
 import net.mehvahdjukaar.moonlight.api.resources.StaticResource;
-import net.mehvahdjukaar.moonlight.api.resources.pack.DynClientResourcesGenerator;
-import net.mehvahdjukaar.moonlight.api.resources.pack.DynamicTexturePack;
-import net.mehvahdjukaar.moonlight.api.resources.pack.ResourceGenTask;
-import net.mehvahdjukaar.moonlight.api.resources.pack.ResourceSink;
+import net.mehvahdjukaar.moonlight.api.resources.pack.*;
 import net.mehvahdjukaar.moonlight.api.resources.textures.*;
 import net.mehvahdjukaar.moonlight.api.set.wood.WoodType;
 import net.mehvahdjukaar.moonlight.api.set.wood.WoodTypeRegistry;
@@ -45,14 +42,14 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
-public class ClientResourceGenerator extends DynClientResourcesGenerator {
+public class ClientResourceGenerator extends DynamicClientResourceProvider {
 
     public ClientResourceGenerator() {
-        super(new DynamicTexturePack(Amendments.res("generated_pack")));
+        super(Amendments.res("generated_pack"), PackGenerationStrategy.CACHED);
     }
 
     @Override
-    public Collection<String> additionalNamespaces() {
+    protected Collection<String> gatherSupportedNamespaces() {
         List<String> namespaces = new ArrayList<>();
         namespaces.add("minecraft");
         if (ClientConfigs.PIXEL_CONSISTENT_SIGNS.get()) {
@@ -60,11 +57,6 @@ public class ClientResourceGenerator extends DynClientResourcesGenerator {
             PlatHelper.getInstalledMods().forEach(namespaces::add);
         }
         return namespaces;
-    }
-
-    @Override
-    public Logger getLogger() {
-        return Amendments.LOGGER;
     }
 
     @Override
@@ -397,7 +389,7 @@ public class ClientResourceGenerator extends DynClientResourcesGenerator {
                         sink.addTexture(texturePath, newImage);
                     }
                 } catch (Exception ex) {
-                    getLogger().warn("Failed to generate record item texture for {}. No model / texture found", e.getKey());
+                    Amendments.LOGGER.warn("Failed to generate record item texture for {}. No model / texture found", e.getKey());
                     sink.addTexture(texturePath, fallback);
                 }
             }

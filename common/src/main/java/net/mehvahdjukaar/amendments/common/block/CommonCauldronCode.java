@@ -245,6 +245,11 @@ public final class CommonCauldronCode {
     }
 
 
+    private static void attemptDyeCauldronConversion(BlockState state, Level level, BlockPos pos, Entity entity,
+                                               Supplier<Double> heightProvider) {
+     //TODO: add this
+    }
+
     private static void spawnResultItems(Level level, BlockPos pos, List<ItemStack> itemStacks) {
         if (itemStacks.isEmpty()) return;
 
