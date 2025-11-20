@@ -1,6 +1,5 @@
 package net.mehvahdjukaar.amendments.integration;
 
-import com.jozufozu.flywheel.vanilla.BellInstance;
 import it.crystalnest.soul_fire_d.api.FireManager;
 import net.mehvahdjukaar.moonlight.api.util.Utils;
 import net.minecraft.resources.ResourceLocation;

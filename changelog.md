@@ -1,1 +1,1 @@
-better compat with dye depot and other dye mods
+- disabled flyweel (vanillin) compat

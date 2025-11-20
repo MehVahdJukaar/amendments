@@ -12,7 +12,7 @@ import net.minecraft.world.level.block.entity.BellBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import org.jetbrains.annotations.Nullable;
 
-public class FlywheelCompat {
+public class VanillinCompat {
 
     public static final PartialModel BELL_CHAIN = new PartialModel(AmendmentsClient.BELL_CHAIN);
     public static final PartialModel BELL_ROPE = new PartialModel(AmendmentsClient.BELL_ROPE);

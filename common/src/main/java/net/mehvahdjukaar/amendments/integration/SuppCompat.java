@@ -4,7 +4,6 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.mehvahdjukaar.amendments.common.block.CeilingBannerBlock;
 import net.mehvahdjukaar.amendments.common.tile.LiquidCauldronBlockTile;
-import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidStack;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidTank;
 import net.mehvahdjukaar.supplementaries.client.ModMaterials;
@@ -14,12 +13,11 @@ import net.mehvahdjukaar.supplementaries.common.block.faucet.FaucetBehaviorsMana
 import net.mehvahdjukaar.supplementaries.common.block.faucet.FaucetTarget;
 import net.mehvahdjukaar.supplementaries.common.block.faucet.FluidOffer;
 import net.mehvahdjukaar.supplementaries.common.block.tiles.FaucetBlockTile;
-import net.mehvahdjukaar.supplementaries.common.misc.explosion.GunpowderExplosion;
 import net.mehvahdjukaar.supplementaries.common.utils.BlockUtil;
 import net.mehvahdjukaar.supplementaries.common.utils.MiscUtils;
 import net.mehvahdjukaar.supplementaries.configs.ClientConfigs;
 import net.mehvahdjukaar.supplementaries.reg.ModEntities;
-import net.minecraft.client.renderer.entity.EntityRenderers;
+import net.minecraft.Util;
 import net.minecraft.client.resources.model.Material;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -39,6 +37,7 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.function.Function;
 
 import static net.mehvahdjukaar.amendments.events.behaviors.CauldronConversion.getNewState;
 
@@ -149,18 +148,26 @@ public class SuppCompat {
 
     public static Vec3 getCandleHolderParticleOffset(BlockState state) {
         if (state.getBlock() instanceof CandleHolderBlock cb) {
-            try{
+            try {
                 @SuppressWarnings("unchecked")
                 Function<BlockState, List<Vec3>> offsets = (Function<BlockState, List<Vec3>>) OFFSETS.get(cb);
                 List<Vec3> particleOffsets = offsets.apply(state);
                 if (!particleOffsets.isEmpty()) {
                     return particleOffsets.getFirst().subtract(0.5, 0.5, 0.5); //center it
                 }
-            }catch (Exception ignored){
+            } catch (Exception ignored) {
 
             }
             //return cb.particleOffsets.apply(state).get(0);
         }
         return Vec3.ZERO;
     }
+
+    private static final java.lang.reflect.Field OFFSETS = Util.make(() -> {
+        try {
+            return CandleHolderBlock.class.getDeclaredField("particleOffsets");
+        } catch (NoSuchFieldException e) {
+            throw new RuntimeException(e);
+        }
+    });
 }

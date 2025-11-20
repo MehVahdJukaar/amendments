@@ -3,7 +3,20 @@
   "values": [
     "#minecraft:wool_carpets",
     "minecraft:moss_carpet",
+    {"id":"#minecraft:moss_carpets","required":false},
+    {"id":"vanillabackport:pale_moss_carpet","required":false},
+    {"id":"minecraft:pale_moss_carpet","required":false},
+    {"id":"deep_aether:aether_moss_carpet","required":false},
+    {"id":"deep_aether:cloudbloom_carpet","required":false},
     {"id":"quark:bamboo_mat","required":false},
-    {"id":"farmersdelight:canvas_rug","required":false}
+    {"id":"farmersdelight:canvas_rug","required":false},
+    {"id":"vanilla_backport:pale_moss_carpet","required":false},
+    {"id":"minecraft:pale_moss_carpet","required":false}
+  ],
+  "remove": [
+    "hexerei:infused_fabric_carpet_ornate",
+    "hexerei:waxed_infused_fabric_carpet_ornate",
+    "hexerei:infused_fabric_carpet",
+    "hexerei:waxed_infused_fabric_carpet"
   ]
 }

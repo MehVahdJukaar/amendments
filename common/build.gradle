@@ -23,7 +23,8 @@ dependencies {
 	
     //modCompileOnly ("net.mehvahdjukaar:supplementaries:${supplementaries_version}")
 	modCompileOnly("curse.maven:supplementaries-412082:7113231")
-	
+	modCompileOnly("curse.maven:vanillin-965702:6446560")
+
     modImplementation("curse.maven:supplementaries-squared-838411:5130385")
     modImplementation("curse.maven:lambdynamiclights-393442:6639151")
     modImplementation("curse.maven:cave-enhancements-597562:4388535")

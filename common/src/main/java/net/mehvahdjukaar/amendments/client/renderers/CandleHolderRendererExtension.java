@@ -44,17 +44,17 @@ public class CandleHolderRendererExtension implements IThirdPersonAnimationProvi
         IFirstPersonSpecialItemRenderer {
 
     private static final ResourceLocation FLAME_TEXTURE =
-            ResourceLocation.withDefaultNamespace("textures/particle/flame.png");
+            new ResourceLocation("textures/particle/flame.png");
     private static final ResourceLocation SOUL_FLAME_TEXTURE =
-            ResourceLocation.withDefaultNamespace("textures/particle/soul_fire_flame.png");
+            new ResourceLocation("textures/particle/soul_fire_flame.png");
     private static final ResourceLocation ENDER_FLAME_TEXTURE =
-            ResourceLocation.fromNamespaceAndPath("endergetic",
+            new ResourceLocation("endergetic",
                     "textures/particle/ender_fire_flame.png");
     private static final ResourceLocation CUPRIC_FLAME_TEXTURE =
-            ResourceLocation.fromNamespaceAndPath("caverns_and_chasms",
+            new ResourceLocation("caverns_and_chasms",
                     "textures/particle/cupric_fire_flame.png");
     private static final ResourceLocation REDSTONE_FLAME_TEXTURE =
-            ResourceLocation.withDefaultNamespace("textures/particle/generic_6.png");
+            new ResourceLocation("textures/particle/generic_6.png");
 
     private final BlockState offState;
     private final BlockState litState;
@@ -157,7 +157,7 @@ public class CandleHolderRendererExtension implements IThirdPersonAnimationProvi
         }*/
 
         float period = 20;
-        float t = ((entity.tickCount + Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(false)) % period) / period;
+        float t = ((entity.tickCount + Minecraft.getInstance().getDeltaFrameTime()) % period) / period;
         float ss = (1.0F - t * t * 0.4F);
 
         float scale = ss * 2 / 16f;
