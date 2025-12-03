@@ -153,7 +153,7 @@ public class SuppCompat {
                 Function<BlockState, List<Vec3>> offsets = (Function<BlockState, List<Vec3>>) OFFSETS.get(cb);
                 List<Vec3> particleOffsets = offsets.apply(state);
                 if (!particleOffsets.isEmpty()) {
-                    return particleOffsets.getFirst().subtract(0.5, 0.5, 0.5); //center it
+                    return particleOffsets.get(0).subtract(0.5, 0.5, 0.5); //center it
                 }
             } catch (Exception ignored) {
 
