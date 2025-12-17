@@ -123,15 +123,15 @@ public class ClientResourceGenerator extends DynClientResourcesGenerator {
     }
 
     private void generateSignTextures(ResourceManager manager, ResourceSink sink) {
-        TextureCollager transformer = TextureCollager.builder(64, 32, 64, 32)
+        TextureCollager transformer = TextureCollager.builder(64, 32, 64, 16)
                 .copyFrom(0, 16, 16, 16)
-                .to(0, 16)
+                .to(56, 0)
                 .build();
 
         try (TextureImage template = TextureImage.open(manager,
-                Amendments.res("entity/sign/template"));
+                Amendments.res("block/sign/template"));
              TextureImage mask = TextureImage.open(manager,
-                     Amendments.res("entity/sign/mask"))) {
+                     Amendments.res("block/sign/mask"))) {
 
             Respriter respriter = Respriter.masked(template, mask);
 

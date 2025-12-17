@@ -193,12 +193,12 @@ public final class CommonCauldronCode {
 
 
     //crafting
-
+    //just used for dye
     private static void attemptInWorldCrafting(BlockState state, Level level, BlockPos pos, Entity entity,
                                                Supplier<Double> heightProvider) {
         if (!CommonConfigs.CAULDRON_HAND_CRAFTING.get()) return;
 
-        if (!(entity instanceof ItemEntity ie)) return;
+        if (!(entity instanceof ItemEntity ie) || !entity.onGround()) return;
         //age sloower
         ie.setPickUpDelay(ie.pickupDelay + 1);
         // if (ie.tickCount % 10 != 0) return;

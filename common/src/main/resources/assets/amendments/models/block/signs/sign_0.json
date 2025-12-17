@@ -5,7 +5,7 @@
 	"texture_size": [64, 32],
 	"textures": {
 		"1": "amendments:blocks/signs/sign_oak",
-		"particle": "amendments:entity/signs/sign_oak"
+		"particle": "amendments:blocks/signs/sign_oak"
 	},
 	"elements": [
 		{
