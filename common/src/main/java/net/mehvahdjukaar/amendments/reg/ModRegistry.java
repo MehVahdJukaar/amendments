@@ -2,6 +2,7 @@ package net.mehvahdjukaar.amendments.reg;
 
 import com.google.common.base.Preconditions;
 import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap;
+import net.mehvahdjukaar.amendments.Amendments;
 import net.mehvahdjukaar.amendments.common.CakeRegistry;
 import net.mehvahdjukaar.amendments.common.LecternEditMenu;
 import net.mehvahdjukaar.amendments.common.block.*;
@@ -66,7 +67,7 @@ public class ModRegistry {
 
     public static void init() {
         BlockSetAPI.registerBlockSetDefinition(CakeRegistry.INSTANCE);
-        BlockSetAPI.addDynamicBlockRegistration(ModRegistry::registerDoubleCakes, CakeRegistry.CakeType.class);
+        BlockSetAPI.addDynamicRegistration(Amendments.MOD_ID, ModRegistry::registerDoubleCakes, BuiltInRegistries.BLOCK);
         AdditionalItemPlacementsAPI.addRegistration(ModRegistry::registerAdditionalPlacements);
     }
 
@@ -297,9 +298,8 @@ public class ModRegistry {
 
     public static final Map<CakeRegistry.CakeType, DoubleCakeBlock> DOUBLE_CAKES = new LinkedHashMap<>();
 
-    private static void registerDoubleCakes
-            (Registrator<Block> event, Collection<CakeRegistry.CakeType> cakeTypes) {
-        for (CakeRegistry.CakeType type : cakeTypes) {
+    private static void registerDoubleCakes(Registrator<Block> event) {
+        for (CakeRegistry.CakeType type : CakeRegistry.INSTANCE) {
 
             ResourceLocation id = res(type.getVariantId("double"));
             DoubleCakeBlock block = new DoubleCakeBlock(type);

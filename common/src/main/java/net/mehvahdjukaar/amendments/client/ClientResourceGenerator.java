@@ -214,7 +214,7 @@ public class ClientResourceGenerator extends DynClientResourcesGenerator {
                 .copyFrom(0, 16, 8, 16)
                 .to(56, 0) //stick
 
-                .copyFrom(0, 0, 32, 16)
+                .copyFrom(0, 0, 32, 11)
                 .to(0, 0)
                 .copyFrom(0, 12, 28, 2)
                 .to(0, 9)

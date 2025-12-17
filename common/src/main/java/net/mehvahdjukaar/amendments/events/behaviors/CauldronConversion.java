@@ -71,7 +71,7 @@ public class CauldronConversion implements BlockUse {
 
     @Nullable
     public static BlockState getNewState(BlockPos pos, Level level, ItemStack fluidBottle, boolean checkCauldronInteractions) {
-        var fluid = SoftFluidStack.fromItem(fluidBottle);
+        var fluid = SoftFluidStack.fromItem(fluidBottle, level.registryAccess());
         if (fluid == null) return null;
         SoftFluidStack first = fluid.getFirst();
         if (first.is(BuiltInSoftFluids.WATER)) return null;
