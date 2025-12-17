@@ -1,2 +1,5 @@
 - added a sign blacklist for pixel consistent signs
 - fixed 2 ghasts fireballs mixins not being applied causing amendments particles to be missing
+- fixed cake stacking breaking with candles
+- optimized sign textures
+- added bamboo sign texture

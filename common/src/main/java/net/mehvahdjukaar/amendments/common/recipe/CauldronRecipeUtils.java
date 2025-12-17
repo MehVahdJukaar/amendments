@@ -48,7 +48,7 @@ public class CauldronRecipeUtils {
             if (crafted != null) return crafted;
 
             if (items.size() == 1) {
-                crafted = craftItemSurround(level, true, tankCapacity, fluidStack, items.get(0));
+                crafted = craftItemSurround(level, true, tankCapacity, fluidStack, items.getFirst());
                 return crafted;
             }
         }

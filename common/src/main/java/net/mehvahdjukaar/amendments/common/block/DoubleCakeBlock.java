@@ -10,13 +10,20 @@ import net.mehvahdjukaar.moonlight.api.platform.ForgeHelper;
 import net.mehvahdjukaar.moonlight.api.util.math.MthUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.*;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.CandleBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -51,7 +58,7 @@ public class DoubleCakeBlock extends DirectionalCakeBlock {
     ).toArray(VoxelShape[]::new);
     private final BlockState mimic;
 
-    public DoubleCakeBlock(CakeRegistry.CakeType type){
+    public DoubleCakeBlock(CakeRegistry.CakeType type) {
         super(type);
         this.mimic = type.cake.defaultBlockState();
     }
@@ -59,6 +66,20 @@ public class DoubleCakeBlock extends DirectionalCakeBlock {
     public DoubleCakeBlock(Properties properties, CakeRegistry.CakeType type) {
         super(properties, type);
         this.mimic = type.cake.defaultBlockState();
+    }
+
+    @Override
+    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
+        Item item = stack.getItem();
+
+        if (stack.is(ItemTags.CANDLES) && Block.byItem(item) instanceof CandleBlock) {
+            if (hitResult.getDirection() == Direction.UP) {
+                //try place candle on cake
+                return ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION;
+            }
+            return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION; //blocks candle interaction
+        }
+        return super.useItemOn(stack, state, level, pos, player, hand, hitResult);
     }
 
     @Override
