@@ -3,16 +3,10 @@ package net.mehvahdjukaar.amendments.mixins;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import net.mehvahdjukaar.amendments.AmendmentsClient;
 import net.mehvahdjukaar.amendments.client.renderers.SignRendererExtension;
 import net.mehvahdjukaar.amendments.configs.ClientConfigs;
 import net.mehvahdjukaar.moonlight.api.util.math.ColorUtils;
 import net.minecraft.client.model.Model;
-import net.minecraft.client.model.geom.PartPose;
-import net.minecraft.client.model.geom.builders.CubeListBuilder;
-import net.minecraft.client.model.geom.builders.LayerDefinition;
-import net.minecraft.client.model.geom.builders.MeshDefinition;
-import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.SignRenderer;
 import net.minecraft.core.BlockPos;
@@ -32,7 +26,6 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 //fixes plain text shade
 @Mixin(SignRenderer.class)
@@ -42,10 +35,11 @@ public abstract class SignRendererMixin {
     private static Float amendments$signYaw;
     @Unique
     private static Boolean amendments$front;
-
+    @Unique
+    private static boolean amendments$rendersPixelConsistent;
     //screw this
-
     //if you find an incompatibility pls report
+
     /**
      * @author MehVahDjukaar
      * @reason adding color normal shading and color modifier
@@ -82,19 +76,32 @@ public abstract class SignRendererMixin {
     @Inject(method = "renderSignWithText", at = @At("TAIL"))
     private void amendments$resetYaw(SignBlockEntity signBlockEntity, PoseStack poseStack, MultiBufferSource multiBufferSource, int i, int j, BlockState blockState, SignBlock signBlock, WoodType woodType, Model model, CallbackInfo ci) {
         amendments$signYaw = null;
+        amendments$rendersPixelConsistent = false;
     }
 
 
-
-
-
+    @Inject(method = "renderSignWithText", at = @At("HEAD"))
+    private void amendments$setSign(SignBlockEntity signBlockEntity, PoseStack poseStack, MultiBufferSource multiBufferSource, int i, int j, BlockState blockState, SignBlock signBlock, WoodType woodType, Model model, CallbackInfo ci) {
+        amendments$rendersPixelConsistent = ClientConfigs.isPixelConsistentSign(blockState);
+    }
 
 
     @Inject(method = "renderSignModel", at = @At("HEAD"), cancellable = true)
     private void amendments$renderSignModel(PoseStack poseStack, int packedLight, int packedOverlay, Model model, VertexConsumer vertexConsumer, CallbackInfo ci) {
-        if (ClientConfigs.PIXEL_CONSISTENT_SIGNS.get()) {
+        if (amendments$rendersPixelConsistent) {
             ci.cancel();
         }
+    }
+
+    @Unique
+    private static final Vec3 OLD_OFFSET = new Vec3(0.0, 0.3333333432674408, 0.046666666865348816);
+
+    @ModifyReturnValue(method = "getTextOffset", at = @At("RETURN"))
+    private Vec3 amendments$signTextOffset(Vec3 scale) {
+        if (amendments$rendersPixelConsistent && scale.equals(OLD_OFFSET)) {
+            return SignRendererExtension.TEXT_OFFSET;
+        }
+        return scale;
     }
 
     //yes all this below isnt even used anymore since we dont render the model anymore. TODO: delete?
@@ -116,7 +123,7 @@ public abstract class SignRendererMixin {
 
     @ModifyReturnValue(method = "getSignModelRenderScale", at = @At("RETURN"))
     private float amendments$signScale(float scale) {
-        if (ClientConfigs.PIXEL_CONSISTENT_SIGNS.get() && scale == 0.6666667F) {
+        if (amendments$rendersPixelConsistent && scale == 0.6666667F) {
             return 1;
         }
         return scale;
@@ -138,7 +145,7 @@ public abstract class SignRendererMixin {
     @Inject(method = "translateSign",
             at = @At(value = "TAIL"))
     private void amendments$signTranslate(PoseStack poseStack, float yRot, BlockState state, CallbackInfo ci) {
-        if (ClientConfigs.PIXEL_CONSISTENT_SIGNS.get() && !(state.getBlock() instanceof StandingSignBlock)) {
+        if (amendments$rendersPixelConsistent && !(state.getBlock() instanceof StandingSignBlock)) {
             SignRendererExtension.translateWall(poseStack);
 
         }

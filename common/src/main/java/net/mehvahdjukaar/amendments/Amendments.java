@@ -67,11 +67,23 @@ public class Amendments {
         RegHelper.addDynamicDispenserBehaviorRegistration(Amendments::registerDispenserBehavior);
         RegHelper.registerSimpleRecipeCondition(res("flag"), CommonConfigs::isFlagOn);
         RegHelper.addItemsToTabsRegistration(Amendments::addItemsToTabs);
+        RegHelper.addExtraPOIStatesRegistration(Amendments::addExtraPoiStates);
+
 
         //TODO: fix sign y offset on FD one and wall signs have weird scale
         //TODO: check all fireballs & dispenser
         // configurable models for wall lanterns and skulls
         // add wall lantern stand model override instead of texture one
+        // todo: finish porting
+
+        // register 1 wall lantern per type
+        // make bell connections
+//healing particles
+        //snow golems healing in snow
+        //TODO: fix candle holder particle
+        // TODO: add sound for wind change and improve fire charge sounds
+        //improved entity sync time
+        //improved range at which sound plays and such
         // mud slows down mobs
         //here we go. ideas part 2
         //carpeted trapdoor
@@ -91,6 +103,8 @@ public class Amendments {
         //low tech mod?
     }
 
+
+
     private static void addItemsToTabs(RegHelper.ItemToTabEvent itemToTabEvent) {
         if (CommonConfigs.THROWABLE_FIRE_CHARGES.get()) {
             itemToTabEvent.addBefore(CreativeModeTabs.COMBAT,
@@ -100,6 +114,10 @@ public class Amendments {
                         i -> i.is(Items.SNOWBALL), ModRegistry.DRAGON_CHARGE.get());
             }
         }
+    }
+
+    private static void addExtraPoiStates(RegHelper.ExtraPOIStatesEvent event) {
+        event.addBlocks(PoiTypes.LEATHERWORKER, List.of(ModRegistry.LIQUID_CAULDRON.get(), ModRegistry.DYE_CAULDRON.get()));
     }
 
 
@@ -117,6 +135,7 @@ public class Amendments {
 
     private static void setupAsync() {
         FlowerPotHandler.setup();
+        ClientConfigs.setup();
     }
 
     public static void onReload(RegistryAccess registryAccess, boolean client) {

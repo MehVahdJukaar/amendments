@@ -9,7 +9,17 @@ import net.mehvahdjukaar.moonlight.api.platform.configs.ConfigBuilder;
 import net.mehvahdjukaar.moonlight.api.platform.configs.ConfigSpec;
 import net.mehvahdjukaar.moonlight.api.platform.configs.ConfigType;
 import vectorwing.farmersdelight.client.renderer.CanvasSignRenderer;
+import net.mehvahdjukaar.moonlight.api.set.wood.WoodType;
+import net.mehvahdjukaar.moonlight.api.set.wood.WoodTypeRegistry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.function.Supplier;
 
 public class ClientConfigs {
@@ -47,6 +57,7 @@ public class ClientConfigs {
     public static final Supplier<Boolean> CAMPFIRE_SMOKE;
 
     public static final Supplier<Boolean> PIXEL_CONSISTENT_SIGNS;
+    public static final Supplier<List<String>> SIGN_BLACKLIST;
 
     public static final Supplier<Boolean> COLORED_ARROWS;
     public static final Supplier<Boolean> FAST_HOOKS;
@@ -68,6 +79,7 @@ public class ClientConfigs {
 
     public static final ConfigSpec SPEC;
 
+
     static {
         ConfigBuilder builder = ConfigBuilder.create(Amendments.MOD_ID, ConfigType.CLIENT);
 
@@ -82,6 +94,9 @@ public class ClientConfigs {
                 .define("pixel_consistent", true);
         BRIGHTEN_SIGN_TEXT_COLOR = builder.comment("A scalar multiplier that will be applied to sign text making it brighter, supposedly more legible")
                 .define("text_color_multiplier", 1.2d, 0, 5);
+        SIGN_BLACKLIST = builder.comment("A list of sign blocks that will NOT be affected by the pixel consistent sign setting. Use full registry names separated by commas")
+                .define("sign_blacklist", new ArrayList<>(),
+                        o -> o instanceof String s && !s.isEmpty());
         builder.pop();
 
         builder.push("projectiles");
@@ -216,5 +231,27 @@ public class ClientConfigs {
 
     public static float getItemPixelScale() {
         return hsScale;
+    }
+
+    public static boolean isPixelConsistentSign(BlockState state) {
+        if (!PIXEL_CONSISTENT_SIGNS.get()) {
+            return false;
+        }
+        return KNOWN_WOOD_SIGNS.contains(state.getBlock());
+    }
+
+    private static final Set<Block> KNOWN_WOOD_SIGNS = new HashSet<>();
+
+    public static void setup() {
+        for (WoodType w : WoodTypeRegistry.INSTANCE) {
+            Block b = w.getBlockOfThis("sign");
+            Block b1 = w.getBlockOfThis("wall_sign");
+            if (b != null) KNOWN_WOOD_SIGNS.add(b);
+            if (b1 != null) KNOWN_WOOD_SIGNS.add(b1);
+        }
+        for (String s : SIGN_BLACKLIST.get()) {
+            var b = BuiltInRegistries.BLOCK.getOptional(ResourceLocation.parse(s));
+            b.ifPresent(KNOWN_WOOD_SIGNS::remove);
+        }
     }
 }
