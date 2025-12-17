@@ -97,9 +97,9 @@ dependencies {
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionNeoForge")) { transitive = false }
 
-    modImplementation("net.mehvahdjukaar:moonlight-neoforge:${moonlight_version}")
-
-    modCompileOnly("curse.maven:supplementaries-412082:5458843")
+    modApi("net.mehvahdjukaar:moonlight-neoforge:${moonlight_version}") {
+        transitive = false
+    }
 
     modCompileOnly ("maven.modrinth:sodium:mc1.21-0.6.0-beta.2-neoforge")
     modImplementation("curse.maven:farmers-delight-398521:5566383")

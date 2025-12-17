@@ -37,9 +37,14 @@ dependencies {
     modImplementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
     implementation(annotationProcessor("io.github.llamalad7:mixinextras-common:0.5.0"))
 
-    modApi("net.mehvahdjukaar:moonlight:${moonlight_version}")
+    modApi("net.mehvahdjukaar:moonlight:${moonlight_version}"){
+        transitive = false
+    }
+    modImplementation("net.mehvahdjukaar:supplementaries:1.21-3.5.4"){
+        transitive = false
+    }
     //modImplementation("curse.maven:selene-499980:7113116")
-    modCompileOnly("curse.maven:supplementaries-412082:5981094")
+    //modCompileOnly("curse.maven:supplementaries-412082:5981094")
 
     modCompileOnly("com.jozufozu.flywheel:flywheel-forge-${flywheel_version}")
     modCompileOnly("curse.maven:flan-404578:5290167")

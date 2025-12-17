@@ -39,7 +39,7 @@ public abstract class WallSignMixin extends Block {
     //technically unsafe
     @ModifyReturnValue(method = "getShape", at = @At("RETURN"))
     public VoxelShape getShape(VoxelShape original, BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
-        if ((level instanceof Level l) && l.isClientSide && ClientConfigs.PIXEL_CONSISTENT_SIGNS.get()) {
+        if ((level instanceof Level l) && l.isClientSide && ClientConfigs.isPixelConsistentSign(state)) {
             return AMENDMENTS_VISUAL_SHAPE.get(state.getValue(WallSignBlock.FACING));
         }
         return original;

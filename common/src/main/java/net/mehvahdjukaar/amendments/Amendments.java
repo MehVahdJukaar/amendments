@@ -69,6 +69,8 @@ public class Amendments {
 
         RegHelper.registerSimpleRecipeCondition(res("flag"), CommonConfigs::isFlagOn);
         RegHelper.addItemsToTabsRegistration(Amendments::addItemsToTabs);
+        RegHelper.addExtraPOIStatesRegistration(Amendments::addExtraPoiStates);
+
 
         //TODO: fix sign y offset on FD one and wall signs have weird scale
         //TODO: check all fireballs & dispenser
@@ -77,7 +79,8 @@ public class Amendments {
 
         // register 1 wall lantern per type
         // make bell connections
-
+//healing particles
+        //snow golems healing in snow
         //TODO: fix candle holder particle
         // TODO: add sound for wind change and improve fire charge sounds
         //improved entity sync time
@@ -100,6 +103,8 @@ public class Amendments {
         //low tech mod?
     }
 
+
+
     private static void addItemsToTabs(RegHelper.ItemToTabEvent itemToTabEvent) {
         if (CommonConfigs.THROWABLE_FIRE_CHARGES.get()) {
             itemToTabEvent.addBefore(CreativeModeTabs.COMBAT,
@@ -111,6 +116,10 @@ public class Amendments {
         }
     }
 
+    private static void addExtraPoiStates(RegHelper.ExtraPOIStatesEvent event) {
+        event.addBlocks(PoiTypes.LEATHERWORKER, List.of(ModRegistry.LIQUID_CAULDRON.get(), ModRegistry.DYE_CAULDRON.get()));
+    }
+
 
     private static void setup() {
         if (CommonConfigs.INVERSE_POTIONS.get() == null) {
@@ -118,19 +127,12 @@ public class Amendments {
         }
         if (CompatHandler.SUPPLEMENTARIES) SuppCompat.setup();
 
-        var holder = BuiltInRegistries.POINT_OF_INTEREST_TYPE.getHolderOrThrow(PoiTypes.LEATHERWORKER);
-        var set = new HashSet<>(holder.value().matchingStates);
-        Set<BlockState> extraStates = Stream.of(ModRegistry.LIQUID_CAULDRON.get(), ModRegistry.DYE_CAULDRON.get()).flatMap(
-                (block) -> block.getStateDefinition().getPossibleStates().stream()).collect(Collectors.toSet());
-        set.addAll(extraStates);
-        holder.value().matchingStates = set;
-        PoiTypes.registerBlockStates(holder, extraStates);
-
         ModRegistry.registerAdditionalPlacements();
     }
 
     private static void setupAsync() {
         FlowerPotHandler.setup();
+        ClientConfigs.setup();
     }
 
     public static void onReload(RegistryAccess registryAccess, boolean client) {

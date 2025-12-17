@@ -63,40 +63,41 @@ public class LiquidCauldronBlockTile extends BlockEntity implements IExtraModelD
     }
 
     @Override
-    public SoftFluidTank getSoftFluidTank() {
-        initializeTank(Preconditions.checkNotNull(level).registryAccess());
-        return fluidTank;
+    public void setLevel(Level level) {
+        super.setLevel(level);
+        getOrCreateTank(level.registryAccess());
     }
 
-    private void initializeTank(HolderLookup.Provider registries) {
+    @Override
+    public SoftFluidTank getSoftFluidTank() {
+        return Preconditions.checkNotNull(fluidTank, "Accessing cauldron tank before loadAdditional is was called!");
+    }
+
+    private SoftFluidTank getOrCreateTank(HolderLookup.Provider registries) {
         if (fluidTank == null) {
             fluidTank = (this.getBlockState().getBlock() instanceof DyeCauldronBlock) ?
                     createCauldronDyeTank(registries) :
                     createCauldronLiquidTank(registries);
         }
+        return fluidTank;
     }
 
     @Override
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
-        initializeTank(registries);
-        this.getSoftFluidTank().load(tag, registries);
-        if (this.level != null) {
-            if (this.level.isClientSide) {
-                getSoftFluidTank().refreshTintCache();
-                this.requestModelReload();
-            }
-        }
         this.hasGlowInk = tag.getBoolean("glow_ink");
+        this.getOrCreateTank(registries).load(tag, registries);
+        if (this.level != null && this.level.isClientSide) {
+            getSoftFluidTank().refreshTintCache();
+            this.requestModelReload();
+        }
     }
 
     @Override
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
-        initializeTank(registries);
-        this.getSoftFluidTank().save(tag, registries);
-
         if (this.hasGlowInk) tag.putBoolean("glow_ink", true);
+        this.getSoftFluidTank().save(tag, registries);
     }
 
     @Override

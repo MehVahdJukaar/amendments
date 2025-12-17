@@ -22,7 +22,7 @@ public class SignEditScreenMixin {
     @Inject(method = "renderSignBackground",
             at = @At("HEAD"), cancellable = true)
     public void amendments$renderSignBlockModel(GuiGraphics guiGraphics, BlockState state, CallbackInfo ci) {
-        if (ClientConfigs.PIXEL_CONSISTENT_SIGNS.get()) {
+        if (ClientConfigs.isPixelConsistentSign(state)) {
             Block block = state.getBlock();
             boolean b = block instanceof WallSignBlock;
             if (b || block instanceof StandingSignBlock) {
