@@ -13,7 +13,10 @@ import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
 import net.mehvahdjukaar.moonlight.api.resources.RPUtils;
 import net.mehvahdjukaar.moonlight.api.resources.ResType;
 import net.mehvahdjukaar.moonlight.api.resources.StaticResource;
-import net.mehvahdjukaar.moonlight.api.resources.pack.*;
+import net.mehvahdjukaar.moonlight.api.resources.pack.DynamicClientResourceProvider;
+import net.mehvahdjukaar.moonlight.api.resources.pack.PackGenerationStrategy;
+import net.mehvahdjukaar.moonlight.api.resources.pack.ResourceGenTask;
+import net.mehvahdjukaar.moonlight.api.resources.pack.ResourceSink;
 import net.mehvahdjukaar.moonlight.api.resources.textures.*;
 import net.mehvahdjukaar.moonlight.api.set.wood.WoodType;
 import net.mehvahdjukaar.moonlight.api.set.wood.WoodTypeRegistry;
@@ -31,7 +34,6 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
 
 import java.nio.charset.StandardCharsets;
@@ -122,14 +124,14 @@ public class ClientResourceGenerator extends DynamicClientResourceProvider {
 
     private void generateSignTextures(ResourceManager manager, ResourceSink sink) {
         TextureCollager transformer = TextureCollager.builder(64, 32, 64, 16)
-                .copyFrom(0, 16, 16, 16)
+                .copyFrom(0, 16, 8, 16)
                 .to(56, 0)
                 .build();
 
         try (TextureImage template = TextureImage.open(manager,
-                Amendments.res("block/sign/template"));
+                Amendments.res("block/signs/template"));
              TextureImage mask = TextureImage.open(manager,
-                     Amendments.res("block/sign/mask"))) {
+                     Amendments.res("block/signs/mask"))) {
 
             Respriter respriter = Respriter.masked(template, mask);
 
@@ -137,26 +139,26 @@ public class ClientResourceGenerator extends DynamicClientResourceProvider {
                 Block sing = w.getBlockOfThis("sign");
                 if (sing == null) continue;
 
+                ResourceLocation blockLocation = Amendments.res("block/signs/" + w.getVariantId("sign"));
                 ResourceLocation signTextureLocation = findSignTexture(manager, w, sing, false);
                 if (signTextureLocation == null) continue;
-                try (TextureImage signTexture = TextureImage.open(manager, signTextureLocation);
-                     TextureImage modPlankTexture = TextureImage.open(manager,
-                             RPUtils.findFirstBlockTextureLocation(manager, w.planks));) {
-                    List<Palette> palette = Palette.fromAnimatedImage(modPlankTexture);
-                    for (var p : palette) {
-                        p.remove(p.getLightest());
-                    }
+                sink.addTextureIfNotPresent(manager, blockLocation, () -> {
+                    try (TextureImage signTexture = TextureImage.open(manager, signTextureLocation);
+                         TextureImage modPlankTexture = TextureImage.open(manager,
+                                 RPUtils.findFirstBlockTextureLocation(manager, w.planks));) {
+                        List<Palette> palette = Palette.fromAnimatedImage(modPlankTexture);
+                        for (var p : palette) {
+                            p.remove(p.getLightest());
+                        }
 
-                    try (TextureImage newImage = respriter.recolorWithAnimation(palette,
-                            modPlankTexture.getMcMeta())) {
+                        TextureImage newImage = respriter.recolorWithAnimation(palette, modPlankTexture.getMcMeta());
                         transformer.apply(signTexture, newImage);
-                        ResourceLocation blockLocation = Amendments.res("block/signs/" + w.getVariantId("sign"));
-                        // sink.addTexture(signTextureLocation, newImage);
-                        sink.addTexture(blockLocation, newImage);
+                        return newImage;
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
                     }
-                } catch (Exception e) {
-                    Amendments.LOGGER.warn("Failed to generate hanging sign extension texture for {}, ", w, e);
-                }
+                });
+
             }
         } catch (Exception e) {
             Amendments.LOGGER.warn("Failed to generate sign extension textures, ", e);
@@ -204,9 +206,17 @@ public class ClientResourceGenerator extends DynamicClientResourceProvider {
     }
 
     private void generateFdSignTextures(ResourceManager manager, ResourceSink sink) {
-        TextureCollager transformer = TextureCollager.builder(64, 32, 64, 32)
+
+        TextureCollager transformer = TextureCollager.builder(64, 32, 64, 16)
+                .copyFrom(0, 16, 8, 16)
+                .to(56, 0) //stick
+
+                .copyFrom(0, 0, 32, 16)
+                .to(0, 0)
+
                 .copyFrom(0, 12, 28, 2)
                 .to(0, 9)
+
                 .copyFrom(26, 2, 2, 14)
                 .to(18, 2)
                 .copyFrom(24, 7, 2, 10)
@@ -222,23 +232,25 @@ public class ClientResourceGenerator extends DynamicClientResourceProvider {
                 .to(34, 2)
                 .build();
 
+
         List<String> names = new ArrayList<>();
         Arrays.stream(DyeColor.values()).forEach(d -> names.add(d.getName()));
         names.add("");
         for (String d : names) {
             ResourceLocation texturePath = ResourceLocation.fromNamespaceAndPath("farmersdelight",
                     joinNonEmpty("entity/signs/canvas", d));
+            ResourceLocation blockTexturePath = Amendments.res("block/signs/farmersdelight/" + joinNonEmpty(d, "canvas_sign"));
 
-            try (TextureImage vanillaTexture = TextureImage.open(manager, texturePath);
-                 TextureImage newImage = vanillaTexture.makeCopy()) {
+            sink.addTextureIfNotPresent(manager, blockTexturePath, () -> {
+                try (TextureImage vanillaTexture = TextureImage.open(manager, texturePath)){
 
-                transformer.apply(vanillaTexture, newImage);
-                ResourceLocation blockTexturePath = Amendments.res("block/signs/farmersdelight/" + joinNonEmpty(d, "canvas_sign"));
-                //sink.addTexture(texturePath, newImage);
-                sink.addTexture(blockTexturePath, newImage);
-            } catch (Exception e) {
-                Amendments.LOGGER.warn("Failed to generate Farmers Delight sign extension texture for {}, ", d, e);
-            }
+                    TextureImage newImg = TextureImage.createNew(64, 16);
+                    transformer.apply(vanillaTexture, newImg);
+                    return newImg;
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            });
         }
     }
 

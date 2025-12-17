@@ -44,11 +44,11 @@ public class CauldronRecipeUtils {
 
         //can only craft crafting table stuff when its boiling
         if (boiling || !fluidStack.is(MLBuiltinSoftFluids.WATER)) {
-            crafted = craftItemSingle(level, true, tankCapacity, fluidStack, items);
+            crafted = craftItemSingle(level, boiling, tankCapacity, fluidStack, items);
             if (crafted != null) return crafted;
 
             if (items.size() == 1) {
-                crafted = craftItemSurround(level, true, tankCapacity, fluidStack, items.getFirst());
+                crafted = craftItemSurround(level, boiling, tankCapacity, fluidStack, items.getFirst());
                 return crafted;
             }
         }

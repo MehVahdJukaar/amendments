@@ -3,3 +3,5 @@
 - fixed cake stacking breaking with candles
 - optimized sign textures
 - added bamboo sign texture
+- fixed cauldrons sometimes crafting 2 items in a row
+- fixed recipe not accounting for boiling cauldrons
