@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import net.mehvahdjukaar.amendments.configs.ClientConfigs;
+import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.BlockGetter;
@@ -17,12 +18,11 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
 
 import java.util.EnumMap;
 
 @Mixin(WallSignBlock.class)
-public abstract class WallSignMixin extends Block {
+public abstract class WallSignBlockMixin extends Block {
 
     @Unique
     private static final EnumMap<Direction, VoxelShape> AMENDMENTS_VISUAL_SHAPE = Maps.newEnumMap(ImmutableMap.of(
@@ -31,7 +31,7 @@ public abstract class WallSignMixin extends Block {
             Direction.EAST, Block.box(0.0, 4, 0.0, 2.0, 13, 16.0),
             Direction.WEST, Block.box(14.0, 4, 0.0, 16.0, 13, 16.0)));
 
-    public WallSignMixin(Properties properties) {
+    public WallSignBlockMixin(Properties properties) {
         super(properties);
     }
 
@@ -47,6 +47,9 @@ public abstract class WallSignMixin extends Block {
 
     @Override
     public RenderShape getRenderShape(BlockState state) {
-        return RenderShape.MODEL;
+        if (PlatHelper.getPhysicalSide().isClient()) {
+            if (ClientConfigs.isPixelConsistentSign(state)) return RenderShape.MODEL;
+        }
+        return super.getRenderShape(state);
     }
 }

@@ -25,6 +25,7 @@ import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -48,12 +49,17 @@ public class CauldronCraftingContainer implements CraftingContainer {
         //fill all containers that it can fill.
         this.equivalentFluidContainers = fluidStack.toAllPossibleFilledItems();
         if (fluidStack.is(BuiltInSoftFluids.WATER)) {
+            //to add bowls
             equivalentFluidContainers.put(DUMMY_WATER_BOWL_CATEGORY, Items.BOWL.getDefaultInstance());
         }
         this.fluidPosition = fluidPosition;
         Preconditions.checkArgument(fluidPosition <= items.size());
         this.fluidContainerSize = fluidContainerSize;
         this.isBoiling = isBoiling;
+    }
+
+    private Collection<ItemStack> splitItems(Collection<ItemStack> items) {
+        return null;
     }
 
     private static final FluidContainerList.Category DUMMY_WATER_BOWL_CATEGORY = Util.make(() -> {
@@ -80,10 +86,6 @@ public class CauldronCraftingContainer implements CraftingContainer {
                 item,/*4*/ item,
                 item, item, item
         ), 4, boiling);
-    }
-
-    public static CauldronCraftingContainer of(boolean boiling, int fluidContainerSize, SoftFluidStack fluid, ItemStack... items) {
-        return new CauldronCraftingContainer(fluidContainerSize, fluid, List.of(items), items.length, boiling);
     }
 
     public static CauldronCraftingContainer of(boolean boiling, int fluidContainerSize, SoftFluidStack fluid, Collection<ItemStack> items) {

@@ -8,6 +8,7 @@ import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.DyeableLeatherItem;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.ArmorDyeRecipe;
@@ -24,31 +25,24 @@ public class DyeBottleRecipe extends CustomRecipe {
 
     @Override
     public boolean matches(CraftingContainer craftingContainer, Level level) {
-        boolean hasDyableItem = false;
-
         ItemStack dyeBottle = ItemStack.EMPTY;
+        ItemStack otherItem = ItemStack.EMPTY;
         for (ItemStack itemstack : craftingContainer.getItems()) {
             if (!itemstack.isEmpty()) {
                 Item item = itemstack.getItem();
                 if (item == ModRegistry.DYE_BOTTLE_ITEM.get()) {
                     if (!dyeBottle.isEmpty()) return false;
                     dyeBottle = itemstack;
+                } else {
+                    if (!otherItem.isEmpty()) return false;
+                    otherItem = itemstack;
                 }
             }
         }
-        if (dyeBottle.isEmpty()) return false;
-        for (var itemstack : craftingContainer.getItems()) {
-            if (!itemstack.isEmpty()) {
-                Item item = itemstack.getItem();
-                if (item instanceof DyeableLeatherItem ||
-                            (BlocksColorAPI.changeColor(item,
-                                    DyeBottleItem.getClosestDye(dyeBottle)) != null)) {
-                        if (hasDyableItem) return false;
-                        else hasDyableItem = true;
-                    }
-                }
-            }
-        return hasDyableItem;
+
+        return otherItem.is(ItemTags.DYEABLE) ||
+                (BlocksColorAPI.changeColor(otherItem.getItem(),
+                        DyeBottleItem.getClosestDye(dyeBottle)) != null);
     }
 
     @Override
@@ -76,8 +70,12 @@ public class DyeBottleRecipe extends CustomRecipe {
                 l.setColor(result, DyeBottleItem.getColor(dyeBottle));
             }
         } else {
-            result = BlocksColorAPI.changeColor(leather.getItem(),
-                    DyeBottleItem.getClosestDye(dyeBottle)).getDefaultInstance();
+            DyeColor dye = DyeBottleItem.getClosestDye(dyeBottle);
+            Item changed = BlocksColorAPI.changeColor(leather.getItem(), dye);
+            if (changed == null) {
+                return ItemStack.EMPTY;
+            }
+            result = changed.getDefaultInstance();
             result.setTag(leather.getTag());
         }
         return result;
