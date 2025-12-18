@@ -106,7 +106,7 @@ dependencies {
     modCompileOnly("curse.maven:supplementaries-squared-838411:5130385")
     modCompileOnly("curse.maven:lucent-493280:4951434")
    // modCompileOnly("curse.maven:embeddium-908741:5321172")
-    modCompileOnly("curse.maven:farmers-delight-398521:5051242")
+    modImplementation("curse.maven:farmers-delight-398521:5051242")
     modImplementation("curse.maven:etched-491890:5998004")
     modCompileOnly("curse.maven:quark-243121:5594847")
     modCompileOnly("curse.maven:zeta-968868:5597406")

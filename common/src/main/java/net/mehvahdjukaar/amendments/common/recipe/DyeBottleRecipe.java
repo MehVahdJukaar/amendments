@@ -7,6 +7,7 @@ import net.mehvahdjukaar.moonlight.api.set.BlocksColorAPI;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.tags.ItemTags;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.DyedItemColor;
@@ -25,30 +26,24 @@ public class DyeBottleRecipe extends CustomRecipe {
 
     @Override
     public boolean matches(CraftingInput input, Level level) {
-        boolean hasDyableItem = false;
         ItemStack dyeBottle = ItemStack.EMPTY;
+        ItemStack otherItem = ItemStack.EMPTY;
         for (ItemStack itemstack : input.items()) {
             if (!itemstack.isEmpty()) {
                 Item item = itemstack.getItem();
                 if (item == ModRegistry.DYE_BOTTLE_ITEM.get()) {
                     if (!dyeBottle.isEmpty()) return false;
                     dyeBottle = itemstack;
+                } else {
+                    if (!otherItem.isEmpty()) return false;
+                    otherItem = itemstack;
                 }
             }
         }
-        if (dyeBottle.isEmpty()) return false;
-        for (var itemstack : input.items()) {
-            if (!itemstack.isEmpty()) {
-                Item item = itemstack.getItem();
-                if (itemstack.is(ItemTags.DYEABLE) ||
-                        (BlocksColorAPI.changeColor(item,
-                                DyeBottleItem.getClosestDye(dyeBottle)) != null)) {
-                    if (hasDyableItem) return false;
-                    else hasDyableItem = true;
-                }
-            }
-        }
-        return hasDyableItem;
+
+        return otherItem.is(ItemTags.DYEABLE) ||
+                (BlocksColorAPI.changeColor(otherItem.getItem(),
+                        DyeBottleItem.getClosestDye(dyeBottle)) != null);
     }
 
     @Override
@@ -79,8 +74,12 @@ public class DyeBottleRecipe extends CustomRecipe {
                 result.set(DataComponents.DYED_COLOR, new DyedItemColor(dyeBottle.get(DataComponents.DYED_COLOR).rgb(), true));
             }
         } else {
-            result = BlocksColorAPI.changeColor(leather.getItem(),
-                    DyeBottleItem.getClosestDye(dyeBottle)).getDefaultInstance();
+            DyeColor dye = DyeBottleItem.getClosestDye(dyeBottle);
+            Item changed = BlocksColorAPI.changeColor(leather.getItem(), dye);
+            if (changed == null) {
+                return ItemStack.EMPTY;
+            }
+            result = changed.getDefaultInstance();
             result.applyComponents(leather.getComponents());
         }
         return result;

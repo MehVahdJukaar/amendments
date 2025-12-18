@@ -6,6 +6,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -47,6 +48,9 @@ public class CauldronRecipeUtils {
             crafted = craftItemSingle(level, boiling, tankCapacity, fluidStack, items);
             if (crafted != null) return crafted;
 
+            crafted = craftItemSplit(level, boiling, tankCapacity, fluidStack, items);
+            if (crafted != null) return crafted;
+
             if (items.size() == 1) {
                 crafted = craftItemSurround(level, boiling, tankCapacity, fluidStack, items.getFirst());
                 return crafted;
@@ -56,6 +60,16 @@ public class CauldronRecipeUtils {
         return null;
     }
 
+    private static List<ItemStack> expandItems(List<ItemStack> items) {
+        List<ItemStack> itemList = new ArrayList<>();
+        for (ItemStack stack : items) {
+            int count = stack.getCount();
+            for (int i = 0; i < count; i++) {
+                itemList.add(stack.copyWithCount(1));
+            }
+        }
+        return itemList;
+    }
 
     @Nullable
     private static FluidAndItemCraftResult craftItemSingle(Level level, boolean boiling, int tankCapacity, SoftFluidStack fluid, Collection<ItemStack> item) {
@@ -65,6 +79,29 @@ public class CauldronRecipeUtils {
             for (var i : item) {
                 if (!i.isEmpty()) {
                     i.shrink(1);
+                }
+            }
+            return result;
+        } else {
+            return null;
+        }
+    }
+
+    @Nullable
+    private static FluidAndItemCraftResult craftItemSplit(Level level, boolean boiling, int tankCapacity, SoftFluidStack fluid, Collection<ItemStack> item) {
+        List<ItemStack> expandedItems = expandItems(new ArrayList<>(item));
+        CauldronCraftingContainer container = CauldronCraftingContainer.of(boiling, tankCapacity, fluid, expandedItems);
+        FluidAndItemCraftResult result = container.craftWithCraftingRecipes(level);
+        if (result != null) {
+            for (var i : expandedItems) {
+                if (!i.isEmpty()) {
+                   //find same in original items and shrink there
+                    for (var orig : item) {
+                        if (ItemStack.isSameItemSameComponents(i, orig)) {
+                            orig.shrink(1);
+                            break;
+                        }
+                    }
                 }
             }
             return result;

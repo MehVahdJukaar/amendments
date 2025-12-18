@@ -39,7 +39,7 @@
     "SnowballMixin",
     "VineMixin",
     "WallHangingSignBlockMixin",
-    "WallSignMixin",
+    "WallSignBlockMixin",
     "WaterLilyMixin"
   ],
   "client": [

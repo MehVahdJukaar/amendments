@@ -1,7 +1,1 @@
-- added a sign blacklist for pixel consistent signs
-- fixed 2 ghasts fireballs mixins not being applied causing amendments particles to be missing
-- fixed cake stacking breaking with candles
-- optimized sign textures
-- added bamboo sign texture
-- fixed cauldrons sometimes crafting 2 items in a row
-- fixed recipe not accounting for boiling cauldrons
+fixed an issue with crafting with dye cauldron and cauldron crafting

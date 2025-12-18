@@ -8,6 +8,8 @@ import net.mehvahdjukaar.amendments.configs.ClientConfigs;
 import net.mehvahdjukaar.moonlight.api.util.math.ColorUtils;
 import net.minecraft.client.model.Model;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.client.renderer.blockentity.SignRenderer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.DyeColor;
@@ -30,12 +32,16 @@ import vectorwing.farmersdelight.client.renderer.CanvasSignRenderer;
 //fixes plain text shade
 @Pseudo
 @Mixin(CanvasSignRenderer.class)
-public abstract class CompatFarmersDelightSignRendererMixin {
+public abstract class CompatFarmersDelightSignRendererMixin extends SignRenderer {
 
     @Unique
     private static Float amendments$canvasSignYaw;
     @Unique
     private static Boolean amendments$canvasFront;
+
+    public CompatFarmersDelightSignRendererMixin(BlockEntityRendererProvider.Context context) {
+        super(context);
+    }
 
     /**
      * @author MehVahDjukaar
@@ -75,6 +81,14 @@ public abstract class CompatFarmersDelightSignRendererMixin {
         amendments$canvasSignYaw = null;
     }
 
+    @Override
+    public float getSignModelRenderScale() {
+        if (ClientConfigs.PIXEL_CONSISTENT_SIGNS.get()) {
+            return 1;
+        }
+        return super.getSignModelRenderScale();
+    }
+
     @ModifyReturnValue(method = "getTextOffset", at = @At("RETURN"))
     private Vec3 amendments$signTextOffset(Vec3 scale) {
         if (ClientConfigs.PIXEL_CONSISTENT_SIGNS.get()) {
@@ -95,6 +109,8 @@ public abstract class CompatFarmersDelightSignRendererMixin {
     private void amendments$signTranslate(PoseStack poseStack, float yRot, BlockState state, CallbackInfo ci) {
         if (ClientConfigs.PIXEL_CONSISTENT_SIGNS.get() && !(state.getBlock() instanceof StandingSignBlock)) {
             SignRendererExtension.translateWall(poseStack);
+
         }
     }
+
 }

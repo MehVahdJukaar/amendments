@@ -141,7 +141,6 @@ public class Amendments {
     }
 
 
-    @EventCalled
     private static void registerDispenserBehaviors(DispenserHelper.Event event) {
         for (SoftFluid f : SoftFluidRegistry.get(event.getRegistryAccess())) {
             registerFluidBehavior(f, event);
