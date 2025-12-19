@@ -167,7 +167,7 @@ public class HangingSignRendererExtension {
         var font = mc.font;
         boolean filtered = mc.isTextFilteringEnabled();
 
-        LOD lod = LOD.at( tile);
+        LOD lod = new LOD(camera, tile.getBlockPos());
 
 
         poseStack.pushPose();

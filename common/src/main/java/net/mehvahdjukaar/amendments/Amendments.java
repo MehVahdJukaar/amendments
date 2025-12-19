@@ -22,6 +22,7 @@ import net.minecraft.core.*;
 import net.minecraft.core.dispenser.AbstractProjectileDispenseBehavior;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.ai.village.poi.PoiTypes;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -67,7 +68,6 @@ public class Amendments {
         RegHelper.addDynamicDispenserBehaviorRegistration(Amendments::registerDispenserBehavior);
         RegHelper.registerSimpleRecipeCondition(res("flag"), CommonConfigs::isFlagOn);
         RegHelper.addItemsToTabsRegistration(Amendments::addItemsToTabs);
-        RegHelper.addExtraPOIStatesRegistration(Amendments::addExtraPoiStates);
 
 
         //TODO: fix sign y offset on FD one and wall signs have weird scale
@@ -116,16 +116,13 @@ public class Amendments {
         }
     }
 
-    private static void addExtraPoiStates(RegHelper.ExtraPOIStatesEvent event) {
-        event.addBlocks(PoiTypes.LEATHERWORKER, List.of(ModRegistry.LIQUID_CAULDRON.get(), ModRegistry.DYE_CAULDRON.get()));
-    }
-
-
     private static void setup() {
         if (CommonConfigs.INVERSE_POTIONS.get() == null) {
             throw new IllegalStateException("Inverse potions config is null. How??");
         }
         if (CompatHandler.SUPPLEMENTARIES) SuppCompat.setup();
+
+        RegHelper.addBlocksToPOI(PoiTypes.LEATHERWORKER, List.of(ModRegistry.LIQUID_CAULDRON.get(), ModRegistry.DYE_CAULDRON.get()));
 
         // gg vanilla. They arent even marked as fire immune
         EntityType.SMALL_FIREBALL.fireImmune = true;

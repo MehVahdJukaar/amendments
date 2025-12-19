@@ -250,7 +250,7 @@ public class ClientConfigs {
             if (b1 != null) KNOWN_WOOD_SIGNS.add(b1);
         }
         for (String s : SIGN_BLACKLIST.get()) {
-            var b = BuiltInRegistries.BLOCK.getOptional(ResourceLocation.parse(s));
+            var b = BuiltInRegistries.BLOCK.getOptional(new ResourceLocation(s));
             b.ifPresent(KNOWN_WOOD_SIGNS::remove);
         }
     }

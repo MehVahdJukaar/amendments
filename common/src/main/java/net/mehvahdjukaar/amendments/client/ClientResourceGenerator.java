@@ -17,10 +17,6 @@ import net.mehvahdjukaar.moonlight.api.resources.pack.DynClientResourcesGenerato
 import net.mehvahdjukaar.moonlight.api.resources.pack.DynamicTexturePack;
 import net.mehvahdjukaar.moonlight.api.resources.pack.ResourceGenTask;
 import net.mehvahdjukaar.moonlight.api.resources.pack.ResourceSink;
-import net.mehvahdjukaar.moonlight.api.resources.pack.DynamicClientResourceProvider;
-import net.mehvahdjukaar.moonlight.api.resources.pack.PackGenerationStrategy;
-import net.mehvahdjukaar.moonlight.api.resources.pack.ResourceGenTask;
-import net.mehvahdjukaar.moonlight.api.resources.pack.ResourceSink;
 import net.mehvahdjukaar.moonlight.api.resources.textures.*;
 import net.mehvahdjukaar.moonlight.api.set.wood.WoodType;
 import net.mehvahdjukaar.moonlight.api.set.wood.WoodTypeRegistry;
@@ -38,6 +34,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
 
 import java.nio.charset.StandardCharsets;
@@ -145,7 +142,7 @@ public class ClientResourceGenerator extends DynClientResourcesGenerator {
                 ResourceLocation blockLocation = Amendments.res("block/signs/" + w.getVariantId("sign"));
                 ResourceLocation signTextureLocation = findSignTexture(manager, w, sing, false);
                 if (signTextureLocation == null) continue;
-                sink.addTextureIfNotPresent(manager, blockLocation, () -> {
+                sink.addTextureIfNotPresent(manager, blockLocation.toString(), () -> {
                     try (TextureImage signTexture = TextureImage.open(manager, signTextureLocation);
                          TextureImage modPlankTexture = TextureImage.open(manager,
                                  RPUtils.findFirstBlockTextureLocation(manager, w.planks));) {
@@ -239,11 +236,11 @@ public class ClientResourceGenerator extends DynClientResourcesGenerator {
         Arrays.stream(DyeColor.values()).forEach(d -> names.add(d.getName()));
         names.add("");
         for (String d : names) {
-            ResourceLocation texturePath = ResourceLocation.fromNamespaceAndPath("farmersdelight",
+            ResourceLocation texturePath = new ResourceLocation("farmersdelight",
                     joinNonEmpty("entity/signs/canvas", d));
             ResourceLocation blockTexturePath = Amendments.res("block/signs/farmersdelight/" + joinNonEmpty(d, "canvas_sign"));
 
-            sink.addTextureIfNotPresent(manager, blockTexturePath, () -> {
+            sink.addTextureIfNotPresent(manager, blockTexturePath.toString(), () -> {
                 try (TextureImage vanillaTexture = TextureImage.open(manager, texturePath)){
 
                     TextureImage newImg = TextureImage.createNew(64, 16);

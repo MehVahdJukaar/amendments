@@ -206,7 +206,7 @@ public class CauldronCraftingContainer implements CraftingContainer {
                             return FluidAndItemCraftResult.of(craftedItem, fluid.copyWithCount(newFluidCount));
                         }
                         ///aaa lingering pots dont give back a bottle
-                        var equivalentFluid = SoftFluidStack.fromItem(craftedItem, level.registryAccess());
+                        var equivalentFluid = SoftFluidStack.fromItem(craftedItem);
                         if (equivalentFluid != null) {
                             FluidContainerList.Category catt = equivalentFluid.getSecond();
                             if (catt.getEmptyContainer() == emptyContainer) {

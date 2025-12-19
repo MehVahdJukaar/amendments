@@ -14,14 +14,11 @@ import net.minecraft.tags.ItemTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.*;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.CandleBlock;
 import net.minecraft.world.level.block.SoundType;
@@ -63,20 +60,6 @@ public class DoubleCakeBlock extends DirectionalCakeBlock {
     public DoubleCakeBlock(CakeRegistry.CakeType type) {
         super(type);
         this.mimic = type.cake.defaultBlockState();
-    }
-
-    @Override
-    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
-        Item item = stack.getItem();
-
-        if (stack.is(ItemTags.CANDLES) && Block.byItem(item) instanceof CandleBlock) {
-            if (hitResult.getDirection() == Direction.UP) {
-                //try place candle on cake
-                return ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION;
-            }
-            return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION; //blocks candle interaction
-        }
-        return super.useItemOn(stack, state, level, pos, player, hand, hitResult);
     }
 
     @Override
@@ -144,9 +127,14 @@ public class DoubleCakeBlock extends DirectionalCakeBlock {
 
 
     @Override
-    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand handIn, BlockHitResult hit) {
+    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player,
+                                 InteractionHand handIn, BlockHitResult hit) {
+        ItemStack stack = player.getItemInHand(handIn);
+        if (stack.is(ItemTags.CANDLES) && Block.byItem(stack.getItem()) instanceof CandleBlock) {
+            return InteractionResult.PASS; //blocks candle interaction
+        }
         //hack
-        if (!player.getItemInHand(handIn).is(ItemTags.CANDLES)) {
+        if (!stack.is(ItemTags.CANDLES)) {
             BlockState newState = type.cake.withPropertiesOf(state);
             level.setBlock(pos, newState, Block.UPDATE_INVISIBLE);
             var res = newState.use(level, player, handIn, hit);

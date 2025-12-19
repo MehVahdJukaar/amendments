@@ -6,6 +6,7 @@ import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.moonlight.api.set.BlocksColorAPI;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.DyeableLeatherItem;
 import net.minecraft.world.item.DyeColor;
@@ -40,7 +41,7 @@ public class DyeBottleRecipe extends CustomRecipe {
             }
         }
 
-        return otherItem.is(ItemTags.DYEABLE) ||
+        return (otherItem.getItem() instanceof DyeableLeatherItem) ||
                 (BlocksColorAPI.changeColor(otherItem.getItem(),
                         DyeBottleItem.getClosestDye(dyeBottle)) != null);
     }

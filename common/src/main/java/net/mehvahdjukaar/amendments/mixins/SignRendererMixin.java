@@ -7,6 +7,11 @@ import net.mehvahdjukaar.amendments.client.renderers.SignRendererExtension;
 import net.mehvahdjukaar.amendments.configs.ClientConfigs;
 import net.mehvahdjukaar.moonlight.api.util.math.ColorUtils;
 import net.minecraft.client.model.Model;
+import net.minecraft.client.model.geom.PartPose;
+import net.minecraft.client.model.geom.builders.CubeListBuilder;
+import net.minecraft.client.model.geom.builders.LayerDefinition;
+import net.minecraft.client.model.geom.builders.MeshDefinition;
+import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.SignRenderer;
 import net.minecraft.core.BlockPos;
@@ -26,6 +31,7 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 //fixes plain text shade
 @Mixin(SignRenderer.class)
@@ -125,18 +131,6 @@ public abstract class SignRendererMixin {
     private float amendments$signScale(float scale) {
         if (amendments$rendersPixelConsistent && scale == 0.6666667F) {
             return 1;
-        }
-        return scale;
-    }
-
-
-    @Unique
-    private static final Vec3 OLD_OFFSET = new Vec3(0.0, 0.3333333432674408, 0.046666666865348816);
-
-    @ModifyReturnValue(method = "getTextOffset", at = @At("RETURN"))
-    private Vec3 amendments$signTextOffset(Vec3 scale) {
-        if (ClientConfigs.PIXEL_CONSISTENT_SIGNS.get() && scale.equals(OLD_OFFSET)) {
-            return SignRendererExtension.TEXT_OFFSET;
         }
         return scale;
     }

@@ -53,10 +53,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.PushReaction;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Supplier;
 
 import static net.mehvahdjukaar.amendments.Amendments.res;
@@ -67,9 +64,10 @@ public class ModRegistry {
 
     public static void init() {
         BlockSetAPI.registerBlockSetDefinition(CakeRegistry.INSTANCE);
-        BlockSetAPI.addDynamicRegistration(Amendments.MOD_ID, ModRegistry::registerDoubleCakes, BuiltInRegistries.BLOCK);
+        BlockSetAPI.addDynamicBlockRegistration(ModRegistry::registerDoubleCakes, CakeRegistry.CakeType.class);
         AdditionalItemPlacementsAPI.addRegistration(ModRegistry::registerAdditionalPlacements);
     }
+
 
     public static void registerAdditionalPlacements(AdditionalItemPlacementsAPI.Event event) {
         // this is specifically for things that place a new block in air. Stuff that modifiers blocks is in events.
@@ -298,8 +296,8 @@ public class ModRegistry {
 
     public static final Map<CakeRegistry.CakeType, DoubleCakeBlock> DOUBLE_CAKES = new LinkedHashMap<>();
 
-    private static void registerDoubleCakes(Registrator<Block> event) {
-        for (CakeRegistry.CakeType type : CakeRegistry.INSTANCE) {
+    private static void registerDoubleCakes(Registrator<Block> event, Collection<CakeRegistry.CakeType> cakes) {
+        for (CakeRegistry.CakeType type : cakes) {
 
             ResourceLocation id = res(type.getVariantId("double"));
             DoubleCakeBlock block = new DoubleCakeBlock(type);

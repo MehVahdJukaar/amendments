@@ -52,7 +52,7 @@ public class CauldronRecipeUtils {
             if (crafted != null) return crafted;
 
             if (items.size() == 1) {
-                crafted = craftItemSurround(level, boiling, tankCapacity, fluidStack, items.getFirst());
+                crafted = craftItemSurround(level, boiling, tankCapacity, fluidStack, items.get(0));
                 return crafted;
             }
         }
@@ -97,7 +97,7 @@ public class CauldronRecipeUtils {
                 if (!i.isEmpty()) {
                    //find same in original items and shrink there
                     for (var orig : item) {
-                        if (ItemStack.isSameItemSameComponents(i, orig)) {
+                        if (ItemStack.isSameItemSameTags(i, orig)) {
                             orig.shrink(1);
                             break;
                         }

@@ -72,12 +72,6 @@ public class LiquidCauldronBlockTile extends BlockEntity implements IExtraModelD
     }
 
     @Override
-    public void setLevel(Level level) {
-        super.setLevel(level);
-        getOrCreateTank(level.registryAccess());
-    }
-
-    @Override
     public SoftFluidTank getSoftFluidTank() {
         return fluidTank;
     }
