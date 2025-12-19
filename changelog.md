@@ -1,1 +1,1 @@
-fixed an issue with crafting with dye cauldron and cauldron crafting
+fixed dye bottle recipe getting too excited

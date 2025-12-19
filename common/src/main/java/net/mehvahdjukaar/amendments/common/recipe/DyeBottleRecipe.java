@@ -40,7 +40,7 @@ public class DyeBottleRecipe extends CustomRecipe {
                 }
             }
         }
-
+        if (dyeBottle.isEmpty() || otherItem.isEmpty()) return false;
         return otherItem.is(ItemTags.DYEABLE) ||
                 (BlocksColorAPI.changeColor(otherItem.getItem(),
                         DyeBottleItem.getClosestDye(dyeBottle)) != null);
