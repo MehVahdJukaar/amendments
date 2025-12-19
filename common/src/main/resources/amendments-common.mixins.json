@@ -21,7 +21,6 @@
     "FenceBlockMixin",
     "FireballMixin",
     "FireballMixin",
-    "FireChargeMixin",
     "FlowerPotBlockMixin",
     "HangingSignBlockEntityMixin",
     "JukeboxBlockEntityMixin",

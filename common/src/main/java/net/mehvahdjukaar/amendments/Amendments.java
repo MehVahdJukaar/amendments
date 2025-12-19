@@ -122,8 +122,6 @@ public class Amendments {
         }
         if (CompatHandler.SUPPLEMENTARIES) SuppCompat.setup();
 
-        RegHelper.addBlocksToPOI(PoiTypes.LEATHERWORKER, List.of(ModRegistry.LIQUID_CAULDRON.get(), ModRegistry.DYE_CAULDRON.get()));
-
         // gg vanilla. They arent even marked as fire immune
         EntityType.SMALL_FIREBALL.fireImmune = true;
         EntityType.FIREBALL.fireImmune = true;
