@@ -7,6 +7,7 @@ import com.teamabnormals.blueprint.common.world.modification.structure.Structure
 import com.teamabnormals.blueprint.common.world.modification.structure.StructureRepaletter;
 import com.teamabnormals.blueprint.common.world.modification.structure.StructureRepaletterManager;
 import net.mehvahdjukaar.amendments.Amendments;
+import net.mehvahdjukaar.amendments.common.block.StructureCauldronHack;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.ServerLevelAccessor;
@@ -17,6 +18,7 @@ import org.jetbrains.annotations.Nullable;
 public class BlueprintIntegration {
 
     public static void init() {
+        StructureCauldronHack.register();
         StructureRepaletterManager.registerRepalleter(Amendments.res("blockstate_replace"),
                 BlockStateRepaletter.CODEC);
     }

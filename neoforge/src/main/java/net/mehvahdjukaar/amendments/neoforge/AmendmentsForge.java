@@ -46,7 +46,6 @@ public class AmendmentsForge {
         }
 
         if (CompatHandler.BLUEPRINT) {
-            StructureCauldronHack.register();
             BlueprintIntegration.init();
         }
     }
