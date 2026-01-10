@@ -38,6 +38,8 @@ public class ClientConfigs {
     public static final Supplier<Boolean> POTION_TEXTURE;
     public static final Supplier<Boolean> JUKEBOX_MODEL;
     public static final Supplier<Boolean> JUKEBOX_SPIN;
+    public static final Supplier<Boolean> TEXTURE_PACK_SUPPORT;
+    public static final Supplier<GenMode> DYNAMIC_ASSETS_GEN_MODE;
 
     public static final Supplier<Boolean> FAST_LANTERNS;
     public static final Supplier<Boolean> LANTERN_HOLDING;
@@ -85,6 +87,10 @@ public class ClientConfigs {
         builder.push("general");
         TOOLTIP_HINTS = builder.define("tooltip_hints", true);
         CUSTOM_CONFIGURED_SCREEN = builder.define("custom_configured_screen", true);
+        TEXTURE_PACK_SUPPORT = builder.comment("Makes dynamically generated assets depend on texture packs too and not just vanilla files")
+                .define("texture_pack_support", false);
+        DYNAMIC_ASSETS_GEN_MODE = builder.define("dynamic_assets_generation_mode", GenMode.CACHED);
+
         builder.pop();
 
         builder.push("sign");
@@ -252,4 +258,7 @@ public class ClientConfigs {
             b.ifPresent(KNOWN_WOOD_SIGNS::remove);
         }
     }
+
+
 }
+

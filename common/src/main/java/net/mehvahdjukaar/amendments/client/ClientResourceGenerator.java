@@ -47,7 +47,12 @@ import java.util.stream.Stream;
 public class ClientResourceGenerator extends DynamicClientResourceProvider {
 
     public ClientResourceGenerator() {
-        super(Amendments.res("generated_pack"), PackGenerationStrategy.CACHED);
+        super(Amendments.res("generated_pack"), ClientConfigs.DYNAMIC_ASSETS_GEN_MODE.get().toStrategy());
+    }
+
+    @Override
+    public boolean canUseExternalResourcePacks() {
+        return PlatHelper.isDev() || ClientConfigs.TEXTURE_PACK_SUPPORT.get();
     }
 
     @Override

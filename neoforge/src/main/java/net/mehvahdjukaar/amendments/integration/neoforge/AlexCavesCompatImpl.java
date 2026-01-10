@@ -1,16 +1,14 @@
 package net.mehvahdjukaar.amendments.integration.neoforge;
 
-import com.github.alexmodguy.alexscaves.client.particle.ACParticleRegistry;
-import com.github.alexmodguy.alexscaves.server.block.ACBlockRegistry;
-import com.github.alexmodguy.alexscaves.server.block.fluid.ACFluidRegistry;
-import com.github.alexmodguy.alexscaves.server.misc.ACSoundRegistry;
 import net.mehvahdjukaar.amendments.common.block.CommonCauldronCode;
 import net.mehvahdjukaar.amendments.common.block.LiquidCauldronBlock;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluid;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidRegistry;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidStack;
-import net.mehvahdjukaar.moonlight.api.misc.HolderReference;
-import net.minecraft.client.renderer.blockentity.SignRenderer;
+import net.mehvahdjukaar.moonlight.api.misc.HolderRef;
+import net.mehvahdjukaar.moonlight.api.misc.OptHolderRef;
+import net.mehvahdjukaar.moonlight.api.misc.OptRegSupplier;
+import net.mehvahdjukaar.moonlight.api.misc.RegSupplier;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleType;
@@ -30,19 +28,19 @@ import java.lang.reflect.Method;
 
 public class AlexCavesCompatImpl {
 
-    public static HolderReference<SoftFluid> ACID_SF = HolderReference.of(
+    public static HolderRef<SoftFluid> ACID_SF = HolderRef.of(
             ResourceLocation.fromNamespaceAndPath("alexscaves", "acid"), SoftFluidRegistry.KEY);
 
-    public static HolderReference<FluidType> ACID_FLUID_TYPE = HolderReference.of(
+    public static HolderRef<FluidType> ACID_FLUID_TYPE = HolderRef.of(
             ResourceLocation.fromNamespaceAndPath("alexscaves", "acid"), NeoForgeRegistries.Keys.FLUID_TYPES);
 
-    public static HolderReference<Block> ACID_BLOCK = HolderReference.of(
+    public static RegSupplier<Block> ACID_BLOCK = OptRegSupplier.of(
             ResourceLocation.fromNamespaceAndPath("alexscaves", "acid"), Registries.BLOCK);
 
-    public static HolderReference<ParticleType<?>> ACID_BUBBLE = HolderReference.of(
+    public static RegSupplier<ParticleType<?>> ACID_BUBBLE = OptRegSupplier.of(
             ResourceLocation.fromNamespaceAndPath("alexscaves", "acid_bubble"), Registries.PARTICLE_TYPE);
 
-    public static HolderReference<SoundEvent> ACID_IDLE = HolderReference.of(
+    public static RegSupplier<SoundEvent> ACID_IDLE = OptRegSupplier.of(
             ResourceLocation.fromNamespaceAndPath("alexscaves", "acid_idle"), Registries.SOUND_EVENT);
 
 
@@ -71,7 +69,7 @@ public class AlexCavesCompatImpl {
                 double stateH = state.getValue(LiquidCauldronBlock.LEVEL) * 0.25;
                 SET_H.invoke(entity, acidFluid, stateH);
 
-                Block acid = ACID_BLOCK.get(level);
+                Block acid = ACID_BLOCK.get();
                 acid.defaultBlockState().entityInside(level, pos, entity);
 
                 SET_H.invoke(entity, acidFluid, oldH);
@@ -83,10 +81,10 @@ public class AlexCavesCompatImpl {
     public static void acidParticles(SoftFluidStack fluid, Level level, BlockPos pos, RandomSource rand, double height) {
         if (fluid.is(ACID_SF)) {
             if (rand.nextInt(400) == 0) {
-                level.playLocalSound(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, ACID_IDLE.get(level),
+                level.playLocalSound(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, ACID_IDLE.get(),
                         SoundSource.BLOCKS, 0.5F, rand.nextFloat() * 0.4F + 0.8F, false);
             }
-            CommonCauldronCode.addSurfaceParticles((ParticleOptions) ACID_BUBBLE.get(level),
+            CommonCauldronCode.addSurfaceParticles((ParticleOptions) ACID_BUBBLE.get(),
                     level, pos, 1, height, rand,
                     (rand.nextFloat() - 0.5f) * 0.1f,
                     0.05F + rand.nextFloat() * 0.1f,

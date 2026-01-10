@@ -6,6 +6,7 @@ import net.mehvahdjukaar.moonlight.api.platform.configs.ConfigBuilder;
 import net.mehvahdjukaar.moonlight.api.platform.configs.ConfigType;
 import net.mehvahdjukaar.moonlight.api.platform.configs.ModConfigHolder;
 import net.mehvahdjukaar.moonlight.api.util.Utils;
+import net.mehvahdjukaar.moonlight.api.util.codec.CodecUtils;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffects;
@@ -141,7 +142,7 @@ public class CommonConfigs {
                 .define("potion_mixing_limit", 8, 1, 64);
         INVERSE_POTIONS = builder.comment("Map of potion ids to their inverse ids. Used for potion mixing")
                 .defineObject("inverse_potions", CommonConfigs::getInverseEffects,
-                        Utils.optionalMapCodec(BuiltInRegistries.MOB_EFFECT.byNameCodec(),
+                        CodecUtils.optionalMapCodec(BuiltInRegistries.MOB_EFFECT.byNameCodec(),
                                 BuiltInRegistries.MOB_EFFECT.byNameCodec()));
 
         CONNECT_TO_FENCES = builder.comment("Makes cauldrons connect to fences")

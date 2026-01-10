@@ -19,7 +19,7 @@ import net.mehvahdjukaar.amendments.configs.CommonConfigs;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluid;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidRegistry;
 import net.mehvahdjukaar.moonlight.api.item.additional_placements.AdditionalItemPlacementsAPI;
-import net.mehvahdjukaar.moonlight.api.misc.HolderReference;
+import net.mehvahdjukaar.moonlight.api.misc.HolderRef;
 import net.mehvahdjukaar.moonlight.api.misc.RegSupplier;
 import net.mehvahdjukaar.moonlight.api.misc.Registrator;
 import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
@@ -53,7 +53,6 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.PushReaction;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -98,11 +97,11 @@ public class ModRegistry {
         }
     }
 
-    public static final HolderReference<DamageType> BOILING_DAMAGE = HolderReference.of(
+    public static final HolderRef<DamageType> BOILING_DAMAGE = HolderRef.of(
             res("boiling"), Registries.DAMAGE_TYPE);
 
 
-    public static final HolderReference<SoftFluid> DYE_SOFT_FLUID = HolderReference.of(res("dye"),
+    public static final HolderRef<SoftFluid> DYE_SOFT_FLUID = HolderRef.of(res("dye"),
             SoftFluidRegistry.KEY);
 
     public static final RegSupplier<RecipeSerializer<DyeBottleRecipe>> DYE_BOTTLE_RECIPE = RegHelper.registerSpecialRecipe(

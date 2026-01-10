@@ -77,7 +77,7 @@ public class FireballExplosion extends Explosion {
     ) {
         FireballExplosion explosion = explode(serverLevel, source, damageSource, damageCalculator, x, y, z,
                 radius, fire, explosionInteraction, false,
-                ModRegistry.FIREBALL_EXPLOSION_SOUND.getHolder(),
+                ModRegistry.FIREBALL_EXPLOSION_SOUND,
                 settings);
 
         if (!(serverLevel instanceof ServerLevel sl)) {
