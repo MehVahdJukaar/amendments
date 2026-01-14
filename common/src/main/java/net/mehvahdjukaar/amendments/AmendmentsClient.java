@@ -124,7 +124,10 @@ public class AmendmentsClient {
         return new ModelLayerLocation(Amendments.res(name), name);
     }
 
+    public static boolean WAS_INIT = false;
+
     public static void init() {
+        WAS_INIT = true;
         RegHelper.registerDynamicResourceProvider(new ClientResourceGenerator());
 
         ClientHelper.addClientSetup(AmendmentsClient::setup);
