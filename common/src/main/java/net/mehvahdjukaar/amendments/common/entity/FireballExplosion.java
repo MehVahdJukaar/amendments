@@ -4,6 +4,7 @@ import net.mehvahdjukaar.amendments.common.network.ClientBoundFireballExplodePac
 import net.mehvahdjukaar.amendments.common.network.ModNetwork;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.moonlight.api.block.ILightable;
+import net.mehvahdjukaar.moonlight.api.platform.ForgeHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -115,8 +116,10 @@ public class FireballExplosion extends Explosion {
         };
         FireballExplosion explosion = new FireballExplosion(level, source, damageSource, damageCalculator,
                 x, y, z, radius, fire, blockInteraction, settings);
-        explosion.explode();
-        explosion.finalizeExplosion(spawnParticles);
+        if (!ForgeHelper.onExplosionStart(level, explosion)) {
+            explosion.explode();
+            explosion.finalizeExplosion(spawnParticles);
+        }
         return explosion;
     }
 
