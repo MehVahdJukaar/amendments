@@ -55,7 +55,6 @@ public class ClientResourceGenerator extends DynClientResourcesGenerator {
         }
     }
 
-
     @Override
     public Logger getLogger() {
         return Amendments.LOGGER;
@@ -241,7 +240,7 @@ public class ClientResourceGenerator extends DynClientResourcesGenerator {
             ResourceLocation blockTexturePath = Amendments.res("block/signs/farmersdelight/" + joinNonEmpty(d, "canvas_sign"));
 
             sink.addTextureIfNotPresent(manager, blockTexturePath.toString(), () -> {
-                try (TextureImage vanillaTexture = TextureImage.open(manager, texturePath)){
+                try (TextureImage vanillaTexture = TextureImage.open(manager, texturePath)) {
 
                     TextureImage newImg = TextureImage.createNew(64, 16);
                     transformer.apply(vanillaTexture, newImg);
@@ -383,26 +382,25 @@ public class ClientResourceGenerator extends DynClientResourcesGenerator {
 
             for (var e : AmendmentsClient.getAllRecords().entrySet()) {
                 ResourceLocation texturePath = Amendments.res(e.getValue().texture().getPath());
-                if (sink.alreadyHasTextureAtLocation(manager, texturePath)) continue;
-                //hanging sign extension textures
-                try (TextureImage vanillaTexture = TextureImage.open(manager,
-                        RPUtils.findFirstItemTextureLocation(manager, e.getKey()))) {
+                sink.addTextureIfNotPresent(manager, texturePath.toString(), () -> {
+                    try (TextureImage vanillaTexture = TextureImage.open(manager,
+                            RPUtils.findFirstItemTextureLocation(manager, e.getKey()))) {
 
-                    Palette p = Palette.fromImage(vanillaTexture, mask);
-                    amendJukeboxPalette(p);
-                    try (TextureImage newImage = respriter.recolor(p)) {
+                        Palette p = Palette.fromImage(vanillaTexture, mask);
+                        amendJukeboxPalette(p);
+                        TextureImage newImage = respriter.recolor(p);
                         transformer.apply(vanillaTexture, newImage);
 
                         if (newImage.getPixel(6, 6) == p.get(p.size() - 2).rgb().toInt()) {
                             newImage.setPixel(6, 6, p.getLightest().value());
                             newImage.setPixel(9, 9, p.getLightest().value());
                         }
-                        sink.addTexture(texturePath, newImage);
+                        return newImage;
+                    } catch (Exception ex) {
+                        getLogger().warn("Failed to generate record item texture for {}. No model / texture found", e.getKey());
+                        return fallback;
                     }
-                } catch (Exception ex) {
-                    getLogger().warn("Failed to generate record item texture for {}. No model / texture found", e.getKey());
-                    sink.addTexture(texturePath, fallback);
-                }
+                });
             }
         } catch (Exception ignored) {
         }
@@ -436,16 +434,22 @@ public class ClientResourceGenerator extends DynClientResourcesGenerator {
                     ResourceLocation top = RPUtils.findFirstBlockTextureLocation(manager, t.cake, s -> s.contains("top"));
                     ResourceLocation side = RPUtils.findFirstBlockTextureLocation(manager, t.cake, s -> s.contains("side"));
                     ResourceLocation bottom = RPUtils.findFirstBlockTextureLocation(manager, t.cake, s -> s.contains("bottom"));
-                    ResourceLocation inner = RPUtils.findFirstBlockTextureLocation(manager, t.cake, s -> s.contains("inner"));
-
+                    ResourceLocation inner;
+                    try {
+                        inner = RPUtils.findFirstBlockTextureLocation(manager, t.cake, s -> s.contains("inner") || s.contains("cut")
+                                || s.contains("inside"));
+                    } catch (Exception e) {
+                        inner = top;
+                    }
                     for (var m : cakeModels) {
+                        ResourceLocation finalInner = inner;
                         sink.addSimilarJsonResource(manager, m, s -> s
                                         .replace("amendments:block/double_cake", "")
                                         .replace("minecraft:block/cake", "")
                                         .replace("\"/", "\"amendments:block/double_cake/")
                                         .replace("_top", top.toString())
                                         .replace("_side", side.toString())
-                                        .replace("_inner", inner.toString())
+                                        .replace("_inner", finalInner.toString())
                                         .replace("_bottom", bottom.toString()),
                                 s -> s.replace("vanilla", dcId.getPath()));
                     }
@@ -453,7 +457,7 @@ public class ClientResourceGenerator extends DynClientResourcesGenerator {
                             s -> s.replace("vanilla", dcId.getPath()),
                             s -> s.replace("double_cake", dcId.getPath()));
                 } catch (Exception e) {
-                    Amendments.LOGGER.error("Failed to generate model for double cake {},", t);
+                    Amendments.LOGGER.error("Failed to generate model for double cake {},", t, e);
                 }
             }
         }

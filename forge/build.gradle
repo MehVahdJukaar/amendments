@@ -145,6 +145,7 @@ dependencies {
     modImplementation("curse.maven:mmmmmmmmmmmm-225738:6608233")
     modImplementation("curse.maven:skinned-lanterns-414154:4656953")
     modImplementation("curse.maven:farmers-delight-398521:6597298")
+    modImplementation("curse.maven:veggies-delight-1082807:7443458")
    // modImplementation("curse.maven:polytone-958094:5308480")
     modCompileOnly("curse.maven:etched-491890:5065299")
     //modImplementation("curse.maven:aeroblender-879879:4789008")
