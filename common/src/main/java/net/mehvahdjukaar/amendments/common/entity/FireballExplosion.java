@@ -5,6 +5,7 @@ import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.moonlight.api.block.ILightable;
 import net.mehvahdjukaar.moonlight.api.platform.network.NetworkHelper;
 import net.mehvahdjukaar.supplementaries.reg.ModParticles;
+import net.mehvahdjukaar.moonlight.api.platform.ForgeHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.particles.ParticleOptions;
@@ -128,8 +129,10 @@ public class FireballExplosion extends Explosion {
                 fire, blockInteraction,
                 ParticleTypes.EXPLOSION_EMITTER, ParticleTypes.EXPLOSION_EMITTER, //unused
                 explosionSound, settings);
-        explosion.explode();
-        explosion.finalizeExplosion(spawnParticles);
+        if (!ForgeHelper.onExplosionStart(level, explosion)) {
+            explosion.explode();
+            explosion.finalizeExplosion(spawnParticles);
+        }
         return explosion;
     }
 
