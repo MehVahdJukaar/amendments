@@ -1,5 +1,6 @@
 package net.mehvahdjukaar.amendments.mixins;
 
+import net.mehvahdjukaar.amendments.AmendmentsClient;
 import net.mehvahdjukaar.amendments.configs.ClientConfigs;
 import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
 import net.minecraft.world.level.block.Block;
@@ -17,7 +18,7 @@ public abstract class SignBlockMixin extends Block {
 
     @Override
     public RenderShape getRenderShape(BlockState state) {
-        if (PlatHelper.getPhysicalSide().isClient()) {
+        if (PlatHelper.getPhysicalSide().isClient() && AmendmentsClient.WAS_INIT) {
             if (ClientConfigs.isPixelConsistentSign(state)) return RenderShape.MODEL;
         }
         return super.getRenderShape(state);

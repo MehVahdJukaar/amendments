@@ -3,6 +3,7 @@ package net.mehvahdjukaar.amendments.mixins;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
+import net.mehvahdjukaar.amendments.AmendmentsClient;
 import net.mehvahdjukaar.amendments.configs.ClientConfigs;
 import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
 import net.minecraft.core.BlockPos;
@@ -47,7 +48,7 @@ public abstract class WallSignBlockMixin extends Block {
 
     @Override
     public RenderShape getRenderShape(BlockState state) {
-        if (PlatHelper.getPhysicalSide().isClient()) {
+        if (PlatHelper.getPhysicalSide().isClient() && AmendmentsClient.WAS_INIT) {
             if (ClientConfigs.isPixelConsistentSign(state)) return RenderShape.MODEL;
         }
         return super.getRenderShape(state);

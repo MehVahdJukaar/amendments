@@ -110,23 +110,6 @@ public abstract class SignRendererMixin {
         return scale;
     }
 
-    //yes all this below isnt even used anymore since we dont render the model anymore. TODO: delete?
-
-    @Inject(method = "createSignLayer", at = @At("HEAD"), cancellable = true)
-    private static void amendments$makePixelConsistentModel(CallbackInfoReturnable<LayerDefinition> cir) {
-        if (ClientConfigs.PIXEL_CONSISTENT_SIGNS.get()) {
-            MeshDefinition meshDefinition = new MeshDefinition();
-            PartDefinition partDefinition = meshDefinition.getRoot();
-            partDefinition.addOrReplaceChild("sign", CubeListBuilder.create()
-                    .texOffs(0, 0)
-                    .addBox(-8, -16 + 12, -1.0F, 16.0F, 9, 2.0F), PartPose.ZERO);
-            partDefinition.addOrReplaceChild("stick", CubeListBuilder.create()
-                    .texOffs(0, 14)
-                    .addBox(-1.0F, -7.0F + 12, -1.0F, 2.0F, 7, 2.0F), PartPose.ZERO);
-            cir.setReturnValue(LayerDefinition.create(meshDefinition, 64, 32));
-        }
-    }
-
     @ModifyReturnValue(method = "getSignModelRenderScale", at = @At("RETURN"))
     private float amendments$signScale(float scale) {
         if (amendments$rendersPixelConsistent && scale == 0.6666667F) {
