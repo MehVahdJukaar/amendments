@@ -1,1 +1,2 @@
-fixed dye bottle recipe getting too excited
+minor fixes
+added pack related configs
