@@ -133,7 +133,7 @@ dependencies {
 	//modImplementation("curse.maven:selene-499980:5458914")
 	
     //modCompileOnly("net.mehvahdjukaar:supplementaries-forge:${supplementaries_version}")
-    modImplementation("curse.maven:supplementaries-412082:6373937")
+    modCompileOnly("curse.maven:supplementaries-412082:6373937")
 	
     //modCompileOnly("net.mehvahdjukaar:suppsquared-forge:${suppsquared_version}")
 	modCompileOnly("curse.maven:supplementaries-squared-838411:5130385")
@@ -169,7 +169,7 @@ dependencies {
     modCompileOnly("curse.maven:new-thin-air-878379:5068247")
    // modImplementation("com.jozufozu.flywheel:flywheel-forge-${flywheel_version}")
     modRuntimeOnly("curse.maven:autumnity-365045:5292346") // Blueprint
-    modImplementation("curse.maven:vanillin-965702:6446560")
+    modCompileOnly("curse.maven:vanillin-965702:6446560")
 
     modRuntimeOnly("curse.maven:blue-skies-312918:5010316") // structure-gel-api
     modRuntimeOnly("curse.maven:structure-gel-api-378802:5188368") // Blue-Skies

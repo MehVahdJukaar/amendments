@@ -9,8 +9,6 @@ accessible method net/minecraft/client/renderer/blockentity/SignRenderer getText
 accessible field net/minecraft/world/entity/item/ItemEntity pickupDelay I
 accessible field net/minecraft/client/gui/screens/inventory/AbstractSignEditScreen isFrontText Z
 
-accessible field net/minecraft/world/entity/EntityType fireImmune Z
-mutable field net/minecraft/world/entity/EntityType fireImmune Z
 accessible field net/minecraft/world/level/Explosion fire Z
 #area of effect
 accessible field net/minecraft/world/entity/AreaEffectCloud effects Ljava/util/List;

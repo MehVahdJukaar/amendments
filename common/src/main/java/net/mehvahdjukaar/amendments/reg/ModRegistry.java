@@ -127,7 +127,7 @@ public class ModRegistry {
                     () -> EntityType.Builder.<MediumDragonFireball>of(MediumDragonFireball::new, MobCategory.MISC)
                             .sized(0.3125F, 0.3125F)
                             .clientTrackingRange(16)
-                            .fireImmune()
+                           // .fireImmune() //same as vanilla
                             .updateInterval(5)
                             .build("medium_dragon_fireball"));
 
@@ -136,7 +136,7 @@ public class ModRegistry {
                     () -> EntityType.Builder.<MediumFireball>of(MediumFireball::new, MobCategory.MISC)
                             .sized(0.3125F, 0.3125F)
                             .clientTrackingRange(16)
-                            .fireImmune()
+                            // .fireImmune() //same as vanilla
                             .updateInterval(5)
                             .build("medium_fireball"));
 

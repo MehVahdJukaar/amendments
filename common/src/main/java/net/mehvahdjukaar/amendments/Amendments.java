@@ -122,10 +122,6 @@ public class Amendments {
         }
         if (CompatHandler.SUPPLEMENTARIES) SuppCompat.setup();
 
-        // gg vanilla. They arent even marked as fire immune
-        EntityType.SMALL_FIREBALL.fireImmune = true;
-        EntityType.FIREBALL.fireImmune = true;
-        EntityType.DRAGON_FIREBALL.fireImmune = true;
     }
 
     private static void setupAsync() {

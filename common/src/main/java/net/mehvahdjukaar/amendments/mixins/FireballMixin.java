@@ -91,8 +91,4 @@ public abstract class FireballMixin extends AbstractHurtingProjectile implements
         }
     }
 
-    @Override
-    public void clearFire() {
-        super.clearFire();
-    }
 }

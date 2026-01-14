@@ -1,1 +1,2 @@
-- disabled flyweel (vanillin) compat
+- disabled soul fire compat
+- fixed some issues with fireballs
