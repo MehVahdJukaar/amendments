@@ -1,2 +1,2 @@
-minor fixes
-added pack related configs
+- disabled soul fire compat
+- fixed some issues with fireballs
