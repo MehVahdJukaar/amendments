@@ -1,2 +1,1 @@
-- disabled soul fire compat
-- fixed some issues with fireballs
+misc fixes

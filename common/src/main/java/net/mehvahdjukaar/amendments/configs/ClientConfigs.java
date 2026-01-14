@@ -192,6 +192,7 @@ public class ClientConfigs {
 
         builder.push("jukebox");
         JUKEBOX_MODEL = builder.comment("Use the new jukebox model")
+                .gameRestart()
                 .define("new_model", true);
         JUKEBOX_SPIN = builder.comment("Makes jukebox disc spin while playing")
                 .define("disc_spin", true);

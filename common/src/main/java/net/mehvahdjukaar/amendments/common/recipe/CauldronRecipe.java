@@ -147,7 +147,7 @@ public class CauldronRecipe implements Recipe<CauldronCraftingContainer> {
                         .map(l -> NonNullList.of(Ingredient.EMPTY, l.toArray(new Ingredient[0])), Function.identity()),
                 r -> r.inputItems,
                 ByteBufCodecs.optional(SoftFluidIngredient.STREAM_CODEC), r -> r.outputFluid,
-                ItemStack.STREAM_CODEC, r -> r.outputItem,
+                ItemStack.OPTIONAL_STREAM_CODEC, r -> r.outputItem,
                 ByteBufCodecs.VAR_INT, r -> r.fluidAmountDifference,
                 ByteBufCodecs.BOOL, r -> r.requireBoiling,
                 CauldronRecipe::new
