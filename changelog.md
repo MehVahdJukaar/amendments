@@ -1,2 +1,1 @@
-- disabled soul fire compat
-- fixed some issues with fireballs
+fixed an issue with dye bottle recipe
