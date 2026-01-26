@@ -6,7 +6,9 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.mehvahdjukaar.amendments.client.renderers.SignRendererExtension;
 import net.mehvahdjukaar.amendments.configs.ClientConfigs;
 import net.mehvahdjukaar.moonlight.api.util.math.ColorUtils;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.Model;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.SignRenderer;
 import net.minecraft.core.BlockPos;
@@ -76,13 +78,26 @@ public abstract class SignRendererMixin {
     @Inject(method = "renderSignWithText", at = @At("TAIL"))
     private void amendments$resetYaw(SignBlockEntity signBlockEntity, PoseStack poseStack, MultiBufferSource multiBufferSource, int i, int j, BlockState blockState, SignBlock signBlock, WoodType woodType, Model model, CallbackInfo ci) {
         amendments$signYaw = null;
+    }
+
+    @Inject(method = "render(Lnet/minecraft/world/level/block/entity/SignBlockEntity;FLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;II)V",
+            at = @At("RETURN"))
+    private void amendments$resetPixelConsistent(SignBlockEntity blockEntity, float partialTick, PoseStack poseStack, MultiBufferSource buffer, int packedLight, int packedOverlay, CallbackInfo ci) {
         amendments$rendersPixelConsistent = false;
     }
 
 
-    @Inject(method = "renderSignWithText", at = @At("HEAD"))
-    private void amendments$setSign(SignBlockEntity signBlockEntity, PoseStack poseStack, MultiBufferSource multiBufferSource, int i, int j, BlockState blockState, SignBlock signBlock, WoodType woodType, Model model, CallbackInfo ci) {
-        amendments$rendersPixelConsistent = ClientConfigs.isPixelConsistentSign(blockState);
+    @Inject(method = "render(Lnet/minecraft/world/level/block/entity/SignBlockEntity;FLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;II)V", at = @At("HEAD"), cancellable = true)
+    private void amendments$setPixelConsistent(SignBlockEntity blockEntity, float partialTick, PoseStack poseStack, MultiBufferSource buffer, int packedLight, int packedOverlay, CallbackInfo ci) {
+        amendments$rendersPixelConsistent = ClientConfigs.isPixelConsistentSign(blockEntity.getBlockState());
+        if (amendments$rendersPixelConsistent) {
+            SignText front = blockEntity.getFrontText();
+            SignText back = blockEntity.getBackText();
+            LocalPlayer player = Minecraft.getInstance().player;
+            if (player != null && !front.hasMessage(player) && !back.hasMessage(player)) {
+                ci.cancel();
+            }
+        }
     }
 
 
