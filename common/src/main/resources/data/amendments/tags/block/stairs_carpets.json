@@ -11,7 +11,8 @@
     {"id":"quark:bamboo_mat","required":false},
     {"id":"farmersdelight:canvas_rug","required":false},
     {"id":"vanilla_backport:pale_moss_carpet","required":false},
-    {"id":"minecraft:pale_moss_carpet","required":false}
+    {"id":"minecraft:pale_moss_carpet","required":false},
+    {"id":"biomesoplenty:glowing_moss_carpet","required":false}
   ],
   "remove": [
     "hexerei:infused_fabric_carpet_ornate",
