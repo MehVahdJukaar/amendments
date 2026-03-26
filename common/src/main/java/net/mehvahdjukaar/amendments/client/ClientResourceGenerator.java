@@ -404,8 +404,8 @@ public class ClientResourceGenerator extends DynamicClientResourceProvider {
                         }
                         return newImage;
                     } catch (Exception ex) {
-                        Amendments.LOGGER.warn("Failed to generate record item texture for {}. No model / texture found", e.getKey());
-                        return fallback;
+                        Amendments.LOGGER.warn("Failed to generate record item texture for {}. Using default generic texture", e.getKey());
+                        return fallback.makeCopy();
                     }
                 });
             }
