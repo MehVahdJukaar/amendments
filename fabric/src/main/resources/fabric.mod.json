@@ -7,6 +7,7 @@
   "authors": [
     "${mod_authors}"
   ],
+  "accessWidener": "${mod_id}.accesswidener",
   "contact": {
     "homepage": "${mod_homepage}",
     "sources": "${mod_github}"
@@ -28,7 +29,7 @@
   ],
   "depends": {
     "fabric": "*",
-    "minecraft": ">=${minecraft_min_version} <${minecraft_max_version}",
+    "minecraft": "=${minecraft_version}",
     "moonlight": ">=${moonlight_min_version}"
   },
   "conflicts": {

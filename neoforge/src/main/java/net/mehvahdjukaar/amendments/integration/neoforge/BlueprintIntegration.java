@@ -18,6 +18,7 @@ import org.jetbrains.annotations.Nullable;
 public class BlueprintIntegration {
 
     public static void init() {
+        //TODO: test
         StructureCauldronHack.register();
         StructureRepaletterManager.registerRepalleter(Amendments.res("blockstate_replace"),
                 BlockStateRepaletter.CODEC);

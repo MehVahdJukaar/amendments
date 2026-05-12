@@ -402,6 +402,7 @@ public class ClientResourceGenerator extends DynamicClientResourceProvider {
                             newImage.setPixel(6, 6, p.getLightest().value());
                             newImage.setPixel(9, 9, p.getLightest().value());
                         }
+                     if(PlatHelper.isDev())   throw new RuntimeException("test");
                         return newImage;
                     } catch (Exception ex) {
                         Amendments.LOGGER.warn("Failed to generate record item texture for {}. Using default generic texture", e.getKey());
