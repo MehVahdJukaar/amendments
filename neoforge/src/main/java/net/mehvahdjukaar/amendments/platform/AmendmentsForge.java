@@ -1,19 +1,17 @@
-package net.mehvahdjukaar.amendments.neoforge;
+package net.mehvahdjukaar.amendments.platform;
 
 import net.mehvahdjukaar.amendments.Amendments;
-import net.mehvahdjukaar.amendments.common.block.StructureCauldronHack;
 import net.mehvahdjukaar.amendments.configs.ClientConfigs;
 import net.mehvahdjukaar.amendments.events.ModEvents;
 import net.mehvahdjukaar.amendments.integration.CompatHandler;
-import net.mehvahdjukaar.amendments.integration.neoforge.BlueprintIntegration;
-import net.mehvahdjukaar.amendments.integration.neoforge.configured.ModConfigSelectScreen;
+import net.mehvahdjukaar.amendments.integration.platform.BlueprintIntegration;
+import net.mehvahdjukaar.amendments.integration.platform.configured.ModConfigSelectScreen;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
-import net.mehvahdjukaar.moonlight.api.fluids.neoforge.SoftFluidTankFluidHandlerWrapper;
+import net.mehvahdjukaar.moonlight.api.fluids.platform.SoftFluidTankFluidHandlerWrapper;
 import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
 import net.mehvahdjukaar.moonlight.api.platform.RegHelper;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.LivingEntity;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -33,8 +31,6 @@ import static net.mehvahdjukaar.amendments.Amendments.MOD_ID;
 public class AmendmentsForge {
 
     public AmendmentsForge(IEventBus bus) {
-        RegHelper.startRegisteringFor(bus);
-
         Amendments.init();
         bus.addListener(AmendmentsForge::registerCapabilities);
         NeoForge.EVENT_BUS.register(this);

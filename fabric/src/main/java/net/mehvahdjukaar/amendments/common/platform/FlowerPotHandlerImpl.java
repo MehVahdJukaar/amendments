@@ -1,4 +1,4 @@
-package net.mehvahdjukaar.amendments.common.fabric;
+package net.mehvahdjukaar.amendments.common.platform;
 
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;

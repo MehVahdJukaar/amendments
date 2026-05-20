@@ -1,7 +1,5 @@
 package net.mehvahdjukaar.amendments.common.network;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.mehvahdjukaar.amendments.Amendments;
 import net.mehvahdjukaar.amendments.common.block.BoilingWaterCauldronBlock;
 import net.mehvahdjukaar.amendments.common.block.ModCauldronBlock;
@@ -39,13 +37,8 @@ public record ClientBoundPlaySplashParticlesMessage(Vec3 hitPos, double speed, f
 
     @Override
     public void handle(Context context) {
-        doOnClient();
-    }
 
-    @Environment(EnvType.CLIENT)
-    public void doOnClient() {
-        ClientLevel level = Minecraft.getInstance().level;
-
+        Level level = context.getPlayer().level();
         BlockPos pos = BlockPos.containing(this.hitPos);
         BlockState state = level.getBlockState(pos);
         if (state.getBlock() instanceof ModCauldronBlock mc &&

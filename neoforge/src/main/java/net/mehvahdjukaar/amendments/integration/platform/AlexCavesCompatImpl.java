@@ -1,4 +1,4 @@
-package net.mehvahdjukaar.amendments.integration.neoforge;
+package net.mehvahdjukaar.amendments.integration.platform;
 
 import net.mehvahdjukaar.amendments.common.block.CommonCauldronCode;
 import net.mehvahdjukaar.amendments.common.block.LiquidCauldronBlock;
@@ -6,7 +6,6 @@ import net.mehvahdjukaar.moonlight.api.fluids.SoftFluid;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidRegistry;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidStack;
 import net.mehvahdjukaar.moonlight.api.misc.HolderRef;
-import net.mehvahdjukaar.moonlight.api.misc.OptHolderRef;
 import net.mehvahdjukaar.moonlight.api.misc.OptRegSupplier;
 import net.mehvahdjukaar.moonlight.api.misc.RegSupplier;
 import net.minecraft.core.BlockPos;

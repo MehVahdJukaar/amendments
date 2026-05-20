@@ -1,4 +1,4 @@
-package net.mehvahdjukaar.amendments.integration.fabric;
+package net.mehvahdjukaar.amendments.integration.platform;
 
 import net.mehvahdjukaar.amendments.Amendments;
 import net.mehvahdjukaar.amendments.configs.ClientConfigs;

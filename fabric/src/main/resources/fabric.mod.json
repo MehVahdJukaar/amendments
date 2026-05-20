@@ -17,10 +17,10 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "net.mehvahdjukaar.amendments.fabric.AmendmentsFabric"
+      "net.mehvahdjukaar.amendments.platform.AmendmentsFabric"
     ],
     "modmenu": [
-      "net.mehvahdjukaar.amendments.integration.fabric.ModMenuCompat"
+      "net.mehvahdjukaar.amendments.integration.platform.ModMenuCompat"
     ]
   },
   "mixins": [
@@ -31,13 +31,5 @@
     "fabric": "*",
     "minecraft": "=${minecraft_version}",
     "moonlight": ">=${moonlight_min_version}"
-  },
-  "conflicts": {
-    "supplementaries": "<1.20-2.8.0"
-  },
-  "breaks": {
-    "carpeted": "*",
-    "betterlily": "*",
-    "betterjukebox": "*"
   }
 }

@@ -10,9 +10,10 @@ public class SoulFiredCompat {
 
 
     public static void setSecondsOnFire(Entity target, int duration, ItemStack stack) {
-        FireManager.setOnFire(target, duration, getFireType(stack));
+        //FireManager.setOnFire(target, duration, getFireType(stack));
     }
 
+    /*
     private static ResourceLocation getFireType(ItemStack stack) {
         var fires = FireManager.getFireTypes();
         ResourceLocation id = Utils.getID(stack.getItem());
@@ -24,5 +25,5 @@ public class SoulFiredCompat {
             }
         }
         return FireManager.ensure(ResourceLocation.withDefaultNamespace("fire"));
-    }
+    }*/
 }

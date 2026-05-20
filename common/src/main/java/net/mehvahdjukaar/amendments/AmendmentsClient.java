@@ -1,7 +1,6 @@
 package net.mehvahdjukaar.amendments;
 
 import com.google.common.base.Suppliers;
-import dev.architectury.injectables.annotations.ExpectPlatform;
 import net.mehvahdjukaar.amendments.client.ClientResourceGenerator;
 import net.mehvahdjukaar.amendments.client.ItemHoldingAnimationsManager;
 import net.mehvahdjukaar.amendments.client.WallLanternModelsManager;
@@ -18,6 +17,7 @@ import net.mehvahdjukaar.amendments.integration.CompatObjects;
 import net.mehvahdjukaar.amendments.integration.FlywheelCompat;
 import net.mehvahdjukaar.amendments.integration.SuppCompat;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
+import net.mehvahdjukaar.candlelight.api.PlatformImpl;
 import net.mehvahdjukaar.moonlight.api.client.model.NestedModelLoader;
 import net.mehvahdjukaar.moonlight.api.misc.EventCalled;
 import net.mehvahdjukaar.moonlight.api.platform.ClientHelper;
@@ -139,7 +139,7 @@ public class AmendmentsClient {
         ClientHelper.addEntityRenderersRegistration(AmendmentsClient::registerEntityRenderers);
         ClientHelper.addItemColorsRegistration(AmendmentsClient::registerItemColors);
         ClientHelper.addParticleRegistration(AmendmentsClient::registerParticles);
-
+ClientHelper.addMenuScreensRegistration(AmendmentsClient::registerMenuScreens);
         if (CompatHandler.FLYWHEEL) FlywheelCompat.init();
     }
 
@@ -159,13 +159,17 @@ public class AmendmentsClient {
         ClientHelper.registerRenderType(ModRegistry.HANGING_FLOWER_POT.get(), RenderType.cutout());
         ClientHelper.registerRenderType(ModRegistry.WALL_LANTERN.get(), RenderType.cutout());
         ClientHelper.registerRenderType(ModRegistry.TOOL_HOOK.get(), RenderType.cutout());
-        MenuScreens.register(ModRegistry.LECTERN_EDIT_MENU.get(), LecternBookEditScreen::new);
+
     }
 
     public static void afterTagSetup() {
         ItemHoldingAnimationsManager.addAnimations();
     }
 
+    @EventCalled
+    private static void  registerMenuScreens(ClientHelper.MenuScreenEvent event){
+        event.register(ModRegistry.LECTERN_EDIT_MENU.get(), LecternBookEditScreen::new);
+    }
 
     @EventCalled
     private static void registerItemColors(ClientHelper.ItemColorEvent event) {
@@ -336,7 +340,7 @@ public class AmendmentsClient {
         }
     }
 
-    @ExpectPlatform
+    @PlatformImpl
     public static boolean hasFixedNormals() {
         throw new AssertionError();
     }

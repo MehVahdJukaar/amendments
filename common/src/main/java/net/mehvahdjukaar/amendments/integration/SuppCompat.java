@@ -1,9 +1,9 @@
 package net.mehvahdjukaar.amendments.integration;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.mehvahdjukaar.amendments.common.block.CeilingBannerBlock;
 import net.mehvahdjukaar.amendments.common.tile.LiquidCauldronBlockTile;
+import net.mehvahdjukaar.candlelight.api.ClientOnly;
+import net.mehvahdjukaar.moonlight.api.fluids.FluidOffer;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidStack;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidTank;
 import net.mehvahdjukaar.supplementaries.client.ModMaterials;
@@ -11,8 +11,6 @@ import net.mehvahdjukaar.supplementaries.common.block.IRopeConnection;
 import net.mehvahdjukaar.supplementaries.common.block.blocks.*;
 import net.mehvahdjukaar.supplementaries.common.block.faucet.FaucetBehaviorsManager;
 import net.mehvahdjukaar.supplementaries.common.block.faucet.FaucetTarget;
-import net.mehvahdjukaar.supplementaries.common.block.faucet.FluidOffer;
-import net.mehvahdjukaar.supplementaries.common.block.tiles.FaucetBlockTile;
 import net.mehvahdjukaar.supplementaries.common.misc.explosion.GunpowderExplosion;
 import net.mehvahdjukaar.supplementaries.common.utils.MiscUtils;
 import net.mehvahdjukaar.supplementaries.configs.ClientConfigs;
@@ -72,7 +70,7 @@ public class SuppCompat {
     }
 
     public static void spawnCakeParticles(Level level, BlockPos pos, RandomSource rand) {
-        if (MiscUtils.FESTIVITY.isStValentine()) {
+        if (MiscUtils.getFestivity().isStValentine()) {
             if (rand.nextFloat() > 0.8) {
                 double d0 = (pos.getX() + 0.5 + (rand.nextFloat() - 0.5));
                 double d1 = (pos.getY() + 0.5 + (rand.nextFloat() - 0.5));
@@ -98,12 +96,6 @@ public class SuppCompat {
         return IRopeConnection.canConnectDown(neighborState);
     }
 
-    @Environment(EnvType.CLIENT)
-    @Nullable
-    public static Material getFlagMaterial(Level l, BannerPatternItem bannerPatternItem) {
-        return ModMaterials.getFlagMaterialForPatternItem(l, bannerPatternItem);
-    }
-
     public static boolean isSconce(Block block) {
         if (block instanceof SconceLeverBlock) return true;
         return block instanceof SconceBlock && !(block instanceof SconceWallBlock);
@@ -117,23 +109,11 @@ public class SuppCompat {
         return ModEntities.THROWABLE_SLIMEBALL.get();
     }
 
-    @Deprecated(forRemoval = true)
-    private static final Field OFFSETS;
-
-    static {
-        try {
-            OFFSETS = CandleHolderBlock.class.getDeclaredField("particleOffsets");
-            OFFSETS.setAccessible(true);
-        } catch (NoSuchFieldException e) {
-            throw new RuntimeException(e);
-        }
-    }
 
     public static Vec3 getCandleHolderParticleOffset(BlockState state) {
         if (state.getBlock() instanceof CandleHolderBlock cb) {
             try{
-                @SuppressWarnings("unchecked")
-                Function<BlockState, List<Vec3>> offsets = (Function<BlockState, List<Vec3>>) OFFSETS.get(cb);
+                Function<BlockState, List<Vec3>> offsets = cb.particleOffsets;
                 List<Vec3> particleOffsets = offsets.apply(state);
                 if (!particleOffsets.isEmpty()) {
                     return particleOffsets.getFirst().subtract(0.5, 0.5, 0.5); //center it

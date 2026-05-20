@@ -1,4 +1,4 @@
-package net.mehvahdjukaar.amendments.neoforge;
+package net.mehvahdjukaar.amendments.platform;
 
 public class AmendmentsClientImpl {
 

@@ -7,6 +7,8 @@ import net.mehvahdjukaar.amendments.common.tile.HangingSignTileExtension;
 import net.mehvahdjukaar.amendments.configs.ClientConfigs;
 import net.mehvahdjukaar.amendments.integration.CompatHandler;
 import net.mehvahdjukaar.amendments.integration.SuppCompat;
+import net.mehvahdjukaar.amendments.integration.SuppCompatClient;
+import net.mehvahdjukaar.amendments.mixins.SignRendererAccessor;
 import net.mehvahdjukaar.amendments.reg.ModBlockProperties;
 import net.mehvahdjukaar.moonlight.api.client.util.LOD;
 import net.mehvahdjukaar.moonlight.api.client.util.RotHlpr;
@@ -225,7 +227,7 @@ public class HangingSignRendererExtension {
         ItemStack item = extension.getFrontItem();
 
         if (item.isEmpty()) {
-            renderer.translateSignText(poseStack, true, renderer.getTextOffset());
+            renderer.translateSignText(poseStack, true, ((SignRendererAccessor) renderer).invokeGetTextOffset());
             renderSignText(tile.getFrontText(), font, poseStack, buffer, light,
                     norm, lod, filtered, tile.getTextLineHeight(), tile.getMaxTextLineWidth(),
                     colorMult);
@@ -243,7 +245,7 @@ public class HangingSignRendererExtension {
         ItemStack item = extension.getBackItem();
 
         if (item.isEmpty()) {
-            renderer.translateSignText(poseStack, false, renderer.getTextOffset());
+            renderer.translateSignText(poseStack, false, ((SignRendererAccessor) renderer).invokeGetTextOffset());
             renderSignText(tile.getBackText(), font, poseStack, buffer, light,
                     norm.mul(-1), lod, filtered, tile.getTextLineHeight(), tile.getMaxTextLineWidth(),
                     colorMult);
@@ -280,7 +282,7 @@ public class HangingSignRendererExtension {
     private static void renderBannerPattern(Level level, SignText sign, PoseStack poseStack, MultiBufferSource bufferSource,
                                             int packedLight, BannerPatternItem banner) {
 
-        Material renderMaterial = SuppCompat.getFlagMaterial(level, banner);
+        Material renderMaterial = SuppCompatClient.getFlagMaterial(level, banner);
         if (renderMaterial != null) {
             poseStack.pushPose();
             poseStack.translate(0, -9 / 16f, 1 / 16f + 0.001);

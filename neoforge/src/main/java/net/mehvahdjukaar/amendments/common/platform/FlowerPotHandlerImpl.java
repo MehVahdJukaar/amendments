@@ -1,4 +1,4 @@
-package net.mehvahdjukaar.amendments.common.neoforge;
+package net.mehvahdjukaar.amendments.common.platform;
 
 import net.mehvahdjukaar.moonlight.api.util.Utils;
 import net.minecraft.core.registries.BuiltInRegistries;

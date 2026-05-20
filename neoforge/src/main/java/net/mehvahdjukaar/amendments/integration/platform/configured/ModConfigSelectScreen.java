@@ -1,4 +1,4 @@
-package net.mehvahdjukaar.amendments.integration.neoforge.configured;
+package net.mehvahdjukaar.amendments.integration.platform.configured;
 
 
 import net.mehvahdjukaar.amendments.Amendments;

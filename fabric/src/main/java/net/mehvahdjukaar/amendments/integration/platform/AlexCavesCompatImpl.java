@@ -1,4 +1,4 @@
-package net.mehvahdjukaar.amendments.integration.fabric;
+package net.mehvahdjukaar.amendments.integration.platform;
 
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidStack;
 import net.minecraft.core.BlockPos;

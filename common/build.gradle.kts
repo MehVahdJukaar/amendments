@@ -16,12 +16,13 @@ val mixin_extras_version: String by extra
 dependencies {
 
     modApi("net.mehvahdjukaar:moonlight-neoforge:${moonlight_version}")
+    accessTransformers("net.mehvahdjukaar:moonlight-neoforge:${moonlight_version}")
 
     modImplementation("curse.maven:supplementaries-412082:8044262")
 
     modCompileOnly("com.jozufozu.flywheel:flywheel-forge-${flywheel_version}")
     modCompileOnly("curse.maven:flan-404578:5290167")
-    modCompileOnly("curse.maven:farmers-delight-398521:5051242")
+    modCompileOnly("curse.maven:farmers-delight-398521:8083481")
     modCompileOnly("curse.maven:etched-491890:5998004")
     modCompileOnly("com.lowdragmc.shimmer:Shimmer-common:1.19.2-0.1.14")
     modCompileOnly("curse.maven:new-thin-air-878379:5068247")

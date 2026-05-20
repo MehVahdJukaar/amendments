@@ -1,4 +1,4 @@
-package net.mehvahdjukaar.amendments.integration.fabric;
+package net.mehvahdjukaar.amendments.integration.platform;
 
 import com.terraformersmc.modmenu.api.ConfigScreenFactory;
 import com.terraformersmc.modmenu.api.ModMenuApi;

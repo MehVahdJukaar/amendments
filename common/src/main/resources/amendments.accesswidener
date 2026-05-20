@@ -53,7 +53,7 @@ accessible class net/minecraft/client/gui/screens/inventory/BookEditScreen$Displ
 accessible class net/minecraft/client/gui/screens/inventory/BookEditScreen$Pos2i
 
 accessible field net/minecraft/world/level/block/state/StateDefinition$Builder properties Ljava/util/Map;
-
-
 accessible field net/minecraft/world/entity/Entity wasTouchingWater Z
 # pot fabric
+accessible field net/minecraft/world/level/block/FlowerPotBlock POTTED_BY_CONTENT Ljava/util/Map;
+accessible class net/minecraft/client/gui/screens/MenuScreens$ScreenConstructor

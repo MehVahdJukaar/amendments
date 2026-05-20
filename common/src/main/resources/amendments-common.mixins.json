@@ -16,6 +16,7 @@
     "CeilingHangingSignBlockMixin",
     "CompatQuarkSelfCandleSkullMixin",
     "DragonFireballMixin",
+    "EntityAccessor",
     "ExplosionMixin",
     "FenceBlockMixin",
     "FireballMixin",

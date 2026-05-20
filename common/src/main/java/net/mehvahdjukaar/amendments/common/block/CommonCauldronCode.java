@@ -7,6 +7,7 @@ import net.mehvahdjukaar.amendments.common.recipe.FluidAndItemsCraftResult;
 import net.mehvahdjukaar.amendments.common.tile.LiquidCauldronBlockTile;
 import net.mehvahdjukaar.amendments.configs.CommonConfigs;
 import net.mehvahdjukaar.amendments.events.behaviors.CauldronConversion;
+import net.mehvahdjukaar.amendments.mixins.EntityAccessor;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.amendments.reg.ModTags;
 import net.mehvahdjukaar.moonlight.api.block.ILightable;
@@ -178,11 +179,11 @@ public final class CommonCauldronCode {
         // same logic as normal water splash sounds (just on server side)
         if (speed < 0.25F) {
             level.playSound(null, hitPos.x(), hitPos.y(), hitPos.z(),
-                    entity.getSwimSplashSound(), entity.getSoundSource(),
+                    ((EntityAccessor) entity).invokeGetSwimSplashSound(), entity.getSoundSource(),
                     speed, 1.0F + (rand.nextFloat() - rand.nextFloat()) * 0.4F);
         } else {
             level.playSound(null, hitPos.x(), hitPos.y(), hitPos.z(),
-                    entity.getSwimHighSpeedSplashSound(), entity.getSoundSource(),
+                    ((EntityAccessor) entity).invokeGetSwimHighSpeedSplashSound(), entity.getSoundSource(),
                     speed, 1.0F + (rand.nextFloat() - rand.nextFloat()) * 0.4F);
         }
 
@@ -246,8 +247,8 @@ public final class CommonCauldronCode {
 
 
     private static void attemptDyeCauldronConversion(BlockState state, Level level, BlockPos pos, Entity entity,
-                                               Supplier<Double> heightProvider) {
-     //TODO: add this
+                                                     Supplier<Double> heightProvider) {
+        //TODO: add this
     }
 
     private static void spawnResultItems(Level level, BlockPos pos, List<ItemStack> itemStacks) {

@@ -1,4 +1,4 @@
-package net.mehvahdjukaar.amendments.integration.neoforge;
+package net.mehvahdjukaar.amendments.integration.platform;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;

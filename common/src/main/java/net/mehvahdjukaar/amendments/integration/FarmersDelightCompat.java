@@ -20,7 +20,7 @@ import vectorwing.farmersdelight.common.tag.ModTags;
 
 public class FarmersDelightCompat {
     public static InteractionResult onCakeInteract(BlockState state, BlockPos pos, Level level, @NotNull ItemStack stack) {
-        if (stack.is(ModTags.KNIVES)) {
+        if (stack.is(ModTags.Items.KNIVES)) {
             int bites = state.getValue(CakeBlock.BITES);
             if (bites < 6) {
                 level.setBlock(pos, state.setValue(CakeBlock.BITES, bites + 1), 3);

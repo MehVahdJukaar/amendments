@@ -17,9 +17,9 @@ dependencies {
 
     modCompileOnly("maven.modrinth:sodium:mc1.21-0.6.0-beta.2-neoforge")
     modImplementation("curse.maven:farmers-delight-398521:5566383")
-    modCompileOnly("curse.maven:supplementaries-squared-838411:5130385")
+    //modCompileOnly("curse.maven:supplementaries-squared-838411:8120873")
     modCompileOnly("curse.maven:lucent-493280:4951434")
-    modImplementation("curse.maven:farmers-delight-398521:5051242")
+    modImplementation("curse.maven:farmers-delight-398521:8083481")
     modImplementation("curse.maven:etched-491890:5998004")
     modCompileOnly("curse.maven:quark-243121:5594847")
     modCompileOnly("curse.maven:zeta-968868:5597406")
