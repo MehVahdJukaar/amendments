@@ -10,7 +10,6 @@ import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.moonlight.api.fluids.platform.SoftFluidTankFluidHandlerWrapper;
 import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
 import net.mehvahdjukaar.moonlight.api.platform.RegHelper;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.IEventBus;
@@ -71,7 +70,7 @@ public class AmendmentsForge {
     public void onEntityHurt(AttackEntityEvent event) {
         if (!event.isCanceled()) {
             ModEvents.onAttackEntity(event.getEntity(), event.getEntity().level(),
-                    InteractionHand.MAIN_HAND, event.getTarget(), null);
+                    event.getEntity().getUsedItemHand(), event.getTarget(), null);
         }
     }
 

@@ -186,8 +186,9 @@ public class WaterloggedLilyBlock extends WaterlilyBlock implements LiquidBlockC
                     return drops;
                 }
             }
-            List<ItemStack> newDrops = heldState.getDrops(builder);
-            drops.addAll(newDrops);
+            if (!heldState.isAir() && !(heldState.getBlock() instanceof WaterloggedLilyBlock)) {
+                drops.addAll(heldState.getDrops(builder));
+            }
         }
         return drops;
     }
@@ -213,7 +214,9 @@ public class WaterloggedLilyBlock extends WaterlilyBlock implements LiquidBlockC
     public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state) {
         if (level.getBlockEntity(pos) instanceof IBlockHolder tile) {
             BlockState mimic = tile.getHeldBlock();
-            return mimic.getBlock().getCloneItemStack(level, pos, state);
+            if (!mimic.isAir() && !(mimic.getBlock() instanceof WaterloggedLilyBlock)) {
+                return mimic.getBlock().getCloneItemStack(level, pos, mimic);
+            }
         }
         return super.getCloneItemStack(level, pos, state);
     }

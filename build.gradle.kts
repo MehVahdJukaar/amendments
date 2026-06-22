@@ -1,4 +1,3 @@
-import org.gradle.internal.impldep.org.apache.commons.io.output.ByteArrayOutputStream
 
 plugins {
     id("com.possible-triangle.core")
@@ -10,13 +9,6 @@ plugins {
 }
 
 mod {
-    val mod_description: String by extra
-    val mod_credits: String by extra
-    val mod_license: String by extra
-    val mod_homepage: String by extra
-    val mod_github: String by extra
-    val mod_authors: String by extra
-    val moonlight_min_version: String by extra
     additional.add("mod_description")
     additional.add("mod_credits")
     additional.add("mod_license")

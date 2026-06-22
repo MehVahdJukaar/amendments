@@ -54,32 +54,35 @@ public class ModEvents {
 
     public static InteractionResult onAttackEntity(Player player, Level level, InteractionHand hand,
                                                    Entity target, @Nullable EntityHitResult entityHitResult) {
-        //TODO:check
-        ItemStack stack = player.getItemInHand(hand);
+        var ret = torchEntity(player, level, target, player.getItemInHand(hand));
+        if (ret.consumesAction()) return ret;
         if (CommonConfigs.TORCH_FIRE_OFFHAND.get()) {
-            ItemStack offHand = hand == InteractionHand.MAIN_HAND ? player.getOffhandItem() : player.getMainHandItem();
-            var ret = torchEntity(player, level, target, offHand);
+            InteractionHand other = hand == InteractionHand.MAIN_HAND ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND;
+            ret = torchEntity(player, level, target, player.getItemInHand(other));
             if (ret.consumesAction()) return ret;
         }
-        return torchEntity(player, level, target, stack);
+        return InteractionResult.PASS;
     }
 
     private static @NotNull InteractionResult torchEntity(Player player, Level level, Entity target, ItemStack stack) {
-        if (stack.is(ModTags.SET_ENTITY_ON_FIRE) &&
-                target.isAttackable() && !target.skipAttackInteraction(player) && target instanceof LivingEntity) {
-            if (!target.isOnFire() && CommonConfigs.TORCH_FIRE.get()) {
-                int duration = CommonConfigs.TORCH_FIRE_DURATION.get();
-                if (CompatHandler.SOUL_FIRED) {
-                    SoulFiredCompat.setSecondsOnFire(target, duration, stack);
-                } else {
-                    target.setRemainingFireTicks(duration);
-                }
-                if (stack.is(ILightable.FLINT_AND_STEELS)) {
-                    target.playSound(SoundEvents.FLINTANDSTEEL_USE, 1.0F, level.getRandom().nextFloat() * 0.4F + 0.8F);
-                } else {
-                    target.playSound(SoundEvents.FIRECHARGE_USE, 0.5F, 1.3F + level.getRandom().nextFloat() * 0.2F);
-                }
-            }
+        if (!stack.is(ModTags.SET_ENTITY_ON_FIRE) || !CommonConfigs.TORCH_FIRE.get()) {
+            return InteractionResult.PASS;
+        }
+        if (level.isClientSide() || !(target instanceof LivingEntity living)
+                || !target.isAttackable() || target.skipAttackInteraction(player)) {
+            return InteractionResult.PASS;
+        }
+        int seconds = CommonConfigs.TORCH_FIRE_DURATION.get();
+        int ticks = seconds * 20;
+        if (CompatHandler.SOUL_FIRED) {
+            SoulFiredCompat.setSecondsOnFire(living, seconds, stack);
+        } else {
+            living.setRemainingFireTicks(Math.max(living.getRemainingFireTicks(), ticks));
+        }
+        if (stack.is(ILightable.FLINT_AND_STEELS)) {
+            target.playSound(SoundEvents.FLINTANDSTEEL_USE, 1.0F, level.getRandom().nextFloat() * 0.4F + 0.8F);
+        } else {
+            target.playSound(SoundEvents.FIRECHARGE_USE, 0.5F, 1.3F + level.getRandom().nextFloat() * 0.2F);
         }
         return InteractionResult.PASS;
     }

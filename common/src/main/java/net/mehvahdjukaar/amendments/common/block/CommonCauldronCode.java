@@ -104,12 +104,19 @@ public final class CommonCauldronCode {
     }
 
     private static SoftFluidStack getFluidOrWater(BlockState newState, BlockPos pos, LevelAccessor level) {
-        if (newState.getBlock() instanceof ModCauldronBlock && level.getBlockEntity(pos) instanceof LiquidCauldronBlockTile te) {
-            return te.getSoftFluidTank().getFluid();
-        } else {
+        if (newState.getBlock() instanceof ModCauldronBlock modCauldron) {
+            if (level.getBlockEntity(pos) instanceof LiquidCauldronBlockTile te) {
+                return te.getSoftFluidTank().getFluid();
+            }
+            // Block entity not loaded yet (e.g. Create contraption placement) — use mod cauldron level property
+            return SoftFluidStack.of(MLBuiltinSoftFluids.WATER.getHolder(level.registryAccess()),
+                    newState.getValue(modCauldron.getLevelProperty()));
+        }
+        if (newState.hasProperty(LayeredCauldronBlock.LEVEL)) {
             return SoftFluidStack.of(MLBuiltinSoftFluids.WATER.getHolder(level.registryAccess()),
                     newState.getValue(LayeredCauldronBlock.LEVEL));
         }
+        return SoftFluidStack.empty(level.registryAccess());
     }
 
     public static boolean shouldBoil(BlockState belowState, SoftFluidStack fluid, LevelAccessor level, BlockPos pos) {
