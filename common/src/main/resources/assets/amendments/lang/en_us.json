@@ -91,5 +91,19 @@
   "item.amendments.dye_bottle.slate": "Slate",
   "fluid.amendments.dye": "Dye",
   "subtitles.amendments.fireball_explosion": "Fireball Explosion",
-  "message.amendments.cauldron": "The potion mix seems unstable..."
+  "message.amendments.cauldron": "The potion mix seems unstable...",
+  "tag.block.amendments.cauldron_heat_source": "Cauldron Heat Source",
+  "tag.block.amendments.ceiling_banners": "Ceiling Banners",
+  "tag.block.amendments.skull_candles": "Skull Candles",
+  "tag.block.amendments.stairs_carpets": "Stairs Carpets",
+  "tag.item.amendments.goes_in_lectern": "Goes In Lectern",
+  "tag.item.amendments.goes_in_tripwire_hook": "Goes In Tripwire Hook",
+  "tag.item.amendments.non_stackable_heads": "Non Stackable Heads",
+  "tag.item.amendments.sets_on_fire": "Sets On Fire",
+  "tag.moonlight.amendments.soft_fluid.can_glow": "Can Glow",
+  "tag.moonlight.amendments.soft_fluid.cant_boil": "Cant Boil",
+  "tag.moonlight.amendments.soft_fluid.cant_extinguish": "Cant Extinguish",
+  "tag.moonlight.amendments.soft_fluid.cant_go_in_liquid_cauldron": "Cant Go In Liquid Cauldron",
+  "tag.moonlight.amendments.soft_fluid.no_tint_in_cauldron": "No Tint In Cauldron",
+  "tag.worldgen.amendments.structure.add_potion_cauldron": "Add Potion Cauldron"
 }
