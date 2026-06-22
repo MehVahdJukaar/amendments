@@ -42,16 +42,18 @@ public class WallLanternTextureGen {
     }
 
     /**
-     * Builds a palette mask that samples only the metal cap at the very top of the lantern.
-     * Moonlight reads colors from the mask's transparent pixels, so everything below the cap is
-     * made opaque (ignored). The cap already contains every metal shade, and staying high avoids
-     * the glowing core in the middle of the cage - which modded lanterns may draw larger than vanilla.
+     * Builds a palette mask that samples only the metal base at the bottom of the lantern.
+     * Moonlight reads colors from the mask's transparent pixels, so everything above the base is
+     * made opaque (ignored). The base carries the full metal palette - the wall mount texture is a
+     * recolor of exactly those shades, so for lanterns whose metal matches vanilla the generated
+     * mount comes out identical to the builtin one. It also sits farthest from the glowing core in
+     * the upper-middle of the cage, which modded lanterns may draw larger than vanilla.
      */
     private static TextureImage createMetalMask(TextureImage image) {
         TextureImage mask = TextureImage.createNew(image.imageWidth(), image.imageHeight(), image.getMcMeta());
-        int sampledRows = Math.max(1, Math.round(image.frameHeight() * 0.2f));
+        int baseStart = Math.round(image.frameHeight() * 0.75f);
         image.forEachPixel(pixel -> {
-            if (pixel.frameY() >= sampledRows) {
+            if (pixel.frameY() < baseStart) {
                 mask.setPixel(pixel.x(), pixel.y(), 0xFFFFFFFF);
             }
         });

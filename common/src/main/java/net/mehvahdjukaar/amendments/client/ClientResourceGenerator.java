@@ -5,7 +5,6 @@ import net.mehvahdjukaar.amendments.Amendments;
 import net.mehvahdjukaar.amendments.AmendmentsClient;
 import net.mehvahdjukaar.amendments.common.CakeRegistry;
 import net.mehvahdjukaar.amendments.common.LanternRegistry;
-import net.mehvahdjukaar.amendments.common.WallLanternCompat;
 import net.mehvahdjukaar.amendments.configs.ClientConfigs;
 import net.mehvahdjukaar.amendments.configs.CommonConfigs;
 import net.mehvahdjukaar.amendments.integration.CompatHandler;
@@ -445,13 +444,15 @@ public class ClientResourceGenerator extends DynamicClientResourceProvider {
         for (var type : LanternRegistry.INSTANCE.getValues()) {
             if (type.isVanilla() && type.getId().getPath().equals("lantern")) continue;
 
-            if (WallLanternCompat.hasBuiltinSupport(type)) continue;
-
             var wallBlock = type.getBlockOfThis("wall_lantern");
             if (wallBlock == null) continue;
 
             try {
                 ResourceLocation wlId = Utils.getID(wallBlock);
+                // Lanterns we ship builtin assets for (vanilla soul + curated mod lanterns) bring their own
+                // blockstate/models/textures - don't override them.
+                if (manager.getResource(ResType.BLOCKSTATES.getPath(wlId)).isPresent()) continue;
+
                 ResourceLocation supportTexture = WallLanternTextureGen.getSupportTextureLocation(type);
                 ResourceLocation lanternTexture = WallLanternTextureGen.getLanternTextureLocation(manager, type);
 
