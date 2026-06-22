@@ -8,85 +8,53 @@ import net.mehvahdjukaar.moonlight.api.resources.textures.Respriter;
 import net.mehvahdjukaar.moonlight.api.resources.textures.TextureImage;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
-import net.minecraft.util.FastColor;
 
 public class WallLanternTextureGen {
 
     private WallLanternTextureGen() {
     }
 
-    public static boolean canGenerateFrom(ResourceManager manager, ResourceLocation lanternTexture) {
-        try (TextureImage source = TextureImage.open(manager, lanternTexture);
-             TextureImage vanilla = TextureImage.open(manager, ResourceLocation.withDefaultNamespace("block/lantern"))) {
-            return hasMatchingWhitespace(source, vanilla);
-        } catch (Exception e) {
-            return false;
-        }
-    }
-
     public static TextureImage generate(ResourceManager manager, ResourceLocation lanternTexture) throws Exception {
-        try (TextureImage sourceLantern = TextureImage.open(manager, lanternTexture);
-             TextureImage vanillaLantern = TextureImage.open(manager, ResourceLocation.withDefaultNamespace("block/lantern"));
+        try (TextureImage fullLantern = TextureImage.open(manager, lanternTexture);
+             TextureImage sourceLantern = firstFrame(fullLantern);
              TextureImage template = TextureImage.open(manager, Amendments.res("block/wall_lanterns/wall_lantern"));
-             TextureImage lanternMetalMask = openMetalMask(manager, Amendments.res("block/wall_lanterns/lantern_metal_mask"),
-                     vanillaLantern, true);
-             TextureImage supportMetalMask = openMetalMask(manager, Amendments.res("block/wall_lanterns/wall_lantern_metal_mask"),
-                     template, false)) {
+             TextureImage paletteMask = createMetalMask(sourceLantern)) {
 
-            restrictToUpperHalf(lanternMetalMask);
-            Palette metalPalette = Palette.fromImage(sourceLantern, lanternMetalMask);
-            Respriter respriter = Respriter.masked(template, supportMetalMask);
-            return respriter.recolor(metalPalette);
-        }
-    }
-
-    private static TextureImage openMetalMask(ResourceManager manager, ResourceLocation path,
-                                              TextureImage fallbackFrom, boolean fromLantern) throws Exception {
-        if (manager.getResource(net.mehvahdjukaar.moonlight.api.resources.ResType.TEXTURES.getPath(path)).isPresent()) {
-            return TextureImage.open(manager, path);
-        }
-        return fromLantern ? createLanternMetalMask(fallbackFrom) : createSupportMetalMask(fallbackFrom);
-    }
-
-    /** Clears the lower half of a mask so palette sampling uses only the lantern cage. */
-    private static void restrictToUpperHalf(TextureImage mask) {
-        int halfHeight = (int) (mask.imageHeight() * 0.3);
-        for (int x = 0; x < mask.imageWidth(); x++) {
-            for (int y = halfHeight; y < mask.imageHeight(); y++) {
-                mask.setPixel(x, y, 0);
-            }
+            Palette palette = Palette.fromImage(sourceLantern, paletteMask);
+            return Respriter.of(template).recolor(palette);
         }
     }
 
     /**
-     * Marks metal pixels on a vanilla-style lantern texture (opaque, non-glass).
+     * Lantern textures may be animated (frames stacked vertically). Only the first frame
+     * represents the lit lantern, so we recolor from that single frame rather than the whole sheet.
      */
-    private static TextureImage createLanternMetalMask(TextureImage lantern) {
-        TextureImage mask = TextureImage.createNew(lantern.imageWidth(), lantern.imageHeight());
-        for (int x = 0; x < lantern.imageWidth(); x++) {
-            for (int y = 0; y < lantern.imageHeight(); y++) {
-                int pixel = lantern.getPixel(x, y);
-                if (FastColor.ABGR32.alpha(pixel) == 0) continue;
-                if (isGlassPixel(pixel)) continue;
-                mask.setPixel(x, y, 0xFFFFFFFF);
+    private static TextureImage firstFrame(TextureImage image) {
+        int fw = image.frameWidth();
+        int fh = image.frameHeight();
+        TextureImage frame = TextureImage.createNew(fw, fh);
+        for (int x = 0; x < fw; x++) {
+            for (int y = 0; y < fh; y++) {
+                frame.setPixel(x, y, image.getFramePixel(0, x, y));
             }
         }
-        return mask;
+        return frame;
     }
 
     /**
-     * Marks recolorable metal pixels on the wall lantern support template.
+     * Builds a palette mask that samples only the metal cap at the very top of the lantern.
+     * Moonlight reads colors from the mask's transparent pixels, so everything below the cap is
+     * made opaque (ignored). The cap already contains every metal shade, and staying high avoids
+     * the glowing core in the middle of the cage - which modded lanterns may draw larger than vanilla.
      */
-    private static TextureImage createSupportMetalMask(TextureImage template) {
-        TextureImage mask = TextureImage.createNew(template.imageWidth(), template.imageHeight());
-        for (int x = 0; x < template.imageWidth(); x++) {
-            for (int y = 0; y < template.imageHeight(); y++) {
-                int pixel = template.getPixel(x, y);
-                if (FastColor.ABGR32.alpha(pixel) == 0) {
-                    mask.setPixel(x, y, 0xFFFFFFFF);
-                }
+    private static TextureImage createMetalMask(TextureImage image) {
+        TextureImage mask = TextureImage.createNew(image.imageWidth(), image.imageHeight(), image.getMcMeta());
+        int sampledRows = Math.max(1, Math.round(image.frameHeight() * 0.2f));
+        image.forEachPixel(pixel -> {
+            if (pixel.frameY() >= sampledRows) {
+                mask.setPixel(pixel.x(), pixel.y(), 0xFFFFFFFF);
             }
-        }
+        });
         return mask;
     }
 

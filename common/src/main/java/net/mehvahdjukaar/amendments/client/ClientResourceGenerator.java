@@ -5,6 +5,7 @@ import net.mehvahdjukaar.amendments.Amendments;
 import net.mehvahdjukaar.amendments.AmendmentsClient;
 import net.mehvahdjukaar.amendments.common.CakeRegistry;
 import net.mehvahdjukaar.amendments.common.LanternRegistry;
+import net.mehvahdjukaar.amendments.common.WallLanternCompat;
 import net.mehvahdjukaar.amendments.configs.ClientConfigs;
 import net.mehvahdjukaar.amendments.configs.CommonConfigs;
 import net.mehvahdjukaar.amendments.integration.CompatHandler;
@@ -394,7 +395,7 @@ public class ClientResourceGenerator extends DynamicClientResourceProvider {
 
             for (var e : AmendmentsClient.getAllRecords().entrySet()) {
                 ResourceLocation texturePath = Amendments.res(e.getValue().texture().getPath());
-                sink.addTextureIfNotPresent(manager, texturePath.toString(), () -> {
+                sink.addTextureIfNotPresent(manager, texturePath, () -> {
                     try (TextureImage vanillaTexture = TextureImage.open(manager,
                             RPUtils.findFirstItemTextureLocation(manager, e.getKey()))) {
 
@@ -407,7 +408,6 @@ public class ClientResourceGenerator extends DynamicClientResourceProvider {
                             newImage.setPixel(6, 6, p.getLightest().value());
                             newImage.setPixel(9, 9, p.getLightest().value());
                         }
-                     if(PlatHelper.isDev())   throw new RuntimeException("test");
                         return newImage;
                     } catch (Exception ex) {
                         Amendments.LOGGER.warn("Failed to generate record item texture for {}. Using default generic texture", e.getKey());
@@ -436,29 +436,27 @@ public class ClientResourceGenerator extends DynamicClientResourceProvider {
     private void generateWallLanternAssets(ResourceManager manager, ResourceSink sink) {
         StaticResource blockState = StaticResource.getOrLog(manager,
                 ResType.BLOCKSTATES.getPath(Amendments.res("wall_lantern")));
-        StaticResource[] models = Stream.of("", "_1", "_2", "_3", "_4", "_5")
+        StaticResource[] models = Stream.of("", "_1", "_2", "_3", "_4", "_5",
+                        "_template", "_1_template", "_2_template", "_3_template", "_4_template", "_5_template")
                 .map(s -> StaticResource.getOrLog(manager,
-                        ResType.BLOCK_MODELS.getPath(Amendments.res("block/wall_lantern" + s))))
+                        ResType.BLOCK_MODELS.getPath(Amendments.res("wall_lantern" + s))))
                 .toArray(StaticResource[]::new);
 
         for (var type : LanternRegistry.INSTANCE.getValues()) {
             if (type.isVanilla() && type.getId().getPath().equals("lantern")) continue;
 
+            if (WallLanternCompat.hasBuiltinSupport(type)) continue;
+
+            var wallBlock = type.getBlockOfThis("wall_lantern");
+            if (wallBlock == null) continue;
+
             try {
-                ResourceLocation wlId = Utils.getID(type.getBlockOfThis("wall_lantern"));
+                ResourceLocation wlId = Utils.getID(wallBlock);
                 ResourceLocation supportTexture = WallLanternTextureGen.getSupportTextureLocation(type);
                 ResourceLocation lanternTexture = WallLanternTextureGen.getLanternTextureLocation(manager, type);
 
-                sink.addTextureIfNotPresent(manager, supportTexture.toString(), () -> {
-                    try {
-                        if (WallLanternTextureGen.canGenerateFrom(manager, lanternTexture)) {
-                            return WallLanternTextureGen.generate(manager, lanternTexture);
-                        }
-                    } catch (Exception ex) {
-                        throw new RuntimeException(ex);
-                    }
-                    throw new RuntimeException("Cannot generate wall lantern texture for " + type.getId());
-                });
+                sink.addTextureUnlessPresent(manager, supportTexture, () ->
+                        WallLanternTextureGen.generate(manager, lanternTexture));
 
                 String textureRef = supportTexture.toString();
                 String modelPrefix = "amendments:block/" + wlId.getPath();

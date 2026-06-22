@@ -1,0 +1,94 @@
+{
+  "variants": {
+    "facing=north,attachment=block": {
+      "model": "amendments:block/twigs/wall_blue_orchid_paper_lantern"
+    },
+    "facing=east,attachment=block": {
+      "model": "amendments:block/twigs/wall_blue_orchid_paper_lantern",
+      "y": 90
+    },
+    "facing=south,attachment=block": {
+      "model": "amendments:block/twigs/wall_blue_orchid_paper_lantern",
+      "y": 180
+    },
+    "facing=west,attachment=block": {
+      "model": "amendments:block/twigs/wall_blue_orchid_paper_lantern",
+      "y": 270
+    },
+    "facing=north,attachment=post": {
+      "model": "amendments:block/twigs/wall_blue_orchid_paper_lantern_4"
+    },
+    "facing=east,attachment=post": {
+      "model": "amendments:block/twigs/wall_blue_orchid_paper_lantern_4",
+      "y": 90
+    },
+    "facing=south,attachment=post": {
+      "model": "amendments:block/twigs/wall_blue_orchid_paper_lantern_4",
+      "y": 180
+    },
+    "facing=west,attachment=post": {
+      "model": "amendments:block/twigs/wall_blue_orchid_paper_lantern_4",
+      "y": 270
+    },
+    "facing=north,attachment=wall": {
+      "model": "amendments:block/twigs/wall_blue_orchid_paper_lantern_2"
+    },
+    "facing=east,attachment=wall": {
+      "model": "amendments:block/twigs/wall_blue_orchid_paper_lantern_2",
+      "y": 90
+    },
+    "facing=south,attachment=wall": {
+      "model": "amendments:block/twigs/wall_blue_orchid_paper_lantern_2",
+      "y": 180
+    },
+    "facing=west,attachment=wall": {
+      "model": "amendments:block/twigs/wall_blue_orchid_paper_lantern_2",
+      "y": 270
+    },
+    "facing=north,attachment=beam": {
+      "model": "amendments:block/twigs/wall_blue_orchid_paper_lantern_1"
+    },
+    "facing=east,attachment=beam": {
+      "model": "amendments:block/twigs/wall_blue_orchid_paper_lantern_1",
+      "y": 90
+    },
+    "facing=south,attachment=beam": {
+      "model": "amendments:block/twigs/wall_blue_orchid_paper_lantern_1",
+      "y": 180
+    },
+    "facing=west,attachment=beam": {
+      "model": "amendments:block/twigs/wall_blue_orchid_paper_lantern_1",
+      "y": 270
+    },
+    "facing=north,attachment=palisade": {
+      "model": "amendments:block/twigs/wall_blue_orchid_paper_lantern_3"
+    },
+    "facing=east,attachment=palisade": {
+      "model": "amendments:block/twigs/wall_blue_orchid_paper_lantern_3",
+      "y": 90
+    },
+    "facing=south,attachment=palisade": {
+      "model": "amendments:block/twigs/wall_blue_orchid_paper_lantern_3",
+      "y": 180
+    },
+    "facing=west,attachment=palisade": {
+      "model": "amendments:block/twigs/wall_blue_orchid_paper_lantern_3",
+      "y": 270
+    },
+    "facing=north,attachment=stick": {
+      "model": "amendments:block/twigs/wall_blue_orchid_paper_lantern_5"
+    },
+    "facing=east,attachment=stick": {
+      "model": "amendments:block/twigs/wall_blue_orchid_paper_lantern_5",
+      "y": 90
+    },
+    "facing=south,attachment=stick": {
+      "model": "amendments:block/twigs/wall_blue_orchid_paper_lantern_5",
+      "y": 180
+    },
+    "facing=west,attachment=stick": {
+      "model": "amendments:block/twigs/wall_blue_orchid_paper_lantern_5",
+      "y": 270
+    }
+  }
+}
