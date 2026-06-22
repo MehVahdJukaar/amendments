@@ -10,14 +10,19 @@ fabric {
 val moonlight_version: String by extra
 val soul_fire_d_version: String by extra
 val minecraft_min_version: String by extra
+val flywheel_version: String by extra
 
 dependencies {
     modImplementation("net.mehvahdjukaar:moonlight-fabric:${moonlight_version}")
 
- //   modCompileOnly("com.terraformersmc:modmenu:4.0.6")
-
-  //  modCompileOnly("curse.maven:supplementaries-412082:8120874")
-//    modCompileOnly("curse.maven:farmers-delight-refabricated-993166:8007019")
-    //modCompileOnly("curse.maven:spelunkery-790530:5043881")
-   // modCompileOnly("it.crystalnest:soul-fire-d-common:${minecraft_min_version}-${soul_fire_d_version}")
+    // Mirror of common deps (new setup requires every common modImplementation/modCompileOnly to live here too)
+    modImplementation("curse.maven:supplementaries-412082:8044262")
+    //modCompileOnly("com.jozufozu.flywheel:flywheel-forge-${flywheel_version}")
+    modCompileOnly("curse.maven:flan-404578:5290167")
+    modCompileOnly("curse.maven:farmers-delight-398521:8083481")
+    modCompileOnly("curse.maven:etched-491890:5998004")
+    modCompileOnly("curse.maven:new-thin-air-878379:5068247")
+    modCompileOnly("curse.maven:quark-243121:5093415")
+    modCompileOnly("curse.maven:cave-enhancements-597562:4388535")
+    modCompileOnly("curse.maven:soul-fire-d-662413:6248772")
 }

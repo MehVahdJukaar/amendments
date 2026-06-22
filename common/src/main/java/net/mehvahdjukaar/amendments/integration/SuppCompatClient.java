@@ -1,6 +1,5 @@
 package net.mehvahdjukaar.amendments.integration;
 
-import net.mehvahdjukaar.candlelight.api.ClientOnly;
 import net.mehvahdjukaar.supplementaries.client.ModMaterials;
 import net.minecraft.client.resources.model.Material;
 import net.minecraft.world.item.BannerPatternItem;

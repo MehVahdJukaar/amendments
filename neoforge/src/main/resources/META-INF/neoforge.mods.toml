@@ -19,24 +19,23 @@ credits = "${mod_credits}"
 description = '''${mod_description}'''
 modUrl = "${mod_homepage}"
 
-[[dependencies.${ mod_id }]]
+[[dependencies.${mod_id}]]
     modId = "neoforge"
     type = "required"
     versionRange = "*"
     ordering = "NONE"
     side = "BOTH"
 
-[[dependencies.${ mod_id }]]
+[[dependencies.${mod_id}]]
     modId = "minecraft"
     type = "required"
-    versionRange = "${minecraft_version}"
+    versionRange = "[${minecraft_version}]"
     ordering = "NONE"
     side = "BOTH"
 
-[[dependencies.${ mod_id }]]
+[[dependencies.${mod_id}]]
     modId = "moonlight"
-    mandatory = true
+    type = "required"
     versionRange = "[${moonlight_min_version},)"
     ordering = "NONE"
     side = "BOTH"
-

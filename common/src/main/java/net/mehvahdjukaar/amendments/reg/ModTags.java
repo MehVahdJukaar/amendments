@@ -17,10 +17,10 @@ public class ModTags {
     public static final TagKey<SoftFluid> CAN_GLOW = fluidTag("can_glow");
     public static final TagKey<SoftFluid> CAULDRON_BLACKLIST = fluidTag("cant_go_in_liquid_cauldron");
     //block tags
-    public static final TagKey<Block> POSTS = suppTag("posts");
-    public static final TagKey<Block> PALISADES = suppTag("palisades");
-    public static final TagKey<Block> BEAMS = suppTag("beams");
-    public static final TagKey<Block> WALLS = suppTag("walls");
+    public static final TagKey<Block> COLUMN_SHAPE_4X4 = suppTag("column_shape_4x4");
+    public static final TagKey<Block> COLUMN_SHAPE_6X6 = suppTag("column_shape_6x6");
+    public static final TagKey<Block> COLUMN_SHAPE_8X8 = suppTag("column_shape_8x8");
+    public static final TagKey<Block> COLUMN_SHAPE_10X10 = suppTag("column_shape_10x10");
     public static final TagKey<Block> FALLING_LANTERNS_BLACKLIST = suppTag("falling_lantern_blacklist");
 
     public static final TagKey<Block> HEAT_SOURCES = blockTag("cauldron_heat_source");

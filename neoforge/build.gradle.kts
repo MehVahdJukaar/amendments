@@ -13,7 +13,15 @@ val flywheel_version: String by extra
 val minecraft_min_version: String by extra
 
 dependencies {
-    modApi("net.mehvahdjukaar:moonlight-neoforge:${moonlight_version}")
+    modImplementation("net.mehvahdjukaar:moonlight-neoforge:${moonlight_version}")
+    accessTransformers("net.mehvahdjukaar:moonlight-neoforge:${moonlight_version}")
+
+    // Mirror of common deps (new setup requires every common modImplementation/modCompileOnly to live here too)
+    modImplementation("curse.maven:supplementaries-412082:8044262")
+    modCompileOnly("curse.maven:flan-404578:5290167")
+    modCompileOnly("curse.maven:new-thin-air-878379:5068247")
+    modCompileOnly("curse.maven:cave-enhancements-597562:4388535")
+    modCompileOnly("curse.maven:soul-fire-d-662413:6248772")
 
     modCompileOnly("maven.modrinth:sodium:mc1.21-0.6.0-beta.2-neoforge")
     modImplementation("curse.maven:farmers-delight-398521:5566383")

@@ -24,7 +24,6 @@ dependencies {
     modCompileOnly("curse.maven:flan-404578:5290167")
     modCompileOnly("curse.maven:farmers-delight-398521:8083481")
     modCompileOnly("curse.maven:etched-491890:5998004")
-    modCompileOnly("com.lowdragmc.shimmer:Shimmer-common:1.19.2-0.1.14")
     modCompileOnly("curse.maven:new-thin-air-878379:5068247")
     modCompileOnly("curse.maven:quark-243121:5093415")
     modCompileOnly("curse.maven:cave-enhancements-597562:4388535")

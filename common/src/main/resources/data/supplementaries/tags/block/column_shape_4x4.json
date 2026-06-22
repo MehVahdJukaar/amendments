@@ -150,5 +150,8 @@
     {"id":"ecologics:stripped_coconut_post","required":false},
     {"id":"ecologics:stripped_walnut_post","required":false},
     {"id":"ecologics:stripped_azalea_post","required":false}
+  ],
+  "remove": [
+    "gardens_of_the_dead:whistlecane_fence"
   ]
 }

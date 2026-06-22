@@ -78,11 +78,11 @@ public class ModBlockProperties {
 
             PostType type = null;
             //if (state.getBlock().hasTileEntity(state)) return type;
-            if (state.is(ModTags.POSTS)) {
+            if (state.is(ModTags.COLUMN_SHAPE_4X4)) {
                 type = PostType.POST;
-            } else if (state.is(ModTags.PALISADES)) {
+            } else if (state.is(ModTags.COLUMN_SHAPE_6X6)) {
                 type = PostType.PALISADE;
-            } else if (state.is(ModTags.WALLS)) {
+            } else if (state.is(ModTags.COLUMN_SHAPE_8X8)) {
                 if ((state.getBlock() instanceof WallBlock) && !state.getValue(WallBlock.UP)) {
                     //ignoring not full height ones. might use hitbox here instead
                     if (needsFullHeight && (state.getValue(WallBlock.NORTH_WALL) == WallSide.LOW ||
@@ -91,7 +91,7 @@ public class ModBlockProperties {
                 } else {
                     type = PostType.WALL;
                 }
-            } else if (state.is(ModTags.BEAMS)) {
+            } else if (state.is(ModTags.COLUMN_SHAPE_10X10)) {
                 if (state.hasProperty(BlockStateProperties.ATTACHED) && state.getValue(BlockStateProperties.ATTACHED)) {
                     //idk why this was here
                     type = null;

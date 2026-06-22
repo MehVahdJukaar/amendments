@@ -5,6 +5,7 @@
     {"id":"betternether:mushroom_fir_stem","required":false},
     {"id":"betternether:mushroom_stem","required":false},
     {"id":"#decorative_blocks:palisade","required":false},
+    {"id":"gardens_of_the_dead:whistlecane_fence","required":false},
     {"id":"#druidcraft:beams","required":false},
     {"id":"druidcraftrg:beam","required":false},
     {"id":"druidcraft:oak_beam","required":false},
