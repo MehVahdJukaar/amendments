@@ -50,7 +50,11 @@ public class LanternRegistry extends BlockTypeRegistry<LanternRegistry.LanternTy
 
         if (WHITELIST_NAMESPACES.contains(namespace)) return Optional.of(new LanternType(blockId, block));
 
-        if (namespace.equals("twigs") && blockId.getPath().contains("paper_lantern")) {
+        String path = blockId.getPath();
+        if (namespace.equals("twigs") && path.contains("paper_lantern")) {
+            return Optional.of(new LanternType(blockId, block));
+        }
+        if (namespace.equals("windswept") && path.equals("ice_lantern")) {
             return Optional.of(new LanternType(blockId, block));
         }
 

@@ -65,6 +65,7 @@ public class Amendments {
         PlatHelper.addCommonSetupAsync(Amendments::setupAsync);
         PlatHelper.addCommonSetup(Amendments::setup);
         PlatHelper.addReloadableCommonSetup(Amendments::onReload);
+        RegHelper.registerDynamicResourceProvider(new net.mehvahdjukaar.amendments.common.WallLanternServerResources());
         RegHelper.addDynamicDispenserBehaviorRegistration(Amendments::registerDispenserBehaviors);
 
         RegHelper.registerSimpleRecipeCondition(res("flag"), CommonConfigs::isFlagOn);

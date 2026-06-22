@@ -1,3 +1,4 @@
+- wall lanterns now register a new block for each lantern block
 - fixes #201
 - fixes #239
 - fixes #245

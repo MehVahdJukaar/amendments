@@ -29,6 +29,8 @@ public class ModTags {
 
     public static final TagKey<Block> VINE_SUPPORT = blockTag("vine_support");
 
+    public static final TagKey<Block> WALL_LANTERNS = blockTag("wall_lanterns");
+
 
     //item tags
 
