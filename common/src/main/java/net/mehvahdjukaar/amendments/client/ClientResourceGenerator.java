@@ -4,6 +4,7 @@ import com.google.gson.JsonParser;
 import net.mehvahdjukaar.amendments.Amendments;
 import net.mehvahdjukaar.amendments.AmendmentsClient;
 import net.mehvahdjukaar.amendments.common.CakeRegistry;
+import net.mehvahdjukaar.amendments.common.LanternRegistry;
 import net.mehvahdjukaar.amendments.configs.ClientConfigs;
 import net.mehvahdjukaar.amendments.configs.CommonConfigs;
 import net.mehvahdjukaar.amendments.integration.CompatHandler;
@@ -42,6 +43,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 public class ClientResourceGenerator extends DynamicClientResourceProvider {
@@ -68,13 +70,16 @@ public class ClientResourceGenerator extends DynamicClientResourceProvider {
 
     @Override
     public void regenerateDynamicAssets(Consumer<ResourceGenTask> executor) {
-        WallLanternModelsManager.refreshModels(Minecraft.getInstance().getResourceManager());
         if (ClientConfigs.JUKEBOX_MODEL.get()) {
             executor.accept(this::generateJukeboxAssets);
         }
 
         if (CommonConfigs.DOUBLE_CAKES.get()) {
             executor.accept(this::generateDoubleCakesAssets);
+        }
+
+        if (CommonConfigs.WALL_LANTERN.get()) {
+            executor.accept(this::generateWallLanternAssets);
         }
 
         if (ClientConfigs.SIGN_ATTACHMENT.get()) {
@@ -427,6 +432,56 @@ public class ClientResourceGenerator extends DynamicClientResourceProvider {
         }
     }
 
+
+    private void generateWallLanternAssets(ResourceManager manager, ResourceSink sink) {
+        StaticResource blockState = StaticResource.getOrLog(manager,
+                ResType.BLOCKSTATES.getPath(Amendments.res("wall_lantern")));
+        StaticResource[] models = Stream.of("", "_1", "_2", "_3", "_4", "_5")
+                .map(s -> StaticResource.getOrLog(manager,
+                        ResType.BLOCK_MODELS.getPath(Amendments.res("block/wall_lantern" + s))))
+                .toArray(StaticResource[]::new);
+
+        for (var type : LanternRegistry.INSTANCE.getValues()) {
+            if (type.isVanilla() && type.getId().getPath().equals("lantern")) continue;
+
+            try {
+                ResourceLocation wlId = Utils.getID(type.getBlockOfThis("wall_lantern"));
+                ResourceLocation supportTexture = WallLanternTextureGen.getSupportTextureLocation(type);
+                ResourceLocation lanternTexture = WallLanternTextureGen.getLanternTextureLocation(manager, type);
+
+                sink.addTextureIfNotPresent(manager, supportTexture.toString(), () -> {
+                    try {
+                        if (WallLanternTextureGen.canGenerateFrom(manager, lanternTexture)) {
+                            return WallLanternTextureGen.generate(manager, lanternTexture);
+                        }
+                    } catch (Exception ex) {
+                        throw new RuntimeException(ex);
+                    }
+                    throw new RuntimeException("Cannot generate wall lantern texture for " + type.getId());
+                });
+
+                String textureRef = supportTexture.toString();
+                String modelPrefix = "amendments:block/" + wlId.getPath();
+                Function<String, String> pathTransform = s -> s.replace("wall_lantern", wlId.getPath());
+                for (var m : models) {
+                    if (m == null) continue;
+                    sink.addSimilarJsonResource(manager, m,
+                            s -> s.replace("amendments:block/wall_lanterns/wall_lantern", textureRef)
+                                    .replace("\"amendments:block/wall_lantern\"", "\"" + modelPrefix + "\"")
+                                    .replace("\"amendments:block/wall_lantern_", "\"" + modelPrefix + "_"),
+                            pathTransform);
+                }
+                if (blockState != null) {
+                    sink.addSimilarJsonResource(manager, blockState,
+                            s -> s.replace("\"amendments:block/wall_lantern\"", "\"" + modelPrefix + "\"")
+                                    .replace("\"amendments:block/wall_lantern_", "\"" + modelPrefix + "_"),
+                            pathTransform);
+                }
+            } catch (Exception e) {
+                Amendments.LOGGER.error("Failed to generate assets for wall lantern {}", type.getId(), e);
+            }
+        }
+    }
 
     private void generateDoubleCakesAssets(ResourceManager manager, ResourceSink sink) {
         StaticResource[] cakeModels = Stream.of("full", "slice1", "slice2", "slice3", "slice4", "slice5", "slice6")

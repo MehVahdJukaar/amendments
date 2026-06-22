@@ -56,8 +56,8 @@ public class WallLanternBlockTileRenderer implements BlockEntityRenderer<WallLan
         poseStack.mulPose(RotHlpr.Y90);
         poseStack.translate(-0.5, -0.5, -0.5);
 
-        BakedModel model = WallLanternModelsManager.getModel(
-                blockRenderer.getBlockModelShaper(), lanternState);
+        BakedModel model = WallLanternModelsManager.getLanternModel(blockRenderer.getBlockModelShaper(),
+                tile.getOwnBlock().type, lanternState);
         // render block
         Level level = tile.getLevel();
         BlockPos pos = tile.getBlockPos();
@@ -86,7 +86,7 @@ public class WallLanternBlockTileRenderer implements BlockEntityRenderer<WallLan
     public void render(WallLanternBlockTile tile, float partialTicks, PoseStack matrixStackIn,
                        MultiBufferSource bufferIn, int combinedLightIn,
                        int combinedOverlayIn) {
-        this.renderLantern(tile, tile.getHeldBlock(), partialTicks, matrixStackIn, bufferIn, combinedLightIn, combinedOverlayIn, false);
+        this.renderLantern(tile, tile.getLanternState(), partialTicks, matrixStackIn, bufferIn, combinedLightIn, combinedOverlayIn, false);
     }
 
 }

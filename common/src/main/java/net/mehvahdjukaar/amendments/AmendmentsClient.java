@@ -157,7 +157,9 @@ ClientHelper.addMenuScreensRegistration(AmendmentsClient::registerMenuScreens);
         ClientHelper.registerRenderType(ModRegistry.LIQUID_CAULDRON.get(), RenderType.cutout(), RenderType.translucent());
         ClientHelper.registerRenderType(ModRegistry.DYE_CAULDRON.get(), RenderType.cutout(), RenderType.translucent());
         ClientHelper.registerRenderType(ModRegistry.HANGING_FLOWER_POT.get(), RenderType.cutout());
-        ClientHelper.registerRenderType(ModRegistry.WALL_LANTERN.get(), RenderType.cutout());
+        for (var wallLantern : ModRegistry.WALL_LANTERNS.values()) {
+            ClientHelper.registerRenderType(wallLantern, RenderType.cutout());
+        }
         ClientHelper.registerRenderType(ModRegistry.TOOL_HOOK.get(), RenderType.cutout());
 
     }
@@ -247,6 +249,7 @@ ClientHelper.addMenuScreensRegistration(AmendmentsClient::registerMenuScreens);
 
     @EventCalled
     private static void registerSpecialModels(ClientHelper.SpecialModelEvent event) {
+        WallLanternModelsManager.refreshModels(Minecraft.getInstance().getResourceManager());
         WallLanternModelsManager.registerSpecialModels(event);
         event.register(BELL_CHAIN);
         if (CompatHandler.SUPPLEMENTARIES) event.register(BELL_ROPE);
@@ -276,7 +279,8 @@ ClientHelper.addMenuScreensRegistration(AmendmentsClient::registerMenuScreens);
     @EventCalled
     private static void registerBlockColors(ClientHelper.BlockColorEvent event) {
         List<Block> mimics = new ArrayList<>();
-        mimics.addAll(List.of(ModRegistry.WALL_LANTERN.get(), ModRegistry.HANGING_FLOWER_POT.get(),
+        mimics.addAll(ModRegistry.WALL_LANTERNS.values());
+        mimics.addAll(List.of(ModRegistry.HANGING_FLOWER_POT.get(),
                 ModRegistry.WATERLILY_BLOCK.get()));
         mimics.addAll(ModRegistry.DOUBLE_CAKES.values());
         event.register(new MimicBlockColor(), mimics.toArray(new Block[0]));

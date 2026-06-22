@@ -44,27 +44,18 @@ public class WallLanternBakedModel implements CustomBakedModel {
 
         BlockState mimic = data.get(ModBlockProperties.MIMIC);
 
-        //support
-
         var supportQuads = support.getQuads(state, side, rand);
         if (!supportQuads.isEmpty()) {
-            if (mimic != null) {
-                var sprite = WallLanternModelsManager.getTexture(mimic.getBlock());
-                if (sprite != null) {
-                    BakedQuadsTransformer transformer = BakedQuadsTransformer.create()
-                            .applyingSprite(sprite);
-                    supportQuads = transformer.transformAll(supportQuads);
-                }
-            }
             quads.addAll(supportQuads);
         }
 
-        //mimic
+        // lantern body (down/hanging=false model of the source lantern)
         boolean fancy = Boolean.TRUE.equals(data.get(WallLanternBlockTile.IS_FANCY));
         if (!fancy) {
             if (mimic != null && !(mimic.getBlock() instanceof MimicBlock) && !mimic.isAir() && state != null) {
 
-                BakedModel model = WallLanternModelsManager.getModel(blockModelShaper, mimic);
+                BakedModel model = WallLanternModelsManager.getLanternModel(blockModelShaper,
+                        ((net.mehvahdjukaar.amendments.common.block.WallLanternBlock) state.getBlock()).type, mimic);
                 List<BakedQuad> mimicQuads = model.getQuads(mimic, side, rand);
                 if (!mimicQuads.isEmpty()) {
                     Matrix4f mat = new Matrix4f();

@@ -1,12 +1,13 @@
 package net.mehvahdjukaar.amendments.common.tile;
 
+import net.mehvahdjukaar.amendments.common.LanternRegistry;
 import net.mehvahdjukaar.amendments.common.block.WallLanternBlock;
 import net.mehvahdjukaar.amendments.configs.ClientConfigs;
 import net.mehvahdjukaar.amendments.integration.CompatHandler;
 import net.mehvahdjukaar.amendments.integration.ThinAirCompat;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
-import net.mehvahdjukaar.moonlight.api.block.IBlockHolder;
 import net.mehvahdjukaar.moonlight.api.block.MimicBlockTile;
+import net.mehvahdjukaar.moonlight.api.block.IBlockHolder;
 import net.mehvahdjukaar.moonlight.api.client.model.ExtraModelData;
 import net.mehvahdjukaar.moonlight.api.client.model.IExtraModelDataProvider;
 import net.mehvahdjukaar.moonlight.api.client.model.ModelDataKey;
@@ -15,23 +16,22 @@ import net.mehvahdjukaar.moonlight.api.util.Utils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtUtils;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.LanternBlock;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.ticks.TickPriority;
+import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 
 public class WallLanternBlockTile extends SwayingBlockTile implements IBlockHolder, IExtraModelDataProvider {
 
     public static final ModelDataKey<BlockState> MIMIC_KEY = MimicBlockTile.MIMIC_KEY;
 
-    private BlockState mimic = Blocks.LANTERN.defaultBlockState();
     protected double attachmentOffset = 0;
 
-    //for charm compat
-    protected boolean isRedstoneLantern = false;
+    @Nullable
+    private BlockState pendingLegacyLantern;
+    private boolean pendingLegacyRedstone;
 
     public WallLanternBlockTile(BlockPos pos, BlockState state) {
         super(ModRegistry.WALL_LANTERN_TILE.get(), pos, state);
@@ -43,11 +43,29 @@ public class WallLanternBlockTile extends SwayingBlockTile implements IBlockHold
     }
 
     public boolean isRedstoneLantern() {
-        return isRedstoneLantern;
+        return getOwnBlock().type.getId().toString().equals("charm:redstone_lantern");
     }
 
     public double getAttachmentOffset() {
         return attachmentOffset;
+    }
+
+    public WallLanternBlock getOwnBlock() {
+        return (WallLanternBlock) getBlockState().getBlock();
+    }
+
+    public BlockState getLanternState() {
+        return getOwnBlock().getLanternState(getBlockState());
+    }
+
+    @Override
+    public BlockState getHeldBlock(int index) {
+        return getLanternState();
+    }
+
+    @Override
+    public boolean setHeldBlock(BlockState state, int index) {
+        return false;
     }
 
     @Override
@@ -58,66 +76,108 @@ public class WallLanternBlockTile extends SwayingBlockTile implements IBlockHold
     @Override
     public void addExtraModelData(ExtraModelData.Builder builder) {
         super.addExtraModelData(builder);
-        builder.with(MIMIC_KEY, this.getHeldBlock());
+        builder.with(MIMIC_KEY, getLanternState());
     }
 
     @Override
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
-        this.setHeldBlock(Utils.readBlockState(tag.getCompound("Lantern"), level));
-        this.isRedstoneLantern = tag.getBoolean("IsRedstone");
+        if (tag.contains("Lantern")) {
+            pendingLegacyLantern = Utils.readBlockState(tag.getCompound("Lantern"), level);
+            pendingLegacyRedstone = tag.getBoolean("IsRedstone");
+            tryMigrateLegacyLantern();
+        }
+    }
+
+    private void tryMigrateLegacyLantern() {
+        if (pendingLegacyLantern == null || level == null || level.isClientSide) return;
+
+        BlockState legacyLantern = pendingLegacyLantern;
+        boolean legacyRedstone = pendingLegacyRedstone;
+        pendingLegacyLantern = null;
+
+        if (legacyLantern.isAir()) return;
+
+        var type = LanternRegistry.INSTANCE.detectTypeFromBlock(legacyLantern.getBlock(), Utils.getID(legacyLantern.getBlock()));
+        if (type.isEmpty()) return;
+
+        WallLanternBlock targetWall = ModRegistry.WALL_LANTERNS.get(type.get());
+        if (targetWall == null) return;
+
+        WallLanternBlock currentWall = getOwnBlock();
+        BlockState wallState = getBlockState();
+
+        if (currentWall.type != targetWall.type) {
+            wallState = copyWallState(wallState, targetWall.defaultBlockState());
+        }
+        wallState = applyLegacyLanternState(wallState, legacyLantern, legacyRedstone, targetWall.type);
+
+        if (wallState != getBlockState()) {
+            level.setBlock(worldPosition, wallState, Block.UPDATE_ALL);
+        }
+
+        updateAttachmentOffset(legacyLantern, targetWall.type);
+        if (CompatHandler.THIN_AIR && ThinAirCompat.isAirLantern(legacyLantern)) {
+            updateThinAir(legacyLantern);
+        }
+        setChanged();
+    }
+
+    private static BlockState copyWallState(BlockState from, BlockState to) {
+        return to.setValue(WallLanternBlock.FACING, from.getValue(WallLanternBlock.FACING))
+                .setValue(WallLanternBlock.ATTACHMENT, from.getValue(WallLanternBlock.ATTACHMENT))
+                .setValue(WallLanternBlock.WATERLOGGED, from.getValue(WallLanternBlock.WATERLOGGED));
+    }
+
+    private BlockState applyLegacyLanternState(BlockState wallState, BlockState legacyLantern,
+                                               boolean legacyRedstone, LanternRegistry.LanternType type) {
+        int light = ForgeHelper.getLightEmission(legacyLantern, level, worldPosition);
+        boolean lit = true;
+        if (legacyRedstone || type.getId().toString().equals("charm:redstone_lantern")) {
+            lit = legacyLantern.hasProperty(WallLanternBlock.LIT) && legacyLantern.getValue(WallLanternBlock.LIT);
+            light = 15;
+        } else if (legacyLantern.hasProperty(WallLanternBlock.LIT)) {
+            lit = legacyLantern.getValue(WallLanternBlock.LIT);
+        }
+        if (light == 0) lit = false;
+        return wallState.setValue(WallLanternBlock.LIT, lit)
+                .setValue(WallLanternBlock.LIGHT_LEVEL, Math.max(light, 5));
+    }
+
+    private void updateAttachmentOffset(BlockState legacyLantern, LanternRegistry.LanternType type) {
+        var shape = legacyLantern.getShape(level, worldPosition);
+        if (!shape.isEmpty() && !type.getId().getNamespace().equals("twigs")) {
+            attachmentOffset = shape.bounds().maxY - (9 / 16d);
+        }
     }
 
     @Override
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
-        tag.put("Lantern", NbtUtils.writeBlockState(mimic));
-        tag.putBoolean("IsRedstone", this.isRedstoneLantern);
     }
 
-    @Override
-    public BlockState getHeldBlock(int index) {
-        return this.mimic;
-    }
-
-    @Override
-    public boolean setHeldBlock(BlockState state, int index) {
-        if (state.hasProperty(LanternBlock.HANGING)) {
-            state = state.setValue(LanternBlock.HANGING, false);
-        }
-        if (CompatHandler.THIN_AIR && this.level != null && ThinAirCompat.isAirLantern(state)) {
-            var newState = ThinAirCompat.maybeSetAirQuality(state, Vec3.atCenterOf(this.worldPosition), this.level);
+    public void updateThinAir(BlockState lantern) {
+        if (CompatHandler.THIN_AIR && this.level != null && ThinAirCompat.isAirLantern(lantern)) {
+            var newState = ThinAirCompat.maybeSetAirQuality(lantern, Vec3.atCenterOf(this.worldPosition), this.level);
             if (newState != null) {
-                state = newState;
+                level.scheduleTick(worldPosition, getBlockState().getBlock(), 20, TickPriority.NORMAL);
             }
-            level.scheduleTick(worldPosition, getBlockState().getBlock(), 20, TickPriority.NORMAL);
         }
-
-        this.mimic = state;
-
-
-        int light = ForgeHelper.getLightEmission(state, level, worldPosition);
-        boolean lit = true;
-        var res = Utils.getID(this.mimic.getBlock());
-        if (res.toString().equals("charm:redstone_lantern")) {
-            this.isRedstoneLantern = true;
-            light = 15;
-            lit = false;
+        var shape = lantern.getShape(this.level, this.worldPosition);
+        if (!shape.isEmpty() && !getOwnBlock().type.getId().getNamespace().equals("twigs")) {
+            this.attachmentOffset = (shape.bounds().maxY - (9 / 16d));
         }
+    }
 
-        if (this.level != null && !this.mimic.isAir()) {
-            var shape = state.getShape(this.level, this.worldPosition);
-            if (!shape.isEmpty() && !res.getNamespace().equals("twigs")) {
+    @Override
+    public void setChanged() {
+        super.setChanged();
+        if (this.level != null && !this.level.isClientSide) {
+            BlockState lantern = getLanternState();
+            var shape = lantern.getShape(this.level, this.worldPosition);
+            if (!shape.isEmpty() && !getOwnBlock().type.getId().getNamespace().equals("twigs")) {
                 this.attachmentOffset = (shape.bounds().maxY - (9 / 16d));
             }
-            if (this.getBlockState().getValue(WallLanternBlock.LIGHT_LEVEL) != light) {
-                if (light == 0) lit = false;
-                BlockState newState = this.getBlockState().setValue(WallLanternBlock.LIT, lit)
-                        .setValue(WallLanternBlock.LIGHT_LEVEL, Math.max(light, 5));
-                this.getLevel().setBlock(this.worldPosition, newState, 4 | 16);
-            }
         }
-        return true;
     }
-
 }

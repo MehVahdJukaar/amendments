@@ -15,8 +15,8 @@ val mixin_extras_version: String by extra
 
 dependencies {
 
-    modApi("net.mehvahdjukaar:moonlight-neoforge:${moonlight_version}")
-    accessTransformers("net.mehvahdjukaar:moonlight-neoforge:${moonlight_version}")
+    modCompileOnly("net.mehvahdjukaar:moonlight-common:${moonlight_version}")
+    accessTransformers("net.mehvahdjukaar:moonlight-common:${moonlight_version}")
 
     modImplementation("curse.maven:supplementaries-412082:8044262")
 

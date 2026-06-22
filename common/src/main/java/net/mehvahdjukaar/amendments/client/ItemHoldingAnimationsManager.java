@@ -3,6 +3,7 @@ package net.mehvahdjukaar.amendments.client;
 import net.mehvahdjukaar.amendments.client.renderers.CandleHolderRendererExtension;
 import net.mehvahdjukaar.amendments.client.renderers.LanternRendererExtension;
 import net.mehvahdjukaar.amendments.client.renderers.TorchRendererExtension;
+import net.mehvahdjukaar.amendments.common.LanternRegistry;
 import net.mehvahdjukaar.amendments.configs.ClientConfigs;
 import net.mehvahdjukaar.moonlight.api.item.IThirdPersonSpecialItemRenderer;
 import net.minecraft.world.item.BlockItem;
@@ -22,8 +23,8 @@ public class ItemHoldingAnimationsManager {
         //bad
         if (ClientConfigs.LANTERN_HOLDING.get()) {
             var anim = new LanternRendererExtension();
-            BlockScanner.getInstance().getLanterns()
-                    .stream().map(Block::asItem).filter(i -> i != Items.AIR)
+            LanternRegistry.INSTANCE.getValues().stream()
+                    .map(t -> t.lantern.asItem()).filter(i -> i != Items.AIR)
                     .collect(Collectors.toSet()).forEach(item ->
                             IThirdPersonSpecialItemRenderer.attachToItem(item, anim));
         }

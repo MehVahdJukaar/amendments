@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap;
 import net.mehvahdjukaar.amendments.Amendments;
 import net.mehvahdjukaar.amendments.common.CakeRegistry;
+import net.mehvahdjukaar.amendments.common.LanternRegistry;
 import net.mehvahdjukaar.amendments.common.LecternEditMenu;
 import net.mehvahdjukaar.amendments.common.block.*;
 import net.mehvahdjukaar.amendments.common.entity.FallingLanternEntity;
@@ -66,19 +67,18 @@ public class ModRegistry {
 
     public static void init() {
         BlockSetAPI.registerBlockSetDefinition(CakeRegistry.INSTANCE);
+        BlockSetAPI.registerBlockSetDefinition(LanternRegistry.INSTANCE);
         BlockSetAPI.addDynamicRegistration(Amendments.MOD_ID, ModRegistry::registerDoubleCakes, BuiltInRegistries.BLOCK);
+        BlockSetAPI.addDynamicRegistration(Amendments.MOD_ID, ModRegistry::registerWallLanterns, BuiltInRegistries.BLOCK);
     }
 
     public static void registerAdditionalPlacements() {
-        // this is specifically for things that place a new block in air. Stuff that modifiers blocks is in events.
-        // reason is more complicated than this
-        var wallLanternPlacement = new WallLanternPlacement();
-        for (var i : BuiltInRegistries.ITEM) {
-            if (i instanceof BlockItem bi) {
-                Block block = bi.getBlock();
-                Preconditions.checkNotNull(block, "BlockItem " + i + " has a NULL block! This is not an amendments issue and its likely caused by some bigger underlying issue");
-                if (CommonConfigs.WALL_LANTERN.get() && WallLanternBlock.isValidBlock(block)) {
-                    AdditionalItemPlacementsAPI.registerPlacement(i, wallLanternPlacement);
+        if (CommonConfigs.WALL_LANTERN.get()) {
+            for (LanternRegistry.LanternType type : LanternRegistry.INSTANCE) {
+                WallLanternBlock wallBlock = WALL_LANTERNS.get(type);
+                if (wallBlock != null) {
+                    AdditionalItemPlacementsAPI.registerPlacement(type.lantern.asItem(),
+                            new WallLanternPlacement(wallBlock));
                 }
             }
         }
@@ -221,18 +221,25 @@ public class ModRegistry {
     );
 
 
-    //wall lantern
-    public static final Supplier<WallLanternBlock> WALL_LANTERN = regBlock(WALL_LANTERN_NAME, () -> {
-        var p = BlockBehaviour.Properties.ofFullCopy(Blocks.LANTERN)
-                .pushReaction(PushReaction.DESTROY)
-                .lightLevel((state) -> 15)
-                .noLootTable();
-        return new WallLanternBlock(p);
-    });
+    public static final Map<LanternRegistry.LanternType, WallLanternBlock> WALL_LANTERNS = new LinkedHashMap<>();
+    public static Supplier<BlockEntityType<WallLanternBlockTile>> WALL_LANTERN_TILE;
 
-    public static final Supplier<BlockEntityType<WallLanternBlockTile>> WALL_LANTERN_TILE = regTile(
-            WALL_LANTERN_NAME, () -> PlatHelper.newBlockEntityType(
-                    WallLanternBlockTile::new, WALL_LANTERN.get()));
+    private static void registerWallLanterns(Registrator<Block> event) {
+        for (LanternRegistry.LanternType type : LanternRegistry.INSTANCE) {
+            ResourceLocation id = res(type.getVariantId("wall"));
+            var p = BlockBehaviour.Properties.ofFullCopy(type.lantern)
+                    .pushReaction(PushReaction.DESTROY)
+                    .noLootTable();
+            WallLanternBlock block = new WallLanternBlock(p, type);
+            type.addChild("wall_lantern", block);
+            event.register(id, block);
+            WALL_LANTERNS.put(type, block);
+        }
+        WALL_LANTERN_TILE = RegHelper.registerBlockEntityType(res(WALL_LANTERN_NAME), () ->
+                PlatHelper.newBlockEntityType(WallLanternBlockTile::new, WALL_LANTERNS.values().toArray(Block[]::new)));
+    }
+
+    public static Supplier<WallLanternBlock> WALL_LANTERN = () -> WALL_LANTERNS.get(LanternRegistry.VANILLA);
 
     public static final Supplier<EntityType<FallingLanternEntity>> FALLING_LANTERN = regEntity(FALLING_LANTERN_NAME,
             EntityType.Builder.<FallingLanternEntity>of(FallingLanternEntity::new, MobCategory.MISC)

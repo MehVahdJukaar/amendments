@@ -1,6 +1,7 @@
 package net.mehvahdjukaar.amendments.common.block;
 
 import com.mojang.serialization.MapCodec;
+import net.mehvahdjukaar.amendments.common.LanternRegistry;
 import net.mehvahdjukaar.amendments.common.network.ClientBoundEntityHitSwayingBlockMessage;
 import net.mehvahdjukaar.amendments.common.tile.SwayingBlockTile;
 import net.mehvahdjukaar.amendments.common.tile.WallLanternBlockTile;
@@ -14,6 +15,7 @@ import net.mehvahdjukaar.moonlight.api.block.WaterBlock;
 import net.mehvahdjukaar.moonlight.api.platform.network.NetworkHelper;
 import net.mehvahdjukaar.moonlight.api.util.Utils;
 import net.mehvahdjukaar.moonlight.api.util.math.MthUtils;
+import net.mehvahdjukaar.moonlight.api.platform.ForgeHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -26,8 +28,6 @@ import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -67,10 +67,31 @@ public class WallLanternBlock extends WaterBlock implements EntityBlock {
     public static final BooleanProperty LIT = BlockStateProperties.LIT;
     public static final IntegerProperty LIGHT_LEVEL = ModBlockProperties.LIGHT_LEVEL;
 
-    public WallLanternBlock(Properties properties) {
+    public final LanternRegistry.LanternType type;
+
+    public WallLanternBlock(Properties properties, LanternRegistry.LanternType type) {
         super(properties.lightLevel(s -> s.getValue(LIT) ? s.getValue(LIGHT_LEVEL) : 0));
+        this.type = type;
+        int light = Math.max(ForgeHelper.getLightEmission(type.lantern.defaultBlockState(), null, BlockPos.ZERO), 5);
+        boolean lit = !type.getId().toString().equals("charm:redstone_lantern");
         this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH)
-                .setValue(LIGHT_LEVEL, 15).setValue(WATERLOGGED, false).setValue(LIT, true));
+                .setValue(LIGHT_LEVEL, Math.max(light, 5)).setValue(WATERLOGGED, false).setValue(LIT, lit));
+    }
+
+    public BlockState getLanternState(BlockState wallState) {
+        BlockState lantern = type.lantern.defaultBlockState();
+        if (lantern.hasProperty(LanternBlock.HANGING)) {
+            lantern = lantern.setValue(LanternBlock.HANGING, false);
+        }
+        if (lantern.hasProperty(LIT) && wallState.hasProperty(LIT)) {
+            lantern = lantern.setValue(LIT, wallState.getValue(LIT));
+        }
+        return lantern;
+    }
+
+    @Deprecated
+    public WallLanternBlock(Properties properties) {
+        this(properties, LanternRegistry.VANILLA);
     }
 
     @Override
@@ -80,41 +101,28 @@ public class WallLanternBlock extends WaterBlock implements EntityBlock {
 
     @Override
     protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
-        if (level.getBlockEntity(pos) instanceof WallLanternBlockTile te) {
-            BlockState lantern = te.getHeldBlock();
-
-            CompoundTag oldTag = te.saveWithoutMetadata(level.registryAccess());
-            ItemInteractionResult blockRes = lantern.useItemOn(stack, level, player, hand, hitResult);
-            restoreTileAfterInteract(state, level, pos, te, oldTag);
-            return blockRes;
+        BlockState lantern = getLanternState(state);
+        ItemInteractionResult blockRes = lantern.useItemOn(stack, level, player, hand, hitResult);
+        if (blockRes.consumesAction() && lantern.hasProperty(LIT)) {
+            BlockState updated = getLanternState(state);
+            if (updated.getValue(LIT) != state.getValue(LIT)) {
+                level.setBlock(pos, state.setValue(LIT, updated.getValue(LIT)), 2);
+            }
         }
-        return super.useItemOn(stack, state, level, pos, player, hand, hitResult);
+        return blockRes;
     }
 
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
-        if (level.getBlockEntity(pos) instanceof WallLanternBlockTile te) {
-            BlockState lantern = te.getHeldBlock();
-
-            CompoundTag oldTag = te.saveWithoutMetadata(level.registryAccess());
-            var useResult = lantern.useWithoutItem(level, player, hitResult);
-            restoreTileAfterInteract(state, level, pos, te, oldTag);
-            return useResult;
-        }
-        return super.useWithoutItem(state, level, pos, player, hitResult);
-    }
-
-    private static void restoreTileAfterInteract(BlockState state, Level level, BlockPos pos, WallLanternBlockTile te, CompoundTag oldTag) {
-        BlockState newState = level.getBlockState(pos);
-        if (newState != state) {
-            //restore tile
-            level.setBlockAndUpdate(pos, state);
-            if (level.getBlockEntity(pos) instanceof WallLanternBlockTile newTile) {
-                newTile.loadWithComponents(oldTag, level.registryAccess());
-                te.setHeldBlock(newState);
-                newTile.setChanged();
+        BlockState lantern = getLanternState(state);
+        var useResult = lantern.useWithoutItem(level, player, hitResult);
+        if (useResult.consumesAction() && lantern.hasProperty(LIT)) {
+            BlockState updated = getLanternState(state);
+            if (updated.getValue(LIT) != state.getValue(LIT)) {
+                level.setBlock(pos, state.setValue(LIT, updated.getValue(LIT)), 2);
             }
         }
+        return useResult;
     }
 
     @Nullable
@@ -131,16 +139,6 @@ public class WallLanternBlock extends WaterBlock implements EntityBlock {
 
         return getConnectedState(state, facingState, world, relative, dir).setValue(FACING, context.getClickedFace());
     }
-
-    @Override
-    public void setPlacedBy(Level world, BlockPos pos, BlockState state, @Nullable LivingEntity entity, ItemStack stack) {
-        BlockEntity te = world.getBlockEntity(pos);
-        Item i = stack.getItem();
-        if (te instanceof WallLanternBlockTile blockHolder && i instanceof BlockItem blockItem) {
-            blockHolder.setHeldBlock(blockItem.getBlock().defaultBlockState());
-        }
-    }
-
 
     @Override
     public BlockState updateShape(BlockState stateIn, Direction facing, BlockState facingState, LevelAccessor worldIn, BlockPos currentPos,
@@ -189,10 +187,7 @@ public class WallLanternBlock extends WaterBlock implements EntityBlock {
 
     @Override
     public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state) {
-        if (level.getBlockEntity(pos) instanceof WallLanternBlockTile te) {
-            return new ItemStack(te.getHeldBlock().getBlock());
-        }
-        return new ItemStack(Blocks.LANTERN, 1);
+        return new ItemStack(type.lantern);
     }
 
     @Override
@@ -204,40 +199,31 @@ public class WallLanternBlock extends WaterBlock implements EntityBlock {
     @Override
     public void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource rand) {
         super.tick(state, level, pos, rand);
-        if (level.getBlockEntity(pos) instanceof WallLanternBlockTile te) {
-            if (te.isRedstoneLantern()) {
-                if (state.getValue(LIT) && !level.hasNeighborSignal(pos)) {
-                    level.setBlock(pos, state.cycle(LIT), 2);
-                    if (te.getHeldBlock().hasProperty(LIT))
-                        te.setHeldBlock(te.getHeldBlock().cycle(LIT));
-                }
+        if (!(state.getBlock() instanceof WallLanternBlock wall)) return;
+        if (wall.type.getId().toString().equals("charm:redstone_lantern")) {
+            if (state.getValue(LIT) && !level.hasNeighborSignal(pos)) {
+                level.setBlock(pos, state.cycle(LIT), 2);
             }
-            if (CompatHandler.THIN_AIR) {
-                BlockState lantern = te.getHeldBlock();
-                if (ThinAirCompat.isAirLantern(lantern)) {
-                    te.setHeldBlock(lantern); //this automatically updates it
-                    if (te.getHeldBlock() != lantern) {
-                        level.sendBlockUpdated(pos, state, state, 3);
-                    }
-                }
+        }
+        if (CompatHandler.THIN_AIR && level.getBlockEntity(pos) instanceof WallLanternBlockTile te) {
+            BlockState lantern = wall.getLanternState(state);
+            if (ThinAirCompat.isAirLantern(lantern)) {
+                te.updateThinAir(lantern);
+                level.sendBlockUpdated(pos, state, state, 3);
             }
         }
     }
 
-    //i could reference held lantern block directly but maybe it's more efficient this way idk
     @Override
     public void neighborChanged(BlockState state, Level world, BlockPos pos, Block block, BlockPos fromPos, boolean notify) {
-        if (!world.isClientSide) {
-            if (world.getBlockEntity(pos) instanceof WallLanternBlockTile tile && tile.isRedstoneLantern()) {
-                boolean flag = state.getValue(LIT);
-                if (flag != world.hasNeighborSignal(pos)) {
-                    if (flag) {
-                        world.scheduleTick(pos, this, 4);
-                    } else {
-                        world.setBlock(pos, state.cycle(LIT), 2);
-                        if (tile.getHeldBlock().hasProperty(LIT))
-                            tile.setHeldBlock(tile.getHeldBlock().cycle(LIT));
-                    }
+        if (!world.isClientSide && state.getBlock() instanceof WallLanternBlock wall
+                && wall.type.getId().toString().equals("charm:redstone_lantern")) {
+            boolean flag = state.getValue(LIT);
+            if (flag != world.hasNeighborSignal(pos)) {
+                if (flag) {
+                    world.scheduleTick(pos, this, 4);
+                } else {
+                    world.setBlock(pos, state.cycle(LIT), 2);
                 }
             }
         }
@@ -245,17 +231,16 @@ public class WallLanternBlock extends WaterBlock implements EntityBlock {
 
     @Override
     public List<ItemStack> getDrops(BlockState state, LootParams.Builder builder) {
-        if (builder.getOptionalParameter(LootContextParams.BLOCK_ENTITY) instanceof WallLanternBlockTile tile) {
-            return tile.getHeldBlock().getDrops(builder);
+        if (state.getBlock() instanceof WallLanternBlock wall) {
+            return List.of(new ItemStack(wall.type.lantern));
         }
         return super.getDrops(state, builder);
     }
 
-
     @Override
     public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource random) {
-        if (level.getBlockEntity(pos) instanceof WallLanternBlockTile tile) {
-            BlockState s = tile.getHeldBlock();
+        if (state.getBlock() instanceof WallLanternBlock wall) {
+            BlockState s = wall.getLanternState(state);
             s.getBlock().animateTick(s, level, pos, random);
         }
     }
@@ -295,31 +280,12 @@ public class WallLanternBlock extends WaterBlock implements EntityBlock {
         return super.getSoundType(state, world, pos, entity);
     } */
 
-    public void placeOn(BlockState lantern, BlockPos onPos, Direction face, Level world) {
-        BlockState state = getConnectedState(this.defaultBlockState(), world.getBlockState(onPos), world, onPos, face)
+    public static void placeOn(LanternRegistry.LanternType lanternType, BlockPos onPos, Direction face, Level world) {
+        WallLanternBlock wallBlock = ModRegistry.WALL_LANTERNS.get(lanternType);
+        if (wallBlock == null) return;
+        BlockState state = getConnectedState(wallBlock.defaultBlockState(), world.getBlockState(onPos), world, onPos, face)
                 .setValue(FACING, face);
-        BlockPos newPos = onPos.relative(face);
-        world.setBlock(newPos, state, 3);
-        if (world.getBlockEntity(newPos) instanceof IBlockHolder tile) {
-            tile.setHeldBlock(lantern);
-        }
-    }
-
-    //TODO: turn into dynamic reg
-    public static boolean isValidBlock(@NotNull Block b) {
-        if (b.asItem() == Items.AIR) return false;
-        ResourceLocation id = Utils.getID(b);
-        String namespace = id.getNamespace();
-        if (CommonConfigs.WALL_LANTERN_WHITELIST.get().contains(id.toString())) {
-            return true;
-        }
-        if (CommonConfigs.WALL_LANTERN_BLACKLIST.get().contains(namespace)) return false;
-        if (namespace.equals("skinnedlanterns") || (namespace.equals("twigs") && id.getPath().contains("paper_lantern")))
-            return true;
-        if (b instanceof LanternBlock) {
-            return !b.defaultBlockState().hasBlockEntity();
-        }
-        return false;
+        world.setBlock(onPos.relative(face), state, 3);
     }
 
 }
