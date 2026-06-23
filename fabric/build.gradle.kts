@@ -25,4 +25,7 @@ dependencies {
     modCompileOnly("curse.maven:quark-243121:5093415")
     modCompileOnly("curse.maven:cave-enhancements-597562:4388535")
     modCompileOnly("curse.maven:soul-fire-d-662413:6248772")
+    modCompileOnly("curse.maven:modmenu-308702:7808443")
+    modCompileOnly("curse.maven:modmenu-308702:7808443")
+
 }
