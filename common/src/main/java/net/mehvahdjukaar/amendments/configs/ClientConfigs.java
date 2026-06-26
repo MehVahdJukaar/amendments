@@ -49,6 +49,7 @@ public class ClientConfigs {
 
     public static final Supplier<Boolean> TORCH_HOLDING;
     public static final Supplier<Double> TORCH_HOLDING_SIZE;
+    public static final Supplier<Boolean> TORCH_HOLDING_FLAME;
 
     public static final Supplier<Boolean> CANDLE_HOLDER_HOLDING;
     public static final Supplier<Double> CANDLE_HOLDING_SIZE;
@@ -204,6 +205,8 @@ public class ClientConfigs {
                 .define("torch_item_holding", true);
         TORCH_HOLDING_SIZE = builder.comment("Size lanterns when held in hand")
                 .define("torch_item_size", 1d, 0, 2);
+        TORCH_HOLDING_FLAME = builder.comment("Renders a flame particle on top of held torches")
+                .define("torch_item_flame", false);
 
         CANDLE_HOLDER_HOLDING = builder.comment("Gives a special animation to supplementaries candle holders when held in hand")
                 .define("candle_holder_item_holding", true);

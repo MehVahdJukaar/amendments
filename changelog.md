@@ -1,9 +1,2 @@
-- wall lanterns now register a new block for each lantern block
-- fixes #201
-- fixes #239
-- fixes #245
-- fixes #398
-- fixes #425
-- fixes #421
-- fixes #324
-- fixes #277
+- added a feature to prevent mobs to take damage from suffocaiton when mounted
+- more configs
