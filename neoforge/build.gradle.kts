@@ -24,7 +24,6 @@ dependencies {
     modCompileOnly("curse.maven:soul-fire-d-662413:6248772")
 
     modCompileOnly("maven.modrinth:sodium:mc1.21-0.6.0-beta.2-neoforge")
-    modImplementation("curse.maven:farmers-delight-398521:5566383")
     //modCompileOnly("curse.maven:supplementaries-squared-838411:8120873")
     modCompileOnly("curse.maven:lucent-493280:4951434")
     modImplementation("curse.maven:farmers-delight-398521:8083481")

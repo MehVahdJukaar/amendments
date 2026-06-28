@@ -8,7 +8,6 @@ import net.mehvahdjukaar.amendments.configs.ClientConfigs;
 import net.mehvahdjukaar.amendments.integration.CompatHandler;
 import net.mehvahdjukaar.amendments.integration.SuppCompat;
 import net.mehvahdjukaar.amendments.integration.SuppCompatClient;
-import net.mehvahdjukaar.amendments.mixins.SignRendererAccessor;
 import net.mehvahdjukaar.amendments.reg.ModBlockProperties;
 import net.mehvahdjukaar.moonlight.api.client.util.LOD;
 import net.mehvahdjukaar.moonlight.api.client.util.RotHlpr;
@@ -45,12 +44,19 @@ import net.minecraft.world.level.block.entity.SignText;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.RotationSegment;
+import net.minecraft.world.phys.Vec3;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
 import java.util.List;
 
 public class HangingSignRendererExtension {
+
+    // Vanilla HangingSignRenderer.TEXT_OFFSET. We use this constant directly instead of querying
+    // renderer.getTextOffset(): the @Invoker accessor doesn't reliably virtual-dispatch to FD's deeply
+    // nested HangingCanvasSignRenderer override and falls back to the standing-sign offset, throwing the
+    // text up off the sign. Every hanging sign uses the same model shape, so a fixed offset is correct here.
+    private static final Vec3 TEXT_OFFSET = new Vec3(0.0, -0.32F, 0.073F);
 
 
     public static LayerDefinition createMesh() {
@@ -227,7 +233,7 @@ public class HangingSignRendererExtension {
         ItemStack item = extension.getFrontItem();
 
         if (item.isEmpty()) {
-            renderer.translateSignText(poseStack, true, ((SignRendererAccessor) renderer).invokeGetTextOffset());
+            renderer.translateSignText(poseStack, true, TEXT_OFFSET);
             renderSignText(tile.getFrontText(), font, poseStack, buffer, light,
                     norm, lod, filtered, tile.getTextLineHeight(), tile.getMaxTextLineWidth(),
                     colorMult);
@@ -245,7 +251,7 @@ public class HangingSignRendererExtension {
         ItemStack item = extension.getBackItem();
 
         if (item.isEmpty()) {
-            renderer.translateSignText(poseStack, false, ((SignRendererAccessor) renderer).invokeGetTextOffset());
+            renderer.translateSignText(poseStack, false, TEXT_OFFSET);
             renderSignText(tile.getBackText(), font, poseStack, buffer, light,
                     norm.mul(-1), lod, filtered, tile.getTextLineHeight(), tile.getMaxTextLineWidth(),
                     colorMult);

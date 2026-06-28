@@ -1,2 +1,1 @@
-- added a feature to prevent mobs to take damage from suffocaiton when mounted
-- more configs
+- hanging sign fix
