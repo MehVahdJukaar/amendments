@@ -1,1 +1,1 @@
-- hanging sign fix
+- lanterns fix

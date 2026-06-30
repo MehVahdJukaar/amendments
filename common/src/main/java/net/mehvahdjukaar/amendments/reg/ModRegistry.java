@@ -39,7 +39,6 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.inventory.MenuType;
-import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
@@ -70,6 +69,9 @@ public class ModRegistry {
         BlockSetAPI.registerBlockSetDefinition(LanternRegistry.INSTANCE);
         BlockSetAPI.addDynamicRegistration(Amendments.MOD_ID, ModRegistry::registerDoubleCakes, BuiltInRegistries.BLOCK);
         BlockSetAPI.addDynamicRegistration(Amendments.MOD_ID, ModRegistry::registerWallLanterns, BuiltInRegistries.BLOCK);
+        RegHelper.addExtraBEBlockStatesRegistration(event -> {
+            event.addBlocks(WALL_LANTERN_TILE.get(), WALL_LANTERNS.values().toArray(new WallLanternBlock[0]));
+        });
     }
 
     public static void registerAdditionalPlacements() {
@@ -222,7 +224,8 @@ public class ModRegistry {
 
 
     public static final Map<LanternRegistry.LanternType, WallLanternBlock> WALL_LANTERNS = new LinkedHashMap<>();
-    public static Supplier<BlockEntityType<WallLanternBlockTile>> WALL_LANTERN_TILE;
+    public static Supplier<BlockEntityType<WallLanternBlockTile>> WALL_LANTERN_TILE = RegHelper.registerBlockEntityType(res(WALL_LANTERN_NAME), () ->
+            PlatHelper.newBlockEntityType(WallLanternBlockTile::new));
 
     private static void registerWallLanterns(Registrator<Block> event) {
         for (LanternRegistry.LanternType type : LanternRegistry.INSTANCE) {
@@ -235,10 +238,9 @@ public class ModRegistry {
             event.register(id, block);
             WALL_LANTERNS.put(type, block);
         }
-        WALL_LANTERN_TILE = RegHelper.registerBlockEntityType(res(WALL_LANTERN_NAME), () ->
-                PlatHelper.newBlockEntityType(WallLanternBlockTile::new, WALL_LANTERNS.values().toArray(Block[]::new)));
     }
 
+    //backward compat
     public static Supplier<WallLanternBlock> WALL_LANTERN = () -> WALL_LANTERNS.get(LanternRegistry.VANILLA);
 
     public static final Supplier<EntityType<FallingLanternEntity>> FALLING_LANTERN = regEntity(FALLING_LANTERN_NAME,

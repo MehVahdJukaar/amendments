@@ -42,6 +42,7 @@ public class ClientConfigs {
     public static final Supplier<GenMode> DYNAMIC_ASSETS_GEN_MODE;
 
     public static final Supplier<Boolean> FAST_LANTERNS;
+    public static final Supplier<Boolean> LANTERN_ENTITY_SHADING;
     public static final Supplier<Boolean> LANTERN_HOLDING;
     public static final Supplier<Boolean> LANTERN_HOLDING_UP;
     public static final Supplier<Double> LANTERN_HOLDING_SIZE;
@@ -174,6 +175,10 @@ public class ClientConfigs {
         FAST_LANTERNS = builder.comment("Makes wall lantern use a simple block model instead of the animated tile entity renderer. This will make them render much faster but will also remove the animation" +
                         "Note that this option only affect lanterns close by as the one far away render as fast by default")
                 .define("fast_lanterns", false);
+
+        LANTERN_ENTITY_SHADING = builder.comment("Renders the swaying wall lantern through the item renderer so its shading comes from the model's normals instead of the block model's baked per-face shading. " +
+                        "This makes the lantern shade correctly no matter which wall it faces, at the cost of losing block ambient occlusion. Only affects the animated (close-up) renderer")
+                .define("entity_shading", true);
 
         WALL_LANTERN_CONFIG = builder.defineObject("swing_physics",
                 PendulumAnimation.Config::new,
