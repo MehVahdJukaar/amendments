@@ -1,9 +1,1 @@
-- wall lanterns now register a new block for each lantern block
-- fixes #201
-- fixes #239
-- fixes #245
-- fixes #398
-- fixes #425
-- fixes #421
-- fixes #324
-- fixes #277
+- lanterns fix

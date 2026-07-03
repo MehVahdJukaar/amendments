@@ -14,7 +14,8 @@ import net.mehvahdjukaar.amendments.common.block.BoilingWaterCauldronBlock;
 import net.mehvahdjukaar.amendments.configs.ClientConfigs;
 import net.mehvahdjukaar.amendments.integration.CompatHandler;
 import net.mehvahdjukaar.amendments.integration.CompatObjects;
-import net.mehvahdjukaar.amendments.integration.FlywheelCompat;
+// TODO: rewrite as Vanillin compat for 1.21
+// import net.mehvahdjukaar.amendments.integration.FlywheelCompat;
 import net.mehvahdjukaar.amendments.integration.SuppCompat;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.candlelight.api.PlatformImpl;
@@ -140,7 +141,8 @@ public class AmendmentsClient {
         ClientHelper.addItemColorsRegistration(AmendmentsClient::registerItemColors);
         ClientHelper.addParticleRegistration(AmendmentsClient::registerParticles);
 ClientHelper.addMenuScreensRegistration(AmendmentsClient::registerMenuScreens);
-        if (CompatHandler.FLYWHEEL) FlywheelCompat.init();
+        // TODO: rewrite as Vanillin compat for 1.21
+        // if (CompatHandler.FLYWHEEL) FlywheelCompat.init();
     }
 
 

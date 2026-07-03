@@ -42,6 +42,7 @@ public class ClientConfigs {
     public static final Supplier<GenMode> DYNAMIC_ASSETS_GEN_MODE;
 
     public static final Supplier<Boolean> FAST_LANTERNS;
+    public static final Supplier<Boolean> LANTERN_ENTITY_SHADING;
     public static final Supplier<Boolean> LANTERN_HOLDING;
     public static final Supplier<Boolean> LANTERN_HOLDING_UP;
     public static final Supplier<Double> LANTERN_HOLDING_SIZE;
@@ -49,6 +50,7 @@ public class ClientConfigs {
 
     public static final Supplier<Boolean> TORCH_HOLDING;
     public static final Supplier<Double> TORCH_HOLDING_SIZE;
+    public static final Supplier<Boolean> TORCH_HOLDING_FLAME;
 
     public static final Supplier<Boolean> CANDLE_HOLDER_HOLDING;
     public static final Supplier<Double> CANDLE_HOLDING_SIZE;
@@ -174,6 +176,10 @@ public class ClientConfigs {
                         "Note that this option only affect lanterns close by as the one far away render as fast by default")
                 .define("fast_lanterns", false);
 
+        LANTERN_ENTITY_SHADING = builder.comment("Renders the swaying wall lantern through the item renderer so its shading comes from the model's normals instead of the block model's baked per-face shading. " +
+                        "This makes the lantern shade correctly no matter which wall it faces, at the cost of losing block ambient occlusion. Only affects the animated (close-up) renderer")
+                .define("entity_shading", true);
+
         WALL_LANTERN_CONFIG = builder.defineObject("swing_physics",
                 PendulumAnimation.Config::new,
                 PendulumAnimation.Config.CODEC);
@@ -204,6 +210,8 @@ public class ClientConfigs {
                 .define("torch_item_holding", true);
         TORCH_HOLDING_SIZE = builder.comment("Size lanterns when held in hand")
                 .define("torch_item_size", 1d, 0, 2);
+        TORCH_HOLDING_FLAME = builder.comment("Renders a flame particle on top of held torches")
+                .define("torch_item_flame", false);
 
         CANDLE_HOLDER_HOLDING = builder.comment("Gives a special animation to supplementaries candle holders when held in hand")
                 .define("candle_holder_item_holding", true);

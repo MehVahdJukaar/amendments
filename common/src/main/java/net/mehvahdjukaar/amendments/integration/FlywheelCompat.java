@@ -1,5 +1,8 @@
 package net.mehvahdjukaar.amendments.integration;
 
+// TODO: disabled - this uses the old 1.20.1 Flywheel API (com.jozufozu.flywheel).
+//       Rewrite as Vanillin compat for 1.21.
+/*
 import com.jozufozu.flywheel.api.MaterialManager;
 import com.jozufozu.flywheel.backend.instancing.InstancedRenderRegistry;
 import com.jozufozu.flywheel.core.PartialModel;
@@ -80,3 +83,4 @@ public class FlywheelCompat {
     }
 
 }
+*/

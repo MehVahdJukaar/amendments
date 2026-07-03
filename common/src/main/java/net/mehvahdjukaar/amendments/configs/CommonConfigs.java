@@ -81,6 +81,8 @@ public class CommonConfigs {
 
     public static final Supplier<Integer> SNOWBALL_FREEZE;
 
+    public static final Supplier<Boolean> PASSENGER_NO_SUFFOCATION;
+
     public static final ModConfigHolder SPEC;
 
     static {
@@ -217,6 +219,9 @@ public class CommonConfigs {
 
         DYE_BLOCKS = builder.comment("Allows dying blocks by right clicking them with dye")
                 .define("dye_blocks", false);
+
+        PASSENGER_NO_SUFFOCATION = builder.comment("Prevents entities from taking suffocation damage while riding another entity")
+                .define("passenger_no_suffocation", false);
 
         builder.pop();
 

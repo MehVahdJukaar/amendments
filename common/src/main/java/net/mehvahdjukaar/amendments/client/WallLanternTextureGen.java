@@ -65,6 +65,11 @@ public class WallLanternTextureGen {
         if (type.isVanilla() && reg.getPath().equals("lantern")) {
             return Amendments.res("block/wall_lanterns/wall_lantern");
         }
+        // Skinned lanterns reuse the vanilla metal frame, so they share the base wall mount texture
+        // instead of generating a recolored one (which would just duplicate the vanilla shades).
+        if (reg.getNamespace().equals("skinnedlanterns")) {
+            return Amendments.res("block/wall_lanterns/wall_lantern");
+        }
         String namespace = (reg.getNamespace().equals("minecraft") || reg.getNamespace().equals(Amendments.MOD_ID)) ? "" : reg.getNamespace() + "/";
         return Amendments.res("block/wall_lanterns/" + namespace + reg.getPath());
     }
