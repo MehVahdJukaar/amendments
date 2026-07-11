@@ -92,6 +92,20 @@
   "fluid.amendments.dye": "染料",
   "subtitles.amendments.fireball_explosion": "火球：爆炸",
   "message.amendments.cauldron": "这种混合药水似乎不太稳定……",
+  "tag.block.amendments.cauldron_heat_source": "炼药锅热源",
+  "tag.block.amendments.ceiling_banners": "吊顶旗帜",
+  "tag.block.amendments.skull_candles": "头颅烛台",
+  "tag.block.amendments.stairs_carpets": "楼梯地毯",
+  "tag.item.amendments.goes_in_lectern": "可放入讲台",
+  "tag.item.amendments.goes_in_tripwire_hook": "可放入绊线钩",
+  "tag.item.amendments.non_stackable_heads": "不可叠放的头",
+  "tag.item.amendments.sets_on_fire": "能点燃实体",
+  "tag.moonlight.amendments.soft_fluid.can_glow": "会发光",
+  "tag.moonlight.amendments.soft_fluid.cant_boil": "不会被煮沸",
+  "tag.moonlight.amendments.soft_fluid.cant_extinguish": "无法被熄灭",
+  "tag.moonlight.amendments.soft_fluid.cant_go_in_liquid_cauldron": "不可倒入装有液体的炼药锅",
+  "tag.moonlight.amendments.soft_fluid.no_tint_in_cauldron": "在炼药锅中不进行着色",
+  "tag.worldgen.amendments.structure.add_potion_cauldron": "加入装有药水的炼药锅",
 
 
 
