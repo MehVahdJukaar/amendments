@@ -153,7 +153,9 @@ public abstract class ModCauldronBlock extends AbstractCauldronBlock implements 
         if (fluid.isEmpty()) {
             state = Blocks.CAULDRON.defaultBlockState();
         } else {
-            state = state.setValue(getLevelProperty(), height);
+            BlockPos below = pos.below();
+            state = state.setValue(getLevelProperty(), height)
+                    .setValue(BOILING, CommonCauldronCode.shouldBoil(level.getBlockState(below), fluid, level, below));
         }
         return state;
     }

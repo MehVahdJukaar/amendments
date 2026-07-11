@@ -14,8 +14,6 @@ import net.mehvahdjukaar.amendments.common.block.BoilingWaterCauldronBlock;
 import net.mehvahdjukaar.amendments.configs.ClientConfigs;
 import net.mehvahdjukaar.amendments.integration.CompatHandler;
 import net.mehvahdjukaar.amendments.integration.CompatObjects;
-// TODO: rewrite as Vanillin compat for 1.21
-// import net.mehvahdjukaar.amendments.integration.FlywheelCompat;
 import net.mehvahdjukaar.amendments.integration.SuppCompat;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.candlelight.api.PlatformImpl;
@@ -26,7 +24,6 @@ import net.mehvahdjukaar.moonlight.api.platform.RegHelper;
 import net.mehvahdjukaar.moonlight.api.set.BlocksColorAPI;
 import net.mehvahdjukaar.moonlight.api.util.Utils;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.FallingBlockRenderer;
@@ -44,12 +41,16 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.properties.WoodType;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+
+// TODO: rewrite as Vanillin compat for 1.21
+// import net.mehvahdjukaar.amendments.integration.FlywheelCompat;
 
 
 public class AmendmentsClient {
@@ -140,7 +141,7 @@ public class AmendmentsClient {
         ClientHelper.addEntityRenderersRegistration(AmendmentsClient::registerEntityRenderers);
         ClientHelper.addItemColorsRegistration(AmendmentsClient::registerItemColors);
         ClientHelper.addParticleRegistration(AmendmentsClient::registerParticles);
-ClientHelper.addMenuScreensRegistration(AmendmentsClient::registerMenuScreens);
+        ClientHelper.addMenuScreensRegistration(AmendmentsClient::registerMenuScreens);
         // TODO: rewrite as Vanillin compat for 1.21
         // if (CompatHandler.FLYWHEEL) FlywheelCompat.init();
     }
@@ -171,7 +172,7 @@ ClientHelper.addMenuScreensRegistration(AmendmentsClient::registerMenuScreens);
     }
 
     @EventCalled
-    private static void  registerMenuScreens(ClientHelper.MenuScreenEvent event){
+    private static void registerMenuScreens(ClientHelper.MenuScreenEvent event) {
         event.register(ModRegistry.LECTERN_EDIT_MENU.get(), LecternBookEditScreen::new);
     }
 
@@ -298,14 +299,22 @@ ClientHelper.addMenuScreensRegistration(AmendmentsClient::registerMenuScreens);
         if (RECORD_MATERIALS.isEmpty()) {
             for (var i : BuiltInRegistries.ITEM) {
                 if (i.components().get(DataComponents.JUKEBOX_PLAYABLE) != null) {
-                    RECORD_MATERIALS.put(i, new Material(TextureAtlas.LOCATION_BLOCKS,
-                            Amendments.res("block/music_discs/" + Utils.getID(i).toString()
-                                    .replace("minecraft:", "")
-                                    .replace(":", "/"))));
+                    RECORD_MATERIALS.put(i, discMaterial(i));
                 }
+            }
+            if (CompatHandler.CAVERNS_AND_CHASMS) {
+                Item i = BuiltInRegistries.ITEM.get(ResourceLocation.fromNamespaceAndPath("caverns_and_chasms", "music_disc_copy"));
+                RECORD_MATERIALS.put(i, discMaterial(i));
             }
         }
         return RECORD_MATERIALS;
+    }
+
+    private static @NotNull Material discMaterial(Item i) {
+        return new Material(TextureAtlas.LOCATION_BLOCKS,
+                Amendments.res("block/music_discs/" + Utils.getID(i).toString()
+                        .replace("minecraft:", "")
+                        .replace(":", "/")));
     }
 
     public static Material getRecordMaterial(Item item) {

@@ -1,12 +1,8 @@
 package net.mehvahdjukaar.amendments.mixins;
 
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
-import net.mehvahdjukaar.amendments.common.block.BoilingWaterCauldronBlock;
-import net.mehvahdjukaar.amendments.common.block.CommonCauldronCode;
 import net.mehvahdjukaar.amendments.configs.CommonConfigs;
 import net.mehvahdjukaar.amendments.events.behaviors.CauldronConversion;
-import net.mehvahdjukaar.moonlight.api.fluids.MLBuiltinSoftFluids;
-import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidStack;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.ItemInteractionResult;
@@ -37,17 +33,8 @@ public class AbstractCauldronBlockMixin extends Block {
         if (original == ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION && this == Blocks.CAULDRON && CommonConfigs.LIQUID_CAULDRON.get()) {
             return CauldronConversion.convert(state, pos, level, player, hand, stack, false);
         }
-        //for convert interaction to water cauldron from normal one
-        BlockState newState = level.getBlockState(pos);
-        if (newState.getBlock() instanceof BoilingWaterCauldronBlock) {
-            BlockPos belowPos = pos.below();
-            boolean isFire = CommonCauldronCode.shouldBoil(level.getBlockState(belowPos),
-                    SoftFluidStack.of(MLBuiltinSoftFluids.WATER.getHolder(level)), level, belowPos);
-            if (isFire) {
-                level.setBlockAndUpdate(pos, newState.setValue(BoilingWaterCauldronBlock.BOILING, true));
-            }
-        }
-
+        // boiling state on the resulting water cauldron is handled generically by
+        // BoilingWaterCauldronBlock#onPlace, which fires on the interaction's setBlock
         return original;
     }
 

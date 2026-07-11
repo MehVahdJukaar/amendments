@@ -12,6 +12,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.entity.SkullBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -102,10 +103,24 @@ public class EnhancedSkullBlockTile extends BlockEntity {
     }
 
     protected void tick(Level level, BlockPos pos, BlockState state) {
-        if (innerTile != null) {
-            var b = innerTile.getBlockState();
-            if (b instanceof EntityBlock eb) {
-                eb.getTicker(level, b, innerTile.getType());
+        tickInner(level, pos, innerTile);
+    }
+
+    /**
+     * Drives the wrapped skull's own block-entity ticker (e.g. Caverns &amp; Chasms peeper/mime heads
+     * turn to track the nearest player when powered). The inner skull isn't a real block entity in
+     * the world, so the level never ticks it - we have to pump its ticker ourselves. Without this its
+     * animation state never advances and, because the renderer interpolates by partial tick, the head
+     * jitters wildly on the client instead of holding still.
+     */
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    protected static void tickInner(Level level, BlockPos pos, @Nullable SkullBlockEntity inner) {
+        if (inner == null) return;
+        BlockState b = inner.getBlockState();
+        if (b.getBlock() instanceof EntityBlock eb) {
+            BlockEntityTicker ticker = eb.getTicker(level, b, inner.getType());
+            if (ticker != null) {
+                ticker.tick(level, pos, b, inner);
             }
         }
     }

@@ -1,1 +1,1 @@
-- lanterns fix
+- improved boling state handling

@@ -1,12 +1,7 @@
 package net.mehvahdjukaar.amendments.integration;
 
-import com.google.common.base.Suppliers;
 import net.mehvahdjukaar.amendments.Amendments;
 import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
-import net.mehvahdjukaar.supplementaries.Supplementaries;
-import net.minecraft.world.entity.EntityType;
-
-import java.util.function.Supplier;
 
 public class CompatHandler {
 
@@ -25,6 +20,7 @@ public class CompatHandler {
     public static final boolean ALEX_CAVES = PlatHelper.isModLoaded("alexscaves");
     public static final boolean RATS = PlatHelper.isModLoaded("rats");
     public static final boolean THIN_AIR = PlatHelper.isModLoaded("thinair");
+    public static final boolean CAVERNS_AND_CHASMS = PlatHelper.isModLoaded("caverns_and_chasms");
     public static final boolean FLYWHEEL = PlatHelper.isModLoaded("flywheel") && false;
 
     static {

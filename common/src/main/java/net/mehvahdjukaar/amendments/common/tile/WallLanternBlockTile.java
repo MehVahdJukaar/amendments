@@ -6,8 +6,8 @@ import net.mehvahdjukaar.amendments.configs.ClientConfigs;
 import net.mehvahdjukaar.amendments.integration.CompatHandler;
 import net.mehvahdjukaar.amendments.integration.ThinAirCompat;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
-import net.mehvahdjukaar.moonlight.api.block.MimicBlockTile;
 import net.mehvahdjukaar.moonlight.api.block.IBlockHolder;
+import net.mehvahdjukaar.moonlight.api.block.MimicBlockTile;
 import net.mehvahdjukaar.moonlight.api.client.model.ExtraModelData;
 import net.mehvahdjukaar.moonlight.api.client.model.IExtraModelDataProvider;
 import net.mehvahdjukaar.moonlight.api.client.model.ModelDataKey;
@@ -27,8 +27,6 @@ public class WallLanternBlockTile extends SwayingBlockTile implements IBlockHold
 
     public static final ModelDataKey<BlockState> MIMIC_KEY = MimicBlockTile.MIMIC_KEY;
 
-    protected double attachmentOffset = 0;
-
     @Nullable
     private BlockState pendingLegacyLantern;
     private boolean pendingLegacyRedstone;
@@ -47,7 +45,7 @@ public class WallLanternBlockTile extends SwayingBlockTile implements IBlockHold
     }
 
     public double getAttachmentOffset() {
-        return attachmentOffset;
+        return getOwnBlock().type.attachmentOffset;
     }
 
     public WallLanternBlock getOwnBlock() {
@@ -116,7 +114,6 @@ public class WallLanternBlockTile extends SwayingBlockTile implements IBlockHold
             level.setBlock(worldPosition, wallState, Block.UPDATE_ALL);
         }
 
-        updateAttachmentOffset(legacyLantern, targetWall.type);
         if (CompatHandler.THIN_AIR && ThinAirCompat.isAirLantern(legacyLantern)) {
             updateThinAir(legacyLantern);
         }
@@ -144,13 +141,6 @@ public class WallLanternBlockTile extends SwayingBlockTile implements IBlockHold
                 .setValue(WallLanternBlock.LIGHT_LEVEL, Math.max(light, 5));
     }
 
-    private void updateAttachmentOffset(BlockState legacyLantern, LanternRegistry.LanternType type) {
-        var shape = legacyLantern.getShape(level, worldPosition);
-        if (!shape.isEmpty() && !type.getId().getNamespace().equals("twigs")) {
-            attachmentOffset = shape.bounds().maxY - (9 / 16d);
-        }
-    }
-
     @Override
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
@@ -161,22 +151,6 @@ public class WallLanternBlockTile extends SwayingBlockTile implements IBlockHold
             var newState = ThinAirCompat.maybeSetAirQuality(lantern, Vec3.atCenterOf(this.worldPosition), this.level);
             if (newState != null) {
                 level.scheduleTick(worldPosition, getBlockState().getBlock(), 20, TickPriority.NORMAL);
-            }
-        }
-        var shape = lantern.getShape(this.level, this.worldPosition);
-        if (!shape.isEmpty() && !getOwnBlock().type.getId().getNamespace().equals("twigs")) {
-            this.attachmentOffset = (shape.bounds().maxY - (9 / 16d));
-        }
-    }
-
-    @Override
-    public void setChanged() {
-        super.setChanged();
-        if (this.level != null && !this.level.isClientSide) {
-            BlockState lantern = getLanternState();
-            var shape = lantern.getShape(this.level, this.worldPosition);
-            if (!shape.isEmpty() && !getOwnBlock().type.getId().getNamespace().equals("twigs")) {
-                this.attachmentOffset = (shape.bounds().maxY - (9 / 16d));
             }
         }
     }

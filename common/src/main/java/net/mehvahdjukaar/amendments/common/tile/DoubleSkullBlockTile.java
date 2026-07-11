@@ -1,6 +1,5 @@
 package net.mehvahdjukaar.amendments.common.tile;
 
-import com.mojang.authlib.GameProfile;
 import net.mehvahdjukaar.amendments.AmendmentsClient;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
@@ -11,23 +10,23 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtUtils;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.*;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.CandleBlock;
+import net.minecraft.world.level.block.Rotation;
+import net.minecraft.world.level.block.SkullBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.SkullBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
-import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.Nullable;
 
 public class DoubleSkullBlockTile extends EnhancedSkullBlockTile {
@@ -150,12 +149,6 @@ public class DoubleSkullBlockTile extends EnhancedSkullBlockTile {
 
     public static void tick(Level level, BlockPos pos, BlockState state, DoubleSkullBlockTile e) {
         e.tick(level, pos, state);
-        var tileUp = e.getSkullTileUp();
-        if (tileUp != null) {
-            var b = tileUp.getBlockState();
-            if (b instanceof EntityBlock eb) {
-                eb.getTicker(level, b, tileUp.getType());
-            }
-        }
+        tickInner(level, pos, e.innerTileUp);
     }
 }
