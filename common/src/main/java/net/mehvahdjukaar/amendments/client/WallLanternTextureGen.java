@@ -119,6 +119,11 @@ public class WallLanternTextureGen {
             ResourceLocation copper = copperMountTexture(reg.getPath());
             if (copper != null) return copper;
         }
+        // Supplementaries Squared's crimson lantern is a golden-framed lantern, so it reuses the
+        // handmade gold mount rather than a runtime recolor (its texture doesn't sample cleanly).
+        if (reg.getNamespace().equals("supp_squared") && reg.getPath().equals("crimson_lantern")) {
+            return Amendments.res("block/wall_lanterns/wall_lantern_gold");
+        }
         String namespace = (reg.getNamespace().equals("minecraft") || reg.getNamespace().equals(Amendments.MOD_ID)) ? "" : reg.getNamespace() + "/";
         return Amendments.res("block/wall_lanterns/" + namespace + reg.getPath());
     }

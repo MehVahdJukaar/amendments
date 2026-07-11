@@ -9,6 +9,7 @@ import net.mehvahdjukaar.amendments.common.tile.LiquidCauldronBlockTile;
 import net.mehvahdjukaar.moonlight.api.block.ISoftFluidTankProvider;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidStack;
 import net.mehvahdjukaar.moonlight.api.fluids.fabric.SoftFluidStackImpl;
+import net.mehvahdjukaar.moonlight.api.util.Utils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -26,7 +27,7 @@ public abstract class SelfCauldronMixin extends BlockEntity implements SingleSlo
     @Override
     public long insert(FluidVariant resource, long maxAmount, TransactionContext transaction) {
         var tank = getSoftFluidTank();
-        SoftFluidStack stack = SoftFluidStackImpl.fromFabricFluid(resource, (int) (maxAmount/ FluidConstants.BOTTLE));
+        SoftFluidStack stack = SoftFluidStackImpl.fromFabricFluid(resource, (int) (maxAmount / FluidConstants.BOTTLE), Utils.hackyGetRegistryAccess());
         var res = tank.addFluid(stack, true);
         //actually inserts
         transaction.addCloseCallback((t, r) -> {
