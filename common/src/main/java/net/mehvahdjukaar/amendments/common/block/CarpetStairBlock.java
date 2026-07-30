@@ -163,7 +163,7 @@ public class CarpetStairBlock extends ModStairBlock implements EntityBlock, IRec
     @Override
     public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {
         super.onRemove(state, level, pos, newState, isMoving);
-        if (!state.is(newState.getBlock())) {
+        if (!state.is(newState.getBlock()) || !newState.hasBlockEntity()) {
             level.removeBlockEntity(pos);
         }
     }
