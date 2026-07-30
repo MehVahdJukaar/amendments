@@ -26,7 +26,6 @@ public class ClientConfigs {
     }
 
     public static final Supplier<Boolean> TOOLTIP_HINTS;
-    public static final Supplier<Boolean> CUSTOM_CONFIGURED_SCREEN;
 
     public static final Supplier<Double> LILY_OFFSET;
     public static final Supplier<Boolean> BELL_CONNECTION;
@@ -88,7 +87,6 @@ public class ClientConfigs {
 
         builder.push("general");
         TOOLTIP_HINTS = builder.define("tooltip_hints", true);
-        CUSTOM_CONFIGURED_SCREEN = builder.define("custom_configured_screen", true);
         TEXTURE_PACK_SUPPORT = builder.comment("Makes dynamically generated assets depend on texture packs too and not just vanilla files")
                 .define("texture_pack_support", false);
         DYNAMIC_ASSETS_GEN_MODE = builder.define("dynamic_assets_generation_mode", GenMode.CACHED);

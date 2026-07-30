@@ -1,15 +1,12 @@
 package net.mehvahdjukaar.amendments.platform;
 
 import net.mehvahdjukaar.amendments.Amendments;
-import net.mehvahdjukaar.amendments.configs.ClientConfigs;
 import net.mehvahdjukaar.amendments.events.ModEvents;
 import net.mehvahdjukaar.amendments.integration.CompatHandler;
 import net.mehvahdjukaar.amendments.integration.platform.BlueprintIntegration;
-import net.mehvahdjukaar.amendments.integration.platform.configured.ModConfigSelectScreen;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.moonlight.api.fluids.platform.SoftFluidTankFluidHandlerWrapper;
 import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
-import net.mehvahdjukaar.moonlight.api.platform.RegHelper;
 import net.minecraft.world.InteractionResult;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.IEventBus;
@@ -35,9 +32,6 @@ public class AmendmentsForge {
         NeoForge.EVENT_BUS.register(this);
         if (PlatHelper.getPhysicalSide().isClient()) {
             NeoForge.EVENT_BUS.register(ClientEvents.class);
-            if (CompatHandler.CONFIGURED && ClientConfigs.CUSTOM_CONFIGURED_SCREEN.get()) {
-                ModConfigSelectScreen.registerConfigScreen(Amendments.MOD_ID, ModConfigSelectScreen::new);
-            }
         }
 
         if (CompatHandler.BLUEPRINT) {
