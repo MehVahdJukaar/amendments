@@ -159,10 +159,13 @@ public class CarpetStairBlock extends ModStairBlock implements EntityBlock, IRec
         return super.getSoundType(state);
     }
 
+    //StairBlock forwards onRemove to its base state, which has no block entity, so the tile would linger here forever
     @Override
-    public void destroy(LevelAccessor level, BlockPos pos, BlockState state) {
-        super.destroy(level, pos, state);
-
+    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {
+        super.onRemove(state, level, pos, newState, isMoving);
+        if (!state.is(newState.getBlock())) {
+            level.removeBlockEntity(pos);
+        }
     }
 
     @Override
