@@ -1,0 +1,19 @@
+{
+  "global_conditions": [
+    {
+      "modid": "supplementaries",
+      "type": "forge:mod_loaded"
+    },
+    {
+      "modid": "buzzier_bees",
+      "type": "forge:mod_loaded"
+    },
+    {
+      "modid": "endergetic",
+      "type": "forge:mod_loaded"
+    }
+  ],
+  "id": "supplementaries:candle_holder_ender",
+  "light": 8,
+  "works_underwater": false
+}
