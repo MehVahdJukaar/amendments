@@ -18,32 +18,11 @@ classes/
 .settings
 *.launch
 /unique_lines.txt
-/.junie/memory/
-/.codex
-/.aiassistant/
-/.ai/
 /common/build/
 /fabric/build/
 /neoforge/build/
 /forge/build/
-/.junie/AGENTS.md
-/.claude/skills/mixin-writing/references/at-reference.md
-/.cursor/skills/mixin-writing/references/at-reference.md
-/.claude/skills/mixin-writing/references/expressions-language.md
-/.cursor/skills/mixin-writing/references/expressions-language.md
-/.cursor/rules/minecraft-mod-project.mdc
 /build/reports/problems/problems-report.html
 /settings.gradle.kts
-/.claude/skills/mixin-writing/SKILL.md
-/.claude/skills/mixinmcp-tools/SKILL.md
-/.cursor/skills/mixin-writing/SKILL.md
-/.cursor/skills/mixinmcp-tools/SKILL.md
-/.claude/skills/mixinmcp-tools/references/toolchains.md
-/.cursor/skills/mixinmcp-tools/references/toolchains.md
 
-# AI agent / assistant config (local only, not on GitHub)
-.claude/
-.cursor/
-.junie/
-CLAUDE.md
 /build/
