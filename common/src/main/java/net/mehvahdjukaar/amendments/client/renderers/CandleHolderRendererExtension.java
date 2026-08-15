@@ -37,7 +37,6 @@ import net.minecraft.world.level.block.CandleBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix4f;
-import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
 public class CandleHolderRendererExtension implements IThirdPersonAnimationProvider, IThirdPersonSpecialItemRenderer,
@@ -161,14 +160,15 @@ public class CandleHolderRendererExtension implements IThirdPersonAnimationProvi
         float ss = (1.0F - t * t * 0.4F);
 
         float scale = ss * 2 / 16f;
-        Matrix4f mat = new Matrix4f();
-        Quaternionf cameraRot = Minecraft.getInstance().gameRenderer.getMainCamera().rotation();
 
         poseStack.translate(candleParticleOffset.x, candleParticleOffset.y, candleParticleOffset.z);
-        mat.setTranslation(poseStack.last().pose().getTranslation(new Vector3f()));
-        mat.rotate(cameraRot);
 
-        poseStack.last().pose().set(mat);
+        //pose is already in view space, so dropping its rotation is what makes the quad face the camera.
+        //the negative x and z scale below is a 180 turn that points the quad's front face back at us
+        Matrix4f pose = poseStack.last().pose();
+        Vector3f pos = pose.getTranslation(new Vector3f());
+        pose.identity().setTranslation(pos);
+
         poseStack.scale(-scale, scale, -scale);
 
         //TODO: fix for animated particles

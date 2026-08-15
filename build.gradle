@@ -110,6 +110,8 @@ allprojects {
 
         mavenLocal()
 
+        maven { url "https://registry.somethingcatchy.net/repository/maven-releases/" }
+
         maven { url "https://maven.parchmentmc.org" }
 
         maven {

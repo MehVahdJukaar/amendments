@@ -2,6 +2,7 @@ package net.mehvahdjukaar.amendments.integration;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.mehvahdjukaar.amendments.Amendments;
 import net.mehvahdjukaar.amendments.common.block.CeilingBannerBlock;
 import net.mehvahdjukaar.amendments.common.tile.LiquidCauldronBlockTile;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidStack;
@@ -36,7 +37,10 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.List;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import static net.mehvahdjukaar.amendments.events.behaviors.CauldronConversion.getNewState;
@@ -147,27 +151,46 @@ public class SuppCompat {
 
 
     public static Vec3 getCandleHolderParticleOffset(BlockState state) {
-        if (state.getBlock() instanceof CandleHolderBlock cb) {
-            try {
-                @SuppressWarnings("unchecked")
-                Function<BlockState, List<Vec3>> offsets = (Function<BlockState, List<Vec3>>) OFFSETS.get(cb);
-                List<Vec3> particleOffsets = offsets.apply(state);
-                if (!particleOffsets.isEmpty()) {
-                    return particleOffsets.get(0).subtract(0.5, 0.5, 0.5); //center it
-                }
-            } catch (Exception ignored) {
-
+        if (OFFSETS != null && state.getBlock() instanceof CandleHolderBlock cb) {
+            List<Vec3> offsets = OFFSETS.apply(cb, state);
+            if (!offsets.isEmpty()) {
+                return offsets.get(0).subtract(0.5, 0.5, 0.5); //center it
             }
-            //return cb.particleOffsets.apply(state).get(0);
         }
         return Vec3.ZERO;
     }
 
-    private static final java.lang.reflect.Field OFFSETS = Util.make(() -> {
+    //newer supplementaries keeps these in a field, older ones behind a method. no offset just means the flame sits at the model center
+    @Nullable
+    private static final BiFunction<CandleHolderBlock, BlockState, List<Vec3>> OFFSETS = Util.make(() -> {
         try {
-            return CandleHolderBlock.class.getDeclaredField("particleOffsets");
-        } catch (NoSuchFieldException e) {
-            throw new RuntimeException(e);
+            Field field = CandleHolderBlock.class.getDeclaredField("particleOffsets");
+            field.setAccessible(true);
+            return (block, state) -> {
+                try {
+                    //noinspection unchecked
+                    var offsets = (Function<BlockState, List<Vec3>>) field.get(block);
+                    return offsets.apply(state);
+                } catch (Exception e) {
+                    return List.of();
+                }
+            };
+        } catch (NoSuchFieldException ignored) {
         }
+        try {
+            Method method = CandleHolderBlock.class.getDeclaredMethod("getParticleOffset", BlockState.class);
+            method.setAccessible(true);
+            return (block, state) -> {
+                try {
+                    //noinspection unchecked
+                    return (List<Vec3>) method.invoke(block, state);
+                } catch (Exception e) {
+                    return List.of();
+                }
+            };
+        } catch (NoSuchMethodException ignored) {
+        }
+        Amendments.LOGGER.warn("Could not find candle holder particle offsets. Held candle flames will be off center");
+        return null;
     });
 }

@@ -7,5 +7,5 @@
   ],
   "id": "supplementaries:candle_holder_lime",
   "light": 8,
-  "works_underwater": true
+  "works_underwater": false
 }
