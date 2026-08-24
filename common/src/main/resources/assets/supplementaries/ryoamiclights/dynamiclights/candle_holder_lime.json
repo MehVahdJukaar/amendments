@@ -11,7 +11,7 @@
       "modid": "supplementaries"
     }
   ],
-  "id": "supplementaries:candle_holder_white",
-  "light": 8,
-  "works_underwater": false
+  "item": "supplementaries:candle_holder_lime",
+  "luminance": 8,
+  "water_sensitive": true
 }

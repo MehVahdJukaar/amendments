@@ -21,5 +21,5 @@
   ],
   "id": "supplementaries:candle_holder_spectacle",
   "light": 8,
-  "works_underwater": true
+  "works_underwater": false
 }

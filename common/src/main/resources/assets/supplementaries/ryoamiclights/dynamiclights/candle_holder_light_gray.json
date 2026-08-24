@@ -12,6 +12,6 @@
     }
   ],
   "item": "supplementaries:candle_holder_light_gray",
-  "luminance": "block",
+  "luminance": 8,
   "water_sensitive": true
 }

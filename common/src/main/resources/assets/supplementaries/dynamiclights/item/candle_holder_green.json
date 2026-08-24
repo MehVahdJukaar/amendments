@@ -1,5 +1,5 @@
 {
-"fabric:load_conditions": [
+  "fabric:load_conditions": [
     {
       "condition": "fabric:mod_loaded",
       "modid": "supplementaries"
@@ -15,5 +15,5 @@
     "items": "supplementaries:candle_holder_green"
   },
   "luminance": 8,
-  "water_sensitive": false
+  "water_sensitive": true
 }

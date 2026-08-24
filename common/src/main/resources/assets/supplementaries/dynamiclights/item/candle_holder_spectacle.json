@@ -23,5 +23,5 @@
     "items": "supplementaries:candle_holder_spectacle"
   },
   "luminance": 8,
-  "water_sensitive": false
+  "water_sensitive": true
 }

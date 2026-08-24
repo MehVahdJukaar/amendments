@@ -5,7 +5,7 @@
       "modid": "supplementaries"
     },
     {
-      "type": "neoforge:mod_loaded",
+      "condition": "fabric:mod_loaded",
       "modid": "buzzier_bees"
     }
   ],
@@ -23,5 +23,5 @@
     "items": "supplementaries:candle_holder_soul"
   },
   "luminance": 8,
-  "water_sensitive": false
+  "water_sensitive": true
 }

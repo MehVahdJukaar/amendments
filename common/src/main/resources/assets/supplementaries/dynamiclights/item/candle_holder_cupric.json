@@ -31,5 +31,5 @@
     "items": "supplementaries:candle_holder_cupric"
   },
   "luminance": 8,
-  "water_sensitive": false
+  "water_sensitive": true
 }
