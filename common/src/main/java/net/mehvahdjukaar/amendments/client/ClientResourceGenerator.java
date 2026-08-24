@@ -454,10 +454,19 @@ public class ClientResourceGenerator extends DynamicClientResourceProvider {
                 if (manager.getResource(ResType.BLOCKSTATES.getPath(wlId)).isPresent()) continue;
 
                 ResourceLocation supportTexture = WallLanternTextureGen.getSupportTextureLocation(type);
-                ResourceLocation lanternTexture = WallLanternTextureGen.getLanternTextureLocation(manager, type);
-
-                sink.addTextureUnlessPresent(manager, supportTexture, () ->
-                        WallLanternTextureGen.generate(manager, lanternTexture));
+                ResourceLocation handmade = WallLanternTextureGen.getHandmadeMount(type);
+                if (handmade != null) {
+                    // copy instead of pointing the model straight at the handmade texture, else a pack
+                    // couldn't override just this lantern's mount
+                    if (!sink.alreadyHasTextureAtLocation(manager, supportTexture)) {
+                        sink.copyResource(manager, ResType.TEXTURES.getPath(handmade),
+                                ResType.TEXTURES.getPath(supportTexture), true);
+                    }
+                } else {
+                    ResourceLocation lanternTexture = WallLanternTextureGen.getLanternTextureLocation(manager, type);
+                    sink.addTextureUnlessPresent(manager, supportTexture, () ->
+                            WallLanternTextureGen.generate(manager, lanternTexture));
+                }
 
                 String textureRef = supportTexture.toString();
                 String modelPrefix = "amendments:block/" + wlId.getPath();

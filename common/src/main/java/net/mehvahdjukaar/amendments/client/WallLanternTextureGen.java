@@ -10,13 +10,30 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Map;
+
 public class WallLanternTextureGen {
+
+    private static final ResourceLocation IRON_MOUNT = Amendments.res("block/wall_lanterns/wall_lantern");
+    private static final ResourceLocation GOLD_MOUNT = Amendments.res("block/wall_lanterns/wall_lantern_gold");
+
+    // Lanterns whose texture doesn't sample into a decent mount (colored glass, glowing bulbs, vines)
+    // so the recolor comes out garish. They all hang off a plain metal frame anyway, so give them a
+    // handmade mount.
+    private static final Map<ResourceLocation, ResourceLocation> HANDMADE_MOUNTS = Map.of(
+            ResourceLocation.fromNamespaceAndPath("suppsquared", "crimson_lantern"), GOLD_MOUNT,
+            ResourceLocation.fromNamespaceAndPath("enderscape", "bulb_lantern"), IRON_MOUNT,
+            ResourceLocation.fromNamespaceAndPath("bountifulfares", "feldspar_lantern"), IRON_MOUNT,
+            ResourceLocation.fromNamespaceAndPath("goodending", "firefly_lantern"), IRON_MOUNT,
+            ResourceLocation.fromNamespaceAndPath("dungeonsdelight", "living_lantern"), IRON_MOUNT,
+            ResourceLocation.fromNamespaceAndPath("darkerdepths", "glowshroom_lantern"), IRON_MOUNT
+    );
 
     private WallLanternTextureGen() {
     }
 
     public static TextureImage generate(ResourceManager manager, ResourceLocation lanternTexture) throws Exception {
-        try (TextureImage template = TextureImage.open(manager, Amendments.res("block/wall_lanterns/wall_lantern"))) {
+        try (TextureImage template = TextureImage.open(manager, IRON_MOUNT)) {
             try (TextureImage fullLantern = TextureImage.open(manager, lanternTexture);
                  TextureImage sourceLantern = firstFrame(fullLantern)) {
 
@@ -105,27 +122,38 @@ public class WallLanternTextureGen {
         return mask;
     }
 
+    /**
+     * Where the wall mount texture for this lantern lives. Always a per lantern path so a resource
+     * pack can drop its own texture there and win over whatever we make, be it a recolor or a copy
+     * of one of our handmade mounts.
+     */
     public static ResourceLocation getSupportTextureLocation(LanternRegistry.LanternType type) {
         ResourceLocation reg = type.getId();
         if (type.isVanilla() && reg.getPath().equals("lantern")) {
-            return Amendments.res("block/wall_lanterns/wall_lantern");
+            return IRON_MOUNT;
         }
-        // Skinned lanterns reuse the vanilla metal frame, so they share the base wall mount texture
-        // instead of generating a recolored one (which would just duplicate the vanilla shades).
+        // Skinned lanterns all reuse the vanilla metal frame so they just share the base mount.
+        // Copying it to a hundred odd paths would only waste atlas space.
         if (reg.getNamespace().equals("skinnedlanterns")) {
-            return Amendments.res("block/wall_lanterns/wall_lantern");
-        }
-        if (reg.getNamespace().equals("caverns_and_chasms")) {
-            ResourceLocation copper = copperMountTexture(reg.getPath());
-            if (copper != null) return copper;
-        }
-        // Supplementaries Squared's crimson lantern is a golden-framed lantern, so it reuses the
-        // handmade gold mount rather than a runtime recolor (its texture doesn't sample cleanly).
-        if (reg.getNamespace().equals("supp_squared") && reg.getPath().equals("crimson_lantern")) {
-            return Amendments.res("block/wall_lanterns/wall_lantern_gold");
+            return IRON_MOUNT;
         }
         String namespace = (reg.getNamespace().equals("minecraft") || reg.getNamespace().equals(Amendments.MOD_ID)) ? "" : reg.getNamespace() + "/";
         return Amendments.res("block/wall_lanterns/" + namespace + reg.getPath());
+    }
+
+    /**
+     * The handmade mount this lantern should copy instead of getting a generated recolor,
+     * or null if it has none and must be generated.
+     */
+    @Nullable
+    public static ResourceLocation getHandmadeMount(LanternRegistry.LanternType type) {
+        ResourceLocation reg = type.getId();
+        ResourceLocation manual = HANDMADE_MOUNTS.get(reg);
+        if (manual != null) return manual;
+        if (reg.getNamespace().equals("caverns_and_chasms")) {
+            return copperMountTexture(reg.getPath());
+        }
+        return null;
     }
 
     /**
@@ -143,7 +171,7 @@ public class WallLanternTextureGen {
             case "exposed_copper_lantern" -> Amendments.res("block/wall_lanterns/wall_lantern_copper_exposed");
             case "weathered_copper_lantern" -> Amendments.res("block/wall_lanterns/wall_lantern_copper_weathered");
             case "oxidized_copper_lantern" -> Amendments.res("block/wall_lanterns/wall_lantern_copper_oxidized");
-            case "cupric_lantern" -> Amendments.res("block/wall_lanterns/wall_lantern");
+            case "cupric_lantern" -> IRON_MOUNT;
             default -> null;
         };
     }
