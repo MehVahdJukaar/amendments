@@ -1,2 +1,3 @@
-- wall lantern fixes
-- warn in chat when Enhanced Block Entities is installed
+- fixes #367
+- fixes #447
+- aded warn in chat when Enhanced Block Entities is installed
