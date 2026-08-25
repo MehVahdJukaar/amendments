@@ -23,6 +23,7 @@ import net.mehvahdjukaar.moonlight.api.platform.ClientHelper;
 import net.mehvahdjukaar.moonlight.api.platform.RegHelper;
 import net.mehvahdjukaar.moonlight.api.set.BlocksColorAPI;
 import net.mehvahdjukaar.moonlight.api.util.Utils;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.renderer.RenderType;
@@ -35,6 +36,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -142,10 +144,23 @@ public class AmendmentsClient {
         ClientHelper.addItemColorsRegistration(AmendmentsClient::registerItemColors);
         ClientHelper.addParticleRegistration(AmendmentsClient::registerParticles);
         ClientHelper.addMenuScreensRegistration(AmendmentsClient::registerMenuScreens);
+        if (CompatHandler.ENHANCED_BLOCK_ENTITIES) {
+            ClientHelper.addClientLoginCallback(AmendmentsClient::warnAboutEnhancedBlockEntities);
+        }
         // TODO: rewrite as Vanillin compat for 1.21
         // if (CompatHandler.FLYWHEEL) FlywheelCompat.init();
     }
 
+
+    @EventCalled
+    private static void warnAboutEnhancedBlockEntities() {
+        boolean disabled = ClientConfigs.NO_EBE_WARN.get();
+        if (disabled) return;
+        Player player = ClientHelper.getLocalPlayer();
+        if (player == null) return;
+        player.displayClientMessage(Component.translatable("message.amendments.ebe_warning")
+                .withStyle(ChatFormatting.RED), false);
+    }
 
     public static float x;
     public static float y;

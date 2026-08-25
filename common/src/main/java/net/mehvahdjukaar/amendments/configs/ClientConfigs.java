@@ -26,6 +26,7 @@ public class ClientConfigs {
     }
 
     public static final Supplier<Boolean> TOOLTIP_HINTS;
+    public static final Supplier<Boolean> NO_EBE_WARN;
 
     public static final Supplier<Double> LILY_OFFSET;
     public static final Supplier<Boolean> BELL_CONNECTION;
@@ -90,6 +91,8 @@ public class ClientConfigs {
         TEXTURE_PACK_SUPPORT = builder.comment("Makes dynamically generated assets depend on texture packs too and not just vanilla files")
                 .define("texture_pack_support", false);
         DYNAMIC_ASSETS_GEN_MODE = builder.define("dynamic_assets_generation_mode", GenMode.CACHED);
+        NO_EBE_WARN = builder.comment("Disables the chat warning shown when Enhanced Block Entities is installed")
+                .define("no_enhanced_block_entities_warn", false);
 
         builder.pop();
 

@@ -1,1 +1,2 @@
-- improved mod compat
+- wall lantern fixes
+- warn in chat when Enhanced Block Entities is installed

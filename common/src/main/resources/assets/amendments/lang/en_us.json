@@ -92,6 +92,7 @@
   "fluid.amendments.dye": "Dye",
   "subtitles.amendments.fireball_explosion": "Fireball Explosion",
   "message.amendments.cauldron": "The potion mix seems unstable...",
+  "message.amendments.ebe_warning": "[Amendments] Enhanced Block Entities is installed. Signs will render wrong and hanging signs won't swivel until you turn off those in EBE's own config.",
   "tag.block.amendments.cauldron_heat_source": "Cauldron Heat Source",
   "tag.block.amendments.ceiling_banners": "Ceiling Banners",
   "tag.block.amendments.skull_candles": "Skull Candles",
