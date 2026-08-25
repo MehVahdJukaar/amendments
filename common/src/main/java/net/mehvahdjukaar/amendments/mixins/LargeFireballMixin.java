@@ -4,6 +4,7 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.mehvahdjukaar.amendments.common.ProjectileStats;
 import net.mehvahdjukaar.amendments.common.entity.FireballExplosion;
+import net.mehvahdjukaar.amendments.common.entity.IExtinguishableFireball;
 import net.mehvahdjukaar.amendments.configs.CommonConfigs;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -38,7 +39,7 @@ public abstract class LargeFireballMixin extends Entity {
 
     @Inject(method = "onHit", at = @At(value = "HEAD"), cancellable = true)
     public void amendments$cancelExplosion(HitResult result, CallbackInfo ci) {
-        if (this.getRemainingFireTicks() <= 0) {
+        if (((IExtinguishableFireball) this).amendments$isExtinguished()) {
             if (!level().isClientSide) this.discard();
             ci.cancel();
         }

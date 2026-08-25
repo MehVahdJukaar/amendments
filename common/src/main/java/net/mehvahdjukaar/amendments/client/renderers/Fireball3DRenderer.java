@@ -3,6 +3,7 @@ package net.mehvahdjukaar.amendments.client.renderers;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.mehvahdjukaar.amendments.client.ModRenderTypes;
+import net.mehvahdjukaar.amendments.common.entity.IExtinguishableFireball;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.LightTexture;
@@ -46,14 +47,14 @@ public class Fireball3DRenderer<E extends Entity> extends ThrownProjectile3DRend
 
     @Override
     protected int getBlockLightLevel(E entity, BlockPos pos) {
-        if (entity.getRemainingFireTicks() <= 0 && noOverlayTexture != null) return super.getBlockLightLevel(entity, pos);
+        if (!isLit(entity) && noOverlayTexture != null) return super.getBlockLightLevel(entity, pos);
         // otherwise its always 15 since its on fire
         return entity.level().getBrightness(LightLayer.BLOCK, pos);
     }
 
     @Override
     public void renderBall(E entity, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {
-        boolean hasOverlay = entity.getRemainingFireTicks() > 0 || noOverlayTexture == null;
+        boolean hasOverlay = isLit(entity) || noOverlayTexture == null;
         ResourceLocation mainTexture = hasOverlay ? getTextureLocation(entity) : noOverlayTexture;
         RenderType mainRedderType = renderTypeFunction.apply(mainTexture);
         VertexConsumer vertexConsumer = bufferSource.getBuffer(mainRedderType);
@@ -68,6 +69,12 @@ public class Fireball3DRenderer<E extends Entity> extends ThrownProjectile3DRend
 
             overlay.render(poseStack, outlineVertexConsumer, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY);
         }
+    }
+
+    // dont read fire ticks directly, mods that retexture fireballs zero those out
+    private boolean isLit(E entity) {
+        if (entity instanceof IExtinguishableFireball fireball) return !fireball.amendments$isExtinguished();
+        return entity.getRemainingFireTicks() > 0;
     }
 
     private float fireXOffset(float tickCount) {

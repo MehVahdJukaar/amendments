@@ -7,6 +7,7 @@ import net.mehvahdjukaar.amendments.configs.CommonConfigs;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.moonlight.api.entity.ImprovedProjectileEntity;
 import net.mehvahdjukaar.moonlight.api.entity.ParticleTrailEmitter;
+import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
@@ -15,16 +16,14 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.SnowballItem;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
-import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 
-public class MediumFireball extends ImprovedProjectileEntity implements IVisualTransformationProvider {
+public class MediumFireball extends ImprovedProjectileEntity implements IVisualTransformationProvider, IExtinguishableFireball {
 
     private final ParticleTrailEmitter trailEmitter = ProjectileStats.makeFireballTrialEmitter();
     private final TumblingAnimation tumblingAnimation = ProjectileStats.makeTumbler();
@@ -65,6 +64,11 @@ public class MediumFireball extends ImprovedProjectileEntity implements IVisualT
     }
 
     @Override
+    public boolean amendments$isExtinguished() {
+        return this.isExtinguished;
+    }
+
+    @Override
     public Matrix4f amendments$getVisualTransformation(float partialTicks) {
         return new Matrix4f().rotate(this.tumblingAnimation.getRotation(partialTicks));
     }
@@ -98,7 +102,7 @@ public class MediumFireball extends ImprovedProjectileEntity implements IVisualT
         super.onHit(result);
         if (!this.level().isClientSide) {
             if (!this.isExtinguished) {
-                boolean bl = this.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING);
+                boolean canStartFires = PlatHelper.isMobGriefingOn(this.level(), this);
                 var settings = new FireballExplosion.ExtraSettings();
                 settings.hasKnockback = false;
                 settings.soundVolume = ProjectileStats.PLAYER_FIREBALL.soundVolume();
@@ -106,7 +110,7 @@ public class MediumFireball extends ImprovedProjectileEntity implements IVisualT
                 settings.maxDamage = ProjectileStats.PLAYER_FIREBALL.normalExplosionRadius() + 1;
                 FireballExplosion.explodeServer(this.level(), this, null, null,
                         this.getX(), this.getY(), this.getZ(), (float) 1,
-                        bl, Level.ExplosionInteraction.NONE, settings);
+                        canStartFires, Level.ExplosionInteraction.NONE, settings);
             }
             this.discard();
         }

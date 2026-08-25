@@ -2,6 +2,7 @@ package net.mehvahdjukaar.amendments.mixins;
 
 import net.mehvahdjukaar.amendments.client.TumblingAnimation;
 import net.mehvahdjukaar.amendments.common.ProjectileStats;
+import net.mehvahdjukaar.amendments.common.entity.IExtinguishableFireball;
 import net.mehvahdjukaar.amendments.common.entity.IVisualTransformationProvider;
 import net.mehvahdjukaar.amendments.configs.ClientConfigs;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
@@ -19,10 +20,10 @@ import org.spongepowered.asm.mixin.Unique;
 
 // just here because it annoyed me that you can pick these
 @Mixin(Fireball.class)
-public abstract class FireballMixin extends AbstractHurtingProjectile implements IVisualTransformationProvider {
+public abstract class FireballMixin extends AbstractHurtingProjectile implements IVisualTransformationProvider, IExtinguishableFireball {
 
     @Unique
-    private boolean amendments$isExtinguished = false;
+    private boolean amendments$extinguished = false;
 
     @Unique
     private final ParticleTrailEmitter amendments$trailEmitter = ProjectileStats.makeFireballTrialEmitter();
@@ -31,6 +32,11 @@ public abstract class FireballMixin extends AbstractHurtingProjectile implements
 
     protected FireballMixin(EntityType<? extends AbstractHurtingProjectile> entityType, Level level) {
         super(entityType, level);
+    }
+
+    @Override
+    public boolean amendments$isExtinguished() {
+        return this.amendments$extinguished;
     }
 
     @Override
@@ -58,7 +64,7 @@ public abstract class FireballMixin extends AbstractHurtingProjectile implements
 
     @Override
     protected boolean shouldBurn() {
-        if (amendments$isExtinguished && this.getType() == EntityType.FIREBALL) {
+        if (amendments$extinguished && this.getType() == EntityType.FIREBALL) {
             return false;
         }
         return super.shouldBurn();
@@ -79,8 +85,8 @@ public abstract class FireballMixin extends AbstractHurtingProjectile implements
             }
             if (ClientConfigs.CHARGES_TUMBLE.get()) amendments$tumblingAnimation.tick(random);
         }
-        if (!this.amendments$isExtinguished && this.isInWater()) {
-            this.amendments$isExtinguished = true;
+        if (!this.amendments$extinguished && this.isInWater()) {
+            this.amendments$extinguished = true;
             if (!level().isClientSide()) {
                 this.clearFire();
                 this.playEntityOnFireExtinguishedSound();

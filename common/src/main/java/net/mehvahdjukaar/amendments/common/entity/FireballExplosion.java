@@ -3,18 +3,16 @@ package net.mehvahdjukaar.amendments.common.entity;
 import net.mehvahdjukaar.amendments.common.network.ClientBoundFireballExplodePacket;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.moonlight.api.block.ILightable;
-import net.mehvahdjukaar.moonlight.api.platform.network.NetworkHelper;
-import net.mehvahdjukaar.supplementaries.reg.ModParticles;
 import net.mehvahdjukaar.moonlight.api.platform.ForgeHelper;
+import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
+import net.mehvahdjukaar.moonlight.api.platform.network.NetworkHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Explosion;
@@ -118,7 +116,8 @@ public class FireballExplosion extends Explosion {
         switch (explosionInteraction) {
             case NONE -> inter = BlockInteraction.KEEP;
             case BLOCK -> inter = level.getDestroyType(GameRules.RULE_BLOCK_EXPLOSION_DROP_DECAY);
-            case MOB -> inter = level.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING) ? level.getDestroyType(GameRules.RULE_MOB_EXPLOSION_DROP_DECAY) : BlockInteraction.KEEP;
+            case MOB ->
+                    inter = PlatHelper.isMobGriefingOn(level, source) ? level.getDestroyType(GameRules.RULE_MOB_EXPLOSION_DROP_DECAY) : BlockInteraction.KEEP;
             case TNT -> inter = level.getDestroyType(GameRules.RULE_TNT_EXPLOSION_DROP_DECAY);
             case TRIGGER -> inter = BlockInteraction.TRIGGER_BLOCK;
             default -> throw new MatchException(null, null);
