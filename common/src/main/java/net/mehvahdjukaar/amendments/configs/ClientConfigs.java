@@ -57,6 +57,7 @@ public class ClientConfigs {
 
     public static final Supplier<Boolean> HOLDING_ANIMATION_FIXED;
     public static final Supplier<Boolean> CAMPFIRE_SMOKE;
+    public static final Supplier<Boolean> TRADE_BUTTONS;
 
     public static final Supplier<Boolean> PIXEL_CONSISTENT_SIGNS;
     public static final Supplier<List<String>> SIGN_BLACKLIST;
@@ -225,6 +226,9 @@ public class ClientConfigs {
 
         CAMPFIRE_SMOKE = builder.comment("Prevents campfire smoke from rendering if there is a solid block above it")
                 .define("campfire_smoke_through_blocks", false);
+
+        TRADE_BUTTONS = builder.comment("Gives the villager trade buttons the same look loom and stonecutter buttons have")
+                .define("villager_trade_buttons", true);
         builder.pop();
 
         builder.onChange(ClientConfigs::onChange);

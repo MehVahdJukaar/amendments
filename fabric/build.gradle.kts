@@ -11,9 +11,11 @@ val moonlight_version: String by extra
 val soul_fire_d_version: String by extra
 val minecraft_min_version: String by extra
 val flywheel_version: String by extra
+val codecui_version: String by extra
 
 dependencies {
     modImplementation("net.mehvahdjukaar:moonlight-fabric:${moonlight_version}")
+    modRuntimeOnly("net.mehvahdjukaar:codecui-fabric:${codecui_version}")
 
     // Mirror of common deps (new setup requires every common modImplementation/modCompileOnly to live here too)
     modImplementation("curse.maven:supplementaries-412082:8044262")

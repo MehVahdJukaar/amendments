@@ -25,6 +25,7 @@ import net.mehvahdjukaar.moonlight.api.set.BlocksColorAPI;
 import net.mehvahdjukaar.moonlight.api.util.Utils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.FallingBlockRenderer;
@@ -110,6 +111,8 @@ public class AmendmentsClient {
     public static final ResourceLocation BELL_ROPE = Amendments.res("block/bell_rope");
     public static final ResourceLocation BELL_CHAIN = Amendments.res("block/bell_chain");
     public static final ResourceLocation LECTERN_GUI = Amendments.res("textures/gui/lectern.png");
+    public static final WidgetSprites BUTTON_SPRITES = new WidgetSprites(
+            Amendments.res("widget/button"), Amendments.res("widget/button_highlighted"));
     public static final ResourceLocation POTION_TEXTURE = Amendments.res("block/potion_cauldron");
     public static final ResourceLocation MUSHROOM_STEW = Amendments.res("block/mushroom_stew_cauldron");
     public static final ResourceLocation RABBIT_STEW = Amendments.res("block/rabbit_stew_cauldron");

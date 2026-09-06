@@ -49,10 +49,12 @@
     "DisplayCacheMixin",
     "DragonBreathParticleMixin",
     "HangingSignRendererMixin",
+    "MerchantScreenMixin",
     "SignEditScreenMixin",
     "SignRendererAccessor",
     "SignRendererMixin",
-    "SkullBlockRendererMixin"
+    "SkullBlockRendererMixin",
+    "TradeOfferButtonMixin"
   ],
   "plugin": "net.mehvahdjukaar.amendments.mixins.MixinPlugin",
   "injectors": {
