@@ -34,7 +34,7 @@ public abstract class BrewingStandMixin extends BlockEntity {
 
     @Inject(method = "loadAdditional", at = @At("TAIL"))
     public void amendments$refreshModel(CompoundTag tag, HolderLookup.Provider registries, CallbackInfo ci){
-        if(level != null && level.isClientSide){
+        if (level != null && level.isClientSide()) {
             //this for some reason marks block for re-render
             level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
         }

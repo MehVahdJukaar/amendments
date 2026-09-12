@@ -15,7 +15,6 @@ import net.mehvahdjukaar.moonlight.api.resources.RPUtils;
 import net.mehvahdjukaar.moonlight.api.resources.ResType;
 import net.mehvahdjukaar.moonlight.api.resources.StaticResource;
 import net.mehvahdjukaar.moonlight.api.resources.pack.DynamicClientResourceProvider;
-import net.mehvahdjukaar.moonlight.api.resources.pack.PackGenerationStrategy;
 import net.mehvahdjukaar.moonlight.api.resources.pack.ResourceGenTask;
 import net.mehvahdjukaar.moonlight.api.resources.pack.ResourceSink;
 import net.mehvahdjukaar.moonlight.api.resources.textures.*;
@@ -25,10 +24,10 @@ import net.mehvahdjukaar.moonlight.api.util.Utils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
-import net.minecraft.client.resources.model.Material;
+import net.minecraft.client.resources.model.sprite.SpriteId;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.block.Block;
@@ -95,7 +94,7 @@ public class ClientResourceGenerator extends DynamicClientResourceProvider {
         executor.accept((manager, sink) -> {
 
             if (ClientConfigs.COLORED_ARROWS.get()) {
-                sink.addItemModel(ResourceLocation.withDefaultNamespace("crossbow_arrow"), JsonParser.parseString(
+                sink.addItemModel(Identifier.withDefaultNamespace("crossbow_arrow"), JsonParser.parseString(
                         """ 
                                 {
                                     "parent": "item/crossbow",
@@ -108,14 +107,14 @@ public class ClientResourceGenerator extends DynamicClientResourceProvider {
             }
 
             if (ClientConfigs.JUKEBOX_MODEL.get()) {
-                sink.addItemModel(ResourceLocation.withDefaultNamespace("jukebox"), JsonParser.parseString(
+                sink.addItemModel(Identifier.withDefaultNamespace("jukebox"), JsonParser.parseString(
                         """ 
                                 {
                                   "parent": "amendments:block/jukebox"
                                 }
                                 """));
 
-                sink.addBlockState(ResourceLocation.withDefaultNamespace("jukebox"), JsonParser.parseString(
+                sink.addBlockState(Identifier.withDefaultNamespace("jukebox"), JsonParser.parseString(
                         """ 
                                 {
                                   "variants": {
@@ -149,8 +148,8 @@ public class ClientResourceGenerator extends DynamicClientResourceProvider {
                 Block sing = w.getBlockOfThis("sign");
                 if (sing == null) continue;
 
-                ResourceLocation blockLocation = Amendments.res("block/signs/" + w.getVariantId("sign"));
-                ResourceLocation signTextureLocation = findSignTexture(manager, w, sing, false);
+                Identifier blockLocation = Amendments.res("block/signs/" + w.getVariantId("sign"));
+                Identifier signTextureLocation = findSignTexture(manager, w, sing, false);
                 if (signTextureLocation == null) continue;
                 sink.addTextureIfNotPresent(manager, blockLocation, () -> {
                     try (TextureImage signTexture = TextureImage.open(manager, signTextureLocation);
@@ -176,13 +175,13 @@ public class ClientResourceGenerator extends DynamicClientResourceProvider {
     }
 
     @Nullable
-    private static ResourceLocation findSignTexture(ResourceManager manager, WoodType w, Block sing, boolean hanging) {
+    private static Identifier findSignTexture(ResourceManager manager, WoodType w, Block sing, boolean hanging) {
         var vanilla = w.toVanilla();
         if (vanilla == null) {
             Amendments.LOGGER.error("Vanilla wood type for wood {} was null. This is a bug", w);
             return null;
         }
-        Material signMaterial = hanging ? Sheets.getHangingSignMaterial(vanilla) :
+        SpriteId signMaterial = hanging ? Sheets.getHangingSignMaterial(vanilla) :
                 Sheets.getSignMaterial(vanilla);
         if (signMaterial == null) {
             try {
@@ -197,8 +196,8 @@ public class ClientResourceGenerator extends DynamicClientResourceProvider {
         }
         //when all else fails, guess
         if (signMaterial == null) {
-            ResourceLocation relativeLocation = w.getId().withPrefix("entity/signs/" + (hanging ? "hanging/" : ""));
-            ResourceLocation id = ResType.TEXTURES.getPath(relativeLocation);
+            Identifier relativeLocation = w.getId().withPrefix("entity/signs/" + (hanging ? "hanging/" : ""));
+            Identifier id = ResType.TEXTURES.getPath(relativeLocation);
             if (manager.getResource(id).isPresent()) return relativeLocation;
         } else {
             return signMaterial.texture();
@@ -247,9 +246,9 @@ public class ClientResourceGenerator extends DynamicClientResourceProvider {
         Arrays.stream(DyeColor.values()).forEach(d -> names.add(d.getName()));
         names.add("");
         for (String d : names) {
-            ResourceLocation texturePath = ResourceLocation.fromNamespaceAndPath("farmersdelight",
+            Identifier texturePath = Identifier.fromNamespaceAndPath("farmersdelight",
                     joinNonEmpty("entity/signs/canvas", d));
-            ResourceLocation blockTexturePath = Amendments.res("block/signs/farmersdelight/" + joinNonEmpty(d, "canvas_sign"));
+            Identifier blockTexturePath = Amendments.res("block/signs/farmersdelight/" + joinNonEmpty(d, "canvas_sign"));
 
             sink.addTextureIfNotPresent(manager, blockTexturePath, () -> {
                 try (TextureImage vanillaTexture = TextureImage.open(manager, texturePath)) {
@@ -300,12 +299,12 @@ public class ClientResourceGenerator extends DynamicClientResourceProvider {
         names.add("");
         if (CompatHandler.FARMERS_DELIGHT) {
             for (Block canvas : BlockScanner.getInstance().getFdSigns()) {
-                ResourceLocation id = Utils.getID(canvas);
+                Identifier id = Utils.getID(canvas);
                 Block canvasWall = BuiltInRegistries.BLOCK.getOptional(
                                 id.withPath(p -> p.replace("sign", "wall_sign")))
                         .orElse(null);
                 if (canvasWall == null) continue;
-                ResourceLocation canvasWallId = Utils.getID(canvasWall);
+                Identifier canvasWallId = Utils.getID(canvasWall);
                 String variantId = "farmersdelight/" + id.getPath();
 
                 sink.addSimilarJsonResource(manager, sign0, "sign_oak", variantId);
@@ -338,7 +337,7 @@ public class ClientResourceGenerator extends DynamicClientResourceProvider {
             Block hangingSign = w.getBlockOfThis("hanging_sign");
             if (hangingSign == null) continue;
             //hanging sign extension textures
-            ResourceLocation signTexturePath = findSignTexture(manager, w, hangingSign, true);
+            Identifier signTexturePath = findSignTexture(manager, w, hangingSign, true);
             if (signTexturePath == null) continue;
             try (TextureImage vanillaTexture = TextureImage.open(manager, signTexturePath);
                  TextureImage rotated = TextureOps.createRotated(vanillaTexture, Rotation.CLOCKWISE_90);
@@ -355,7 +354,7 @@ public class ClientResourceGenerator extends DynamicClientResourceProvider {
         if (CompatHandler.FARMERS_DELIGHT) {
             //hanging sign extension textures
             try (TextureImage vanillaTexture = TextureImage.open(manager,
-                    ResourceLocation.fromNamespaceAndPath("farmersdelight", "entity/signs/hanging/canvas"));
+                    Identifier.fromNamespaceAndPath("farmersdelight", "entity/signs/hanging/canvas"));
                  TextureImage rotated = TextureOps.createRotated(vanillaTexture, Rotation.CLOCKWISE_90);
                  TextureImage newIm = TextureOps.createScaled(rotated, 0.5f, 0.25f)) {
                 newIm.clear();
@@ -393,7 +392,7 @@ public class ClientResourceGenerator extends DynamicClientResourceProvider {
             Respriter respriter = Respriter.of(template);
 
             for (var e : AmendmentsClient.getAllRecords().entrySet()) {
-                ResourceLocation texturePath = Amendments.res(e.getValue().texture().getPath());
+                Identifier texturePath = Amendments.res(e.getValue().texture().getPath());
                 sink.addTextureIfNotPresent(manager, texturePath, () -> {
                     try (TextureImage vanillaTexture = TextureImage.open(manager,
                             RPUtils.findFirstItemTextureLocation(manager, e.getKey()))) {
@@ -448,13 +447,13 @@ public class ClientResourceGenerator extends DynamicClientResourceProvider {
             if (wallBlock == null) continue;
 
             try {
-                ResourceLocation wlId = Utils.getID(wallBlock);
+                Identifier wlId = Utils.getID(wallBlock);
                 // Lanterns we ship builtin assets for (vanilla soul + curated mod lanterns) bring their own
                 // blockstate/models/textures - don't override them.
                 if (manager.getResource(ResType.BLOCKSTATES.getPath(wlId)).isPresent()) continue;
 
-                ResourceLocation supportTexture = WallLanternTextureGen.getSupportTextureLocation(type);
-                ResourceLocation handmade = WallLanternTextureGen.getHandmadeMount(type);
+                Identifier supportTexture = WallLanternTextureGen.getSupportTextureLocation(type);
+                Identifier handmade = WallLanternTextureGen.getHandmadeMount(type);
                 if (handmade != null) {
                     // copy instead of pointing the model straight at the handmade texture, else a pack
                     // couldn't override just this lantern's mount
@@ -463,7 +462,7 @@ public class ClientResourceGenerator extends DynamicClientResourceProvider {
                                 ResType.TEXTURES.getPath(supportTexture), true);
                     }
                 } else {
-                    ResourceLocation lanternTexture = WallLanternTextureGen.getLanternTextureLocation(manager, type);
+                    Identifier lanternTexture = WallLanternTextureGen.getLanternTextureLocation(manager, type);
                     sink.addTextureUnlessPresent(manager, supportTexture, () ->
                             WallLanternTextureGen.generate(manager, lanternTexture));
                 }
@@ -501,11 +500,11 @@ public class ClientResourceGenerator extends DynamicClientResourceProvider {
         for (var t : CakeRegistry.INSTANCE.getValues()) {
             if (!t.isVanilla()) {
                 try {
-                    ResourceLocation dcId = Utils.getID(t.getBlockOfThis("double_cake"));
-                    ResourceLocation top = RPUtils.findFirstBlockTextureLocation(manager, t.cake, s -> s.contains("top"));
-                    ResourceLocation side = RPUtils.findFirstBlockTextureLocation(manager, t.cake, s -> s.contains("side"));
-                    ResourceLocation bottom = RPUtils.findFirstBlockTextureLocation(manager, t.cake, s -> s.contains("bottom"));
-                    ResourceLocation inner;
+                    Identifier dcId = Utils.getID(t.getBlockOfThis("double_cake"));
+                    Identifier top = RPUtils.findFirstBlockTextureLocation(manager, t.cake, s -> s.contains("top"));
+                    Identifier side = RPUtils.findFirstBlockTextureLocation(manager, t.cake, s -> s.contains("side"));
+                    Identifier bottom = RPUtils.findFirstBlockTextureLocation(manager, t.cake, s -> s.contains("bottom"));
+                    Identifier inner;
                     try {
                         inner = RPUtils.findFirstBlockTextureLocation(manager, t.cake, s -> s.contains("inner") || s.contains("cut")
                                 || s.contains("inside"));
@@ -513,7 +512,7 @@ public class ClientResourceGenerator extends DynamicClientResourceProvider {
                         inner = top;
                     }
                     for (var m : cakeModels) {
-                        ResourceLocation finalInner = inner;
+                        Identifier finalInner = inner;
                         sink.addSimilarJsonResource(manager, m, s -> s
                                         .replace("amendments:block/double_cake", "")
                                         .replace("minecraft:block/cake", "")

@@ -1,131 +1,138 @@
 package net.mehvahdjukaar.amendments.client.model;
 
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.mehvahdjukaar.amendments.AmendmentsClient;
 import net.mehvahdjukaar.amendments.common.block.ModCauldronBlock;
 import net.mehvahdjukaar.amendments.common.tile.LiquidCauldronBlockTile;
 import net.mehvahdjukaar.amendments.configs.ClientConfigs;
-import net.mehvahdjukaar.moonlight.api.client.model.BakedQuadsTransformer;
-import net.mehvahdjukaar.moonlight.api.client.model.CustomBakedModel;
+import net.mehvahdjukaar.moonlight.api.client.model.CustomBlockModel;
+import net.mehvahdjukaar.moonlight.api.client.model.CustomUnbakedModel;
 import net.mehvahdjukaar.moonlight.api.client.model.ExtraModelData;
+import net.mehvahdjukaar.moonlight.api.client.model.QuadEmitter;
 import net.mehvahdjukaar.moonlight.api.fluids.MLBuiltinSoftFluids;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluid;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidRegistry;
 import net.mehvahdjukaar.moonlight.api.platform.ClientHelper;
-import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.block.model.ItemOverrides;
-import net.minecraft.client.renderer.block.model.ItemTransforms;
+import net.minecraft.client.renderer.block.BlockAndTintGetter;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.resources.model.BakedModel;
-import net.minecraft.client.resources.model.ModelState;
-import net.minecraft.core.Direction;
+import net.minecraft.client.resources.model.ModelBaker;
+import net.minecraft.client.resources.model.ResolvableModel;
+import net.minecraft.client.resources.model.geometry.BakedQuad;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.RegistryAccess;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
+public class CauldronBakedModel implements CustomBlockModel {
 
-public class CauldronBakedModel implements CustomBakedModel {
-    private static final boolean SINGLE_PASS = PlatHelper.getPlatform().isFabric();
+    private final BlockStateModel cauldron;
+    private final BlockStateModel fluid;
+    private final boolean translucent;
 
-    private final BakedModel cauldron;
-    private final BakedModel fluid;
-    private final ModelState transform;
-    private final boolean hasTranslucent;
-
-    public CauldronBakedModel(BakedModel c, BakedModel fluid, ModelState transform, boolean translucent) {
-        this.cauldron = c;
+    public CauldronBakedModel(BlockStateModel cauldron, BlockStateModel fluid, boolean translucent) {
+        this.cauldron = cauldron;
         this.fluid = fluid;
-        this.transform = transform;
-        this.hasTranslucent = translucent && !SINGLE_PASS;
+        this.translucent = translucent;
     }
 
     @Override
-    public List<BakedQuad> getBlockQuads(BlockState state, Direction direction, RandomSource randomSource, RenderType renderType, ExtraModelData extraModelData) {
-        List<BakedQuad> quads = new ArrayList<>();
-        boolean isTranslucentLayer = renderType == RenderType.translucent();
-        if (!hasTranslucent || !isTranslucentLayer) {
-            quads.addAll(cauldron.getQuads(state, direction, randomSource));
-        }
-        if (!hasTranslucent || isTranslucentLayer) {
-            BakedQuadsTransformer transformer = BakedQuadsTransformer.create();
-            List<BakedQuad> liquidQuads = fluid.getQuads(state, direction, randomSource);
-            ClientLevel level = Minecraft.getInstance().level;
-            if (liquidQuads.isEmpty() || level == null) return quads;
-            RegistryAccess access = level.registryAccess();
-            ResourceKey<SoftFluid> fluidKey = extraModelData.get(LiquidCauldronBlockTile.FLUID);
-            if (fluidKey != null) {
-                SoftFluid fluid = SoftFluidRegistry.get(access).get(fluidKey);
-                Boolean glowing = extraModelData.get(LiquidCauldronBlockTile.GLOWING);
-                if (glowing == null) glowing = false;
-                // has custom fluid. Fluid might not be received immediately so might be empty for a split second
-                if (fluid != null && !MLBuiltinSoftFluids.EMPTY.is(fluidKey)) {
-                    ResourceLocation stillTexture = fluid.getStillTexture();
-                    if (ClientConfigs.POTION_TEXTURE.get() && MLBuiltinSoftFluids.POTION.is(fluidKey)) {
-                        stillTexture = AmendmentsClient.POTION_TEXTURE;
-                    } else if (MLBuiltinSoftFluids.MUSHROOM_STEW.is(fluidKey)) {
-                        stillTexture = AmendmentsClient.MUSHROOM_STEW;
-                    } else if (MLBuiltinSoftFluids.BEETROOT_SOUP.is(fluidKey)) {
-                        stillTexture = AmendmentsClient.BEETROOT_SOUP;
-                    } else if (MLBuiltinSoftFluids.RABBIT_STEW.is(fluidKey)) {
-                        stillTexture = AmendmentsClient.RABBIT_STEW;
-                    } else if (MLBuiltinSoftFluids.SUS_STEW.is(fluidKey)) {
-                        stillTexture = AmendmentsClient.SUS_STEW;
-                    }
-                    TextureAtlasSprite sprite = ClientHelper.getBlockMaterial(stillTexture).sprite();
-                    transformer.applyingAmbientOcclusion(false)
-                            .applyingEmissivity(Math.max(glowing ? 14 : 0, fluid.getEmissivity()))
-                            .applyingSprite(sprite);
+    public void emitQuads(QuadEmitter emitter, @Nullable BlockAndTintGetter level, @Nullable BlockPos pos,
+                          @Nullable BlockState state, RandomSource random, ExtraModelData data) {
+        emitter.emitAll(this.cauldron, level, pos, state, random);
 
-                    quads.addAll(transformer.transformAll(liquidQuads));
-                }
-            } else if (!(state.getBlock() instanceof ModCauldronBlock)) {
-                transformer.applyingAmbientOcclusion(false);
-                quads.addAll(transformer.transformAll(liquidQuads));
+        ClientLevel clientLevel = Minecraft.getInstance().level;
+        if (clientLevel == null || state == null) return;
+
+        var liquidQuads = CustomBlockModel.collectQuads(this.fluid, level, pos, state, random);
+        if (liquidQuads.isEmpty()) return;
+
+        RegistryAccess access = clientLevel.registryAccess();
+        ResourceKey<SoftFluid> fluidKey = data.get(LiquidCauldronBlockTile.FLUID);
+        if (fluidKey == null) {
+            if (state.getBlock() instanceof ModCauldronBlock) return;
+            for (BakedQuad q : liquidQuads) {
+                emitter.fromQuad(q).ambientOcclusion(false).forceTranslucent(this.translucent).emit();
             }
-
+            return;
         }
-        return quads;
+
+        SoftFluid fluid = SoftFluidRegistry.get(access).get(fluidKey);
+        // fluid might not be received immediately so it can be empty for a split second
+        if (fluid == null || MLBuiltinSoftFluids.EMPTY.is(fluidKey)) return;
+
+        Boolean glowing = data.get(LiquidCauldronBlockTile.GLOWING);
+        if (glowing == null) glowing = false;
+
+        Identifier stillTexture = fluid.getStillTexture();
+        if (ClientConfigs.POTION_TEXTURE.get() && MLBuiltinSoftFluids.POTION.is(fluidKey)) {
+            stillTexture = AmendmentsClient.POTION_TEXTURE;
+        } else if (MLBuiltinSoftFluids.MUSHROOM_STEW.is(fluidKey)) {
+            stillTexture = AmendmentsClient.MUSHROOM_STEW;
+        } else if (MLBuiltinSoftFluids.BEETROOT_SOUP.is(fluidKey)) {
+            stillTexture = AmendmentsClient.BEETROOT_SOUP;
+        } else if (MLBuiltinSoftFluids.RABBIT_STEW.is(fluidKey)) {
+            stillTexture = AmendmentsClient.RABBIT_STEW;
+        } else if (MLBuiltinSoftFluids.SUS_STEW.is(fluidKey)) {
+            stillTexture = AmendmentsClient.SUS_STEW;
+        }
+
+        TextureAtlasSprite sprite = ClientHelper.getBlockMaterial(stillTexture).sprite();
+        int emissivity = Math.max(glowing ? 14 : 0, fluid.getEmissivity());
+        for (BakedQuad q : liquidQuads) {
+            emitter.fromQuad(q)
+                    .sprite(sprite)
+                    .ambientOcclusion(false)
+                    .lightEmission(emissivity)
+                    .forceTranslucent(this.translucent)
+                    .emit();
+        }
     }
 
     @Override
-    public TextureAtlasSprite getBlockParticle(ExtraModelData extraModelData) {
-        return cauldron.getParticleIcon();
+    public TextureAtlasSprite getParticle(ExtraModelData data) {
+        return this.cauldron.particleMaterial().sprite();
     }
 
     @Override
-    public boolean useAmbientOcclusion() {
-        return true;
+    public @Nullable Object geometryKey(BlockAndTintGetter level, BlockPos pos, BlockState state,
+                                        RandomSource random, ExtraModelData data) {
+        return new Key(data.get(LiquidCauldronBlockTile.FLUID), data.get(LiquidCauldronBlockTile.GLOWING), state);
     }
 
-    @Override
-    public boolean isGui3d() {
-        return true;
+    private record Key(@Nullable ResourceKey<SoftFluid> fluid, @Nullable Boolean glowing, BlockState state) {
     }
 
-    @Override
-    public boolean usesBlockLight() {
-        return true;
-    }
+    public record Unbaked(BlockStateModel.Unbaked cauldron, BlockStateModel.Unbaked fluid, boolean translucent)
+            implements CustomUnbakedModel {
 
-    @Override
-    public boolean isCustomRenderer() {
-        return false;
-    }
+        public static final MapCodec<Unbaked> CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
+                BlockStateModel.Unbaked.CODEC.fieldOf("cauldron").forGetter(Unbaked::cauldron),
+                BlockStateModel.Unbaked.CODEC.fieldOf("fluid").forGetter(Unbaked::fluid),
+                Codec.BOOL.optionalFieldOf("translucent", false).forGetter(Unbaked::translucent)
+        ).apply(i, Unbaked::new));
 
-    @Override
-    public ItemTransforms getTransforms() {
-        return ItemTransforms.NO_TRANSFORMS;
-    }
+        @Override
+        public CustomBlockModel bake(ModelBaker baker) {
+            return new CauldronBakedModel(this.cauldron.bake(baker), this.fluid.bake(baker), this.translucent);
+        }
 
-    @Override
-    public ItemOverrides getOverrides() {
-        return ItemOverrides.EMPTY;
+        @Override
+        public MapCodec<? extends CustomUnbakedModel> codec() {
+            return CODEC;
+        }
+
+        @Override
+        public void resolveDependencies(ResolvableModel.Resolver resolver) {
+            this.cauldron.resolveDependencies(resolver);
+            this.fluid.resolveDependencies(resolver);
+        }
     }
 }

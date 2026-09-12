@@ -1,7 +1,5 @@
 package net.mehvahdjukaar.amendments.common.block;
 
-import com.mojang.serialization.MapCodec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
 import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMaps;
@@ -10,26 +8,22 @@ import net.mehvahdjukaar.amendments.configs.CommonConfigs;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.moonlight.api.block.ILightable;
 import net.mehvahdjukaar.moonlight.api.block.IWashable;
-import net.mehvahdjukaar.moonlight.api.misc.ForgeOverride;
 import net.mehvahdjukaar.moonlight.api.set.BlocksColorAPI;
 import net.mehvahdjukaar.moonlight.api.util.Utils;
-import net.minecraft.Util;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.util.RandomSource;
+import net.minecraft.util.Util;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
@@ -52,7 +46,6 @@ import net.minecraft.world.level.pathfinder.PathComputationType;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
@@ -61,7 +54,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.function.Supplier;
 
 public abstract class AbstractCandleSkullBlock extends AbstractCandleBlock implements EntityBlock, ILightable, IWashable {
 
@@ -132,22 +124,11 @@ public abstract class AbstractCandleSkullBlock extends AbstractCandleBlock imple
 
     //crappy for fabric
     @Override
-    public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state) {
+    protected ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state, boolean includeData) {
         if (level.getBlockEntity(pos) instanceof CandleSkullBlockTile tile) {
             return tile.getSkullItem();
         }
-        return super.getCloneItemStack(level, pos, state);
-    }
-
-    //@Override
-    @ForgeOverride
-    public ItemStack getCloneItemStack(BlockState state, HitResult hitResult, LevelReader world, BlockPos pos, Player player) {
-        if (world.getBlockEntity(pos) instanceof CandleSkullBlockTile tile) {
-            double y = hitResult.getLocation().y;
-            boolean up = y % ((int) y) > 0.5d;
-            return up ? tile.getCandle().getBlock().getCloneItemStack(world, pos, state) : tile.getSkullItem();
-        }
-        return super.getCloneItemStack(world, pos, state);
+        return super.getCloneItemStack(level, pos, state, includeData);
     }
 
     @Override
@@ -169,7 +150,7 @@ public abstract class AbstractCandleSkullBlock extends AbstractCandleBlock imple
 
 
     @Override
-    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
+    protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
         if (Utils.mayPerformBlockAction(player, pos, stack)) {
             //add candles
             if (stack.is(ItemTags.CANDLES) && stack.getItem() instanceof BlockItem blockItem) {
@@ -190,9 +171,9 @@ public abstract class AbstractCandleSkullBlock extends AbstractCandleBlock imple
                     level.setBlock(pos, state.setValue(CANDLES, count + 1), 2);
 
                     level.gameEvent(player, GameEvent.BLOCK_CHANGE, pos);
-                    return ItemInteractionResult.sidedSuccess(level.isClientSide);
+                    return InteractionResult.SUCCESS;
                 }
-                return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+                return InteractionResult.TRY_WITH_EMPTY_HAND;
             }
             //lightable logic
             return ILightable.super.lightableInteractWithPlayerItem(state, level, pos, player, hand, stack);

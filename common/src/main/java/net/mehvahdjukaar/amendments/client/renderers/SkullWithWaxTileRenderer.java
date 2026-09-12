@@ -7,16 +7,17 @@ import net.mehvahdjukaar.amendments.AmendmentsClient;
 import net.mehvahdjukaar.amendments.common.block.WallCandleSkullBlock;
 import net.mehvahdjukaar.amendments.common.tile.EnhancedSkullBlockTile;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.model.SkullModel;
-import net.minecraft.client.model.SkullModelBase;
+import net.minecraft.client.model.object.skull.SkullModel;
+import net.minecraft.client.model.object.skull.SkullModelBase;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.client.renderer.rendertype.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.SkullBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -80,7 +81,7 @@ public abstract class SkullWithWaxTileRenderer<T extends EnhancedSkullBlockTile>
         }
     }
 
-    public void renderWax(PoseStack poseStack, MultiBufferSource buffer, int pCombinedLight, @Nullable ResourceLocation texture, float yaw) {
+    public void renderWax(PoseStack poseStack, MultiBufferSource buffer, int pCombinedLight, @Nullable Identifier texture, float yaw) {
         if (texture == null) return;
         poseStack.pushPose();
         poseStack.translate(0.5, 0.25, 0.5);
@@ -89,7 +90,7 @@ public abstract class SkullWithWaxTileRenderer<T extends EnhancedSkullBlockTile>
         poseStack.scale(-s, -s, s);
         poseStack.translate(0, 0.25f, 0);
 
-        RenderType overlayTexture = RenderType.entityCutoutNoCullZOffset(texture);
+        RenderType overlayTexture = RenderTypes.entityCutoutNoCullZOffset(texture);
         VertexConsumer vertexconsumer = buffer.getBuffer(overlayTexture);
         this.overlay.setupAnim(0, -yaw, 0.0F);
         this.overlay.renderToBuffer(poseStack, vertexconsumer, pCombinedLight, OverlayTexture.NO_OVERLAY);

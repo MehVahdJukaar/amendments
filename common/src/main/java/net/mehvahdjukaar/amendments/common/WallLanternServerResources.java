@@ -14,7 +14,7 @@ import net.mehvahdjukaar.moonlight.api.resources.pack.PackGenerationStrategy;
 import net.mehvahdjukaar.moonlight.api.resources.pack.ResourceGenTask;
 import net.mehvahdjukaar.moonlight.api.util.Utils;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
@@ -65,7 +65,7 @@ public class WallLanternServerResources extends DynamicServerResourceProvider {
             JsonObject waxables = new JsonObject();
             for (var entry : ModRegistry.WALL_LANTERNS.entrySet()) {
                 if (!(entry.getValue() instanceof WeatheringWallLanternBlock wall)) continue;
-                ResourceLocation lanternId = entry.getKey().getId();
+                Identifier lanternId = entry.getKey().getId();
 
                 WallLanternBlock next = wallLanternFor(shiftOxidation(lanternId, 1));
                 if (next != null) putPair(oxidizables, wall, next, "next_oxidation_stage");
@@ -96,7 +96,7 @@ public class WallLanternServerResources extends DynamicServerResourceProvider {
     }
 
     @Nullable
-    private static WallLanternBlock wallLanternFor(@Nullable ResourceLocation lanternId) {
+    private static WallLanternBlock wallLanternFor(@Nullable Identifier lanternId) {
         return lanternId == null ? null : ModRegistry.WALL_LANTERNS_BY_LANTERN.get(lanternId);
     }
 
@@ -104,7 +104,7 @@ public class WallLanternServerResources extends DynamicServerResourceProvider {
      * Returns the lantern id one oxidation step away ({@code +1} more weathered, {@code -1} scraped), or null past the ends.
      */
     @Nullable
-    private static ResourceLocation shiftOxidation(ResourceLocation lanternId, int step) {
+    private static Identifier shiftOxidation(Identifier lanternId, int step) {
         String path = lanternId.getPath();
         boolean waxed = path.startsWith("waxed_");
         String rest = waxed ? path.substring("waxed_".length()) : path;
@@ -112,18 +112,18 @@ public class WallLanternServerResources extends DynamicServerResourceProvider {
         int next = index + step;
         if (next < 0 || next >= WEATHER_PREFIXES.length) return null;
         String base = rest.substring(WEATHER_PREFIXES[index].length());
-        return ResourceLocation.fromNamespaceAndPath(lanternId.getNamespace(),
+        return Identifier.fromNamespaceAndPath(lanternId.getNamespace(),
                 (waxed ? "waxed_" : "") + WEATHER_PREFIXES[next] + base);
     }
 
     /**
      * Returns the waxed or unwaxed counterpart of the given copper lantern id, keeping its weather stage.
      */
-    private static ResourceLocation withWaxed(ResourceLocation lanternId, boolean waxed) {
+    private static Identifier withWaxed(Identifier lanternId, boolean waxed) {
         String path = lanternId.getPath();
         boolean alreadyWaxed = path.startsWith("waxed_");
         String rest = alreadyWaxed ? path.substring("waxed_".length()) : path;
-        return ResourceLocation.fromNamespaceAndPath(lanternId.getNamespace(), (waxed ? "waxed_" : "") + rest);
+        return Identifier.fromNamespaceAndPath(lanternId.getNamespace(), (waxed ? "waxed_" : "") + rest);
     }
 
     private static int weatherIndex(String unwaxedPath) {

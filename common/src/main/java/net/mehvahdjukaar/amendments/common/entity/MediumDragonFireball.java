@@ -76,7 +76,7 @@ public class MediumDragonFireball extends ImprovedProjectileEntity implements IV
     protected void onHit(HitResult result) {
         super.onHit(result);
         if (result.getType() != HitResult.Type.ENTITY || !this.ownedBy(((EntityHitResult) result).getEntity())) {
-            if (!this.level().isClientSide) {
+            if (!this.level().isClientSide()) {
                 if (!this.isSilent()) {
                     level().broadcastEntityEvent(this, (byte) 3);
                     this.playSound(SoundEvents.DRAGON_FIREBALL_EXPLODE,

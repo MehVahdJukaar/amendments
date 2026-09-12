@@ -1,16 +1,15 @@
 package net.mehvahdjukaar.amendments.common.block;
 
-
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.mehvahdjukaar.amendments.common.tile.CarpetedBlockTile;
 import net.mehvahdjukaar.amendments.reg.ModBlockProperties;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
+import net.mehvahdjukaar.candlelight.api.VirtualOverride;
 import net.mehvahdjukaar.moonlight.api.block.IBlockHolder;
 import net.mehvahdjukaar.moonlight.api.block.IRecolorable;
 import net.mehvahdjukaar.moonlight.api.block.IRotatable;
 import net.mehvahdjukaar.moonlight.api.block.ModStairBlock;
-import net.mehvahdjukaar.moonlight.api.misc.ForgeOverride;
 import net.mehvahdjukaar.moonlight.api.platform.ForgeHelper;
 import net.mehvahdjukaar.moonlight.api.set.BlocksColorAPI;
 import net.mehvahdjukaar.moonlight.api.util.math.MthUtils;
@@ -19,14 +18,12 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
-import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.*;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.Rotation;
@@ -42,8 +39,6 @@ import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
-import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
@@ -162,7 +157,7 @@ public class CarpetStairBlock extends ModStairBlock implements EntityBlock, IRec
 
     //might cause lag when breaking?
     //@Override
-    @ForgeOverride
+    @VirtualOverride("neoforge")
     public SoundType getSoundType(BlockState state, LevelReader world, BlockPos pos, Entity entity) {
         if (world.getBlockEntity(pos) instanceof CarpetedBlockTile tile) {
             SoundType mixed = tile.getSoundType();
@@ -208,26 +203,14 @@ public class CarpetStairBlock extends ModStairBlock implements EntityBlock, IRec
         return drops;
     }
 
-    @ForgeOverride
+    @VirtualOverride("neoforge")
     //@Override
-    public ItemStack getCloneItemStack(BlockState state, HitResult target, LevelReader level, BlockPos pos, Player player) {
-        if (level.getBlockEntity(pos) instanceof CarpetedBlockTile tile) {
-            if (target instanceof BlockHitResult hs && hs.getDirection() == Direction.UP) {
-                return tile.getHeldBlock(1).getBlock().getCloneItemStack(level, pos, state);
-            }
-            BlockState mimic = tile.getHeldBlock();
-            return mimic.getBlock().getCloneItemStack(level, pos, state);
-        }
-        return super.getCloneItemStack(level, pos, state);
-    }
-
-    @Override
-    public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state) {
+    protected ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state, boolean includeData) {
         if (level.getBlockEntity(pos) instanceof CarpetedBlockTile tile) {
             BlockState mimic = tile.getHeldBlock();
-            return mimic.getBlock().getCloneItemStack(level, pos, state);
+            return mimic.getBlock().getCloneItemStack(level, pos, state, includeData);
         }
-        return super.getCloneItemStack(level, pos, state);
+        return super.getCloneItemStack(level, pos, state, includeData);
     }
 
     @Nullable
@@ -237,9 +220,8 @@ public class CarpetStairBlock extends ModStairBlock implements EntityBlock, IRec
     }
 
     @Override
-    public BlockState updateShape(BlockState state, Direction facing, BlockState facingState, LevelAccessor world, BlockPos currentPos,
-                                  BlockPos facingPos) {
-        var newState = super.updateShape(state, facing, facingState, world, currentPos, facingPos);
+    public BlockState updateShape(BlockState state, LevelReader world, ScheduledTickAccess ticks, BlockPos currentPos, Direction facing, BlockPos facingPos, BlockState facingState, RandomSource randomSource) {
+        var newState = super.updateShape(state, world, ticks, currentPos, facing, facingPos, facingState, randomSource);
         if (world.getBlockEntity(currentPos) instanceof CarpetedBlockTile tile) {
             BlockState oldHeld = tile.getHeldBlock();
 

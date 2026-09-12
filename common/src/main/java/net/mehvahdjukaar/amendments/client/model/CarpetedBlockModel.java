@@ -1,131 +1,102 @@
 package net.mehvahdjukaar.amendments.client.model;
 
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.mehvahdjukaar.amendments.common.tile.CarpetedBlockTile;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
-import net.mehvahdjukaar.moonlight.api.client.model.BakedQuadsTransformer;
-import net.mehvahdjukaar.moonlight.api.client.model.CustomBakedModel;
+import net.mehvahdjukaar.moonlight.api.client.model.CustomBlockModel;
+import net.mehvahdjukaar.moonlight.api.client.model.CustomUnbakedModel;
 import net.mehvahdjukaar.moonlight.api.client.model.ExtraModelData;
-import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
+import net.mehvahdjukaar.moonlight.api.client.model.QuadEmitter;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.ItemBlockRenderTypes;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.block.BlockModelShaper;
-import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.block.model.ItemOverrides;
-import net.minecraft.client.renderer.block.model.ItemTransforms;
+import net.minecraft.client.renderer.block.BlockAndTintGetter;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.resources.model.BakedModel;
-import net.minecraft.client.resources.model.ModelState;
-import net.minecraft.core.Direction;
+import net.minecraft.client.resources.model.ModelBaker;
+import net.minecraft.client.resources.model.ResolvableModel;
+import net.minecraft.client.resources.model.geometry.BakedQuad;
+import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
+public class CarpetedBlockModel implements CustomBlockModel {
 
-public class CarpetedBlockModel implements CustomBakedModel {
-    private final BakedModel carpet;
-    private final BlockModelShaper blockModelShaper;
-    protected static boolean SINGLE_PASS = PlatHelper.getPlatform().isFabric();
+    private final BlockStateModel carpet;
 
-    public CarpetedBlockModel(BakedModel carpet, ModelState state) {
+    public CarpetedBlockModel(BlockStateModel carpet) {
         this.carpet = carpet;
-        this.blockModelShaper = Minecraft.getInstance().getBlockRenderer().getBlockModelShaper();
     }
 
     @Override
-    public List<BakedQuad> getBlockQuads(BlockState state, Direction side, RandomSource rand, @Nullable RenderType renderType,
-                                         ExtraModelData data) {
-        List<BakedQuad> quads = new ArrayList<>();
+    public void emitQuads(QuadEmitter emitter, @Nullable BlockAndTintGetter level, @Nullable BlockPos pos,
+                          @Nullable BlockState state, RandomSource random, ExtraModelData data) {
+        if (state == null) return;
 
-        if (state == null) return quads;
-        try {
-            BlockState mimic = data.get(CarpetedBlockTile.MIMIC_KEY);
-
-            if (mimic != null) {
-                RenderType originalRenderType = ItemBlockRenderTypes.getChunkRenderType(mimic);
-                // only when on its original render layer or when we do block breaking anim (null render type)
-                if (originalRenderType == renderType || renderType == null || SINGLE_PASS) {
-                    BakedModel model = blockModelShaper.getBlockModel(mimic);
-                    quads.addAll(model.getQuads(mimic, side, rand));
-                }
-            }
-        } catch (Exception ignored) {
-        }
-
-
-        if (renderType == RenderType.solid() || renderType == null || SINGLE_PASS) {
-            //only outputs carpet on the solid layer
-            try {
-                BlockState carpetBlock = data.get(CarpetedBlockTile.CARPET_KEY);
-                List<BakedQuad> carpetQuads = carpet.getQuads(state, side, rand);
-
-                if (!carpetQuads.isEmpty()) {
-                    if (carpetBlock != null) {
-                        boolean occl = (state.is(ModRegistry.CARPET_SLAB.get()));
-                        TextureAtlasSprite sprite = getCarpetSprite(carpetBlock);
-                        BakedQuadsTransformer transformer = BakedQuadsTransformer.create()
-                                .applyingSprite(sprite)
-                                .applyingTintIndex(16)
-                                .applyingAmbientOcclusion(occl);
-                        carpetQuads = transformer.transformAll(carpetQuads);
-                    }
-                    quads.addAll(carpetQuads);
-                }
-            } catch (Exception ignored) {
-                int error = 1;
-            }
-        }
-
-        return quads;
-    }
-
-    private TextureAtlasSprite getCarpetSprite(BlockState carpetBlock) {
-        return blockModelShaper.getBlockModel(carpetBlock).getParticleIcon();
-    }
-
-    @Override
-    public boolean useAmbientOcclusion() {
-        return true;
-    }
-
-    @Override
-    public boolean isGui3d() {
-        return true;
-    }
-
-    @Override
-    public boolean usesBlockLight() {
-        return true;
-    }
-
-    @Override
-    public boolean isCustomRenderer() {
-        return false;
-    }
-
-    @Override
-    public TextureAtlasSprite getBlockParticle(ExtraModelData data) {
         BlockState mimic = data.get(CarpetedBlockTile.MIMIC_KEY);
-        if (mimic != null && !mimic.isAir()) {
-            BakedModel model = blockModelShaper.getBlockModel(mimic);
-            try {
-                return model.getParticleIcon();
-            } catch (Exception ignored) {
-            }
+        if (mimic != null) {
+            emitter.emitAll(blockModel(mimic), level, pos, mimic, random);
         }
-        return carpet.getParticleIcon();
+
+        BlockState carpetBlock = data.get(CarpetedBlockTile.CARPET_KEY);
+        if (carpetBlock == null) {
+            emitter.emitAll(this.carpet, level, pos, state, random);
+            return;
+        }
+        boolean occl = state.is(ModRegistry.CARPET_SLAB.get());
+        TextureAtlasSprite sprite = particle(carpetBlock);
+        for (BakedQuad q : CustomBlockModel.collectQuads(this.carpet, level, pos, state, random)) {
+            emitter.fromQuad(q)
+                    .sprite(sprite)
+                    .tintIndex(16)
+                    .ambientOcclusion(occl)
+                    .emit();
+        }
     }
 
     @Override
-    public ItemOverrides getOverrides() {
-        return ItemOverrides.EMPTY;
+    public TextureAtlasSprite getParticle(ExtraModelData data) {
+        BlockState mimic = data.get(CarpetedBlockTile.MIMIC_KEY);
+        if (mimic != null && !mimic.isAir()) return particle(mimic);
+        return this.carpet.particleMaterial().sprite();
     }
 
     @Override
-    public ItemTransforms getTransforms() {
-        return ItemTransforms.NO_TRANSFORMS;
+    public @Nullable Object geometryKey(BlockAndTintGetter level, BlockPos pos, BlockState state,
+                                        RandomSource random, ExtraModelData data) {
+        return new Key(data.get(CarpetedBlockTile.MIMIC_KEY), data.get(CarpetedBlockTile.CARPET_KEY), state);
     }
 
+    private record Key(@Nullable BlockState mimic, @Nullable BlockState carpet, BlockState state) {
+    }
+
+    private static BlockStateModel blockModel(BlockState state) {
+        return Minecraft.getInstance().getBlockRenderer().getBlockModel(state);
+    }
+
+    private static TextureAtlasSprite particle(BlockState state) {
+        return blockModel(state).particleMaterial().sprite();
+    }
+
+    public record Unbaked(BlockStateModel.Unbaked carpet) implements CustomUnbakedModel {
+
+        public static final MapCodec<Unbaked> CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
+                BlockStateModel.Unbaked.CODEC.fieldOf("carpet").forGetter(Unbaked::carpet)
+        ).apply(i, Unbaked::new));
+
+        @Override
+        public CustomBlockModel bake(ModelBaker baker) {
+            return new CarpetedBlockModel(this.carpet.bake(baker));
+        }
+
+        @Override
+        public MapCodec<? extends CustomUnbakedModel> codec() {
+            return CODEC;
+        }
+
+        @Override
+        public void resolveDependencies(ResolvableModel.Resolver resolver) {
+            this.carpet.resolveDependencies(resolver);
+        }
+    }
 }

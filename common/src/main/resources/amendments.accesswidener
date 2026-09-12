@@ -1,9 +1,10 @@
-accessWidener   v2  named
+accessWidener	v2	official
 
-accessible method net/minecraft/world/level/Level getDestroyType (Lnet/minecraft/world/level/GameRules$Key;)Lnet/minecraft/world/level/Explosion$BlockInteraction;
+accessible method net/minecraft/server/level/ServerLevel getDestroyType (Lnet/minecraft/world/level/gamerules/GameRule;)Lnet/minecraft/world/level/Explosion$BlockInteraction;
 
 #sign renderer
-accessible method net/minecraft/client/renderer/blockentity/SignRenderer translateSignText (Lcom/mojang/blaze3d/vertex/PoseStack;ZLnet/minecraft/world/phys/Vec3;)V
+#SignRenderer split into AbstractSignRenderer/StandingSignRenderer/HangingSignRenderer and translateSignText is gone
+#accessible method net/minecraft/client/renderer/blockentity/SignRenderer translateSignText (Lcom/mojang/blaze3d/vertex/PoseStack;ZLnet/minecraft/world/phys/Vec3;)V
 
 accessible field net/minecraft/world/entity/item/ItemEntity pickupDelay I
 accessible field net/minecraft/client/gui/screens/inventory/AbstractSignEditScreen isFrontText Z
@@ -11,46 +12,48 @@ accessible field net/minecraft/client/gui/screens/inventory/AbstractSignEditScre
 accessible field net/minecraft/world/level/block/AbstractCauldronBlock interactions Lnet/minecraft/core/cauldron/CauldronInteraction$InteractionMap;
 
 #explode
-accessible method net/minecraft/network/protocol/game/ClientboundExplodePacket write (Lnet/minecraft/network/RegistryFriendlyByteBuf;)V
-extendable method net/minecraft/network/protocol/game/ClientboundExplodePacket write (Lnet/minecraft/network/RegistryFriendlyByteBuf;)V
-accessible method net/minecraft/network/protocol/game/ClientboundExplodePacket <init> (Lnet/minecraft/network/RegistryFriendlyByteBuf;)V
+#particles ride the packet as a WeightedList now, these three dont exist
+#accessible method net/minecraft/network/protocol/game/ClientboundExplodePacket write (Lnet/minecraft/network/RegistryFriendlyByteBuf;)V
+#extendable method net/minecraft/network/protocol/game/ClientboundExplodePacket write (Lnet/minecraft/network/RegistryFriendlyByteBuf;)V
+#accessible method net/minecraft/network/protocol/game/ClientboundExplodePacket <init> (Lnet/minecraft/network/RegistryFriendlyByteBuf;)V
 
 #banner renderer
-accessible field net/minecraft/client/renderer/blockentity/BannerRenderer bar Lnet/minecraft/client/model/geom/ModelPart;
-accessible field net/minecraft/client/renderer/blockentity/BannerRenderer flag Lnet/minecraft/client/model/geom/ModelPart;
-accessible field net/minecraft/world/level/Explosion fire Z
+#bar and flag are BannerModel/BannerFlagModel now, not ModelParts
+#accessible field net/minecraft/client/renderer/blockentity/BannerRenderer bar Lnet/minecraft/client/model/geom/ModelPart;
+#accessible field net/minecraft/client/renderer/blockentity/BannerRenderer flag Lnet/minecraft/client/model/geom/ModelPart;
+accessible field net/minecraft/world/level/ServerExplosion fire Z
 #area of effect
 accessible field net/minecraft/world/entity/AreaEffectCloud reapplicationDelay I
 accessible method net/minecraft/world/damagesource/DamageSources source (Lnet/minecraft/resources/ResourceKey;Lnet/minecraft/world/entity/Entity;)Lnet/minecraft/world/damagesource/DamageSource;
 accessible method net/minecraft/world/damagesource/DamageSources source (Lnet/minecraft/resources/ResourceKey;Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/entity/Entity;)Lnet/minecraft/world/damagesource/DamageSource;
 #book edit
 accessible method net/minecraft/client/gui/screens/inventory/BookEditScreen updateLocalCopy ()V
-extendable method net/minecraft/client/gui/screens/inventory/BookEditScreen saveChanges (Z)V
-accessible field net/minecraft/client/gui/screens/inventory/BookEditScreen isModified Z
+extendable method net/minecraft/client/gui/screens/inventory/BookEditScreen saveChanges ()V
+#accessible field net/minecraft/client/gui/screens/inventory/BookEditScreen isModified Z
 extendable method net/minecraft/client/gui/screens/inventory/BookEditScreen eraseEmptyTrailingPages ()V
 extendable method net/minecraft/client/gui/screens/inventory/BookEditScreen pageBack ()V
 extendable method net/minecraft/client/gui/screens/inventory/BookEditScreen pageForward ()V
-accessible field net/minecraft/client/gui/screens/inventory/BookEditScreen doneButton Lnet/minecraft/client/gui/components/Button;
-accessible field net/minecraft/client/gui/screens/inventory/BookEditScreen signButton Lnet/minecraft/client/gui/components/Button;
-accessible field net/minecraft/client/gui/screens/inventory/BookEditScreen finalizeButton Lnet/minecraft/client/gui/components/Button;
 extendable method net/minecraft/client/gui/screens/inventory/BookEditScreen updateButtonVisibility ()V
-extendable method net/minecraft/client/gui/screens/inventory/BookEditScreen titleKeyPressed (III)Z
-accessible field net/minecraft/client/gui/screens/inventory/BookEditScreen title Ljava/lang/String;
-accessible field net/minecraft/client/gui/screens/inventory/BookEditScreen isSigning Z
-extendable method net/minecraft/client/gui/screens/inventory/BookEditScreen clearDisplayCache ()V
-accessible method net/minecraft/client/gui/screens/inventory/BookEditScreen getCurrentPageText ()Ljava/lang/String;
-mutable field net/minecraft/client/gui/screens/inventory/BookEditScreen pageEdit Lnet/minecraft/client/gui/font/TextFieldHelper;
-accessible field net/minecraft/client/gui/screens/inventory/BookEditScreen pageEdit Lnet/minecraft/client/gui/font/TextFieldHelper;
+#BookEditScreen got rebuilt, signing lives in BookSignScreen and the page text is a MultiLineEditBox
+#accessible field net/minecraft/client/gui/screens/inventory/BookEditScreen doneButton Lnet/minecraft/client/gui/components/Button;
+#accessible field net/minecraft/client/gui/screens/inventory/BookEditScreen signButton Lnet/minecraft/client/gui/components/Button;
+#accessible field net/minecraft/client/gui/screens/inventory/BookEditScreen finalizeButton Lnet/minecraft/client/gui/components/Button;
+#extendable method net/minecraft/client/gui/screens/inventory/BookEditScreen titleKeyPressed (III)Z
+#accessible field net/minecraft/client/gui/screens/inventory/BookEditScreen title Ljava/lang/String;
+#accessible field net/minecraft/client/gui/screens/inventory/BookEditScreen isSigning Z
+#extendable method net/minecraft/client/gui/screens/inventory/BookEditScreen clearDisplayCache ()V
+#accessible method net/minecraft/client/gui/screens/inventory/BookEditScreen getCurrentPageText ()Ljava/lang/String;
+#mutable field net/minecraft/client/gui/screens/inventory/BookEditScreen pageEdit Lnet/minecraft/client/gui/font/TextFieldHelper;
+#accessible field net/minecraft/client/gui/screens/inventory/BookEditScreen pageEdit Lnet/minecraft/client/gui/font/TextFieldHelper;
 mutable field net/minecraft/client/gui/screens/inventory/BookEditScreen book Lnet/minecraft/world/item/ItemStack;
 accessible field net/minecraft/client/gui/screens/inventory/BookEditScreen book Lnet/minecraft/world/item/ItemStack;
 accessible field net/minecraft/client/gui/screens/inventory/BookEditScreen pages Ljava/util/List;
-accessible method net/minecraft/client/gui/screens/inventory/BookEditScreen setCurrentPageText (Ljava/lang/String;)V
-accessible method net/minecraft/client/gui/screens/inventory/BookEditScreen setClipboard (Ljava/lang/String;)V
-accessible method net/minecraft/client/gui/screens/inventory/BookEditScreen getClipboard ()Ljava/lang/String;
+#accessible method net/minecraft/client/gui/screens/inventory/BookEditScreen setCurrentPageText (Ljava/lang/String;)V
+#accessible method net/minecraft/client/gui/screens/inventory/BookEditScreen setClipboard (Ljava/lang/String;)V
+#accessible method net/minecraft/client/gui/screens/inventory/BookEditScreen getClipboard ()Ljava/lang/String;
 
-accessible class net/minecraft/client/gui/screens/inventory/BookEditScreen$DisplayCache
-accessible class net/minecraft/client/gui/screens/inventory/BookEditScreen$DisplayCache
-accessible class net/minecraft/client/gui/screens/inventory/BookEditScreen$Pos2i
+#accessible class net/minecraft/client/gui/screens/inventory/BookEditScreen$DisplayCache
+#accessible class net/minecraft/client/gui/screens/inventory/BookEditScreen$Pos2i
 
 accessible field net/minecraft/world/level/block/state/StateDefinition$Builder properties Ljava/util/Map;
 accessible field net/minecraft/world/entity/Entity wasTouchingWater Z

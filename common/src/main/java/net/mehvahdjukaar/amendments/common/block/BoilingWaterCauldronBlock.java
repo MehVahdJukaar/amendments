@@ -5,19 +5,21 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.mehvahdjukaar.amendments.reg.ModBlockProperties;
 import net.mehvahdjukaar.moonlight.api.fluids.MLBuiltinSoftFluids;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidStack;
+import net.minecraft.client.color.block.BlockTintSource;
 import net.minecraft.client.renderer.BiomeColors;
+import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.cauldron.CauldronInteraction;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.LayeredCauldronBlock;
@@ -62,8 +64,8 @@ public class BoilingWaterCauldronBlock extends LayeredCauldronBlock {
     }
 
     @Override
-    public BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor level, BlockPos currentPos, BlockPos neighborPos) {
-        BlockState newState = super.updateShape(state, direction, neighborState, level, currentPos, neighborPos);
+    public BlockState updateShape(BlockState state, LevelReader level, ScheduledTickAccess ticks, BlockPos currentPos, Direction direction, BlockPos neighborPos, BlockState neighborState, RandomSource randomSource) {
+        BlockState newState = super.updateShape(state, level, ticks, currentPos, direction, neighborPos, neighborState, randomSource);
         return CommonCauldronCode.updateBoilingState(direction, neighborState, level, neighborPos, newState, currentPos);
     }
 
@@ -73,7 +75,7 @@ public class BoilingWaterCauldronBlock extends LayeredCauldronBlock {
     @Override
     public void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean movedByPiston) {
         super.onPlace(state, level, pos, oldState, movedByPiston);
-        if (level.isClientSide) return;
+        if (level.isClientSide()) return;
         BlockPos below = pos.below();
         boolean shouldBoil = CommonCauldronCode.shouldBoil(level.getBlockState(below),
                 SoftFluidStack.of(MLBuiltinSoftFluids.WATER.getHolder(level), state.getValue(LEVEL)), level, below);
@@ -96,6 +98,20 @@ public class BoilingWaterCauldronBlock extends LayeredCauldronBlock {
         return i == 1 && level != null && pos != null ? BiomeColors.getAverageWaterColor(level, pos) : -1;
     }
 
+    public static BlockTintSource waterColor() {
+        return new BlockTintSource() {
+            @Override
+            public int color(BlockState state) {
+                return -1;
+            }
+
+            @Override
+            public int colorInWorld(BlockState state, BlockAndTintGetter level, BlockPos pos) {
+                return BiomeColors.getAverageWaterColor(level, pos);
+            }
+        };
+    }
+
     @Override
     public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource random) {
         super.animateTick(state, level, pos, random);
@@ -107,10 +123,10 @@ public class BoilingWaterCauldronBlock extends LayeredCauldronBlock {
 
 
     @Override
-    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
+    protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
         if (CommonCauldronCode.attemptPlayerCrafting(state, level, pos, player, hand, 3,
                 SoftFluidStack.of(MLBuiltinSoftFluids.WATER.getHolder(level), state.getValue(LEVEL)))) {
-            return ItemInteractionResult.sidedSuccess(level.isClientSide);
+            return InteractionResult.SUCCESS;
         }
         return super.useItemOn(stack, state, level, pos, player, hand, hitResult);
 

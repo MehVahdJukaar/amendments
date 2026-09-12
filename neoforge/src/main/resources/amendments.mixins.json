@@ -1,16 +1,11 @@
 {
   "minVersion": "0.8",
   "required": true,
-  "compatibilityLevel": "JAVA_17",
+  "compatibilityLevel": "JAVA_21",
   "package": "net.mehvahdjukaar.amendments.mixins.neoforge",
   "mixins": [
-    "CompatFDSignBlockEntityMixin",
-    "CompatFDWallSignBlockEntityMixin"
   ],
   "client": [
-    "CompatFarmersDelightHangingCanvasMixin",
-    "CompatFarmersDelightSignRendererMixin",
-    "CompatFDSignEditScreenMixin"
   ],
   "injectors": {
     "defaultRequire": 1

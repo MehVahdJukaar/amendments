@@ -9,8 +9,8 @@ import net.mehvahdjukaar.moonlight.api.entity.ParticleTrailEmitter;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.projectile.Snowball;
-import net.minecraft.world.entity.projectile.ThrowableItemProjectile;
+import net.minecraft.world.entity.projectile.throwableitemprojectile.Snowball;
+import net.minecraft.world.entity.projectile.throwableitemprojectile.ThrowableItemProjectile;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.EntityHitResult;
 import org.joml.Matrix4f;
@@ -41,12 +41,12 @@ public abstract class SnowballMixin extends ThrowableItemProjectile implements I
     public void tick() {
         super.tick();
         if (this.isOnFire()) {
-            if (!this.level().isClientSide) {
+            if (!this.level().isClientSide()) {
                 this.playEntityOnFireExtinguishedSound();
                 this.discard();
             }
         }
-        if (level().isClientSide) {
+        if (level().isClientSide()) {
             amendments$trailEmitter.tick(this,
                     (p, v) -> {
                         if (this.isInWater()) return;

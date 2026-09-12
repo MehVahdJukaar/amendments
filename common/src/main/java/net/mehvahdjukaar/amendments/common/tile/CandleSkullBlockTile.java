@@ -1,8 +1,6 @@
 package net.mehvahdjukaar.amendments.common.tile;
 
 import net.mehvahdjukaar.amendments.AmendmentsClient;
-import net.mehvahdjukaar.amendments.integration.CaveEnhancementsCompat;
-import net.mehvahdjukaar.amendments.integration.CompatHandler;
 import net.mehvahdjukaar.amendments.integration.CompatObjects;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
@@ -13,7 +11,7 @@ import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
@@ -25,18 +23,20 @@ import net.minecraft.world.level.block.CandleBlock;
 import net.minecraft.world.level.block.entity.SkullBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
+//import net.mehvahdjukaar.amendments.integration.CaveEnhancementsCompat;
+
 public class CandleSkullBlockTile extends EnhancedSkullBlockTile {
 
     private BlockState candle = Blocks.AIR.defaultBlockState();
     //client only
-    private ResourceLocation waxTexture = null;
+    private Identifier waxTexture = null;
     private ParticleType<?> particle = ParticleTypes.SMALL_FLAME;
 
     public CandleSkullBlockTile(BlockPos pWorldPosition, BlockState pBlockState) {
         super(ModRegistry.SKULL_CANDLE_TILE.get(), pWorldPosition, pBlockState);
     }
 
-    public ResourceLocation getWaxTexture() {
+    public Identifier getWaxTexture() {
         return waxTexture;
     }
 
@@ -89,7 +89,7 @@ public class CandleSkullBlockTile extends EnhancedSkullBlockTile {
                 this.candle.cycle(CandleBlock.CANDLES);
             }
 
-            if (!this.level.isClientSide) {
+            if (!this.level.isClientSide()) {
                 BlockState state = this.getBlockState();
                 BlockState newState = Utils.replaceProperty(this.candle, state, CandleBlock.CANDLES);
                 this.level.setBlockAndUpdate(this.worldPosition, newState);
@@ -111,9 +111,9 @@ public class CandleSkullBlockTile extends EnhancedSkullBlockTile {
 
     public static void tick(Level level, BlockPos pos, BlockState state, CandleSkullBlockTile e) {
         e.tick(level, pos, state);
-        if (CompatHandler.CAVE_ENHANCEMENTS && e.candle.is(CompatObjects.SPECTACLE_CANDLE.get())) {
-            CaveEnhancementsCompat.tick(level, pos, state);
-        }
+        //if (CompatHandler.CAVE_ENHANCEMENTS && e.candle.is(CompatObjects.SPECTACLE_CANDLE.get())) {
+        //    CaveEnhancementsCompat.tick(level, pos, state);
+        //}
     }
 
     public ParticleType<?> getParticle() {

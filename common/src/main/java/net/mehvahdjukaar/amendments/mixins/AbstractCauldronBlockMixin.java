@@ -5,7 +5,7 @@ import net.mehvahdjukaar.amendments.configs.CommonConfigs;
 import net.mehvahdjukaar.amendments.events.behaviors.CauldronConversion;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -26,11 +26,11 @@ public class AbstractCauldronBlockMixin extends Block {
 
     // why is this not an event? because it's better for compatibility
     @ModifyReturnValue(method = "useItemOn", at = @At("RETURN"))
-    public ItemInteractionResult use(ItemInteractionResult original, ItemStack stack, BlockState state,
+    public InteractionResult use(InteractionResult original, ItemStack stack, BlockState state,
                                      Level level, BlockPos pos, Player player,
                                      InteractionHand hand, BlockHitResult hitResult) {
         // do something
-        if (original == ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION && this == Blocks.CAULDRON && CommonConfigs.LIQUID_CAULDRON.get()) {
+        if (original == InteractionResult.TRY_WITH_EMPTY_HAND && this == Blocks.CAULDRON && CommonConfigs.LIQUID_CAULDRON.get()) {
             return CauldronConversion.convert(state, pos, level, player, hand, stack, false);
         }
         // boiling state on the resulting water cauldron is handled generically by

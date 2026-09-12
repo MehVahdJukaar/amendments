@@ -3,17 +3,13 @@ package net.mehvahdjukaar.amendments.common.block;
 import net.mehvahdjukaar.amendments.common.tile.DoubleSkullBlockTile;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.moonlight.api.block.IRotatable;
-import net.mehvahdjukaar.moonlight.api.misc.ForgeOverride;
 import net.mehvahdjukaar.moonlight.api.util.Utils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
-import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.*;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.SkullBlock;
@@ -23,7 +19,6 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
-import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -76,19 +71,11 @@ public class DoubleSkullBlock extends SkullBlock implements IRotatable {
 
     //crappy for fabric
     @Override
-    public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state) {
-        return super.getCloneItemStack(level, pos, state);
-    }
-
-    //@Override
-    @ForgeOverride
-    public ItemStack getCloneItemStack(BlockState state, HitResult hitResult, LevelReader world, BlockPos pos, Player player) {
-        if (world.getBlockEntity(pos) instanceof DoubleSkullBlockTile tile) {
-            double y = hitResult.getLocation().y;
-            boolean up = y % ((int) y) > 0.5d;
-            return up ? tile.getSkullItemUp() : tile.getSkullItem();
+    protected ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state, boolean includeData) {
+        if (level.getBlockEntity(pos) instanceof DoubleSkullBlockTile tile) {
+            return tile.getSkullItem();
         }
-        return super.getCloneItemStack(world, pos, state);
+        return super.getCloneItemStack(level, pos, state, includeData);
     }
 
     @Override
@@ -126,11 +113,11 @@ public class DoubleSkullBlock extends SkullBlock implements IRotatable {
     }
 
     @Override
-    public BlockState updateShape(BlockState pState, Direction dir, BlockState pNeighborState, LevelAccessor pLevel, BlockPos pCurrentPos, BlockPos pNeighborPos) {
+    public BlockState updateShape(BlockState pState, LevelReader pLevel, ScheduledTickAccess ticks, BlockPos pCurrentPos, Direction dir, BlockPos pNeighborPos, BlockState pNeighborState, RandomSource randomSource) {
         if (dir == Direction.UP && pLevel.getBlockEntity(pCurrentPos) instanceof DoubleSkullBlockTile tile) {
             tile.updateWax(pNeighborState);
         }
-        return super.updateShape(pState, dir, pNeighborState, pLevel, pCurrentPos, pNeighborPos);
+        return super.updateShape(pState, pLevel, ticks, pCurrentPos, dir, pNeighborPos, pNeighborState, randomSource);
     }
 
     @Override

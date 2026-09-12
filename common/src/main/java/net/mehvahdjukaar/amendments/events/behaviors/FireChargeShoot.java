@@ -33,7 +33,7 @@ public class FireChargeShoot implements ItemUse {
         //same as in ThrowableProjectile
         level.playSound(null, player.getX(), player.getEyeY() - 0.1, player.getZ(), SoundEvents.FIRECHARGE_USE, SoundSource.NEUTRAL, 0.5F, 0.6f + (0.4F / (level.getRandom().nextFloat() * 0.4F + 0.8F)));
         player.getCooldowns().addCooldown(stack.getItem(), CommonConfigs.CHARGES_COOLDOWN.get());
-        if (!level.isClientSide) {
+        if (!level.isClientSide()) {
             MediumFireball ball = new MediumFireball(level, player);
             ball.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, ProjectileStats.THROWN_SPEED, 1f);
             level.addFreshEntity(ball);
@@ -43,7 +43,7 @@ public class FireChargeShoot implements ItemUse {
         if (!player.getAbilities().instabuild) {
             stack.shrink(1);
         }
-        return InteractionResult.sidedSuccess(level.isClientSide);
+        return InteractionResult.SUCCESS;
     }
 
 }

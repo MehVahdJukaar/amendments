@@ -1,7 +1,6 @@
 {
     "pack": {
-        "description": "stuff",
-        "pack_format": 6,
-        "_comment": "fixes"
+      "description": "Amendments",
+      "pack_format": 82
     }
 }

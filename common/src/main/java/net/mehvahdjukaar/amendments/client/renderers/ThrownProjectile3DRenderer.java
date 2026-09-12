@@ -11,18 +11,18 @@ import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import org.joml.Matrix4f;
 
 public abstract class ThrownProjectile3DRenderer<E extends Entity> extends EntityRenderer<E> {
 
-    private final ResourceLocation texture;
+    private final Identifier texture;
     private final float scale;
 
 
-    public ThrownProjectile3DRenderer(EntityRendererProvider.Context context, float scale, ResourceLocation texture) {
+    public ThrownProjectile3DRenderer(EntityRendererProvider.Context context, float scale, Identifier texture) {
         super(context);
         this.scale = scale;
         this.texture = texture;
@@ -54,7 +54,7 @@ public abstract class ThrownProjectile3DRenderer<E extends Entity> extends Entit
     public abstract void renderBall(E entity, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight);
 
     @Override
-    public ResourceLocation getTextureLocation(E entity) {
+    public Identifier getTextureLocation(E entity) {
         return texture;
     }
 

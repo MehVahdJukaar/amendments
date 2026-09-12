@@ -4,7 +4,7 @@ import net.mehvahdjukaar.amendments.configs.ClientConfigs;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.DragonBreathParticle;
 import net.minecraft.client.particle.Particle;
-import net.minecraft.client.renderer.LightTexture;
+import net.minecraft.util.LightCoordsUtil;
 import org.spongepowered.asm.mixin.Mixin;
 
 @Mixin(DragonBreathParticle.class)
@@ -19,8 +19,8 @@ public abstract class DragonBreathParticleMixin extends Particle {
         if (!ClientConfigs.DRAGON_BREATH_EMISSIBE.get()) {
             return light;
         }
-        int sky = LightTexture.sky(light);
-        int block = Math.max(LightTexture.block(light), 10);
-        return LightTexture.pack(block, sky);
+        int sky = LightCoordsUtil.sky(light);
+        int block = Math.max(LightCoordsUtil.block(light), 10);
+        return LightCoordsUtil.pack(block, sky);
     }
 }

@@ -3,13 +3,11 @@ package net.mehvahdjukaar.amendments.mixins;
 import net.mehvahdjukaar.amendments.common.IBetterJukebox;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.util.Mth;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.JukeboxSongPlayer;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -25,9 +23,6 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-
-import java.awt.geom.Area;
 
 @Mixin(JukeboxBlockEntity.class)
 public abstract class JukeboxBlockEntityMixin extends BlockEntity implements IBetterJukebox, ContainerSingleItem.BlockContainerSingleItem {
@@ -50,7 +45,7 @@ public abstract class JukeboxBlockEntityMixin extends BlockEntity implements IBe
     @Inject(method = "tick", at = @At("TAIL"))
     private static void amendments$tickAnimation(Level level, BlockPos pos, BlockState state,
                                                  JukeboxBlockEntity jukebox, CallbackInfo ci) {
-        if (!level.isClientSide) return;
+        if (!level.isClientSide()) return;
         ((IBetterJukebox) jukebox).amendments$tickAnimation();
     }
 

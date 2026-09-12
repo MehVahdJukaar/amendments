@@ -71,9 +71,9 @@ public class HangingSignDisplayItem implements BlockUse {
         boolean hasItem = !tileItem.isEmpty();
         if (!hasItem && !stack.isEmpty()) {
             level.playSound(player, pos, SoundEvents.ITEM_FRAME_ADD_ITEM, SoundSource.BLOCKS, 1.0F,
-                    level.random.nextFloat() * 0.1F + 0.95F);
+                    level.getRandom().nextFloat() * 0.1F + 0.95F);
 
-            if (level.isClientSide) return InteractionResult.SUCCESS;
+            if (level.isClientSide()) return InteractionResult.SUCCESS;
 
             //add
             if (front) {
@@ -91,7 +91,7 @@ public class HangingSignDisplayItem implements BlockUse {
 
             return InteractionResult.CONSUME;
         } else if (hasItem && stack.isEmpty()) {
-            if (level.isClientSide) return InteractionResult.SUCCESS;
+            if (level.isClientSide()) return InteractionResult.SUCCESS;
 
             //remove
             player.setItemInHand(hand, tileItem.split(1));

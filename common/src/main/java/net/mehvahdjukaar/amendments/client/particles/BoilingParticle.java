@@ -1,18 +1,22 @@
 package net.mehvahdjukaar.amendments.client.particles;
 
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.mehvahdjukaar.moonlight.api.util.math.MthUtils;
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.particle.*;
-import net.minecraft.client.renderer.LightTexture;
+import net.minecraft.client.particle.Particle;
+import net.minecraft.client.particle.ParticleProvider;
+import net.minecraft.client.particle.SingleQuadParticle;
+import net.minecraft.client.particle.SpriteSet;
+import net.minecraft.client.renderer.state.level.QuadParticleRenderState;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.util.FastColor;
+import net.minecraft.util.ARGB;
+import net.minecraft.util.LightCoordsUtil;
+import net.minecraft.util.RandomSource;
 
-public class BoilingParticle extends TextureSheetParticle {
+public class BoilingParticle extends SingleQuadParticle {
 
     private final SpriteSet sprites;
     private final TextureAtlasSprite shineSprite;
@@ -22,18 +26,18 @@ public class BoilingParticle extends TextureSheetParticle {
     private int maxTry = 200;
 
     BoilingParticle(ClientLevel level, double x, double y, double z, double waterLevel, int lightLevel, SpriteSet sprites) {
-        super(level, x, y, z);
+        super(level, x, y, z, sprites.first());
         this.setSize(0.0625F, 0.0625F);
         this.quadSize *= this.random.nextFloat() * 0.4F + 0.16F;
-        this.xd = (level.random.nextFloat() * 2.0 - 1.0) * 0.005;
-        this.yd = (level.random.nextFloat() * 2.0 - 1.0) * 0.005;
-        this.zd = (level.random.nextFloat() * 2.0 - 1.0) * 0.005;
-        this.lifetime = (int) (MthUtils.nextWeighted(level.random, 26, 1, 5));
+        this.xd = (level.getRandom().nextFloat() * 2.0 - 1.0) * 0.005;
+        this.yd = (level.getRandom().nextFloat() * 2.0 - 1.0) * 0.005;
+        this.zd = (level.getRandom().nextFloat() * 2.0 - 1.0) * 0.005;
+        this.lifetime = (int) (MthUtils.nextWeighted(level.getRandom(), 26, 1, 5));
         this.sprites = sprites;
         this.setSpriteFromAge(this.sprites);
         this.shineSprite = sprites.get(0, 6);
         this.waterLevel = waterLevel;
-        this.growFactor = 0.002 + level.random.nextFloat() * 0.004;
+        this.growFactor = 0.002 + level.getRandom().nextFloat() * 0.004;
         this.lightLevel = lightLevel;
     }
 
@@ -74,7 +78,7 @@ public class BoilingParticle extends TextureSheetParticle {
     }
 
     @Override
-    public void render(VertexConsumer buffer, Camera renderInfo, float partialTicks) {
+    public void extract(QuadParticleRenderState renderState, Camera renderInfo, float partialTicks) {
         if (this.lifetime - this.age >= 4) {
             var old = sprite;
             float oldRed = rCol;
@@ -82,20 +86,20 @@ public class BoilingParticle extends TextureSheetParticle {
             float oldBlue = bCol;
             this.setColor(1, 1, 1);
             this.setSprite(shineSprite);
-            super.render(buffer, renderInfo, partialTicks);
+            super.extract(renderState, renderInfo, partialTicks);
             this.setColor(oldRed, oldGreen, oldBlue);
             this.setSprite(old);
         }
 
-        super.render(buffer, renderInfo, partialTicks);
+        super.extract(renderState, renderInfo, partialTicks);
     }
 
     @Override
-    protected int getLightColor(float partialTick) {
-        int lightColor = super.getLightColor(partialTick);
-        int sky = LightTexture.sky(lightColor);
-        int block = LightTexture.block(lightColor);
-        return LightTexture.pack(Math.max(lightLevel, block), sky);
+    protected int getLightCoords(float partialTick) {
+        int lightColor = super.getLightCoords(partialTick);
+        int sky = LightCoordsUtil.sky(lightColor);
+        int block = LightCoordsUtil.block(lightColor);
+        return LightCoordsUtil.pack(Math.max(lightLevel, block), sky);
     }
 
     @Override
@@ -106,8 +110,9 @@ public class BoilingParticle extends TextureSheetParticle {
         }
     }
 
-    public ParticleRenderType getRenderType() {
-        return ParticleRenderType.PARTICLE_SHEET_OPAQUE;
+    @Override
+    protected Layer getLayer() {
+        return Layer.OPAQUE_TERRAIN;
     }
 
     public static class Provider implements ParticleProvider<SimpleParticleType> {
@@ -117,12 +122,13 @@ public class BoilingParticle extends TextureSheetParticle {
             this.sprite = sprites;
         }
 
+        @Override
         public Particle createParticle(SimpleParticleType type, ClientLevel level, double x, double endY, double z,
-                                       double color, double startY, double light) {
+                                       double color, double startY, double light, RandomSource random) {
             int intColor = (int) color;
-            float r = FastColor.ARGB32.red(intColor) / 255f;
-            float g = FastColor.ARGB32.green(intColor) / 255f;
-            float b = FastColor.ARGB32.blue(intColor) / 255f;
+            float r = ARGB.red(intColor) / 255f;
+            float g = ARGB.green(intColor) / 255f;
+            float b = ARGB.blue(intColor) / 255f;
 
             var particle = new BoilingParticle(level, x, startY, z, endY,(int)light, sprite);
             particle.setColor(r, g, b);

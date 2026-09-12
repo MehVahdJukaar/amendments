@@ -1,13 +1,13 @@
 package net.mehvahdjukaar.amendments.mixins;
 
-import net.mehvahdjukaar.amendments.common.ProjectileStats;
 import net.mehvahdjukaar.amendments.client.ElasticAnimation;
-import net.mehvahdjukaar.amendments.common.entity.IVisualTransformationProvider;
 import net.mehvahdjukaar.amendments.client.TumblingAnimation;
+import net.mehvahdjukaar.amendments.common.ProjectileStats;
+import net.mehvahdjukaar.amendments.common.entity.IVisualTransformationProvider;
 import net.mehvahdjukaar.amendments.configs.ClientConfigs;
 import net.mehvahdjukaar.supplementaries.common.entities.SlimeBallEntity;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.projectile.ThrowableItemProjectile;
+import net.minecraft.world.entity.projectile.throwableitemprojectile.ThrowableItemProjectile;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix4f;
@@ -49,7 +49,7 @@ public abstract class SlimeBallMixin extends ThrowableItemProjectile implements 
     @Override
     public void tick() {
         super.tick();
-        if (level().isClientSide) {
+        if (level().isClientSide()) {
             amendments$elasticAnimation.tick(this.getDeltaMovement());
             if (ClientConfigs.PROJECTILE_TUMBLE.get()) amendments$tumblingAnimation.tick(random);
         }

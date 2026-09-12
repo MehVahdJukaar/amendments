@@ -17,14 +17,14 @@ import net.minecraft.client.model.HeadedModel;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.ItemInHandRenderer;
-import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.ItemTransform;
 import net.minecraft.client.renderer.entity.ItemRenderer;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.BakedModel;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
+import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.HumanoidArm;
@@ -43,30 +43,30 @@ import org.joml.Vector3f;
 public class CandleHolderRendererExtension implements IThirdPersonAnimationProvider, IThirdPersonSpecialItemRenderer,
         IFirstPersonSpecialItemRenderer {
 
-    private static final ResourceLocation FLAME_TEXTURE =
-            ResourceLocation.withDefaultNamespace("textures/particle/flame.png");
-    private static final ResourceLocation SOUL_FLAME_TEXTURE =
-            ResourceLocation.withDefaultNamespace("textures/particle/soul_fire_flame.png");
-    private static final ResourceLocation ENDER_FLAME_TEXTURE =
-            ResourceLocation.fromNamespaceAndPath("endergetic",
+    private static final Identifier FLAME_TEXTURE =
+            Identifier.withDefaultNamespace("textures/particle/flame.png");
+    private static final Identifier SOUL_FLAME_TEXTURE =
+            Identifier.withDefaultNamespace("textures/particle/soul_fire_flame.png");
+    private static final Identifier ENDER_FLAME_TEXTURE =
+            Identifier.fromNamespaceAndPath("endergetic",
                     "textures/particle/ender_fire_flame.png");
-    private static final ResourceLocation CUPRIC_FLAME_TEXTURE =
-            ResourceLocation.fromNamespaceAndPath("caverns_and_chasms",
+    private static final Identifier CUPRIC_FLAME_TEXTURE =
+            Identifier.fromNamespaceAndPath("caverns_and_chasms",
                     "textures/particle/cupric_fire_flame.png");
-    private static final ResourceLocation REDSTONE_FLAME_TEXTURE =
-            ResourceLocation.withDefaultNamespace("textures/particle/generic_6.png");
+    private static final Identifier REDSTONE_FLAME_TEXTURE =
+            Identifier.withDefaultNamespace("textures/particle/generic_6.png");
 
     private final BlockState offState;
     private final BlockState litState;
     private final Vec3 candleParticleOffset;
-    private final ResourceLocation flameTexture;
+    private final Identifier flameTexture;
 
     public CandleHolderRendererExtension(BlockItem blockItem) {
         offState = blockItem.getBlock().defaultBlockState();
         litState = offState.setValue(CandleBlock.LIT, true);
         candleParticleOffset = SuppCompat.getCandleHolderParticleOffset(offState);
 
-        ResourceLocation id = Utils.getID(blockItem);
+        Identifier id = Utils.getID(blockItem);
         String path = id.getPath();
         if (path.endsWith("soul") || path.startsWith("soul")) {
             this.flameTexture = SOUL_FLAME_TEXTURE;
@@ -141,10 +141,10 @@ public class CandleHolderRendererExtension implements IThirdPersonAnimationProvi
     //TODO: improve for animated textures
 
     private void renderFlame(LivingEntity entity, PoseStack poseStack, MultiBufferSource bufferSource, ItemStack stack) {
-        VertexConsumer builder = bufferSource.getBuffer(RenderType.text(this.flameTexture));
+        VertexConsumer builder = bufferSource.getBuffer(RenderTypes.text(this.flameTexture));
 
-        int lu = LightTexture.FULL_BRIGHT & '\uffff';
-        int lv = LightTexture.FULL_BRIGHT >> 16 & '\uffff';
+        int lu = LightCoordsUtil.FULL_BRIGHT & '\uffff';
+        int lv = LightCoordsUtil.FULL_BRIGHT >> 16 & '\uffff';
 
         int r, g, b, a;
         a = r = g = b = 255;

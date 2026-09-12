@@ -8,7 +8,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.Position;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.projectile.Projectile;
-import net.minecraft.world.entity.projectile.SmallFireball;
+import net.minecraft.world.entity.projectile.hurtingprojectile.SmallFireball;
 import net.minecraft.world.item.FireChargeItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;

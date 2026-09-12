@@ -6,18 +6,18 @@ import com.mojang.math.Axis;
 import net.mehvahdjukaar.amendments.AmendmentsClient;
 import net.mehvahdjukaar.amendments.common.IBetterJukebox;
 import net.mehvahdjukaar.amendments.configs.ClientConfigs;
-import net.mehvahdjukaar.amendments.integration.CompatObjects;
-import net.mehvahdjukaar.amendments.integration.EtchedCompat;
 import net.mehvahdjukaar.moonlight.api.client.util.RotHlpr;
 import net.mehvahdjukaar.moonlight.api.client.util.VertexUtil;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
-import net.minecraft.client.resources.model.Material;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
+import net.minecraft.client.resources.model.sprite.SpriteId;
 import net.minecraft.world.level.block.JukeboxBlock;
 import net.minecraft.world.level.block.entity.JukeboxBlockEntity;
+
+//import net.mehvahdjukaar.amendments.integration.EtchedCompat;
 
 public class JukeboxTileRenderer implements BlockEntityRenderer<JukeboxBlockEntity> {
 
@@ -37,7 +37,7 @@ public class JukeboxTileRenderer implements BlockEntityRenderer<JukeboxBlockEnti
             poseStack.mulPose(RotHlpr.X90);
 
 
-            Material material = AmendmentsClient.getRecordMaterial(item.getItem());
+            SpriteId material = AmendmentsClient.getRecordMaterial(item.getItem());
             VertexConsumer builder;
             int upLight = LevelRenderer.getLightColor(blockEntity.getLevel(), blockEntity.getBlockPos().above(1));
             int lu = upLight & '\uffff';
@@ -45,12 +45,12 @@ public class JukeboxTileRenderer implements BlockEntityRenderer<JukeboxBlockEnti
 
 
             // etched shit
-            if (item.getItem() == CompatObjects.ETCHED_DISC.get()) {
-                EtchedCompat.drawDisc(item, poseStack, bufferSource, lu, lv);
-            } else {
-                builder = material.buffer(bufferSource, RenderType::entityCutout);
-                VertexUtil.addQuad(builder, poseStack, -0.5f, -0.5f, 0.5f, 0.5f, lu, lv);
-            }
+            //if (item.getItem() == CompatObjects.ETCHED_DISC.get()) {
+            //    EtchedCompat.drawDisc(item, poseStack, bufferSource, lu, lv);
+            //} else {
+            builder = material.buffer(bufferSource, RenderTypes::entityCutout);
+            VertexUtil.addQuad(builder, poseStack, -0.5f, -0.5f, 0.5f, 0.5f, lu, lv);
+            //}
         }
     }
 

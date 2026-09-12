@@ -7,6 +7,7 @@ import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.ParticleProvider;
 import net.minecraft.client.particle.SpriteSet;
 import net.minecraft.core.particles.SimpleParticleType;
+import net.minecraft.util.RandomSource;
 
 public class FireballExplosionEmitterParticle extends NoRenderParticle {
     private final double size;
@@ -38,7 +39,8 @@ public class FireballExplosionEmitterParticle extends NoRenderParticle {
         public Provider(SpriteSet sprite) {
         }
 
-        public Particle createParticle(SimpleParticleType type, ClientLevel level, double x, double y, double z, double size, double ySpeed, double zSpeed) {
+        @Override
+        public Particle createParticle(SimpleParticleType type, ClientLevel level, double x, double y, double z, double size, double ySpeed, double zSpeed, RandomSource random) {
             return new FireballExplosionEmitterParticle(level, x, y, z, size);
         }
     }

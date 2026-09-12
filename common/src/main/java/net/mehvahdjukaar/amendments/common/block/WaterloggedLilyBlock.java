@@ -1,8 +1,8 @@
 package net.mehvahdjukaar.amendments.common.block;
 
 import net.mehvahdjukaar.amendments.common.tile.WaterloggedLilyBlockTile;
+import net.mehvahdjukaar.candlelight.api.VirtualOverride;
 import net.mehvahdjukaar.moonlight.api.block.IBlockHolder;
-import net.mehvahdjukaar.moonlight.api.misc.ForgeOverride;
 import net.mehvahdjukaar.moonlight.api.platform.ForgeHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -10,8 +10,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.player.Player;
@@ -30,7 +28,6 @@ import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.level.pathfinder.PathComputationType;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
-import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
@@ -85,7 +82,7 @@ public class WaterloggedLilyBlock extends WaterlilyBlock implements LiquidBlockC
     }
 
     @Override
-    public BlockState updateShape(BlockState stateIn, Direction facing, BlockState facingState, LevelAccessor worldIn, BlockPos currentPos, BlockPos facingPos) {
+    public BlockState updateShape(BlockState stateIn, LevelReader worldIn, ScheduledTickAccess ticks, BlockPos currentPos, Direction facing, BlockPos facingPos, BlockState facingState, RandomSource randomSource) {
         worldIn.scheduleTick(currentPos, Fluids.WATER, Fluids.WATER.getTickDelay(worldIn));
         return stateIn;
     }
@@ -165,7 +162,7 @@ public class WaterloggedLilyBlock extends WaterlilyBlock implements LiquidBlockC
 
     //might cause lag when breaking?
     //@Override
-    @ForgeOverride
+    @VirtualOverride("neoforge")
     public SoundType getSoundType(BlockState state, LevelReader world, BlockPos pos, Entity entity) {
         if (world.getBlockEntity(pos) instanceof IBlockHolder tile) {
             BlockState mimicState = tile.getHeldBlock();
@@ -198,7 +195,7 @@ public class WaterloggedLilyBlock extends WaterlilyBlock implements LiquidBlockC
         return false;
     }
 
-    @ForgeOverride
+    @VirtualOverride("neoforge")
     public float getExplosionResistance(BlockState state, BlockGetter world, BlockPos pos, Explosion explosion) {
         if (world.getBlockEntity(pos) instanceof IBlockHolder tile) {
             BlockState mimicState = tile.getHeldBlock();
@@ -211,14 +208,14 @@ public class WaterloggedLilyBlock extends WaterlilyBlock implements LiquidBlockC
     }
 
     @Override
-    public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state) {
+    protected ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state, boolean includeData) {
         if (level.getBlockEntity(pos) instanceof IBlockHolder tile) {
             BlockState mimic = tile.getHeldBlock();
             if (!mimic.isAir() && !(mimic.getBlock() instanceof WaterloggedLilyBlock)) {
-                return mimic.getBlock().getCloneItemStack(level, pos, mimic);
+                return mimic.getBlock().getCloneItemStack(level, pos, mimic, includeData);
             }
         }
-        return super.getCloneItemStack(level, pos, state);
+        return super.getCloneItemStack(level, pos, state, includeData);
     }
 
 

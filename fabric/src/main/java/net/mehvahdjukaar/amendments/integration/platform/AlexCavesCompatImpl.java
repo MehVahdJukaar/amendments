@@ -1,16 +1,17 @@
-package net.mehvahdjukaar.amendments.integration.platform;
+//TODO: add back. no 26.1.2 alexs caves yet, uncomment when it ports
+//package net.mehvahdjukaar.amendments.integration.platform;
 
-import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidStack;
-import net.minecraft.core.BlockPos;
-import net.minecraft.util.RandomSource;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.state.BlockState;
+//import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidStack;
+//import net.minecraft.core.BlockPos;
+//import net.minecraft.util.RandomSource;
+//import net.minecraft.world.entity.Entity;
+//import net.minecraft.world.level.Level;
+//import net.minecraft.world.level.block.state.BlockState;
 
-public class AlexCavesCompatImpl {
-    public static void acidDamage(SoftFluidStack fluid, Level level, BlockPos pos, BlockState state, Entity entity) {
-    }
+//public class AlexCavesCompatImpl {
+//    public static void acidDamage(SoftFluidStack fluid, Level level, BlockPos pos, BlockState state, Entity entity) {
+//    }
 
-    public static void acidParticles(SoftFluidStack fluid, Level level, BlockPos pos, RandomSource rand, double height) {
-    }
-}
+//    public static void acidParticles(SoftFluidStack fluid, Level level, BlockPos pos, RandomSource rand, double height) {
+//    }
+//}

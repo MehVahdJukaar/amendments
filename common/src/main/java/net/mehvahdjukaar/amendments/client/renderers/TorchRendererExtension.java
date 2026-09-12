@@ -4,14 +4,12 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import net.mehvahdjukaar.amendments.configs.ClientConfigs;
-import net.mehvahdjukaar.amendments.integration.CompatHandler;
 import net.mehvahdjukaar.amendments.integration.CompatObjects;
-import net.mehvahdjukaar.amendments.integration.SuppCompat;
 import net.mehvahdjukaar.moonlight.api.client.util.VertexUtil;
-import net.mehvahdjukaar.moonlight.api.util.Utils;
 import net.mehvahdjukaar.moonlight.api.item.IFirstPersonSpecialItemRenderer;
 import net.mehvahdjukaar.moonlight.api.item.IThirdPersonAnimationProvider;
 import net.mehvahdjukaar.moonlight.api.item.IThirdPersonSpecialItemRenderer;
+import net.mehvahdjukaar.moonlight.api.util.Utils;
 import net.mehvahdjukaar.moonlight.api.util.math.MthUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ArmedModel;
@@ -20,13 +18,13 @@ import net.minecraft.client.model.HeadedModel;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.ItemInHandRenderer;
-import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.ItemTransform;
 import net.minecraft.client.renderer.entity.ItemRenderer;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
+import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.HumanoidArm;
@@ -44,12 +42,12 @@ import org.joml.Vector3f;
 
 public class TorchRendererExtension implements IThirdPersonAnimationProvider, IThirdPersonSpecialItemRenderer, IFirstPersonSpecialItemRenderer {
 
-    private static final ResourceLocation FLAME_TEXTURE =
-            ResourceLocation.withDefaultNamespace("textures/particle/flame.png");
-    private static final ResourceLocation SOUL_FLAME_TEXTURE =
-            ResourceLocation.withDefaultNamespace("textures/particle/soul_fire_flame.png");
-    private static final ResourceLocation REDSTONE_FLAME_TEXTURE =
-            ResourceLocation.withDefaultNamespace("textures/particle/generic_6.png");
+    private static final Identifier FLAME_TEXTURE =
+            Identifier.withDefaultNamespace("textures/particle/flame.png");
+    private static final Identifier SOUL_FLAME_TEXTURE =
+            Identifier.withDefaultNamespace("textures/particle/soul_fire_flame.png");
+    private static final Identifier REDSTONE_FLAME_TEXTURE =
+            Identifier.withDefaultNamespace("textures/particle/generic_6.png");
 
     //top-center of the torch model, in centered block coords (tweak Y if the flame sits off)
     private static final Vec3 TORCH_PARTICLE_OFFSET = new Vec3(0, 0.16, 0);
@@ -109,10 +107,10 @@ public class TorchRendererExtension implements IThirdPersonAnimationProvider, IT
 
     //same camera-facing billboard the candle holder uses, so it never inherits the item's rotation
     private void renderFlame(LivingEntity entity, PoseStack poseStack, MultiBufferSource bufferSource, ItemStack stack) {
-        VertexConsumer builder = bufferSource.getBuffer(RenderType.text(getFlameTexture(stack)));
+        VertexConsumer builder = bufferSource.getBuffer(RenderTypes.text(getFlameTexture(stack)));
 
-        int lu = LightTexture.FULL_BRIGHT & '￿';
-        int lv = LightTexture.FULL_BRIGHT >> 16 & '￿';
+        int lu = LightCoordsUtil.FULL_BRIGHT & '￿';
+        int lv = LightCoordsUtil.FULL_BRIGHT >> 16 & '￿';
 
         int r, g, b, a;
         a = r = g = b = 255;
@@ -136,7 +134,7 @@ public class TorchRendererExtension implements IThirdPersonAnimationProvider, IT
                 r, g, b, a, lu, lv);
     }
 
-    private static ResourceLocation getFlameTexture(ItemStack stack) {
+    private static Identifier getFlameTexture(ItemStack stack) {
         String path = Utils.getID(stack.getItem()).getPath();
         if (path.contains("soul")) return SOUL_FLAME_TEXTURE;
         if (path.contains("redstone")) return REDSTONE_FLAME_TEXTURE;

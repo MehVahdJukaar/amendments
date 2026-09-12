@@ -4,7 +4,7 @@ import net.mehvahdjukaar.moonlight.api.set.BlockType;
 import net.mehvahdjukaar.moonlight.api.set.BlockTypeRegistry;
 import net.mehvahdjukaar.moonlight.api.util.Utils;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.EmptyBlockGetter;
 import net.minecraft.world.level.ItemLike;
@@ -26,7 +26,7 @@ public class LanternRegistry extends BlockTypeRegistry<LanternRegistry.LanternTy
      * the shape-derived offset in {@link LanternType#computeAttachmentOffset}. Must be initialized
      * before the static {@link #VANILLA}/{@link #SOUL} types below, which read it during construction.
      */
-    private static final Map<ResourceLocation, Double> SPECIAL_OFFSETS = new HashMap<>();
+    private static final Map<Identifier, Double> SPECIAL_OFFSETS = new HashMap<>();
 
     static {
         // Caverns & Chasms copper lanterns (WeatheringCopperLanternBlock) use a taller collision box
@@ -37,19 +37,19 @@ public class LanternRegistry extends BlockTypeRegistry<LanternRegistry.LanternTy
                 "copper_lantern", "exposed_copper_lantern", "weathered_copper_lantern",
                 "oxidized_copper_lantern", "waxed_copper_lantern", "waxed_exposed_copper_lantern",
                 "waxed_weathered_copper_lantern", "waxed_oxidized_copper_lantern")) {
-            SPECIAL_OFFSETS.put(ResourceLocation.fromNamespaceAndPath("caverns_and_chasms", path), -1 / 16d);
+            SPECIAL_OFFSETS.put(Identifier.fromNamespaceAndPath("caverns_and_chasms", path), -1 / 16d);
         }
     }
 
-    public static final LanternType VANILLA = new LanternType(ResourceLocation.withDefaultNamespace("lantern"), Blocks.LANTERN);
-    public static final LanternType SOUL = new LanternType(ResourceLocation.withDefaultNamespace("soul_lantern"), Blocks.SOUL_LANTERN);
+    public static final LanternType VANILLA = new LanternType(Identifier.withDefaultNamespace("lantern"), Blocks.LANTERN);
+    public static final LanternType SOUL = new LanternType(Identifier.withDefaultNamespace("soul_lantern"), Blocks.SOUL_LANTERN);
 
     private static final Set<String> BLACKLIST_MODS = Set.of(
             "bbb", "extlights", "betterendforge", "spelunkery", "galosphere", "tconstruct", "enigmaticlegacy", "beautify"
     );
 
-    private static final Set<ResourceLocation> WHITELIST = Set.of(
-            ResourceLocation.fromNamespaceAndPath("enlightened_end", "xenon_lantern")
+    private static final Set<Identifier> WHITELIST = Set.of(
+            Identifier.fromNamespaceAndPath("enlightened_end", "xenon_lantern")
     );
 
     private static final Set<String> WHITELIST_NAMESPACES = Set.of("skinnedlanterns");
@@ -64,7 +64,7 @@ public class LanternRegistry extends BlockTypeRegistry<LanternRegistry.LanternTy
     }
 
     @Override
-    public Optional<LanternType> detectTypeFromBlock(Block block, ResourceLocation blockId) {
+    public Optional<LanternType> detectTypeFromBlock(Block block, Identifier blockId) {
         if (block.asItem() == Items.AIR) return Optional.empty();
 
         if (WHITELIST.contains(blockId)) return Optional.of(new LanternType(blockId, block));
@@ -98,13 +98,13 @@ public class LanternRegistry extends BlockTypeRegistry<LanternRegistry.LanternTy
          */
         public final double attachmentOffset;
 
-        public LanternType(ResourceLocation name, Block lantern) {
+        public LanternType(Identifier name, Block lantern) {
             super(name);
             this.lantern = lantern;
             this.attachmentOffset = computeAttachmentOffset(name, lantern);
         }
 
-        private static double computeAttachmentOffset(ResourceLocation id, Block lantern) {
+        private static double computeAttachmentOffset(Identifier id, Block lantern) {
             // Paper (twigs) lanterns keep the default mount height.
             if (id.getNamespace().equals("twigs")) return 0;
             try {

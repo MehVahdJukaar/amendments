@@ -1,12 +1,11 @@
 package net.mehvahdjukaar.amendments.integration;
 
 import com.google.common.base.Suppliers;
-import gg.moonflower.etched.common.component.DiscAppearanceComponent;
 import net.minecraft.core.Registry;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import org.jetbrains.annotations.Nullable;
@@ -42,7 +41,7 @@ public class CompatObjects {
 
 
     private static <T> Supplier<@Nullable T> make(String name, Registry<T> registry) {
-        return Suppliers.memoize(() -> registry.getOptional(ResourceLocation.tryParse(name)).orElse(null));
+        return Suppliers.memoize(() -> registry.getOptional(Identifier.tryParse(name)).orElse(null));
     }
 
 }

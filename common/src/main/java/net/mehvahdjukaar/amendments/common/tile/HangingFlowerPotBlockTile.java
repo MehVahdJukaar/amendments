@@ -2,8 +2,8 @@ package net.mehvahdjukaar.amendments.common.tile;
 
 import net.mehvahdjukaar.amendments.common.block.HangingFlowerPotBlock;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
+import net.mehvahdjukaar.candlelight.api.VirtualOverride;
 import net.mehvahdjukaar.moonlight.api.block.MimicBlockTile;
-import net.mehvahdjukaar.moonlight.api.misc.ForgeOverride;
 import net.mehvahdjukaar.moonlight.api.platform.ForgeHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -26,7 +26,7 @@ public class HangingFlowerPotBlockTile extends MimicBlockTile {
         return true;
     }
 
-    @ForgeOverride
+    @VirtualOverride("neoforge")
     public AABB getRenderBoundingBox() {
         return new AABB(this.worldPosition);
     }

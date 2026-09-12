@@ -17,8 +17,6 @@ import net.minecraft.core.dispenser.BlockSource;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.InteractionResultHolder;
-import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -54,21 +52,21 @@ public class CauldronConversion implements BlockUse {
 
 
     //called by mixin
-    public static ItemInteractionResult convert(BlockState state, BlockPos pos, Level level, Player player, InteractionHand hand,
+    public static InteractionResult convert(BlockState state, BlockPos pos, Level level, Player player, InteractionHand hand,
                                                 ItemStack stack, boolean checkCauldronInteractions) {
         BlockState newState = getNewState(pos, level, stack, checkCauldronInteractions);
         if (newState != null && level.setBlockAndUpdate(pos, newState)) {
 
             if (level.getBlockEntity(pos) instanceof LiquidCauldronBlockTile te) {
                 if (te.interactWithPlayerItem(player, hand, stack)) {
-                    return ItemInteractionResult.sidedSuccess(level.isClientSide);
+                    return InteractionResult.SUCCESS;
                 } else {
                     level.setBlockAndUpdate(pos, state);
-                    return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+                    return InteractionResult.TRY_WITH_EMPTY_HAND;
                 }
             }
         }
-        return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        return InteractionResult.TRY_WITH_EMPTY_HAND;
     }
 
     public static BlockState getNewState(BlockPos pos, Level level, ItemStack stack) {
@@ -138,12 +136,12 @@ public class CauldronConversion implements BlockUse {
         }
 
         @Override
-        protected InteractionResultHolder<ItemStack> customBehavior(BlockSource source, ItemStack stack) {
+        protected InteractionResult customBehavior(BlockSource source, ItemStack stack) {
             //this.setSuccessful(false);
             ServerLevel level = source.level();
             BlockState originalState = source.state();
             BlockPos pos = source.pos().relative(originalState.getValue(DispenserBlock.FACING));
-            if (!originalState.is(Blocks.CAULDRON)) return InteractionResultHolder.pass(stack);
+            if (!originalState.is(Blocks.CAULDRON)) return InteractionResult.PASS;
 
             BlockState newState = getNewState(pos, level, stack);
             if (newState != null) {
@@ -153,13 +151,13 @@ public class CauldronConversion implements BlockUse {
                     ItemStack returnStack = tank.interactWithItem(stack, level, pos, false);
                     if (returnStack != null) {
                         level.gameEvent(null, GameEvent.BLOCK_CHANGE, pos);
-                        return InteractionResultHolder.success(returnStack);
+                        return InteractionResult.SUCCESS;
                     } else {
                         level.setBlockAndUpdate(pos, originalState);
                     }
                 }
             }
-            return InteractionResultHolder.pass(stack);
+            return InteractionResult.PASS;
         }
     }
 }

@@ -28,8 +28,9 @@
     "${mod_id}-common.mixins.json"
   ],
   "depends": {
-    "fabric": "*",
-    "minecraft": "=${minecraft_version}",
+    "fabricloader": ">=0.19.3",
+    "fabric-api": ">=0.155.2+26.1.2",
+    "minecraft": "${minecraft_version}",
     "moonlight": ">=${moonlight_min_version}"
   }
 }

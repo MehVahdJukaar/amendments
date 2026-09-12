@@ -1,99 +1,76 @@
 package net.mehvahdjukaar.amendments.client.model;
 
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.mehvahdjukaar.moonlight.api.block.MimicBlockTile;
-import net.mehvahdjukaar.moonlight.api.client.model.CustomBakedModel;
+import net.mehvahdjukaar.moonlight.api.client.model.CustomBlockModel;
+import net.mehvahdjukaar.moonlight.api.client.model.CustomUnbakedModel;
 import net.mehvahdjukaar.moonlight.api.client.model.ExtraModelData;
+import net.mehvahdjukaar.moonlight.api.client.model.QuadEmitter;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.block.BlockModelShaper;
-import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.block.model.ItemOverrides;
-import net.minecraft.client.renderer.block.model.ItemTransforms;
+import net.minecraft.client.renderer.block.BlockAndTintGetter;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.resources.model.BakedModel;
-import net.minecraft.client.resources.model.ModelState;
-import net.minecraft.core.Direction;
+import net.minecraft.client.resources.model.ModelBaker;
+import net.minecraft.client.resources.model.ResolvableModel;
+import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
+public class HangingPotBakedModel implements CustomBlockModel {
 
-public class HangingPotBakedModel implements CustomBakedModel {
-    private final BakedModel rope;
-    private final BlockModelShaper blockModelShaper;
+    private final BlockStateModel rope;
 
-    public HangingPotBakedModel(BakedModel rope, ModelState state) {
+    public HangingPotBakedModel(BlockStateModel rope) {
         this.rope = rope;
-        this.blockModelShaper = Minecraft.getInstance().getBlockRenderer().getBlockModelShaper();
     }
 
     @Override
-    public List<BakedQuad> getBlockQuads(BlockState state, Direction side, RandomSource rand, RenderType renderType, ExtraModelData data) {
-        List<BakedQuad> quads = new ArrayList<>();
-
-        if (state != null) {
-            try {
-                BlockState mimic = data.get(MimicBlockTile.MIMIC_KEY);
-
-                if (mimic != null) {
-                    BakedModel model = blockModelShaper.getBlockModel(mimic);
-                    quads.addAll(model.getQuads(mimic, side, rand));
-                }
-            } catch (Exception ignored) {
-            }
-
-            try {
-                quads.addAll(rope.getQuads(state, side, rand));
-            } catch (Exception ignored) {
-            }
+    public void emitQuads(QuadEmitter emitter, @Nullable BlockAndTintGetter level, @Nullable BlockPos pos,
+                          @Nullable BlockState state, RandomSource random, ExtraModelData data) {
+        if (state == null) return;
+        BlockState mimic = data.get(MimicBlockTile.MIMIC_KEY);
+        if (mimic != null) {
+            emitter.emitAll(Minecraft.getInstance().getBlockRenderer().getBlockModel(mimic), level, pos, mimic, random);
         }
-        return quads;
+        emitter.emitAll(this.rope, level, pos, state, random);
     }
 
     @Override
-    public boolean useAmbientOcclusion() {
-        return true;
-    }
-
-    @Override
-    public boolean isGui3d() {
-        return false;
-    }
-
-    @Override
-    public boolean usesBlockLight() {
-        return false;
-    }
-
-    @Override
-    public boolean isCustomRenderer() {
-        return false;
-    }
-
-    @Override
-    public TextureAtlasSprite getBlockParticle(ExtraModelData data) {
+    public TextureAtlasSprite getParticle(ExtraModelData data) {
         BlockState mimic = data.get(MimicBlockTile.MIMIC_KEY);
         if (mimic != null && !mimic.isAir()) {
-            BakedModel model = blockModelShaper.getBlockModel(mimic);
-            try {
-                return model.getParticleIcon();
-            } catch (Exception ignored) {
-            }
+            return Minecraft.getInstance().getBlockRenderer().getBlockModel(mimic).particleMaterial().sprite();
         }
-        return rope.getParticleIcon();
+        return this.rope.particleMaterial().sprite();
     }
 
     @Override
-    public ItemOverrides getOverrides() {
-        return ItemOverrides.EMPTY;
+    public @Nullable Object geometryKey(BlockAndTintGetter level, BlockPos pos, BlockState state,
+                                        RandomSource random, ExtraModelData data) {
+        return data.get(MimicBlockTile.MIMIC_KEY);
     }
 
-    @Override
-    public ItemTransforms getTransforms() {
-        return ItemTransforms.NO_TRANSFORMS;
+    public record Unbaked(BlockStateModel.Unbaked rope) implements CustomUnbakedModel {
+
+        public static final MapCodec<Unbaked> CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
+                BlockStateModel.Unbaked.CODEC.fieldOf("rope").forGetter(Unbaked::rope)
+        ).apply(i, Unbaked::new));
+
+        @Override
+        public CustomBlockModel bake(ModelBaker baker) {
+            return new HangingPotBakedModel(this.rope.bake(baker));
+        }
+
+        @Override
+        public MapCodec<? extends CustomUnbakedModel> codec() {
+            return CODEC;
+        }
+
+        @Override
+        public void resolveDependencies(ResolvableModel.Resolver resolver) {
+            this.rope.resolveDependencies(resolver);
+        }
     }
-
-
 }
-

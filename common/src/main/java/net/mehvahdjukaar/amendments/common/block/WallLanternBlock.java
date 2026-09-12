@@ -5,53 +5,44 @@ import net.mehvahdjukaar.amendments.common.LanternRegistry;
 import net.mehvahdjukaar.amendments.common.network.ClientBoundEntityHitSwayingBlockMessage;
 import net.mehvahdjukaar.amendments.common.tile.SwayingBlockTile;
 import net.mehvahdjukaar.amendments.common.tile.WallLanternBlockTile;
-import net.mehvahdjukaar.amendments.configs.CommonConfigs;
-import net.mehvahdjukaar.amendments.integration.CompatHandler;
-import net.mehvahdjukaar.amendments.integration.ThinAirCompat;
 import net.mehvahdjukaar.amendments.reg.ModBlockProperties;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
-import net.mehvahdjukaar.moonlight.api.block.IBlockHolder;
 import net.mehvahdjukaar.moonlight.api.block.WaterBlock;
+import net.mehvahdjukaar.moonlight.api.platform.ForgeHelper;
 import net.mehvahdjukaar.moonlight.api.platform.network.NetworkHelper;
 import net.mehvahdjukaar.moonlight.api.util.Utils;
 import net.mehvahdjukaar.moonlight.api.util.math.MthUtils;
-import net.mehvahdjukaar.moonlight.api.platform.ForgeHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.BlockPlaceContext;
-import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
-import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.*;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
-import net.minecraft.world.level.block.state.properties.*;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
+import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.storage.loot.LootParams;
-import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+
+//import net.mehvahdjukaar.amendments.integration.ThinAirCompat;
 
 public class WallLanternBlock extends WaterBlock implements EntityBlock {
 
@@ -62,7 +53,7 @@ public class WallLanternBlock extends WaterBlock implements EntityBlock {
     public static final VoxelShape SHAPE_WEST = MthUtils.rotateVoxelShape(SHAPE_NORTH, Direction.WEST);
     public static final VoxelShape SHAPE_EAST = MthUtils.rotateVoxelShape(SHAPE_NORTH, Direction.EAST);
 
-    public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
+    public static final EnumProperty<Direction> FACING = BlockStateProperties.HORIZONTAL_FACING;
     public static final EnumProperty<ModBlockProperties.BlockAttachment> ATTACHMENT = ModBlockProperties.BLOCK_ATTACHMENT;
     public static final BooleanProperty LIT = BlockStateProperties.LIT;
     public static final IntegerProperty LIGHT_LEVEL = ModBlockProperties.LIGHT_LEVEL;
@@ -100,9 +91,9 @@ public class WallLanternBlock extends WaterBlock implements EntityBlock {
     }
 
     @Override
-    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
+    protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
         BlockState lantern = getLanternState(state);
-        ItemInteractionResult blockRes = lantern.useItemOn(stack, level, player, hand, hitResult);
+        InteractionResult blockRes = lantern.useItemOn(stack, level, player, hand, hitResult);
         if (blockRes.consumesAction() && lantern.hasProperty(LIT)) {
             BlockState updated = getLanternState(state);
             if (updated.getValue(LIT) != state.getValue(LIT)) {
@@ -141,9 +132,8 @@ public class WallLanternBlock extends WaterBlock implements EntityBlock {
     }
 
     @Override
-    public BlockState updateShape(BlockState stateIn, Direction facing, BlockState facingState, LevelAccessor worldIn, BlockPos currentPos,
-                                  BlockPos facingPos) {
-        super.updateShape(stateIn, facing, facingState, worldIn, currentPos, facingPos);
+    public BlockState updateShape(BlockState stateIn, LevelReader worldIn, ScheduledTickAccess ticks, BlockPos currentPos, Direction facing, BlockPos facingPos, BlockState facingState, RandomSource randomSource) {
+        super.updateShape(stateIn, worldIn, ticks, currentPos, facing, facingPos, facingState, randomSource);
         return facing == stateIn.getValue(FACING).getOpposite() ? !stateIn.canSurvive(worldIn, currentPos)
                 ? Blocks.AIR.defaultBlockState()
                 : getConnectedState(stateIn, facingState, worldIn, facingPos, facing) : stateIn;
@@ -186,7 +176,7 @@ public class WallLanternBlock extends WaterBlock implements EntityBlock {
     }
 
     @Override
-    public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state) {
+    protected ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state, boolean includeData) {
         return new ItemStack(type.lantern);
     }
 
@@ -205,18 +195,18 @@ public class WallLanternBlock extends WaterBlock implements EntityBlock {
                 level.setBlock(pos, state.cycle(LIT), 2);
             }
         }
-        if (CompatHandler.THIN_AIR && level.getBlockEntity(pos) instanceof WallLanternBlockTile te) {
-            BlockState lantern = wall.getLanternState(state);
-            if (ThinAirCompat.isAirLantern(lantern)) {
-                te.updateThinAir(lantern);
-                level.sendBlockUpdated(pos, state, state, 3);
-            }
-        }
     }
 
     @Override
     public void neighborChanged(BlockState state, Level world, BlockPos pos, Block block, BlockPos fromPos, boolean notify) {
-        if (!world.isClientSide && state.getBlock() instanceof WallLanternBlock wall
+        //if (CompatHandler.THIN_AIR && world.getBlockEntity(pos) instanceof WallLanternBlockTile te) {
+        //    BlockState lantern = wall.getLanternState(state);
+        //    if (ThinAirCompat.isAirLantern(lantern)) {
+        //        te.updateThinAir(lantern);
+        //        world.sendBlockUpdated(pos, state, state, 3);
+        //    }
+        //}
+        if (!world.isClientSide() && state.getBlock() instanceof WallLanternBlock wall
                 && wall.type.getId().toString().equals("charm:redstone_lantern")) {
             boolean flag = state.getValue(LIT);
             if (flag != world.hasNeighborSignal(pos)) {
@@ -254,7 +244,7 @@ public class WallLanternBlock extends WaterBlock implements EntityBlock {
     @Override
     public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
         super.entityInside(state, level, pos, entity);
-        if (level.isClientSide) {
+        if (level.isClientSide()) {
             if (level.getBlockEntity(pos) instanceof WallLanternBlockTile tile) {
                 tile.amendments$getAnimation().hitByEntity(entity, state, pos);
             }
@@ -269,7 +259,7 @@ public class WallLanternBlock extends WaterBlock implements EntityBlock {
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level pLevel, BlockState pState, BlockEntityType<T> pBlockEntityType) {
-        return Utils.getTicker(pBlockEntityType, ModRegistry.WALL_LANTERN_TILE.get(), pLevel.isClientSide ? SwayingBlockTile::clientTick : null);
+        return Utils.getTicker(pBlockEntityType, ModRegistry.WALL_LANTERN_TILE.get(), pLevel.isClientSide() ? SwayingBlockTile::clientTick : null);
     }
 
    /* @Override

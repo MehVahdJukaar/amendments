@@ -2,8 +2,6 @@ package net.mehvahdjukaar.amendments.platform;
 
 import net.mehvahdjukaar.amendments.Amendments;
 import net.mehvahdjukaar.amendments.events.ModEvents;
-import net.mehvahdjukaar.amendments.integration.CompatHandler;
-import net.mehvahdjukaar.amendments.integration.platform.BlueprintIntegration;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.moonlight.api.fluids.platform.SoftFluidTankFluidHandlerWrapper;
 import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
@@ -20,6 +18,8 @@ import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 
 import static net.mehvahdjukaar.amendments.Amendments.MOD_ID;
 
+//import net.mehvahdjukaar.amendments.integration.platform.BlueprintIntegration;
+
 /**
  * Author: MehVahdJukaar
  */
@@ -34,9 +34,9 @@ public class AmendmentsForge {
             NeoForge.EVENT_BUS.register(ClientEvents.class);
         }
 
-        if (CompatHandler.BLUEPRINT) {
-            BlueprintIntegration.init();
-        }
+        //if (CompatHandler.BLUEPRINT) {
+        //    BlueprintIntegration.init();
+        //}
     }
 
     private static void registerCapabilities(RegisterCapabilitiesEvent event) {

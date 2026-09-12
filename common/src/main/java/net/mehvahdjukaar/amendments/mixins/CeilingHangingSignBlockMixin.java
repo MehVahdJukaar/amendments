@@ -11,7 +11,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -63,7 +62,7 @@ public abstract class CeilingHangingSignBlockMixin extends Block implements Enti
     public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
         super.entityInside(state, level, pos, entity);
         if (level.getBlockEntity(pos) instanceof ExtendedHangingSign tile && tile.amendments$getExtension().canSwing()) {
-            if (level.isClientSide) {
+            if (level.isClientSide()) {
                 tile.amendments$getExtension().getClientAnimation().hitByEntity(entity, state, pos);
             } else {
                 if (entity.xo != entity.getX() || entity.zo != entity.getZ() || entity.yo != entity.getY()) {
@@ -80,12 +79,14 @@ public abstract class CeilingHangingSignBlockMixin extends Block implements Enti
     @WrapMethod(method = "getTicker")
     private <T extends BlockEntity> BlockEntityTicker<T> amendments$swingSign(Level pLevel, BlockState pState, BlockEntityType<T> pBlockEntityType, Operation<BlockEntityTicker<T>> original){
         BlockEntityTicker<T> ticker = original.call(pLevel, pState, pBlockEntityType);
-        if (ticker == null && !pLevel.isClientSide) { return null; }
+        if (ticker == null && !pLevel.isClientSide()) {
+            return null;
+        }
         return (Level level, BlockPos blockPos, BlockState blockState, T blockEntity) -> {
             if (ticker != null) {
                 ticker.tick(level, blockPos, blockState, blockEntity);
             }
-            if (level.isClientSide && ClientConfigs.SWINGING_SIGNS.get() && blockEntity instanceof ExtendedHangingSign te){
+            if (level.isClientSide() && ClientConfigs.SWINGING_SIGNS.get() && blockEntity instanceof ExtendedHangingSign te) {
                 te.amendments$getExtension().clientTick(level, blockPos, blockState);
             }
         };
@@ -93,12 +94,12 @@ public abstract class CeilingHangingSignBlockMixin extends Block implements Enti
 
     @Inject(method = "useItemOn", at = @At("HEAD"), cancellable = true)
     public void amendments$use(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player,
-                               InteractionHand hand, BlockHitResult hit, CallbackInfoReturnable<ItemInteractionResult> cir) {
+                               InteractionHand hand, BlockHitResult hit, CallbackInfoReturnable<InteractionResult> cir) {
         var ret = HangingSignDisplayItem.INSTANCE.tryPerformingAction(state, pos, level, player,
                 hand, player.getItemInHand(hand), hit);
         if (ret != InteractionResult.PASS){
             //TODO: change
-            cir.setReturnValue(ItemInteractionResult.sidedSuccess(level.isClientSide));
+            cir.setReturnValue(InteractionResult.SUCCESS);
         }
     }
 

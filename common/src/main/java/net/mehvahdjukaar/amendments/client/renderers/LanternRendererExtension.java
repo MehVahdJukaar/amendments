@@ -3,8 +3,6 @@ package net.mehvahdjukaar.amendments.client.renderers;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.mehvahdjukaar.amendments.configs.ClientConfigs;
-import net.mehvahdjukaar.amendments.integration.CompatHandler;
-import net.mehvahdjukaar.amendments.integration.ThinAirCompat;
 import net.mehvahdjukaar.moonlight.api.client.util.RotHlpr;
 import net.mehvahdjukaar.moonlight.api.item.IFirstPersonSpecialItemRenderer;
 import net.mehvahdjukaar.moonlight.api.item.IThirdPersonAnimationProvider;
@@ -31,6 +29,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.LanternBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import org.joml.Quaternionf;
+
+//import net.mehvahdjukaar.amendments.integration.ThinAirCompat;
 
 public class LanternRendererExtension implements IThirdPersonAnimationProvider, IThirdPersonSpecialItemRenderer, IFirstPersonSpecialItemRenderer {
 
@@ -203,13 +203,13 @@ public class LanternRendererExtension implements IThirdPersonAnimationProvider, 
         Minecraft mc = Minecraft.getInstance();
         ItemRenderer itemRenderer = mc.getItemRenderer();
         BlockState state = ((BlockItem) itemStack.getItem()).getBlock().defaultBlockState();
-        if (CompatHandler.THIN_AIR) {
-            var newState = ThinAirCompat.maybeSetAirQuality(state, entity.getEyePosition(), entity.level());
-            if (newState != null) {
-                state = newState;
-            }
-        }
         if (state.hasProperty(LanternBlock.HANGING)) state = state.setValue(LanternBlock.HANGING, false);
+        //if (CompatHandler.THIN_AIR) {
+        //    var newState = ThinAirCompat.maybeSetAirQuality(state, entity.getEyePosition(), entity.level());
+        //    if (newState != null) {
+        //        state = newState;
+        //    }
+        //}
         var model = mc.getBlockRenderer().getBlockModel(state);
         itemRenderer.render(itemStack, ItemDisplayContext.NONE, left, poseStack,
                 buffer, light, OverlayTexture.NO_OVERLAY, model);

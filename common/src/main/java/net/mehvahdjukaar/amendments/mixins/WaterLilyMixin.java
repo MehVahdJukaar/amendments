@@ -8,7 +8,6 @@ import net.mehvahdjukaar.moonlight.api.util.Utils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BoneMealItem;
 import net.minecraft.world.item.Item;
@@ -30,12 +29,12 @@ public abstract class WaterLilyMixin extends Block {
 
     //TODO: use event?
     @Override
-    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
+    protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
         if (!Utils.mayPerformBlockAction(player, pos, stack) ||
-                !CommonConfigs.LILY_PADS_ON.get()) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+                !CommonConfigs.LILY_PADS_ON.get()) return InteractionResult.TRY_WITH_EMPTY_HAND;
         // Already a shifted waterlogged lily — let vanilla/mimic handle further interactions (candles, etc.)
         if (state.getBlock() instanceof WaterloggedLilyBlock) {
-            return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+            return InteractionResult.TRY_WITH_EMPTY_HAND;
         }
         Item item = stack.getItem();
         if (!stack.isEmpty() && !(item instanceof PlaceOnWaterBlockItem) && !(stack.getItem() instanceof BoneMealItem)) {
@@ -51,6 +50,6 @@ public abstract class WaterLilyMixin extends Block {
                 }
             }
         }
-        return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        return InteractionResult.TRY_WITH_EMPTY_HAND;
     }
 }

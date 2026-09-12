@@ -1,26 +1,30 @@
 package net.mehvahdjukaar.amendments.client.colors;
 
 import net.mehvahdjukaar.amendments.common.tile.WaterloggedLilyBlockTile;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.color.block.BlockColor;
+import net.minecraft.client.color.block.BlockColors;
+import net.minecraft.client.color.block.BlockTintSource;
+import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
-import org.jetbrains.annotations.Nullable;
 
-public class LilyBlockColor implements BlockColor {
+public record LilyBlockColor(int tint) implements BlockTintSource {
 
     @Override
-    public int getColor(BlockState blockState, @Nullable BlockAndTintGetter getter, @Nullable BlockPos pos, int i) {
-        if (getter != null && pos != null) {
-            if (getter.getBlockEntity(pos) instanceof WaterloggedLilyBlockTile te) {
+    public int color(BlockState state) {
+        return BlockColors.LILY_PAD_DEFAULT;
+    }
+
+    @Override
+    public int colorInWorld(BlockState state, BlockAndTintGetter level, BlockPos pos) {
+        if (level != null && pos != null) {
+            if (level.getBlockEntity(pos) instanceof WaterloggedLilyBlockTile te) {
                 BlockState mimic = te.getHeldBlock();
                 if (mimic != null) {
-                    return Minecraft.getInstance().getBlockColors().getColor(mimic, getter, pos, i);
+                    return MimicBlockColor.tintOf(mimic, level, pos, this.tint);
                 }
             }
-            return 2129968;
+            return BlockColors.LILY_PAD_IN_WORLD;
         }
-        return 7455580;
+        return BlockColors.LILY_PAD_DEFAULT;
     }
 }

@@ -10,7 +10,7 @@ import net.mehvahdjukaar.moonlight.api.platform.configs.ModConfigHolder;
 import net.mehvahdjukaar.moonlight.api.set.wood.WoodType;
 import net.mehvahdjukaar.moonlight.api.set.wood.WoodTypeRegistry;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -268,7 +268,7 @@ public class ClientConfigs {
             if (b1 != null) KNOWN_WOOD_SIGNS.add(b1);
         }
         for (String s : SIGN_BLACKLIST.get()) {
-            var b = BuiltInRegistries.BLOCK.getOptional(ResourceLocation.parse(s));
+            var b = BuiltInRegistries.BLOCK.getOptional(Identifier.parse(s));
             b.ifPresent(KNOWN_WOOD_SIGNS::remove);
         }
     }

@@ -3,8 +3,6 @@ package net.mehvahdjukaar.amendments.common.tile;
 import net.mehvahdjukaar.amendments.common.LanternRegistry;
 import net.mehvahdjukaar.amendments.common.block.WallLanternBlock;
 import net.mehvahdjukaar.amendments.configs.ClientConfigs;
-import net.mehvahdjukaar.amendments.integration.CompatHandler;
-import net.mehvahdjukaar.amendments.integration.ThinAirCompat;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.moonlight.api.block.IBlockHolder;
 import net.mehvahdjukaar.moonlight.api.block.MimicBlockTile;
@@ -18,10 +16,10 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.Vec3;
-import net.minecraft.world.ticks.TickPriority;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
+
+//import net.mehvahdjukaar.amendments.integration.ThinAirCompat;
 
 public class WallLanternBlockTile extends SwayingBlockTile implements IBlockHolder, IExtraModelDataProvider {
 
@@ -88,7 +86,7 @@ public class WallLanternBlockTile extends SwayingBlockTile implements IBlockHold
     }
 
     private void tryMigrateLegacyLantern() {
-        if (pendingLegacyLantern == null || level == null || level.isClientSide) return;
+        if (pendingLegacyLantern == null || level == null || level.isClientSide()) return;
 
         BlockState legacyLantern = pendingLegacyLantern;
         boolean legacyRedstone = pendingLegacyRedstone;
@@ -113,12 +111,21 @@ public class WallLanternBlockTile extends SwayingBlockTile implements IBlockHold
         if (wallState != getBlockState()) {
             level.setBlock(worldPosition, wallState, Block.UPDATE_ALL);
         }
-
-        if (CompatHandler.THIN_AIR && ThinAirCompat.isAirLantern(legacyLantern)) {
-            updateThinAir(legacyLantern);
-        }
         setChanged();
+
+        //if (CompatHandler.THIN_AIR && ThinAirCompat.isAirLantern(legacyLantern)) {
+        //    updateThinAir(legacyLantern);
+        //}
     }
+
+    //public void updateThinAir(BlockState lantern) {
+    //    if (CompatHandler.THIN_AIR && this.level != null && ThinAirCompat.isAirLantern(lantern)) {
+    //        var newState = ThinAirCompat.maybeSetAirQuality(lantern, Vec3.atCenterOf(this.worldPosition), this.level);
+    //        if (newState != null) {
+    //            level.scheduleTick(worldPosition, getBlockState().getBlock(), 20, TickPriority.NORMAL);
+    //        }
+    //    }
+    //}
 
     private static BlockState copyWallState(BlockState from, BlockState to) {
         return to.setValue(WallLanternBlock.FACING, from.getValue(WallLanternBlock.FACING))
@@ -144,14 +151,5 @@ public class WallLanternBlockTile extends SwayingBlockTile implements IBlockHold
     @Override
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
-    }
-
-    public void updateThinAir(BlockState lantern) {
-        if (CompatHandler.THIN_AIR && this.level != null && ThinAirCompat.isAirLantern(lantern)) {
-            var newState = ThinAirCompat.maybeSetAirQuality(lantern, Vec3.atCenterOf(this.worldPosition), this.level);
-            if (newState != null) {
-                level.scheduleTick(worldPosition, getBlockState().getBlock(), 20, TickPriority.NORMAL);
-            }
-        }
     }
 }

@@ -2,20 +2,23 @@ package net.mehvahdjukaar.amendments.client.particles;
 
 import com.google.common.base.Suppliers;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.particle.*;
-import net.minecraft.client.renderer.LightTexture;
+import net.minecraft.client.particle.Particle;
+import net.minecraft.client.particle.ParticleProvider;
+import net.minecraft.client.particle.SingleQuadParticle;
+import net.minecraft.client.particle.SpriteSet;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.particles.SimpleParticleType;
+import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.util.RandomSource;
 
 import java.util.List;
 import java.util.function.Supplier;
 
-public class FireballExplosionParticle extends TextureSheetParticle {
+public class FireballExplosionParticle extends SingleQuadParticle {
     private final SpriteSet sprites;
 
     protected FireballExplosionParticle(ClientLevel clientLevel, double d, double e, double f, double size, SpriteSet spriteSet) {
-        super(clientLevel, d, e, f, 0.0, 0.0, 0.0);
+        super(clientLevel, d, e, f, 0.0, 0.0, 0.0, spriteSet.first());
         this.lifetime = 5 + this.random.nextInt(3);
         this.quadSize = 2.0F * (1.0F - (float) size * 0.5F);
         this.sprites = spriteSet;
@@ -25,8 +28,8 @@ public class FireballExplosionParticle extends TextureSheetParticle {
     }
 
     @Override
-    public int getLightColor(float partialTick) {
-        return LightTexture.FULL_BRIGHT;
+    public int getLightCoords(float partialTick) {
+        return LightCoordsUtil.FULL_BRIGHT;
     }
 
     @Override
@@ -42,8 +45,8 @@ public class FireballExplosionParticle extends TextureSheetParticle {
     }
 
     @Override
-    public ParticleRenderType getRenderType() {
-        return ParticleRenderType.PARTICLE_SHEET_LIT;
+    public Layer getLayer() {
+        return Layer.OPAQUE_TERRAIN;
     }
 
     public static class Provider implements ParticleProvider<SimpleParticleType> {
@@ -76,9 +79,10 @@ public class FireballExplosionParticle extends TextureSheetParticle {
             }));
         }
 
-        public Particle createParticle(SimpleParticleType type, ClientLevel level, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed) {
+        @Override
+        public Particle createParticle(SimpleParticleType type, ClientLevel level, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed, RandomSource random) {
             // making 3 random sub sprite sets
-            int i = level.random.nextInt(2);
+            int i = level.getRandom().nextInt(2);
             if (i == 0) {
                 return new FireballExplosionParticle(level, x, y, z, xSpeed, this.sprites1.get());
             } else if (i == 1) {
@@ -104,6 +108,11 @@ public class FireballExplosionParticle extends TextureSheetParticle {
         @Override
         public TextureAtlasSprite get(RandomSource random) {
             return this.sprites.get(random.nextInt(this.sprites.size()));
+        }
+
+        @Override
+        public TextureAtlasSprite first() {
+            return this.sprites.getFirst();
         }
 
     }

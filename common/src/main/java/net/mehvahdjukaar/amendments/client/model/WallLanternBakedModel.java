@@ -1,122 +1,94 @@
 package net.mehvahdjukaar.amendments.client.model;
 
-import net.mehvahdjukaar.amendments.client.WallLanternModelsManager;
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.mehvahdjukaar.amendments.common.tile.WallLanternBlockTile;
 import net.mehvahdjukaar.amendments.reg.ModBlockProperties;
 import net.mehvahdjukaar.moonlight.api.block.MimicBlock;
-import net.mehvahdjukaar.moonlight.api.client.model.BakedQuadsTransformer;
-import net.mehvahdjukaar.moonlight.api.client.model.CustomBakedModel;
+import net.mehvahdjukaar.moonlight.api.client.model.CustomBlockModel;
+import net.mehvahdjukaar.moonlight.api.client.model.CustomUnbakedModel;
 import net.mehvahdjukaar.moonlight.api.client.model.ExtraModelData;
+import net.mehvahdjukaar.moonlight.api.client.model.QuadEmitter;
 import net.mehvahdjukaar.moonlight.api.client.util.RotHlpr;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.block.BlockModelShaper;
-import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.block.model.ItemOverrides;
-import net.minecraft.client.renderer.block.model.ItemTransforms;
+import net.minecraft.client.renderer.block.BlockAndTintGetter;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.resources.model.BakedModel;
-import net.minecraft.client.resources.model.ModelState;
-import net.minecraft.core.Direction;
+import net.minecraft.client.resources.model.ModelBaker;
+import net.minecraft.client.resources.model.ResolvableModel;
+import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 
-import java.util.ArrayList;
-import java.util.List;
+public class WallLanternBakedModel implements CustomBlockModel {
 
-public class WallLanternBakedModel implements CustomBakedModel {
-    private final BakedModel support;
-    private final BlockModelShaper blockModelShaper;
-    private final ModelState rotation;
+    private final BlockStateModel support;
 
-    public WallLanternBakedModel(BakedModel support, ModelState state) {
+    public WallLanternBakedModel(BlockStateModel support) {
         this.support = support;
-        this.blockModelShaper = Minecraft.getInstance().getBlockRenderer().getBlockModelShaper();
-        this.rotation = state;
     }
 
     @Override
-    public List<BakedQuad> getBlockQuads(BlockState state, Direction side, RandomSource rand,
-                                         RenderType renderType, ExtraModelData data) {
+    public void emitQuads(QuadEmitter emitter, @Nullable BlockAndTintGetter level, @Nullable BlockPos pos,
+                          @Nullable BlockState state, RandomSource random, ExtraModelData data) {
+        emitter.emitAll(this.support, level, pos, state, random);
 
-        List<BakedQuad> quads = new ArrayList<>();
+        if (state == null) return;
+        if (Boolean.TRUE.equals(data.get(WallLanternBlockTile.IS_FANCY))) return;
 
         BlockState mimic = data.get(ModBlockProperties.MIMIC);
+        if (mimic == null || mimic.isAir() || mimic.getBlock() instanceof MimicBlock) return;
 
-        var supportQuads = support.getQuads(state, side, rand);
-        if (!supportQuads.isEmpty()) {
-            quads.addAll(supportQuads);
-        }
+        Matrix4f mat = new Matrix4f();
+        mat.translate(0, 2 / 16f, 2 / 16f);
+        mat.rotate(RotHlpr.Y90);
 
-        // lantern body (down/hanging=false model of the source lantern)
-        boolean fancy = Boolean.TRUE.equals(data.get(WallLanternBlockTile.IS_FANCY));
-        if (!fancy) {
-            if (mimic != null && !(mimic.getBlock() instanceof MimicBlock) && !mimic.isAir() && state != null) {
-
-                BakedModel model = WallLanternModelsManager.getLanternModel(blockModelShaper,
-                        ((net.mehvahdjukaar.amendments.common.block.WallLanternBlock) state.getBlock()).type, mimic);
-                List<BakedQuad> mimicQuads = model.getQuads(mimic, side, rand);
-                if (!mimicQuads.isEmpty()) {
-                    Matrix4f mat = new Matrix4f();
-                    mat.mul(rotation.getRotation().getMatrix());
-
-                    mat.translate(0, 2 / 16f, 2 / 16f);
-                    mat.rotate(RotHlpr.Y90);
-
-                    BakedQuadsTransformer transformer = BakedQuadsTransformer.create()
-                            .applyingTransform(mat);
-                    quads.addAll(transformer.transformAll(mimicQuads));
-                }
-            }
-        }
-        return quads;
+        emitter.transform(mat);
+        emitter.emitAll(blockModel(mimic), level, pos, mimic, random);
+        emitter.transform((Matrix4f) null);
     }
 
     @Override
-    public boolean useAmbientOcclusion() {
-        return true;
-    }
-
-    @Override
-    public boolean isGui3d() {
-        return false;
-    }
-
-    @Override
-    public boolean usesBlockLight() {
-        return false;
-    }
-
-    @Override
-    public boolean isCustomRenderer() {
-        return false;
-    }
-
-    @Override
-    public TextureAtlasSprite getBlockParticle(ExtraModelData data) {
+    public TextureAtlasSprite getParticle(ExtraModelData data) {
         BlockState mimic = data.get(ModBlockProperties.MIMIC);
-        if (mimic != null && !mimic.isAir()) {
+        if (mimic != null && !mimic.isAir()) return blockModel(mimic).particleMaterial().sprite();
+        return this.support.particleMaterial().sprite();
+    }
 
-            BakedModel model = blockModelShaper.getBlockModel(mimic);
-            try {
-                return model.getParticleIcon();
-            } catch (Exception ignored) {
-            }
+    @Override
+    public @Nullable Object geometryKey(BlockAndTintGetter level, BlockPos pos, BlockState state,
+                                        RandomSource random, ExtraModelData data) {
+        return new Key(data.get(ModBlockProperties.MIMIC), data.get(WallLanternBlockTile.IS_FANCY), state);
+    }
 
+    private record Key(@Nullable BlockState mimic, @Nullable Boolean fancy, BlockState state) {
+    }
+
+    private static BlockStateModel blockModel(BlockState state) {
+        return Minecraft.getInstance().getBlockRenderer().getBlockModel(state);
+    }
+
+    public record Unbaked(BlockStateModel.Unbaked support) implements CustomUnbakedModel {
+
+        public static final MapCodec<Unbaked> CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
+                BlockStateModel.Unbaked.CODEC.fieldOf("support").forGetter(Unbaked::support)
+        ).apply(i, Unbaked::new));
+
+        @Override
+        public CustomBlockModel bake(ModelBaker baker) {
+            return new WallLanternBakedModel(this.support.bake(baker));
         }
-        return support.getParticleIcon();
+
+        @Override
+        public MapCodec<? extends CustomUnbakedModel> codec() {
+            return CODEC;
+        }
+
+        @Override
+        public void resolveDependencies(ResolvableModel.Resolver resolver) {
+            this.support.resolveDependencies(resolver);
+        }
     }
-
-    @Override
-    public ItemOverrides getOverrides() {
-        return ItemOverrides.EMPTY;
-    }
-
-    @Override
-    public ItemTransforms getTransforms() {
-        return ItemTransforms.NO_TRANSFORMS;
-    }
-
-
 }

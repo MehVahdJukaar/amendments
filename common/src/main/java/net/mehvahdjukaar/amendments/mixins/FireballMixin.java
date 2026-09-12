@@ -8,8 +8,8 @@ import net.mehvahdjukaar.amendments.configs.ClientConfigs;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.moonlight.api.entity.ParticleTrailEmitter;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.projectile.AbstractHurtingProjectile;
-import net.minecraft.world.entity.projectile.Fireball;
+import net.minecraft.world.entity.projectile.hurtingprojectile.AbstractHurtingProjectile;
+import net.minecraft.world.entity.projectile.hurtingprojectile.Fireball;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
@@ -54,7 +54,7 @@ public abstract class FireballMixin extends AbstractHurtingProjectile implements
 
     @Override
     public boolean displayFireAnimation() {
-        if (level().isClientSide &&
+        if (level().isClientSide() &&
                 (this.getType() == EntityType.FIREBALL || this.getType() == EntityType.SMALL_FIREBALL) &&
                 ClientConfigs.FIREBALL_3D.get()) {
             return false;
@@ -73,7 +73,7 @@ public abstract class FireballMixin extends AbstractHurtingProjectile implements
     @Override
     public void tick() {
         super.tick();
-        if (level().isClientSide) {
+        if (level().isClientSide()) {
             if (ClientConfigs.GHAST_FIREBALL_TRAIL.get()) {
                 amendments$trailEmitter.tick(this,
                         (p, v) -> {

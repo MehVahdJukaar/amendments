@@ -4,7 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.mehvahdjukaar.moonlight.api.client.util.RotHlpr;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.StandingSignBlock;
@@ -38,7 +38,7 @@ public class SignRendererExtension {
 
         Minecraft.getInstance().getBlockRenderer().getModelRenderer()
                 .renderModel(pose.last(),
-                        guiGraphics.bufferSource().getBuffer(RenderType.cutout()),
+                        guiGraphics.bufferSource().getBuffer(RenderTypes.cutout()),
                         state,
                         Minecraft.getInstance().getBlockRenderer().getBlockModel(state),
                         1, 1, 1, 15728880, OverlayTexture.NO_OVERLAY);

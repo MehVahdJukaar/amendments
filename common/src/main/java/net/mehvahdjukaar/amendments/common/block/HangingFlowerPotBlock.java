@@ -4,8 +4,6 @@ import com.mojang.serialization.MapCodec;
 import net.mehvahdjukaar.amendments.Amendments;
 import net.mehvahdjukaar.amendments.common.FlowerPotHandler;
 import net.mehvahdjukaar.amendments.common.tile.HangingFlowerPotBlockTile;
-import net.mehvahdjukaar.amendments.integration.CompatHandler;
-import net.mehvahdjukaar.amendments.integration.SuppCompat;
 import net.mehvahdjukaar.amendments.reg.ModBlockProperties;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -14,8 +12,9 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
@@ -25,8 +24,8 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.EntityBlock;
@@ -94,7 +93,7 @@ public class HangingFlowerPotBlock extends Block implements EntityBlock {
     }
 
     @Override
-    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player,
+    protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player,
                                               InteractionHand hand, BlockHitResult hitResult) {
         if (level.getBlockEntity(pos) instanceof HangingFlowerPotBlockTile tile) {
             Block pot = tile.getHeldBlock().getBlock();
@@ -109,7 +108,7 @@ public class HangingFlowerPotBlock extends Block implements EntityBlock {
 
                 if (isEmptyFlower != isPotEmpty) {
                     if (isPotEmpty) {
-                        if (!level.isClientSide) {
+                        if (!level.isClientSide()) {
                             tile.setHeldBlock(newPot.defaultBlockState());
                             level.sendBlockUpdated(pos, state, state, Block.UPDATE_CLIENTS);
                             tile.setChanged();
@@ -120,7 +119,7 @@ public class HangingFlowerPotBlock extends Block implements EntityBlock {
                         itemstack.consume(1, player);
                     } else {
                         //drop item
-                        ItemStack flowerItem = pot.getCloneItemStack(level, pos, state);
+                        ItemStack flowerItem = pot.getCloneItemStack(level, pos, state, true);
                         if (!flowerItem.equals(new ItemStack(this))) {
                             if (itemstack.isEmpty()) {
                                 player.setItemInHand(hand, flowerItem);
@@ -128,7 +127,7 @@ public class HangingFlowerPotBlock extends Block implements EntityBlock {
                                 player.drop(flowerItem, false);
                             }
                         }
-                        if (!level.isClientSide) {
+                        if (!level.isClientSide()) {
                             tile.setHeldBlock(FlowerPotHandler.getEmptyPot(flowerPot).defaultBlockState());
                             level.sendBlockUpdated(pos, state, state, Block.UPDATE_CLIENTS);
                             tile.setChanged();
@@ -136,18 +135,18 @@ public class HangingFlowerPotBlock extends Block implements EntityBlock {
                     }
 
                     level.gameEvent(player, GameEvent.BLOCK_CHANGE, pos);
-                    return ItemInteractionResult.sidedSuccess(level.isClientSide);
+                    return InteractionResult.SUCCESS;
                 } else {
-                    return ItemInteractionResult.CONSUME;
+                    return InteractionResult.CONSUME;
                 }
             }
         }
-        return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        return InteractionResult.TRY_WITH_EMPTY_HAND;
     }
 
     public static void playPlantSound(Level level, BlockPos pos, Player player) {
         level.playSound(player, pos, SoundEvents.CROP_PLANTED, SoundSource.BLOCKS, 1,
-                level.random.nextFloat() * 0.1F + 0.95F);
+                level.getRandom().nextFloat() * 0.1F + 0.95F);
     }
 
     @Override
@@ -162,7 +161,7 @@ public class HangingFlowerPotBlock extends Block implements EntityBlock {
     }
 
     @Override
-    public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state) {
+    protected ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state, boolean includeData) {
         if (level.getBlockEntity(pos) instanceof HangingFlowerPotBlockTile te) {
             if (te.getHeldBlock().getBlock() instanceof FlowerPotBlock b) {
                 Block flower = b.getPotted();
@@ -193,8 +192,8 @@ public class HangingFlowerPotBlock extends Block implements EntityBlock {
     }
 
     @Override
-    public BlockState updateShape(BlockState stateIn, Direction facing, BlockState facingState, LevelAccessor worldIn, BlockPos currentPos, BlockPos facingPos) {
-        return facing == Direction.UP && !this.canSurvive(stateIn, worldIn, currentPos) ? Blocks.AIR.defaultBlockState() : super.updateShape(stateIn, facing, facingState, worldIn, currentPos, facingPos);
+    public BlockState updateShape(BlockState stateIn, LevelReader worldIn, ScheduledTickAccess ticks, BlockPos currentPos, Direction facing, BlockPos facingPos, BlockState facingState, RandomSource randomSource) {
+        return facing == Direction.UP && !this.canSurvive(stateIn, worldIn, currentPos) ? Blocks.AIR.defaultBlockState() : super.updateShape(stateIn, worldIn, ticks, currentPos, facing, facingPos, facingState, randomSource);
     }
 
     @Override

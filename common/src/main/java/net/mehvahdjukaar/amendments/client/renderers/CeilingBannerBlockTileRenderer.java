@@ -4,15 +4,11 @@ package net.mehvahdjukaar.amendments.client.renderers;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.mehvahdjukaar.amendments.common.block.CeilingBannerBlock;
-import net.mehvahdjukaar.amendments.common.tile.CeilingBannerBlockTile;
 import net.mehvahdjukaar.moonlight.api.client.util.RotHlpr;
-import net.minecraft.client.model.geom.ModelLayers;
-import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BannerRenderer;
-import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
@@ -44,7 +40,7 @@ public class CeilingBannerBlockTileRenderer extends BannerRenderer {
 
         poseStack.pushPose();
         poseStack.scale(-0.6666667F, -0.6666667F, 0.6666667F);
-        VertexConsumer buffer = ModelBakery.BANNER_BASE.buffer(bufferSource, RenderType::entitySolid);
+        VertexConsumer buffer = ModelBakery.BANNER_BASE.buffer(bufferSource, RenderTypes::entitySolid);
 
         this.bar.render(poseStack, buffer, packedLight, packedOverlay);
         BlockPos blockpos = tile.getBlockPos();

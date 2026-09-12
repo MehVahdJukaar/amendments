@@ -1,26 +1,24 @@
 package net.mehvahdjukaar.amendments.client.gui;
 
 import net.mehvahdjukaar.amendments.Amendments;
-import net.mehvahdjukaar.moonlight.api.misc.ForgeOverride;
+import net.mehvahdjukaar.candlelight.api.VirtualOverride;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipPositioner;
-import net.minecraft.client.gui.screens.inventory.tooltip.DefaultTooltipPositioner;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.Arrays;
 import java.util.Locale;
 
 public class InkButton extends AbstractWidget {
 
-    protected static final ResourceLocation[] textures = Arrays.stream(Ink.values())
+    protected static final Identifier[] textures = Arrays.stream(Ink.values())
             .map(t -> Amendments.res("textures/gui/ink_well/" +
-                    t.name().toLowerCase(Locale.ROOT) + ".png")).toArray(ResourceLocation[]::new);
+                    t.name().toLowerCase(Locale.ROOT) + ".png")).toArray(Identifier[]::new);
 
     private final Runnable clickCallback;
     private int type = 0;
@@ -53,7 +51,7 @@ public class InkButton extends AbstractWidget {
         this.clickCallback.run();
     }
 
-    @ForgeOverride
+    @VirtualOverride("neoforge")
     public void onClick(double mouseX, double mouseY, int button) {
         this.onClick(mouseX, mouseY);
     }

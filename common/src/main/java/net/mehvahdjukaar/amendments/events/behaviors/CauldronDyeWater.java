@@ -47,7 +47,7 @@ public class CauldronDyeWater implements BlockUse {
 
                 DyeCauldronBlock.playDyeSoundAndConsume(state, pos, level, player, stack);
 
-                return InteractionResult.sidedSuccess(level.isClientSide);
+                return InteractionResult.SUCCESS;
             }
         }
         return InteractionResult.PASS;

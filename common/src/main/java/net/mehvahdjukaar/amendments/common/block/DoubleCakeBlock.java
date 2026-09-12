@@ -5,7 +5,7 @@ import net.mehvahdjukaar.amendments.configs.CommonConfigs;
 import net.mehvahdjukaar.amendments.integration.CompatHandler;
 import net.mehvahdjukaar.amendments.integration.SuppCompat;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
-import net.mehvahdjukaar.moonlight.api.misc.ForgeOverride;
+import net.mehvahdjukaar.candlelight.api.VirtualOverride;
 import net.mehvahdjukaar.moonlight.api.platform.ForgeHelper;
 import net.mehvahdjukaar.moonlight.api.util.math.MthUtils;
 import net.minecraft.core.BlockPos;
@@ -13,7 +13,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -69,15 +69,15 @@ public class DoubleCakeBlock extends DirectionalCakeBlock {
     }
 
     @Override
-    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
+    protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
         Item item = stack.getItem();
 
         if (stack.is(ItemTags.CANDLES) && Block.byItem(item) instanceof CandleBlock) {
             if (hitResult.getDirection() == Direction.UP) {
                 //try place candle on cake
-                return ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION;
+                return InteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION;
             }
-            return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION; //blocks candle interaction
+            return InteractionResult.TRY_WITH_EMPTY_HAND; //blocks candle interaction
         }
         return super.useItemOn(stack, state, level, pos, player, hand, hitResult);
     }
@@ -123,7 +123,7 @@ public class DoubleCakeBlock extends DirectionalCakeBlock {
     }
 
     //@Override
-    @ForgeOverride
+    @VirtualOverride("neoforge")
     public SoundType getSoundType(BlockState state, LevelReader world, BlockPos pos, Entity entity) {
         return mimic.getSoundType();
     }
@@ -134,15 +134,15 @@ public class DoubleCakeBlock extends DirectionalCakeBlock {
     }
 
     //@Override
-    @ForgeOverride
+    @VirtualOverride("neoforge")
     public float getExplosionResistance(BlockState state, BlockGetter level, BlockPos pos, Explosion explosion) {
         return level instanceof Level l ? Math.max(ForgeHelper.getExplosionResistance(mimic, l, pos, explosion),
                 state.getBlock().getExplosionResistance()) : super.getExplosionResistance();
     }
 
     @Override
-    public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state) {
-        return mimic.getBlock().getCloneItemStack(level, pos, state);
+    protected ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state, boolean includeData) {
+        return mimic.getBlock().getCloneItemStack(level, pos, state, includeData);
     }
 
 }

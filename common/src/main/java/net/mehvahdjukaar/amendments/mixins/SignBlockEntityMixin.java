@@ -28,7 +28,7 @@ public abstract class SignBlockEntityMixin extends BlockEntity{
             // We're already swinging via CeilingHangingSignBlockMixin
             return;
         }
-        if (level.isClientSide && ClientConfigs.SWINGING_SIGNS.get() && sign instanceof ExtendedHangingSign te) {
+        if (level.isClientSide() && ClientConfigs.SWINGING_SIGNS.get() && sign instanceof ExtendedHangingSign te) {
             te.amendments$getExtension().clientTick(level, pos, state);
         }
     }

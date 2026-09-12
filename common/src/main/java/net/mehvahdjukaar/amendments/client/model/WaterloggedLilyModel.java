@@ -1,104 +1,73 @@
 package net.mehvahdjukaar.amendments.client.model;
 
-import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.serialization.MapCodec;
 import net.mehvahdjukaar.amendments.common.block.WaterloggedLilyBlock;
 import net.mehvahdjukaar.amendments.common.tile.WaterloggedLilyBlockTile;
 import net.mehvahdjukaar.amendments.configs.ClientConfigs;
-import net.mehvahdjukaar.moonlight.api.client.model.BakedQuadsTransformer;
-import net.mehvahdjukaar.moonlight.api.client.model.CustomBakedModel;
+import net.mehvahdjukaar.moonlight.api.client.model.CustomBlockModel;
+import net.mehvahdjukaar.moonlight.api.client.model.CustomUnbakedModel;
 import net.mehvahdjukaar.moonlight.api.client.model.ExtraModelData;
+import net.mehvahdjukaar.moonlight.api.client.model.QuadEmitter;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.block.BlockModelShaper;
-import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.block.model.ItemOverrides;
-import net.minecraft.client.renderer.block.model.ItemTransforms;
+import net.minecraft.client.renderer.block.BlockAndTintGetter;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.resources.model.BakedModel;
-import net.minecraft.core.Direction;
+import net.minecraft.client.resources.model.ModelBaker;
+import net.minecraft.client.resources.model.ResolvableModel;
+import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.Nullable;
+import org.joml.Matrix4f;
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class WaterloggedLilyModel implements CustomBakedModel {
-
-    public WaterloggedLilyModel() {
-    }
-
-    private final BlockModelShaper blockModelShaper = Minecraft.getInstance().getBlockRenderer().getBlockModelShaper();
+public class WaterloggedLilyModel implements CustomBlockModel {
 
     @Override
-    public List<BakedQuad> getBlockQuads(BlockState state, Direction side,
-                                         RandomSource rand, RenderType renderType,
-                                         ExtraModelData data) {
+    public void emitQuads(QuadEmitter emitter, @Nullable BlockAndTintGetter level, @Nullable BlockPos pos,
+                          @Nullable BlockState state, RandomSource random, ExtraModelData data) {
         BlockState mimic = data.get(WaterloggedLilyBlockTile.MIMIC_KEY);
-        List<BakedQuad> quads = new ArrayList<>();
+        if (mimic == null || mimic.isAir() || state == null) return;
 
-        if (mimic != null && !mimic.isAir()) {
+        double dy = 1 + (state.getValue(WaterloggedLilyBlock.EXTENDED) ? 0 : ClientConfigs.LILY_OFFSET.get());
+        emitter.transform(new Matrix4f().translate(0, (float) dy, 0));
+        emitter.emitAll(blockModel(mimic), level, pos, mimic, random);
+        emitter.transform((Matrix4f) null);
+    }
 
-            BakedModel model = blockModelShaper.getBlockModel(mimic);
-            List<BakedQuad> mimicQuads = model.getQuads(mimic, side, rand);
+    @Override
+    public TextureAtlasSprite getParticle(ExtraModelData data) {
+        BlockState mimic = data.get(WaterloggedLilyBlockTile.MIMIC_KEY);
+        if (mimic != null && !mimic.isAir()) return blockModel(mimic).particleMaterial().sprite();
+        return blockModel(Blocks.LILY_PAD.defaultBlockState()).particleMaterial().sprite();
+    }
 
-            PoseStack pose = new PoseStack();
-            double v = 1 + (state.getValue(WaterloggedLilyBlock.EXTENDED) ? 0 : ClientConfigs.LILY_OFFSET.get());
-            pose.translate(0, (float) v, 0);
-            BakedQuadsTransformer transformer = BakedQuadsTransformer.create()
-                    .applyingTransform(pose.last().pose());
-            quads.addAll(transformer.transformAll(mimicQuads));
+    @Override
+    public @Nullable Object geometryKey(BlockAndTintGetter level, BlockPos pos, BlockState state,
+                                        RandomSource random, ExtraModelData data) {
+        return data.get(WaterloggedLilyBlockTile.MIMIC_KEY);
+    }
 
-            return quads;
+    private static BlockStateModel blockModel(BlockState state) {
+        return Minecraft.getInstance().getBlockRenderer().getBlockModel(state);
+    }
+
+    public record Unbaked() implements CustomUnbakedModel {
+
+        public static final MapCodec<Unbaked> CODEC = MapCodec.unit(Unbaked::new);
+
+        @Override
+        public CustomBlockModel bake(ModelBaker baker) {
+            return new WaterloggedLilyModel();
         }
 
-        return quads;
-    }
-
-
-    @Override
-    public TextureAtlasSprite getBlockParticle(ExtraModelData data) {
-        BlockState mimic = data.get(WaterloggedLilyBlockTile.MIMIC_KEY);
-        if (mimic != null && !mimic.isAir()) {
-
-            BakedModel model = blockModelShaper.getBlockModel(mimic);
-            try {
-                return model.getParticleIcon();
-            } catch (Exception ignored) {
-            }
-
+        @Override
+        public MapCodec<? extends CustomUnbakedModel> codec() {
+            return CODEC;
         }
-        return blockModelShaper.getBlockModel(Blocks.LILY_PAD.defaultBlockState()).getParticleIcon();
-    }
 
-
-    @Override
-    public boolean useAmbientOcclusion() {
-        return false;
-    }
-
-    @Override
-    public boolean isGui3d() {
-        return false;
-    }
-
-    @Override
-    public boolean usesBlockLight() {
-        return false;
-    }
-
-    @Override
-    public boolean isCustomRenderer() {
-        return false;
-    }
-
-    @Override
-    public ItemOverrides getOverrides() {
-        return ItemOverrides.EMPTY;
-    }
-
-    @Override
-    public ItemTransforms getTransforms() {
-        return ItemTransforms.NO_TRANSFORMS;
+        @Override
+        public void resolveDependencies(ResolvableModel.Resolver resolver) {
+        }
     }
 }

@@ -2,7 +2,7 @@ package net.mehvahdjukaar.amendments.common.platform;
 
 import net.mehvahdjukaar.moonlight.api.util.Utils;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.FlowerPotBlock;
@@ -16,7 +16,7 @@ import java.util.function.Supplier;
 public class FlowerPotHandlerImpl {
     //vanilla pot flower pots
     //empty pot, map(flower item registry name, full block provider)
-    private static Map<Block, Map<ResourceLocation, Supplier<? extends Block>>> FULL_POTS;
+    private static Map<Block, Map<Identifier, Supplier<? extends Block>>> FULL_POTS;
 
     public static Block getFullPot(FlowerPotBlock emptyPot, Block flowerBlock) {
         return FULL_POTS.get(emptyPot.getEmptyPot()).getOrDefault(Utils.getID(flowerBlock), () -> Blocks.AIR).get();

@@ -52,7 +52,7 @@ class DirectionalCakeConversion implements BlockUse {
         if (!(CommonConfigs.DOUBLE_CAKES.get() && stack.is(Items.CAKE))) {
             //for candles. normal cakes have no drops
             BlockState newState = ModRegistry.DIRECTIONAL_CAKE.get().defaultBlockState();
-            if (world.isClientSide) world.setBlock(pos, newState, 3);
+            if (world.isClientSide()) world.setBlock(pos, newState, 3);
             BlockHitResult raytrace = new BlockHitResult(
                     new Vec3(pos.getX(), pos.getY(), pos.getZ()), hit.getDirection(), pos, false);
 

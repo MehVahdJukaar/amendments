@@ -6,7 +6,7 @@ import net.mehvahdjukaar.moonlight.api.resources.RPUtils;
 import net.mehvahdjukaar.moonlight.api.resources.textures.Palette;
 import net.mehvahdjukaar.moonlight.api.resources.textures.Respriter;
 import net.mehvahdjukaar.moonlight.api.resources.textures.TextureImage;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.ResourceManager;
 import org.jetbrains.annotations.Nullable;
 
@@ -14,25 +14,25 @@ import java.util.Map;
 
 public class WallLanternTextureGen {
 
-    private static final ResourceLocation IRON_MOUNT = Amendments.res("block/wall_lanterns/wall_lantern");
-    private static final ResourceLocation GOLD_MOUNT = Amendments.res("block/wall_lanterns/wall_lantern_gold");
+    private static final Identifier IRON_MOUNT = Amendments.res("block/wall_lanterns/wall_lantern");
+    private static final Identifier GOLD_MOUNT = Amendments.res("block/wall_lanterns/wall_lantern_gold");
 
     // Lanterns whose texture doesn't sample into a decent mount (colored glass, glowing bulbs, vines)
     // so the recolor comes out garish. They all hang off a plain metal frame anyway, so give them a
     // handmade mount.
-    private static final Map<ResourceLocation, ResourceLocation> HANDMADE_MOUNTS = Map.of(
-            ResourceLocation.fromNamespaceAndPath("suppsquared", "crimson_lantern"), GOLD_MOUNT,
-            ResourceLocation.fromNamespaceAndPath("enderscape", "bulb_lantern"), IRON_MOUNT,
-            ResourceLocation.fromNamespaceAndPath("bountifulfares", "feldspar_lantern"), IRON_MOUNT,
-            ResourceLocation.fromNamespaceAndPath("goodending", "firefly_lantern"), IRON_MOUNT,
-            ResourceLocation.fromNamespaceAndPath("dungeonsdelight", "living_lantern"), IRON_MOUNT,
-            ResourceLocation.fromNamespaceAndPath("darkerdepths", "glowshroom_lantern"), IRON_MOUNT
+    private static final Map<Identifier, Identifier> HANDMADE_MOUNTS = Map.of(
+            Identifier.fromNamespaceAndPath("suppsquared", "crimson_lantern"), GOLD_MOUNT,
+            Identifier.fromNamespaceAndPath("enderscape", "bulb_lantern"), IRON_MOUNT,
+            Identifier.fromNamespaceAndPath("bountifulfares", "feldspar_lantern"), IRON_MOUNT,
+            Identifier.fromNamespaceAndPath("goodending", "firefly_lantern"), IRON_MOUNT,
+            Identifier.fromNamespaceAndPath("dungeonsdelight", "living_lantern"), IRON_MOUNT,
+            Identifier.fromNamespaceAndPath("darkerdepths", "glowshroom_lantern"), IRON_MOUNT
     );
 
     private WallLanternTextureGen() {
     }
 
-    public static TextureImage generate(ResourceManager manager, ResourceLocation lanternTexture) throws Exception {
+    public static TextureImage generate(ResourceManager manager, Identifier lanternTexture) throws Exception {
         try (TextureImage template = TextureImage.open(manager, IRON_MOUNT)) {
             try (TextureImage fullLantern = TextureImage.open(manager, lanternTexture);
                  TextureImage sourceLantern = firstFrame(fullLantern)) {
@@ -127,8 +127,8 @@ public class WallLanternTextureGen {
      * pack can drop its own texture there and win over whatever we make, be it a recolor or a copy
      * of one of our handmade mounts.
      */
-    public static ResourceLocation getSupportTextureLocation(LanternRegistry.LanternType type) {
-        ResourceLocation reg = type.getId();
+    public static Identifier getSupportTextureLocation(LanternRegistry.LanternType type) {
+        Identifier reg = type.getId();
         if (type.isVanilla() && reg.getPath().equals("lantern")) {
             return IRON_MOUNT;
         }
@@ -146,9 +146,9 @@ public class WallLanternTextureGen {
      * or null if it has none and must be generated.
      */
     @Nullable
-    public static ResourceLocation getHandmadeMount(LanternRegistry.LanternType type) {
-        ResourceLocation reg = type.getId();
-        ResourceLocation manual = HANDMADE_MOUNTS.get(reg);
+    public static Identifier getHandmadeMount(LanternRegistry.LanternType type) {
+        Identifier reg = type.getId();
+        Identifier manual = HANDMADE_MOUNTS.get(reg);
         if (manual != null) return manual;
         if (reg.getNamespace().equals("caverns_and_chasms")) {
             return copperMountTexture(reg.getPath());
@@ -164,7 +164,7 @@ public class WallLanternTextureGen {
      * other C&amp;C lantern so it falls back to normal generation.
      */
     @Nullable
-    private static ResourceLocation copperMountTexture(String path) {
+    private static Identifier copperMountTexture(String path) {
         String p = path.startsWith("waxed_") ? path.substring("waxed_".length()) : path;
         return switch (p) {
             case "copper_lantern" -> Amendments.res("block/wall_lanterns/wall_lantern_copper");
@@ -176,11 +176,11 @@ public class WallLanternTextureGen {
         };
     }
 
-    public static ResourceLocation getLanternTextureLocation(ResourceManager manager, LanternRegistry.LanternType type) {
+    public static Identifier getLanternTextureLocation(ResourceManager manager, LanternRegistry.LanternType type) {
         try {
             return RPUtils.findFirstBlockTextureLocation(manager, type.lantern);
         } catch (Exception e) {
-            return ResourceLocation.withDefaultNamespace("block/lantern");
+            return Identifier.withDefaultNamespace("block/lantern");
         }
     }
 }

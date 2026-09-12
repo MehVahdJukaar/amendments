@@ -90,14 +90,14 @@ public class StructureCauldronHack extends Block implements EntityBlock {
                 if (level.getBlockEntity(pos) instanceof LiquidCauldronBlockTile te) {
 
                     var list = HARMFUL_POTS.get();
-                    var pot = list.get(level.random.nextInt(list.size()));
+                    var pot = list.get(level.getRandom().nextInt(list.size()));
                     SoftFluidStack fluidStack = SoftFluidStack.of(
                             MLBuiltinSoftFluids.POTION.getHolder(level),
-                            level.random.nextIntBetweenInclusive(1, 4));
+                            level.getRandom().nextIntBetweenInclusive(1, 4));
                     fluidStack.set(DataComponents.POTION_CONTENTS,
                             new PotionContents(BuiltInRegistries.POTION.wrapAsHolder(pot)));
 
-                    if (level.random.nextFloat() < 0.4) {
+                    if (level.getRandom().nextFloat() < 0.4) {
                         fluidStack.set(MoonlightRegistry.BOTTLE_TYPE.get(), PotionBottleType.SPLASH);
                     }
 
@@ -107,7 +107,7 @@ public class StructureCauldronHack extends Block implements EntityBlock {
             } else {
                 level.setBlockAndUpdate(pos, ModRegistry.DYE_CAULDRON.get().defaultBlockState());
                 if (level.getBlockEntity(pos) instanceof LiquidCauldronBlockTile te) {
-                    var dye = DyeColor.byId(level.random.nextInt(DyeColor.values().length));
+                    var dye = DyeColor.byId(level.getRandom().nextInt(DyeColor.values().length));
                     var fluid = DyeBottleItem.createFluidStack(dye, 3, level);
                     te.getSoftFluidTank().setFluid(fluid);
                     te.setChanged();

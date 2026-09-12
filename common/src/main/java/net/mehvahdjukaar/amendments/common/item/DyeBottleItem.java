@@ -13,7 +13,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.animal.Sheep;
+import net.minecraft.world.entity.animal.sheep.Sheep;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
@@ -114,11 +114,11 @@ public class DyeBottleItem extends Item {
             DyeColor dye = getClosestDye(stack);
             if (sheep.isAlive() && !sheep.isSheared() && sheep.getColor() != dye) {
                 sheep.level().playSound(player, sheep, SoundEvents.DYE_USE, SoundSource.PLAYERS, 1.0F, 1.0F);
-                if (!player.level().isClientSide) {
+                if (!player.level().isClientSide()) {
                     sheep.setColor(dye);
                     stack.shrink(1);
                 }
-                return InteractionResult.sidedSuccess(player.level().isClientSide);
+                return InteractionResult.SUCCESS;
             }
         }
 

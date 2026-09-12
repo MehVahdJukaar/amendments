@@ -14,7 +14,7 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.blockentity.HangingSignRenderer;
 import net.minecraft.client.renderer.blockentity.SignRenderer;
-import net.minecraft.client.resources.model.Material;
+import net.minecraft.client.resources.model.sprite.SpriteId;
 import net.minecraft.world.level.block.SignBlock;
 import net.minecraft.world.level.block.entity.SignBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -38,7 +38,7 @@ public abstract class HangingSignRendererMixin extends SignRenderer {
     private Map<WoodType, HangingSignRenderer.HangingSignModel> hangingSignModels;
 
     @Shadow
-    abstract Material getSignMaterial(WoodType woodType);
+    abstract SpriteId getSignMaterial(WoodType woodType);
 
     @Unique
     private List<ModelPart> amendments$barModel;

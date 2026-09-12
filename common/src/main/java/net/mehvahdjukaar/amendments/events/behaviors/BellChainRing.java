@@ -42,9 +42,9 @@ class BellChainRing implements BlockUse {
             Predicate<BlockState> predicate =
                     state.getBlock() instanceof ChainBlock ? BellChainRing::isVerticalChain : BellChainRing::isRope;
             if (findAndRingBell(world, pos, player, 0, predicate)) {
-                return InteractionResult.sidedSuccess(world.isClientSide);
+                return InteractionResult.SUCCESS;
             }
-            //return InteractionResult.sidedSuccess(world.isClientSide);
+            //return InteractionResult.SUCCESS;
         }
         return InteractionResult.PASS;
     }

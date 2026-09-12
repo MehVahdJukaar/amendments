@@ -27,13 +27,13 @@ import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
 import net.mehvahdjukaar.moonlight.api.platform.RegHelper;
 import net.mehvahdjukaar.moonlight.api.set.BlockSetAPI;
 import net.mehvahdjukaar.moonlight.api.set.BlocksColorAPI;
-import net.minecraft.Util;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.util.Util;
 import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -223,13 +223,13 @@ public class ModRegistry {
 
     public static final Map<LanternRegistry.LanternType, WallLanternBlock> WALL_LANTERNS = new LinkedHashMap<>();
     // Lantern block id -> its wall lantern, so copper wall lanterns can resolve their oxidation/wax siblings.
-    public static final Map<ResourceLocation, WallLanternBlock> WALL_LANTERNS_BY_LANTERN = new HashMap<>();
+    public static final Map<Identifier, WallLanternBlock> WALL_LANTERNS_BY_LANTERN = new HashMap<>();
     public static Supplier<BlockEntityType<WallLanternBlockTile>> WALL_LANTERN_TILE = RegHelper.registerBlockEntityType(res(WALL_LANTERN_NAME), () ->
             PlatHelper.newBlockEntityType(WallLanternBlockTile::new));
 
     private static void registerWallLanterns(Registrator<Block> event) {
         for (LanternRegistry.LanternType type : LanternRegistry.INSTANCE) {
-            ResourceLocation id = res(type.getVariantId("wall"));
+            Identifier id = res(type.getVariantId("wall"));
             var p = BlockBehaviour.Properties.ofFullCopy(type.lantern)
                     .pushReaction(PushReaction.DESTROY)
                     .noLootTable();
@@ -314,7 +314,7 @@ public class ModRegistry {
     private static void registerDoubleCakes(Registrator<Block> event) {
         for (CakeRegistry.CakeType type : CakeRegistry.INSTANCE) {
 
-            ResourceLocation id = res(type.getVariantId("double"));
+            Identifier id = res(type.getVariantId("double"));
             DoubleCakeBlock block = new DoubleCakeBlock(type);
             type.addChild("double_cake", block);
             event.register(id, block);

@@ -4,13 +4,12 @@ package net.mehvahdjukaar.amendments.common.block;
 import com.mojang.serialization.MapCodec;
 import net.mehvahdjukaar.amendments.common.tile.CarpetedBlockTile;
 import net.mehvahdjukaar.amendments.reg.ModBlockProperties;
+import net.mehvahdjukaar.candlelight.api.VirtualOverride;
 import net.mehvahdjukaar.moonlight.api.block.IBlockHolder;
 import net.mehvahdjukaar.moonlight.api.block.IRecolorable;
-import net.mehvahdjukaar.moonlight.api.misc.ForgeOverride;
 import net.mehvahdjukaar.moonlight.api.platform.ForgeHelper;
 import net.mehvahdjukaar.moonlight.api.set.BlocksColorAPI;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
@@ -32,13 +31,10 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
-import net.minecraft.world.level.block.state.properties.SlabType;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
-import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -107,7 +103,7 @@ public class CarpetSlabBlock extends SlabBlock implements EntityBlock, IRecolora
 
     //might cause lag when breaking?
     //@Override
-    @ForgeOverride
+    @VirtualOverride("neoforge")
     public SoundType getSoundType(BlockState state, LevelReader world, BlockPos pos, Entity entity) {
         if (world.getBlockEntity(pos) instanceof CarpetedBlockTile tile) {
             SoundType mixed = tile.getSoundType();
@@ -134,25 +130,13 @@ public class CarpetSlabBlock extends SlabBlock implements EntityBlock, IRecolora
         return drops;
     }
 
-    @ForgeOverride
-    public ItemStack getCloneItemStack(BlockState state, HitResult target, LevelReader level, BlockPos pos, Player player) {
-        if (level.getBlockEntity(pos) instanceof CarpetedBlockTile tile) {
-            if (target instanceof BlockHitResult hs && hs.getDirection() == Direction.UP) {
-                return tile.getHeldBlock(1).getBlock().getCloneItemStack(level, pos, state);
-            }
-            BlockState mimic = tile.getHeldBlock();
-            return mimic.getBlock().getCloneItemStack(level, pos, state);
-        }
-        return super.getCloneItemStack(level, pos, state);
-    }
-
-    @Override
-    public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state) {
+    @VirtualOverride("neoforge")
+    protected ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state, boolean includeData) {
         if (level.getBlockEntity(pos) instanceof CarpetedBlockTile tile) {
             BlockState mimic = tile.getHeldBlock();
-            return mimic.getBlock().getCloneItemStack(level, pos, state);
+            return mimic.getBlock().getCloneItemStack(level, pos, state, includeData);
         }
-        return super.getCloneItemStack(level, pos, state);
+        return super.getCloneItemStack(level, pos, state, includeData);
     }
 
     @Nullable

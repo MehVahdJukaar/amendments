@@ -16,8 +16,8 @@ import net.mehvahdjukaar.amendments.events.ModEvents;
 import net.mehvahdjukaar.amendments.reg.ModConstants;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
-import net.minecraft.Util;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
+import net.minecraft.util.Util;
 
 import java.util.List;
 
@@ -39,9 +39,9 @@ public class AmendmentsFabric implements ModInitializer {
         list.add(ModConstants.WALL_LANTERN_NAME);
         list.add(ModConstants.FALLING_LANTERN_NAME);
     });
-    private static final ResourceLocation LOW_PRIORITY = Amendments.res("low");
+    private static final Identifier LOW_PRIORITY = Amendments.res("low");
 
-    public static ResourceLocation shouldRemap(String namespace, String path) {
+    public static Identifier shouldRemap(String namespace, String path) {
         if (Amendments.OLD_MODS.contains(namespace)) {
             if (NAMES.contains(path)) {
                 return Amendments.res(path);

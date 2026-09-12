@@ -3,9 +3,10 @@ package net.mehvahdjukaar.amendments.client;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormatElement;
 import net.mehvahdjukaar.amendments.Amendments;
-import net.minecraft.Util;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.client.renderer.rendertype.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
+import net.minecraft.resources.Identifier;
+import net.minecraft.util.Util;
 
 import java.util.function.Function;
 
@@ -22,8 +23,8 @@ public abstract class ModRenderTypes extends RenderType {
             .build();
 
     // clone of render type TEXT with equivalent shader in vanilla (using crumbling) because iris hard crashes the game when this is used...
-    public static final Function<ResourceLocation, RenderType> ENTITY_LIT = Util.memoize(
-            resourceLocation -> RenderType.create(
+    public static final Function<Identifier, RenderType> ENTITY_LIT = Util.memoize(
+            resourceLocation -> RenderTypes.create(
                     Amendments.res("entity_lit").toString(),
                     POSITION_COLOR_TEX,
                     VertexFormat.Mode.QUADS,

@@ -1,87 +1,88 @@
-package net.mehvahdjukaar.amendments.integration;
+//TODO: add back. no 26.1.2 flan yet, uncomment when it ports
+//package net.mehvahdjukaar.amendments.integration;
 
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.player.Player;
-import org.jetbrains.annotations.NotNull;
+//import net.minecraft.core.BlockPos;
+//import net.minecraft.world.entity.Entity;
+//import net.minecraft.world.entity.player.Player;
+//import org.jetbrains.annotations.NotNull;
 
-public final class FlanCompat  {
+//public final class FlanCompat  {
 
-    public static boolean canBreak(@NotNull Player player, @NotNull BlockPos pos) {
-       /*
-        if (player.level().isClientSide) return true; //should only be used from server but client can call too
-        try {
-            ClaimStorage storage = ClaimStorage.get((ServerLevel) player.level());
-            IPermissionContainer claim = storage.getForPermissionCheck(pos);
-            return claim.canInteract((ServerPlayer) player, BuiltinPermission.BREAK, pos, true);
-        } catch (Exception e) {
-            Amendments.LOGGER.error("Failed call break block event: [Player: {}, Pos: {}]", player, pos, e);
-            return true;
-        }*/
-        return true;
-    }
+//    public static boolean canBreak(@NotNull Player player, @NotNull BlockPos pos) {
+//       /*
+//        if (player.level().isClientSide) return true; //should only be used from server but client can call too
+//        try {
+//            ClaimStorage storage = ClaimStorage.get((ServerLevel) player.level());
+//            IPermissionContainer claim = storage.getForPermissionCheck(pos);
+//            return claim.canInteract((ServerPlayer) player, BuiltinPermission.BREAK, pos, true);
+//        } catch (Exception e) {
+//            Amendments.LOGGER.error("Failed call break block event: [Player: {}, Pos: {}]", player, pos, e);
+//            return true;
+//        }*/
+//        return true;
+//    }
 
-    public static boolean canPlace(@NotNull Player player, @NotNull BlockPos pos) {
-      /*
-        if (player.level().isClientSide) return true; //should only be used from server but client can call too
-        try {
-            ClaimStorage storage = ClaimStorage.get((ServerLevel) player.level());
-            IPermissionContainer claim = storage.getForPermissionCheck(pos);
-            return claim.canInteract((ServerPlayer) player, BuiltinPermission.PLACE, pos);
-        } catch (Exception e) {
-            Amendments.LOGGER.error("Failed call place block event: [Player: {}, Pos: {}]", player, pos, e);
-            return true;
-        }*/
-        return true;
-    }
+//    public static boolean canPlace(@NotNull Player player, @NotNull BlockPos pos) {
+//      /*
+//        if (player.level().isClientSide) return true; //should only be used from server but client can call too
+//        try {
+//            ClaimStorage storage = ClaimStorage.get((ServerLevel) player.level());
+//            IPermissionContainer claim = storage.getForPermissionCheck(pos);
+//            return claim.canInteract((ServerPlayer) player, BuiltinPermission.PLACE, pos);
+//        } catch (Exception e) {
+//            Amendments.LOGGER.error("Failed call place block event: [Player: {}, Pos: {}]", player, pos, e);
+//            return true;
+//        }*/
+//        return true;
+//    }
 
-    public static boolean canReplace(@NotNull Player player, @NotNull BlockPos pos) {
-       /*
-        if (player.level().isClientSide) return true; //should only be used from server but client can call too
-        try {
-            ClaimStorage storage = ClaimStorage.get((ServerLevel) player.level());
-            IPermissionContainer claim = storage.getForPermissionCheck(pos);
-            return claim.canInteract((ServerPlayer) player, BuiltinPermission.PLACE, pos);
-        } catch (Exception e) {
-            Amendments.LOGGER.error("Failed call replace block event: [Player: {}, Pos: {}]", player, pos, e);
-            return true;
-        }
+//    public static boolean canReplace(@NotNull Player player, @NotNull BlockPos pos) {
+//       /*
+//        if (player.level().isClientSide) return true; //should only be used from server but client can call too
+//        try {
+//            ClaimStorage storage = ClaimStorage.get((ServerLevel) player.level());
+//            IPermissionContainer claim = storage.getForPermissionCheck(pos);
+//            return claim.canInteract((ServerPlayer) player, BuiltinPermission.PLACE, pos);
+//        } catch (Exception e) {
+//            Amendments.LOGGER.error("Failed call replace block event: [Player: {}, Pos: {}]", player, pos, e);
+//            return true;
+//        }
 
-        */
-        return true;
-    }
+//        */
+//        return true;
+//    }
 
-    public static boolean canAttack(@NotNull Player player, @NotNull Entity victim) {
-        /*
-        if (player.level().isClientSide) return true; //should only be used from server but client can call too
-        try {
-            ClaimStorage storage = ClaimStorage.get((ServerLevel) player.level());
-            IPermissionContainer claim = storage.getForPermissionCheck(victim.blockPosition());
-            if (victim instanceof ServerPlayer) {
-                return claim.canInteract((ServerPlayer) player, BuiltinPermission.HURTPLAYER, victim.blockPosition());
-            } else {
-                return claim.canInteract((ServerPlayer) player, BuiltinPermission.HURTANIMAL, victim.blockPosition());
-            }
-        } catch (Exception e) {
-            Supplementaries.LOGGER.error("Failed call attack entity event: [Player: {}, Victim: {}]", player, victim, e);
-            return true;
-        }*/
-        return true;
-    }
+//    public static boolean canAttack(@NotNull Player player, @NotNull Entity victim) {
+//        /*
+//        if (player.level().isClientSide) return true; //should only be used from server but client can call too
+//        try {
+//            ClaimStorage storage = ClaimStorage.get((ServerLevel) player.level());
+//            IPermissionContainer claim = storage.getForPermissionCheck(victim.blockPosition());
+//            if (victim instanceof ServerPlayer) {
+//                return claim.canInteract((ServerPlayer) player, BuiltinPermission.HURTPLAYER, victim.blockPosition());
+//            } else {
+//                return claim.canInteract((ServerPlayer) player, BuiltinPermission.HURTANIMAL, victim.blockPosition());
+//            }
+//        } catch (Exception e) {
+//            Supplementaries.LOGGER.error("Failed call attack entity event: [Player: {}, Victim: {}]", player, victim, e);
+//            return true;
+//        }*/
+//        return true;
+//    }
 
-    public static boolean canInteract(@NotNull Player player, @NotNull BlockPos targetPos) {
-        /*
-        if (player.level().isClientSide) return true; //should only be used from server but client can call too
-        try {
-            ClaimStorage storage = ClaimStorage.get((ServerLevel) player.level());
-            IPermissionContainer claim = storage.getForPermissionCheck(targetPos);
-            return claim.canInteract((ServerPlayer) player, BuiltinPermission.INTERACTBLOCK, targetPos);
-        } catch (Exception e) {
-            Amendments.LOGGER.error("Failed call interact event: [Player: {}, Pos: {}]", player, targetPos, e);
-            return true;
-        }
+//    public static boolean canInteract(@NotNull Player player, @NotNull BlockPos targetPos) {
+//        /*
+//        if (player.level().isClientSide) return true; //should only be used from server but client can call too
+//        try {
+//            ClaimStorage storage = ClaimStorage.get((ServerLevel) player.level());
+//            IPermissionContainer claim = storage.getForPermissionCheck(targetPos);
+//            return claim.canInteract((ServerPlayer) player, BuiltinPermission.INTERACTBLOCK, targetPos);
+//        } catch (Exception e) {
+//            Amendments.LOGGER.error("Failed call interact event: [Player: {}, Pos: {}]", player, targetPos, e);
+//            return true;
+//        }
 
-         */
-        return true;
-    }
-}
+//         */
+//        return true;
+//    }
+//}

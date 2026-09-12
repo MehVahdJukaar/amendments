@@ -87,7 +87,7 @@ public class LiquidCauldronBlockTile extends BlockEntity implements IExtraModelD
         super.loadAdditional(tag, registries);
         this.hasGlowInk = tag.getBoolean("glow_ink");
         this.getOrCreateTank(registries).load(tag, registries);
-        if (this.level != null && this.level.isClientSide) {
+        if (this.level != null && this.level.isClientSide()) {
             getSoftFluidTank().refreshTintCache();
             this.requestModelReload();
         }

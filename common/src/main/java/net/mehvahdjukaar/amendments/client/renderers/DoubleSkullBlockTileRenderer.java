@@ -4,7 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.mehvahdjukaar.amendments.common.tile.DoubleSkullBlockTile;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.SkullBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 
@@ -28,7 +28,7 @@ public class DoubleSkullBlockTileRenderer extends SkullWithWaxTileRenderer<Doubl
 
             renderInner(upSkull, pPartialTicks, poseStack, buffer, pCombinedLight, pCombinedOverlay);
 
-            ResourceLocation texture = tile.getWaxTexture();
+            Identifier texture = tile.getWaxTexture();
             if (texture != null) {
                 this.renderWax(poseStack, buffer, pCombinedLight, texture,yawUp);
             }

@@ -4,8 +4,6 @@ import com.google.common.collect.Lists;
 import com.mojang.serialization.MapCodec;
 import net.mehvahdjukaar.amendments.common.tile.LiquidCauldronBlockTile;
 import net.mehvahdjukaar.amendments.configs.CommonConfigs;
-import net.mehvahdjukaar.amendments.integration.AlexCavesCompat;
-import net.mehvahdjukaar.amendments.integration.CompatHandler;
 import net.mehvahdjukaar.amendments.reg.ModBlockProperties;
 import net.mehvahdjukaar.amendments.reg.ModTags;
 import net.mehvahdjukaar.moonlight.api.MoonlightRegistry;
@@ -24,7 +22,7 @@ import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.util.FastColor;
+import net.minecraft.util.ARGB;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.effect.MobEffect;
@@ -52,6 +50,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.StreamSupport;
+
+//import net.mehvahdjukaar.amendments.integration.AlexCavesCompat;
 
 public class LiquidCauldronBlock extends ModCauldronBlock {
 
@@ -140,9 +140,9 @@ public class LiquidCauldronBlock extends ModCauldronBlock {
                     level.gameEvent(entity, GameEvent.BLOCK_CHANGE, pos);
                 }
 
-                if (CompatHandler.ALEX_CAVES) {
-                    AlexCavesCompat.acidDamage(fluid, level, pos, state, entity);
-                }
+                //if (CompatHandler.ALEX_CAVES) {
+                //    AlexCavesCompat.acidDamage(fluid, level, pos, state, entity);
+                //}
             }
 
             //TODO: improve
@@ -193,7 +193,7 @@ public class LiquidCauldronBlock extends ModCauldronBlock {
         if (level.getBlockEntity(pos) instanceof LiquidCauldronBlockTile te) {
             SoftFluidTank tank = te.getSoftFluidTank();
 
-            if (level.random.nextInt(4) == 0) {
+            if (level.getRandom().nextInt(4) == 0) {
                 SoftFluidStack fluid = tank.getFluid();
                 PotionBottleType type = getPotType(fluid);
                 double height = getContentHeight(state);
@@ -206,14 +206,14 @@ public class LiquidCauldronBlock extends ModCauldronBlock {
                         int color = tank.getCachedParticleColor(level, pos);
                         int alpha = type == PotionBottleType.SPLASH ? Mth.floor(38.25F) : 255;
                         ParticleOptions particle = ColorParticleOption.create(ParticleTypes.ENTITY_EFFECT,
-                                FastColor.ARGB32.color(alpha, color));
+                                ARGB.color(alpha, color));
 
                         addPotionParticles(particle, level, pos, 1, height, rand, color);
                     }
                 }
-                if (CompatHandler.ALEX_CAVES) {
-                    AlexCavesCompat.acidParticles(fluid, level, pos, rand, height);
-                }
+                //if (CompatHandler.ALEX_CAVES) {
+                //    AlexCavesCompat.acidParticles(fluid, level, pos, rand, height);
+                //}
 
                 BlockPos blockPos = pos.above();
                 if (fluid.is(MLBuiltinSoftFluids.LAVA) && level.getBlockState(blockPos).isAir() && !level.getBlockState(blockPos).isSolidRender(level, blockPos)) {
@@ -251,9 +251,9 @@ public class LiquidCauldronBlock extends ModCauldronBlock {
     private void addPotionParticles(ParticleOptions type, Level level, BlockPos pos, int count,
                                     double surface, RandomSource rand, int color) {
 
-        float r = FastColor.ARGB32.red(color) / 255f;
-        float g = FastColor.ARGB32.green(color) / 255f;
-        float b = FastColor.ARGB32.blue(color) / 255f;
+        float r = ARGB.red(color) / 255f;
+        float g = ARGB.green(color) / 255f;
+        float b = ARGB.blue(color) / 255f;
         CommonCauldronCode.addSurfaceParticles(type, level, pos, count, surface, rand, r, g, b);
     }
 
@@ -284,8 +284,8 @@ public class LiquidCauldronBlock extends ModCauldronBlock {
 
                 return state;
             } else {
-                if (level.isClientSide)
-                    CommonCauldronCode.addSurfaceParticles(ParticleTypes.SMOKE, level, pos, 12, getContentHeight(state), level.random, 0, 0, 0);
+                if (level.isClientSide())
+                    CommonCauldronCode.addSurfaceParticles(ParticleTypes.SMOKE, level, pos, 12, getContentHeight(state), level.getRandom(), 0, 0, 0);
                 level.playSound(null, pos, SoundEvents.GENERIC_EXTINGUISH_FIRE, SoundSource.BLOCKS, 1.0f, 1.0f);
                 return null;
             }
@@ -296,9 +296,9 @@ public class LiquidCauldronBlock extends ModCauldronBlock {
         for (var effect : effects) {
             var inv = inverse.get(effect);
             if (inv != null && effects.contains(inv)) {
-                if (level.isClientSide)
-                    CommonCauldronCode.addSurfaceParticles(ParticleTypes.POOF, level, pos, 8, getContentHeight(state), level.random,
-                            0, 0.01f + level.random.nextFloat() * 0.1f, 0);
+                if (level.isClientSide())
+                    CommonCauldronCode.addSurfaceParticles(ParticleTypes.POOF, level, pos, 8, getContentHeight(state), level.getRandom(),
+                            0, 0.01f + level.getRandom().nextFloat() * 0.1f, 0);
                 level.playSound(null, pos, SoundEvents.GENERIC_EXTINGUISH_FIRE, SoundSource.BLOCKS, 1.0f, 1.0f);
                 return Blocks.CAULDRON.defaultBlockState();
             }

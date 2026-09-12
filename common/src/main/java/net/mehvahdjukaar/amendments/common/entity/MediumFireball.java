@@ -53,7 +53,7 @@ public class MediumFireball extends ImprovedProjectileEntity implements IVisualT
     @Override
     public void spawnTrailParticles() {
         super.spawnTrailParticles();
-        if (!level().isClientSide) return;
+        if (!level().isClientSide()) return;
         trailEmitter.tick(this, (p, v) -> {
             if (this.isExtinguished) return;
             level().addParticle(ModRegistry.FIREBALL_TRAIL_PARTICLE.get(), p.x, p.y, p.z,
@@ -91,7 +91,7 @@ public class MediumFireball extends ImprovedProjectileEntity implements IVisualT
 
     @Override
     public boolean displayFireAnimation() {
-        if (level().isClientSide && ClientConfigs.FIREBALL_3D.get()) {
+        if (level().isClientSide() && ClientConfigs.FIREBALL_3D.get()) {
             return false;
         }
         return super.displayFireAnimation();
@@ -100,7 +100,7 @@ public class MediumFireball extends ImprovedProjectileEntity implements IVisualT
     @Override
     protected void onHit(HitResult result) {
         super.onHit(result);
-        if (!this.level().isClientSide) {
+        if (!this.level().isClientSide()) {
             if (!this.isExtinguished) {
                 boolean canStartFires = PlatHelper.isMobGriefingOn(this.level(), this);
                 var settings = new FireballExplosion.ExtraSettings();

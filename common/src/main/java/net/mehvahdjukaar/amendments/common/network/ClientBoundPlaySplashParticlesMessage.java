@@ -6,8 +6,6 @@ import net.mehvahdjukaar.amendments.common.block.ModCauldronBlock;
 import net.mehvahdjukaar.amendments.common.tile.LiquidCauldronBlockTile;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.moonlight.api.platform.network.Message;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.network.FriendlyByteBuf;
@@ -55,7 +53,7 @@ public record ClientBoundPlaySplashParticlesMessage(Vec3 hitPos, double speed, f
     public void playSplashAnimation(Level level, BlockPos pos,
                                     int color, int light) {
 
-        RandomSource rand = level.random;
+        RandomSource rand = level.getRandom();
 
         float radius = 1.5f;
 

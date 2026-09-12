@@ -10,7 +10,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
@@ -35,7 +35,7 @@ public class DoubleSkullBlockTile extends EnhancedSkullBlockTile {
     protected SkullBlockEntity innerTileUp = null;
     private Block candleUp = null;
     //client only
-    private ResourceLocation waxTexture = null;
+    private Identifier waxTexture = null;
 
     public DoubleSkullBlockTile(BlockPos pWorldPosition, BlockState pBlockState) {
         super(ModRegistry.SKULL_PILE_TILE.get(), pWorldPosition, pBlockState);
@@ -57,7 +57,7 @@ public class DoubleSkullBlockTile extends EnhancedSkullBlockTile {
         this.innerTileUp = this.loadInnerTile("SkullUp", this.innerTileUp, tag, registries);
         Block b = null;
         if (tag.contains("CandleAbove")) {
-            ResourceLocation candle = ResourceLocation.tryParse(tag.getString("CandleAbove"));
+            Identifier candle = Identifier.tryParse(tag.getString("CandleAbove"));
             var o = BuiltInRegistries.BLOCK.getOptional(candle);
             if (o.isPresent()) b = o.get();
         }
@@ -130,7 +130,7 @@ public class DoubleSkullBlockTile extends EnhancedSkullBlockTile {
         }
     }
 
-    public ResourceLocation getWaxTexture() {
+    public Identifier getWaxTexture() {
         return waxTexture;
     }
 

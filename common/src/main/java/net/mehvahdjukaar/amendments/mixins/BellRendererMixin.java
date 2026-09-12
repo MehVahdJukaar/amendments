@@ -9,7 +9,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BellRenderer;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.entity.BellBlockEntity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -23,7 +23,7 @@ public abstract class BellRendererMixin {
     public void render(BellBlockEntity tile, float partialTicks, PoseStack matrixStackIn,
                        MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn, CallbackInfo info) {
         if (tile instanceof IBellConnection connections && ClientConfigs.BELL_CONNECTION.get()) {
-            ResourceLocation model = switch (connections.amendments$getConnection()) {
+            Identifier model = switch (connections.amendments$getConnection()) {
                 case ROPE -> AmendmentsClient.BELL_ROPE;
                 case CHAIN -> AmendmentsClient.BELL_CHAIN;
                 default -> null;

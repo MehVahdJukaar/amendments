@@ -6,7 +6,6 @@ import com.mojang.math.Axis;
 import net.mehvahdjukaar.amendments.common.tile.HangingSignTileExtension;
 import net.mehvahdjukaar.amendments.configs.ClientConfigs;
 import net.mehvahdjukaar.amendments.integration.CompatHandler;
-import net.mehvahdjukaar.amendments.integration.SuppCompat;
 import net.mehvahdjukaar.amendments.integration.SuppCompatClient;
 import net.mehvahdjukaar.amendments.reg.ModBlockProperties;
 import net.mehvahdjukaar.moonlight.api.client.util.LOD;
@@ -21,18 +20,18 @@ import net.minecraft.client.model.geom.builders.CubeListBuilder;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
-import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.HangingSignRenderer;
 import net.minecraft.client.renderer.blockentity.SignRenderer;
 import net.minecraft.client.renderer.entity.ItemRenderer;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.resources.model.BakedModel;
-import net.minecraft.client.resources.model.Material;
+import net.minecraft.client.resources.model.sprite.SpriteId;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Style;
-import net.minecraft.util.FastColor;
+import net.minecraft.util.ARGB;
 import net.minecraft.util.FormattedCharSequence;
+import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.world.item.BannerPatternItem;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
@@ -97,7 +96,7 @@ public class HangingSignRendererExtension {
     public static void render(SignBlockEntity tile, HangingSignTileExtension extension,  float partialTicks, PoseStack poseStack, MultiBufferSource bufferSource,
                               int light, int overlay, BlockState state,
                               HangingSignRenderer.HangingSignModel model, List<ModelPart> barModel, ModelPart chains,
-                              Material material, Material extensionMaterial, SignRenderer renderer,
+                              SpriteId material, SpriteId extensionMaterial, SignRenderer renderer,
                               float colorMult, boolean translucent) { //color mult for FD. Translucent for rats
 
         poseStack.pushPose();
@@ -115,7 +114,7 @@ public class HangingSignRendererExtension {
         poseStack.mulPose(yaw);
 
         model.evaluateVisibleParts(state);
-        VertexConsumer vertexConsumer = material.buffer(bufferSource, translucent ? RenderType::entityTranslucent : model::renderType);
+        VertexConsumer vertexConsumer = material.buffer(bufferSource, translucent ? RenderTypes::entityTranslucent : model::renderType);
 
         poseStack.scale(1, -1, -1);
         //TODO: ceiling banner rot
@@ -288,22 +287,22 @@ public class HangingSignRendererExtension {
     private static void renderBannerPattern(Level level, SignText sign, PoseStack poseStack, MultiBufferSource bufferSource,
                                             int packedLight, BannerPatternItem banner) {
 
-        Material renderMaterial = SuppCompatClient.getFlagMaterial(level, banner);
+        SpriteId renderMaterial = SuppCompatClient.getFlagMaterial(level, banner);
         if (renderMaterial != null) {
             poseStack.pushPose();
             poseStack.translate(0, -9 / 16f, 1 / 16f + 0.001);
 
             float scale = ClientConfigs.getItemPixelScale() / 14f;
             poseStack.scale(scale, -scale, -1);
-            VertexConsumer consumer = renderMaterial.buffer(bufferSource, RenderType::entityNoOutline);
+            VertexConsumer consumer = renderMaterial.buffer(bufferSource, RenderTypes::entityNoOutline);
 
             int color = sign.getColor().getTextureDiffuseColor();
-            int b = FastColor.ARGB32.blue(color);
-            int g = FastColor.ARGB32.green(color);
-            int r = FastColor.ARGB32.red(color);
+            int b = ARGB.blue(color);
+            int g = ARGB.green(color);
+            int r = ARGB.red(color);
             int light = packedLight;
             if (sign.hasGlowingText()) {
-                light = LightTexture.FULL_BRIGHT;
+                light = LightCoordsUtil.FULL_BRIGHT;
             }
 
             int lu = light & '\uffff';

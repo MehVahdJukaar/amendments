@@ -1,5 +1,6 @@
 pluginManagement {
     repositories {
+        maven { url = uri("https://maven.muon.rip/releases") }
         gradlePluginPortal()
         mavenLocal()
     }

@@ -2,8 +2,6 @@ package net.mehvahdjukaar.amendments.events.behaviors;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
-import net.mehvahdjukaar.amendments.integration.CompatHandler;
-import net.mehvahdjukaar.amendments.integration.FlanCompat;
 import net.mehvahdjukaar.moonlight.api.util.Utils;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
@@ -13,7 +11,6 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -32,6 +29,8 @@ import java.util.ArrayList;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
+
+//import net.mehvahdjukaar.amendments.integration.FlanCompat;
 
 public class InteractEvents {
 
@@ -116,9 +115,9 @@ public class InteractEvents {
 
         ItemUseOnBlock override = ITEM_USE_ON_BLOCK_HP.get(item);
         if (override != null && override.isEnabled()) {
-            if (CompatHandler.FLAN && override.altersWorld() && !FlanCompat.canPlace(player, hit.getBlockPos())) {
-                return InteractionResult.PASS;
-            }
+            //if (CompatHandler.FLAN && override.altersWorld() && !FlanCompat.canPlace(player, hit.getBlockPos())) {
+            //    return InteractionResult.PASS;
+            //}
             if (override.altersWorld() && !Utils.mayPerformBlockAction(player, hit.getBlockPos(), stack)) {
                 return InteractionResult.PASS;
             }
@@ -135,9 +134,9 @@ public class InteractEvents {
 
         for (var override : ITEM_USE_ON_BLOCK.get(item)) {
             if (override != null && override.isEnabled()) {
-                if (CompatHandler.FLAN && override.altersWorld() && !FlanCompat.canPlace(player, hit.getBlockPos())) {
-                    return InteractionResult.PASS;
-                }
+                //if (CompatHandler.FLAN && override.altersWorld() && !FlanCompat.canPlace(player, hit.getBlockPos())) {
+                //    return InteractionResult.PASS;
+                //}
                 //TODO: merge
                 if (override.altersWorld() && !Utils.mayPerformBlockAction(player, hit.getBlockPos(), stack)) {
                     return InteractionResult.PASS;
@@ -154,9 +153,9 @@ public class InteractEvents {
 
         BlockUse o = BLOCK_USE.get(state.getBlock());
         if (o != null && o.isEnabled()) {
-            if (CompatHandler.FLAN && o.altersWorld() && !FlanCompat.canPlace(player, hit.getBlockPos())) {
-                return InteractionResult.PASS;
-            }
+            //if (CompatHandler.FLAN && o.altersWorld() && !FlanCompat.canPlace(player, hit.getBlockPos())) {
+            //    return InteractionResult.PASS;
+            //}
             return o.tryPerformingAction(state, pos, level, player, hand, stack, hit);
         }
         return InteractionResult.PASS;
@@ -165,7 +164,7 @@ public class InteractEvents {
     }
 
     //item clicked overrides
-    public static InteractionResultHolder<ItemStack> onItemUseLP(
+    public static InteractionResult onItemUseLP(
             Player player, Level level, InteractionHand hand, ItemStack stack) {
         Item item = stack.getItem();
 
@@ -173,13 +172,13 @@ public class InteractEvents {
         if (override != null && override.isEnabled()) {
             var ret = override.tryPerformingAction(level, player, hand, stack, null);
             return switch (ret) {
-                case CONSUME -> InteractionResultHolder.consume(stack);
-                case SUCCESS -> InteractionResultHolder.success(stack);
-                case FAIL -> InteractionResultHolder.fail(stack);
-                default -> InteractionResultHolder.pass(stack);
+                case CONSUME -> InteractionResult.CONSUME;
+                case SUCCESS -> InteractionResult.SUCCESS;
+                case FAIL -> InteractionResult.FAIL;
+                default -> InteractionResult.PASS;
             };
         }
-        return InteractionResultHolder.pass(stack);
+        return InteractionResult.PASS;
     }
 
     public static InteractionResult replaceSimilarBlock(Block blockOverride, Player player, ItemStack stack,
@@ -209,7 +208,7 @@ public class InteractEvents {
         level.playSound(player, pos, sound.getPlaceSound(), SoundSource.BLOCKS, (sound.getVolume() + 1.0F) / 2.0F, sound.getPitch() * 0.8F);
         stack.consume(1, player);
 
-        return InteractionResult.sidedSuccess(level.isClientSide);
+        return InteractionResult.SUCCESS;
     }
 
 }

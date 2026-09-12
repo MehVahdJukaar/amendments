@@ -61,7 +61,7 @@ public final class CommonCauldronCode {
         if (canFluidExtinguish) {
             entity.wasTouchingWater = true;
         }
-        if (level.isClientSide) return;
+        if (level.isClientSide()) return;
 
         if (state.getValue(ModCauldronBlock.BOILING) && entity instanceof LivingEntity) {
             entity.hurt(new DamageSource(ModRegistry.BOILING_DAMAGE.getHolder(level)), 1.0F);
@@ -90,7 +90,7 @@ public final class CommonCauldronCode {
 
     private static void playExtinguishSound(Level level, BlockPos pos, Entity entity) {
         level.playSound(null, pos, SoundEvents.GENERIC_EXTINGUISH_FIRE, entity.getSoundSource(),
-                0.7F, 1.6F + (level.random.nextFloat() - level.random.nextFloat()) * 0.4F);
+                0.7F, 1.6F + (level.getRandom().nextFloat() - level.getRandom().nextFloat()) * 0.4F);
     }
 
 
@@ -136,7 +136,7 @@ public final class CommonCauldronCode {
         if (entity instanceof ItemEntity ie) {
             ie.setDefaultPickUpDelay();
         }
-        if (!level.isClientSide) {
+        if (!level.isClientSide()) {
             playSplashEffects(entity, height);
         }
     }
@@ -148,11 +148,11 @@ public final class CommonCauldronCode {
         int count = 2;
         addSurfaceParticles(type, level, pos, count, surface, rand, color, pos.getY() + 5 / 16f, light);
 
-        if (level.random.nextInt(4) == 0) {
+        if (level.getRandom().nextInt(4) == 0) {
             level.playLocalSound(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5,
                     SoundEvents.BUBBLE_COLUMN_UPWARDS_AMBIENT, SoundSource.BLOCKS,
-                    0.4F + level.random.nextFloat() * 0.2F,
-                    0.35F + level.random.nextFloat() * 0.2F, false);
+                    0.4F + level.getRandom().nextFloat() * 0.2F,
+                    0.35F + level.getRandom().nextFloat() * 0.2F, false);
         }
     }
 
@@ -182,7 +182,7 @@ public final class CommonCauldronCode {
         BlockPos pos = BlockPos.containing(entity.position());
         Vec3 hitPos = new Vec3(entity.getX(), pos.getY() + waterHeight, entity.getZ());
 
-        RandomSource rand = level.random;
+        RandomSource rand = level.getRandom();
         // same logic as normal water splash sounds (just on server side)
         if (speed < 0.25F) {
             level.playSound(null, hitPos.x(), hitPos.y(), hitPos.z(),
@@ -264,7 +264,7 @@ public final class CommonCauldronCode {
         for (ItemStack item : itemStacks) {
             ItemEntity iteEntity = new ItemEntity(level, pos.getX() + 0.5, pos.getY() + 0.25, pos.getZ() + 0.5, item);
             iteEntity.setDefaultPickUpDelay();
-            iteEntity.setDeltaMovement(level.random.nextGaussian() * 0.01, 0.375, level.random.nextGaussian() * 0.01);
+            iteEntity.setDeltaMovement(level.getRandom().nextGaussian() * 0.01, 0.375, level.getRandom().nextGaussian() * 0.01);
             level.addFreshEntity(iteEntity);
         }
     }

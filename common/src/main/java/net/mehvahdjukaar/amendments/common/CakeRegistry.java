@@ -5,7 +5,7 @@ import net.mehvahdjukaar.moonlight.api.set.BlockType;
 import net.mehvahdjukaar.moonlight.api.set.BlockTypeRegistry;
 import net.mehvahdjukaar.moonlight.api.util.DummyBlockGetter;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -19,7 +19,7 @@ public class CakeRegistry extends BlockTypeRegistry<CakeRegistry.CakeType> {
 
     public static final CakeRegistry INSTANCE = new CakeRegistry();
 
-    public static final CakeType VANILLA = new CakeType(ResourceLocation.withDefaultNamespace("cake"), Blocks.CAKE);
+    public static final CakeType VANILLA = new CakeType(Identifier.withDefaultNamespace("cake"), Blocks.CAKE);
 
     private CakeRegistry() {
         super(CakeType.class, "cake");
@@ -31,7 +31,7 @@ public class CakeRegistry extends BlockTypeRegistry<CakeRegistry.CakeType> {
     }
 
     @Override
-    public Optional<CakeType> detectTypeFromBlock(Block block, ResourceLocation blockId) {
+    public Optional<CakeType> detectTypeFromBlock(Block block, Identifier blockId) {
         if (block instanceof CakeBlock || (blockId.getPath().contains("cake") && block.defaultBlockState().hasProperty(CakeBlock.BITES))) {
             if (!(block instanceof DirectionalCakeBlock) && !(block instanceof EntityBlock)) {
                 BlockState def = block.defaultBlockState();
@@ -50,7 +50,7 @@ public class CakeRegistry extends BlockTypeRegistry<CakeRegistry.CakeType> {
     public static class CakeType extends BlockType {
         public final Block cake;
 
-        public CakeType(ResourceLocation name, Block cake) {
+        public CakeType(Identifier name, Block cake) {
             super(name);
             this.cake = cake;
         }
