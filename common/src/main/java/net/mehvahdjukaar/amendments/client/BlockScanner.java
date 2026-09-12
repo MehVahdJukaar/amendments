@@ -3,7 +3,7 @@ package net.mehvahdjukaar.amendments.client;
 import com.google.common.collect.ImmutableSet;
 import net.mehvahdjukaar.amendments.Amendments;
 import net.mehvahdjukaar.amendments.integration.CompatHandler;
-//import net.mehvahdjukaar.amendments.integration.FarmersDelightCompat;
+import net.mehvahdjukaar.amendments.integration.FarmersDelightCompat;
 import net.mehvahdjukaar.amendments.integration.SuppCompat;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -40,10 +40,9 @@ public class BlockScanner {
                 torchesBuilder.add(block);
             } else if (CompatHandler.SUPPLEMENTARIES && SuppCompat.isCandleHolder(block)) {
                 candleBuilder.add(block);
+            } else if (CompatHandler.FARMERS_DELIGHT && FarmersDelightCompat.isStandingSign(block)) {
+                fdSignsBuilder.add(block);
             }
-            //else if (CompatHandler.FARMERS_DELIGHT && FarmersDelightCompat.isStandingSign(block)) {
-            //    fdSignsBuilder.add(block);
-            //}
         }
         torchesBuilder.add(Blocks.REDSTONE_TORCH);
         torches = torchesBuilder.build();

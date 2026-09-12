@@ -181,14 +181,14 @@ public class ClientResourceGenerator extends DynamicClientResourceProvider {
             Amendments.LOGGER.error("Vanilla wood type for wood {} was null. This is a bug", w);
             return null;
         }
-        SpriteId signMaterial = hanging ? Sheets.getHangingSignMaterial(vanilla) :
-                Sheets.getSignMaterial(vanilla);
+        SpriteId signMaterial = hanging ? Sheets.getHangingSignSprite(vanilla) :
+                Sheets.getSignSprite(vanilla);
         if (signMaterial == null) {
             try {
                 BlockEntity be = ((EntityBlock) sing).newBlockEntity(BlockPos.ZERO, sing.defaultBlockState());
-                BlockEntityRenderer<?> renderer = Minecraft.getInstance().getBlockEntityRenderDispatcher().getRenderer(be);
+                BlockEntityRenderer<?, ?> renderer = Minecraft.getInstance().getBlockEntityRenderDispatcher().getRenderer(be);
                 if (renderer instanceof SignRendererAccessor sr) {
-                    signMaterial = sr.invokeGetSignMaterial(vanilla);
+                    signMaterial = sr.invokeGetSignSprite(vanilla);
                 }
             } catch (Exception e) {
                 Amendments.LOGGER.error("Failed to get sign material for wood (from block entity renderer) {}, ", w, e);

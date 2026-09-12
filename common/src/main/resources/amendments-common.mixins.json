@@ -5,6 +5,7 @@
   "package": "net.mehvahdjukaar.amendments.mixins",
   "mixins": [
     "AbstractCauldronBlockMixin",
+    "CompatFarmersDelightSignBlockMixin",
     "AbstractSkullBlockMixin",
     "BellMixin",
     "BellTileEntityMixin",
@@ -47,11 +48,14 @@
     "BellRendererMixin",
     "DisplayCacheMixin",
     "DragonBreathParticleMixin",
+    "CompatFarmersDelightHangingSignMixin",
+    "CompatFarmersDelightSignRendererMixin",
     "HangingSignRendererMixin",
     "MerchantScreenMixin",
-    "SignEditScreenMixin",
+    "SignRenderStateMixin",
     "SignRendererAccessor",
     "SignRendererMixin",
+    "StandingSignRendererMixin",
     "SkullBlockRendererMixin",
     "TradeOfferButtonMixin"
   ],

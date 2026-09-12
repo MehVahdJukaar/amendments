@@ -2,24 +2,26 @@ package net.mehvahdjukaar.amendments.mixins;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.mehvahdjukaar.amendments.AmendmentsClient;
+import net.mehvahdjukaar.amendments.client.renderers.ExtendedSignRenderState;
+import net.mehvahdjukaar.amendments.client.renderers.HangingSignRenderData;
 import net.mehvahdjukaar.amendments.client.renderers.HangingSignRendererExtension;
-import net.mehvahdjukaar.amendments.common.ExtendedHangingSign;
-import net.mehvahdjukaar.amendments.configs.ClientConfigs;
-import net.mehvahdjukaar.amendments.configs.CommonConfigs;
-import net.mehvahdjukaar.amendments.integration.CompatHandler;
-import net.mehvahdjukaar.amendments.integration.SuppCompat;
 import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
+import net.minecraft.client.model.Model;
 import net.minecraft.client.model.geom.ModelPart;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.blockentity.AbstractSignRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.blockentity.HangingSignRenderer;
-import net.minecraft.client.renderer.blockentity.SignRenderer;
+import net.minecraft.client.renderer.blockentity.state.HangingSignRenderState;
+import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
+import net.minecraft.client.renderer.item.ItemModelResolver;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
+import net.minecraft.client.resources.model.sprite.SpriteGetter;
 import net.minecraft.client.resources.model.sprite.SpriteId;
-import net.minecraft.world.level.block.SignBlock;
 import net.minecraft.world.level.block.entity.SignBlockEntity;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.WoodType;
-import org.spongepowered.asm.mixin.Final;
+import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -28,54 +30,33 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.List;
-import java.util.Map;
 
 @Mixin(HangingSignRenderer.class)
-public abstract class HangingSignRendererMixin extends SignRenderer {
+public abstract class HangingSignRendererMixin extends AbstractSignRenderer<HangingSignRenderState> {
 
     @Shadow
-    @Final
-    private Map<WoodType, HangingSignRenderer.HangingSignModel> hangingSignModels;
+    protected abstract Model.Simple getSignModel(HangingSignRenderState state);
 
     @Shadow
-    abstract SpriteId getSignMaterial(WoodType woodType);
+    protected abstract SpriteId getSignSprite(WoodType type);
 
     @Unique
     private List<ModelPart> amendments$barModel;
     @Unique
     private ModelPart amendments$chains;
+    @Unique
+    private SpriteGetter amendments$sprites;
+    @Unique
+    private ItemModelResolver amendments$itemModels;
 
     protected HangingSignRendererMixin(BlockEntityRendererProvider.Context context) {
         super(context);
     }
 
-
-    @Inject(method = "render(Lnet/minecraft/world/level/block/entity/SignBlockEntity;FLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;II)V",
-            at = @At("HEAD"), cancellable = true)
-    public void renderEnhancedSign(SignBlockEntity tile, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource,
-                                   int packedLight, int packedOverlay, CallbackInfo ci) {
-        if ((ClientConfigs.SIGN_ATTACHMENT.get() || ClientConfigs.SWINGING_SIGNS.get() ||
-                CommonConfigs.HANGING_SIGN_ITEM.get()) && tile instanceof ExtendedHangingSign hs) {
-            BlockState blockState = tile.getBlockState();
-            WoodType woodType = SignBlock.getWoodType(blockState.getBlock());
-            //normal model
-            HangingSignRenderer.HangingSignModel model = this.hangingSignModels.get(woodType);
-
-            boolean translucent = woodType.name().equals("rats:pirat");
-            HangingSignRendererExtension.render(tile, hs.amendments$getExtension(),
-                    partialTick, poseStack, bufferSource, packedLight, packedOverlay,
-                    blockState, model, amendments$barModel, amendments$chains,
-                    this.getSignMaterial(woodType),
-                    AmendmentsClient.HANGING_SIGN_EXTENSIONS.get().get(woodType),
-                    this, CompatHandler.SUPPLEMENTARIES ? SuppCompat.getSignColorMult() : 1,
-                    translucent);
-
-            ci.cancel();
-        }
-    }
-
     @Inject(method = "<init>", at = @At("TAIL"))
     public void initEnhancedSign(BlockEntityRendererProvider.Context context, CallbackInfo ci) {
+        this.amendments$sprites = context.sprites();
+        this.amendments$itemModels = context.itemModelResolver();
         if (PlatHelper.isModLoadingValid()) {
             ModelPart model = context.bakeLayer(AmendmentsClient.HANGING_SIGN_EXTENSION);
             this.amendments$barModel = List.of(model.getChild("extension_6"),
@@ -86,4 +67,24 @@ public abstract class HangingSignRendererMixin extends SignRenderer {
         }
     }
 
+    @Inject(method = "extractRenderState", at = @At("TAIL"))
+    public void extractEnhancedSign(SignBlockEntity blockEntity, HangingSignRenderState state, float partialTicks,
+                                    Vec3 cameraPosition, @Nullable ModelFeatureRenderer.CrumblingOverlay breakProgress,
+                                    CallbackInfo ci) {
+        if (this.amendments$chains == null) return;
+        HangingSignRendererExtension.extract(blockEntity, state, partialTicks, this.amendments$itemModels,
+                AmendmentsClient.HANGING_SIGN_EXTENSIONS.get().get(state.woodType));
+    }
+
+    @Override
+    public void submit(HangingSignRenderState state, PoseStack poseStack, SubmitNodeCollector collector, CameraRenderState camera) {
+        HangingSignRenderData data = ((ExtendedSignRenderState) state).amendments$getData();
+        if (data.enhanced) {
+            HangingSignRendererExtension.submit(state, data, poseStack, collector,
+                    this.getSignModel(state), this.getSignSprite(state.woodType),
+                    this.amendments$barModel, this.amendments$chains, this.amendments$sprites);
+        } else {
+            super.submit(state, poseStack, collector, camera);
+        }
+    }
 }

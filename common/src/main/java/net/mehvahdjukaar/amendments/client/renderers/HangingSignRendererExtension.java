@@ -3,36 +3,39 @@ package net.mehvahdjukaar.amendments.client.renderers;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
+import net.mehvahdjukaar.amendments.common.ExtendedHangingSign;
 import net.mehvahdjukaar.amendments.common.tile.HangingSignTileExtension;
 import net.mehvahdjukaar.amendments.configs.ClientConfigs;
+import net.mehvahdjukaar.amendments.configs.CommonConfigs;
 import net.mehvahdjukaar.amendments.integration.CompatHandler;
+import net.mehvahdjukaar.amendments.integration.SuppCompat;
 import net.mehvahdjukaar.amendments.integration.SuppCompatClient;
-import net.mehvahdjukaar.amendments.reg.ModBlockProperties;
 import net.mehvahdjukaar.moonlight.api.client.util.LOD;
 import net.mehvahdjukaar.moonlight.api.client.util.RotHlpr;
 import net.mehvahdjukaar.moonlight.api.client.util.TextUtil;
-import net.mehvahdjukaar.moonlight.api.client.util.VertexUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.model.Model;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.CubeListBuilder;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.blockentity.HangingSignRenderer;
-import net.minecraft.client.renderer.blockentity.SignRenderer;
-import net.minecraft.client.renderer.entity.ItemRenderer;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.blockentity.state.SignRenderState;
+import net.minecraft.client.renderer.item.ItemModelResolver;
+import net.minecraft.client.renderer.item.ItemStackRenderState;
+import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
-import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.client.resources.model.sprite.SpriteGetter;
 import net.minecraft.client.resources.model.sprite.SpriteId;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Style;
 import net.minecraft.util.ARGB;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.util.LightCoordsUtil;
-import net.minecraft.world.item.BannerPatternItem;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -43,7 +46,6 @@ import net.minecraft.world.level.block.entity.SignText;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.RotationSegment;
-import net.minecraft.world.phys.Vec3;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
@@ -55,7 +57,9 @@ public class HangingSignRendererExtension {
     // renderer.getTextOffset(): the @Invoker accessor doesn't reliably virtual-dispatch to FD's deeply
     // nested HangingCanvasSignRenderer override and falls back to the standing-sign offset, throwing the
     // text up off the sign. Every hanging sign uses the same model shape, so a fixed offset is correct here.
-    private static final Vec3 TEXT_OFFSET = new Vec3(0.0, -0.32F, 0.073F);
+    private static final Vector3f TEXT_OFFSET = new Vector3f(0, -0.32F, 0.073F);
+
+    private static final float TEXT_SCALE = 0.0140625F;
 
 
     public static LayerDefinition createMesh() {
@@ -93,240 +97,249 @@ public class HangingSignRendererExtension {
     }
 
 
-    public static void render(SignBlockEntity tile, HangingSignTileExtension extension,  float partialTicks, PoseStack poseStack, MultiBufferSource bufferSource,
-                              int light, int overlay, BlockState state,
-                              HangingSignRenderer.HangingSignModel model, List<ModelPart> barModel, ModelPart chains,
-                              SpriteId material, SpriteId extensionMaterial, SignRenderer renderer,
-                              float colorMult, boolean translucent) { //color mult for FD. Translucent for rats
+    public static void extract(SignBlockEntity tile, SignRenderState state, float partialTicks,
+                               ItemModelResolver itemModels, SpriteId extensionSprite) {
+        HangingSignRenderData data = ((ExtendedSignRenderState) state).amendments$getData();
+        data.enhanced = false;
+        if (!(tile instanceof ExtendedHangingSign hs)) return;
+        if (!ClientConfigs.SIGN_ATTACHMENT.get() && !ClientConfigs.SWINGING_SIGNS.get() &&
+                !CommonConfigs.HANGING_SIGN_ITEM.get()) return;
+
+        HangingSignTileExtension extension = hs.amendments$getExtension();
+        BlockState blockState = tile.getBlockState();
+
+        data.enhanced = true;
+        data.wallSign = !(blockState.getBlock() instanceof CeilingHangingSignBlock);
+        data.attached = !data.wallSign && blockState.hasProperty(BlockStateProperties.ATTACHED) &&
+                blockState.getValue(BlockStateProperties.ATTACHED);
+        data.yaw = data.attached ?
+                -RotationSegment.convertToDegrees(blockState.getValue(CeilingHangingSignBlock.ROTATION)) :
+                getSignAngle(blockState, data.wallSign);
+        data.swing = extension.canSwing() ? extension.getClientAnimation().getAngle(partialTicks) : 0;
+        data.translucent = state.woodType.name().equals("rats:pirat");
+        data.veryNear = LOD.at(tile).isVeryNear();
+        data.colorMult = CompatHandler.SUPPLEMENTARIES ? SuppCompat.getSignColorMult() : 1;
+        data.extensionSprite = extensionSprite;
+
+        if (ClientConfigs.SIGN_ATTACHMENT.get()) {
+            data.left = extension.getLeftAttachment();
+            data.right = extension.getRightAttachment();
+        } else {
+            data.left = null;
+            data.right = null;
+        }
+
+        Level level = tile.getLevel();
+        data.frontFlag = extractDisplayed(data.frontItem, extension.getFrontItem(), level, itemModels);
+        data.backFlag = extractDisplayed(data.backItem, extension.getBackItem(), level, itemModels);
+    }
+
+    private static SpriteId extractDisplayed(ItemStackRenderState out, ItemStack item, Level level,
+                                             ItemModelResolver itemModels) {
+        out.clear();
+        if (item.isEmpty()) return null;
+        //TODO: add back. BannerPatternItem is gone in 26.1 and supplementaries isnt ported yet
+        //if (CompatHandler.SUPPLEMENTARIES && item.getItem() instanceof BannerPatternItem banner) {
+        //    return SuppCompatClient.getFlagMaterial(level, banner);
+        //}
+        itemModels.updateForTopItem(out, item, ItemDisplayContext.FIXED, level, null, 0);
+        return null;
+    }
+
+
+    public static void submit(SignRenderState state, HangingSignRenderData data, PoseStack poseStack,
+                              SubmitNodeCollector collector, Model.Simple model, SpriteId signSprite,
+                              List<ModelPart> barModel, ModelPart chains, SpriteGetter sprites) {
+        int light = state.lightCoords;
+        int overlay = OverlayTexture.NO_OVERLAY;
+        RenderType signType = signSprite.renderType(data.translucent ? RenderTypes::entityTranslucent : model.renderType());
+        var signAtlas = sprites.get(signSprite);
+
+        ModelPart root = model.root();
+        ModelPart board = root.getChild("board");
+        ModelPart plank = root.hasChild("plank") ? root.getChild("plank") : null;
+        ModelPart hangers = root.hasChild("normalChains") ? root.getChild("normalChains") :
+                root.hasChild("vChains") ? root.getChild("vChains") : null;
 
         poseStack.pushPose();
-
-        boolean wallSign = !(state.getBlock() instanceof CeilingHangingSignBlock);
-        boolean attached = !wallSign && state.hasProperty(BlockStateProperties.ATTACHED) && state.getValue(BlockStateProperties.ATTACHED);
         poseStack.translate(0.5, 0.875, 0.5);
 
-        Quaternionf yaw;
-        if (attached) {
-            yaw = Axis.YP.rotationDegrees(-RotationSegment.convertToDegrees(state.getValue(CeilingHangingSignBlock.ROTATION)));
-        } else {
-            yaw = Axis.YP.rotationDegrees(getSignAngle(state, wallSign));
-        }
+        Quaternionf yaw = Axis.YP.rotationDegrees(data.yaw);
         poseStack.mulPose(yaw);
-
-        model.evaluateVisibleParts(state);
-        VertexConsumer vertexConsumer = material.buffer(bufferSource, translucent ? RenderTypes::entityTranslucent : model::renderType);
-
         poseStack.scale(1, -1, -1);
-        //TODO: ceiling banner rot
-
-        boolean visible = model.plank.visible;
-        boolean visibleC = model.normalChains.visible;
-        model.plank.visible = false;
-        if (wallSign) {
-            model.normalChains.visible = false;
-        }
 
         poseStack.pushPose();
 
         Quaternionf pitch = new Quaternionf();
-        if (extension.canSwing()) {
-            float rot = extension.getClientAnimation().getAngle(partialTicks);
-
-            if (!wallSign && attached) {
-                //y swing
-                pitch = Axis.YP.rotationDegrees(rot);
-            } else {
-                pitch = Axis.XP.rotationDegrees(rot);
-            }
-
-            if (!wallSign) {
-                poseStack.translate(0, -0.125, 0);
-            }
+        if (data.swing != 0) {
+            pitch = !data.wallSign && data.attached ? Axis.YP.rotationDegrees(data.swing) : Axis.XP.rotationDegrees(data.swing);
+            if (!data.wallSign) poseStack.translate(0, -0.125, 0);
             poseStack.mulPose(pitch);
-            if (!wallSign) {
-                poseStack.translate(0, 0.125, 0);
-            }
+            if (!data.wallSign) poseStack.translate(0, 0.125, 0);
         }
-
 
         Vector3f norm = Direction.SOUTH.step().rotate(pitch).rotate(yaw);
 
-
-        //model
         poseStack.pushPose();
-
         poseStack.translate(0, 0.25, 0);
-
-
-        model.root.render(poseStack, vertexConsumer, light, overlay);
-        if (wallSign) {
-            chains.render(poseStack, vertexConsumer, light, overlay); //shorter chains
-            model.normalChains.visible = visibleC;
+        collector.submitModelPart(board, poseStack, signType, light, overlay, signAtlas);
+        if (data.wallSign) {
+            //shorter chains so the sign can hang off a post
+            collector.submitModelPart(chains, poseStack, signType, light, overlay, signAtlas);
+        } else if (hangers != null) {
+            collector.submitModelPart(hangers, poseStack, signType, light, overlay, signAtlas);
         }
-        model.plank.visible = visible;
-
         poseStack.popPose();
-
 
         poseStack.scale(1, -1, -1);
 
         Minecraft mc = Minecraft.getInstance();
-        var camera = mc.gameRenderer.getMainCamera();
-        var font = mc.font;
+        Font font = mc.font;
         boolean filtered = mc.isTextFilteringEnabled();
 
-        LOD lod = LOD.at( tile);
-
-
         poseStack.pushPose();
-        renderFront(tile, extension, poseStack, bufferSource, light, overlay, renderer, colorMult, norm, font, filtered, lod);
+        submitSide(state, data, poseStack, collector, light, overlay, true, norm, font, filtered);
         poseStack.popPose();
 
         poseStack.pushPose();
-        renderBack(tile, extension, poseStack, bufferSource, light, overlay, renderer, colorMult, norm, font, filtered, lod);
+        submitSide(state, data, poseStack, collector, light, overlay, false, new Vector3f(norm).mul(-1), font, filtered);
         poseStack.popPose();
 
         poseStack.popPose();
 
         poseStack.translate(0, 0.25, 0);
 
-
-        //Straight stuff
-
-        if (visible) {
-            model.plank.render(poseStack, vertexConsumer, light, overlay);
+        if (plank != null) {
+            collector.submitModelPart(plank, poseStack, signType, light, overlay, signAtlas);
         }
 
-        ModBlockProperties.PostType right = extension.getRightAttachment();
-        ModBlockProperties.PostType left = extension.getLeftAttachment();
-
-        if (!ClientConfigs.SIGN_ATTACHMENT.get()) {
-            right = null;
-            left = null;
-        }
-
-        VertexConsumer vc2 = null;
-        if (right != null || left != null) {
-            vc2 = extensionMaterial.buffer(bufferSource, model::renderType);
-        }
-        if (left != null) {
-            poseStack.pushPose();
-            poseStack.translate(1, 0, 0);
-            barModel.get(left.ordinal()).render(poseStack, vc2, light, overlay);
-            poseStack.popPose();
-        }
-        if (right != null) {
-            poseStack.pushPose();
-            poseStack.mulPose(RotHlpr.Y180);
-            poseStack.translate(1, 0, 0);
-            barModel.get(right.ordinal()).render(poseStack, vc2, light, overlay);
-            poseStack.popPose();
+        if (data.extensionSprite != null && (data.left != null || data.right != null)) {
+            RenderType barType = data.extensionSprite.renderType(model.renderType());
+            var barAtlas = sprites.get(data.extensionSprite);
+            if (data.left != null) {
+                poseStack.pushPose();
+                poseStack.translate(1, 0, 0);
+                collector.submitModelPart(barModel.get(data.left.ordinal()), poseStack, barType, light, overlay, barAtlas);
+                poseStack.popPose();
+            }
+            if (data.right != null) {
+                poseStack.pushPose();
+                poseStack.mulPose(RotHlpr.Y180);
+                poseStack.translate(1, 0, 0);
+                collector.submitModelPart(barModel.get(data.right.ordinal()), poseStack, barType, light, overlay, barAtlas);
+                poseStack.popPose();
+            }
         }
 
         poseStack.popPose();
     }
 
-    private static void renderFront(SignBlockEntity tile, HangingSignTileExtension extension, PoseStack poseStack, MultiBufferSource buffer,
-                                    int light, int overlay, SignRenderer renderer, float colorMult,
-                                    Vector3f norm, Font font, boolean filtered, LOD lod) {
-        ItemStack item = extension.getFrontItem();
+    private static void submitSide(SignRenderState state, HangingSignRenderData data, PoseStack poseStack,
+                                   SubmitNodeCollector collector, int light, int overlay, boolean front,
+                                   Vector3f norm, Font font, boolean filtered) {
+        SignText text = front ? state.frontText : state.backText;
+        SpriteId flag = front ? data.frontFlag : data.backFlag;
+        ItemStackRenderState item = front ? data.frontItem : data.backItem;
 
-        if (item.isEmpty()) {
-            renderer.translateSignText(poseStack, true, TEXT_OFFSET);
-            renderSignText(tile.getFrontText(), font, poseStack, buffer, light,
-                    norm, lod, filtered, tile.getTextLineHeight(), tile.getMaxTextLineWidth(),
-                    colorMult);
-        } else if (CompatHandler.SUPPLEMENTARIES && item.getItem() instanceof BannerPatternItem banner) {
-            renderBannerPattern(tile.getLevel(), tile.getFrontText(), poseStack, buffer, light, banner);
-        } else {
-            poseStack.mulPose(RotHlpr.Y180);
-            renderItem(item, poseStack, buffer, light, overlay, tile.getLevel());
+        if (flag != null) {
+            if (!front) poseStack.mulPose(RotHlpr.Y180);
+            if (text != null) submitFlag(text, poseStack, collector, light, flag);
+        } else if (!item.isEmpty()) {
+            if (front) poseStack.mulPose(RotHlpr.Y180);
+            submitItem(item, poseStack, collector, light, overlay);
+        } else if (text != null) {
+            translateText(poseStack, front);
+            submitText(text, font, poseStack, collector, light, norm, data, filtered,
+                    state.textLineHeight, state.maxTextLineWidth);
         }
     }
 
-    private static void renderBack(SignBlockEntity tile, HangingSignTileExtension extension, PoseStack poseStack, MultiBufferSource buffer,
-                                   int light, int overlay, SignRenderer renderer, float colorMult,
-                                   Vector3f norm, Font font, boolean filtered, LOD lod) {
-        ItemStack item = extension.getBackItem();
-
-        if (item.isEmpty()) {
-            renderer.translateSignText(poseStack, false, TEXT_OFFSET);
-            renderSignText(tile.getBackText(), font, poseStack, buffer, light,
-                    norm.mul(-1), lod, filtered, tile.getTextLineHeight(), tile.getMaxTextLineWidth(),
-                    colorMult);
-        } else if (CompatHandler.SUPPLEMENTARIES && item.getItem() instanceof BannerPatternItem banner) {
-            poseStack.mulPose(RotHlpr.Y180);
-            renderBannerPattern(tile.getLevel(), tile.getBackText(), poseStack, buffer, light, banner);
-        } else {
-            renderItem(item, poseStack, buffer, light, overlay, tile.getLevel());
-        }
+    private static void translateText(PoseStack poseStack, boolean front) {
+        if (!front) poseStack.mulPose(RotHlpr.Y180);
+        poseStack.translate(TEXT_OFFSET.x, TEXT_OFFSET.y, TEXT_OFFSET.z);
+        poseStack.scale(TEXT_SCALE, -TEXT_SCALE, TEXT_SCALE);
     }
-
 
     private static float getSignAngle(BlockState state, boolean attachedToWall) {
-        return attachedToWall ? -(state.getValue(WallSignBlock.FACING)).toYRot() : -((state.getValue(CeilingHangingSignBlock.ROTATION) * 360) / 16.0F);
+        return attachedToWall ? -(state.getValue(WallSignBlock.FACING)).toYRot() :
+                -((state.getValue(CeilingHangingSignBlock.ROTATION) * 360) / 16.0F);
     }
 
-    public static void renderSignText(SignText signText, Font font, PoseStack poseStack,
-                                      MultiBufferSource buffer,
-                                      int light, Vector3f normal, LOD lod, boolean filtered,
-                                      int lineHeight, int lineWidth,
-                                      float colorMult) {
+    private static void submitText(SignText signText, Font font, PoseStack poseStack, SubmitNodeCollector collector,
+                                   int light, Vector3f normal, HangingSignRenderData data, boolean filtered,
+                                   int lineHeight, int lineWidth) {
         TextUtil.RenderProperties properties = TextUtil.renderProperties(signText.getColor(),
-                signText.hasGlowingText(), colorMult, light, Style.EMPTY, normal, lod::isVeryNear);
+                signText.hasGlowingText(), data.colorMult, light, Style.EMPTY, normal, () -> data.veryNear);
 
-        FormattedCharSequence[] formattedCharSequences = signText.getRenderMessages(filtered, (component) -> {
+        FormattedCharSequence[] lines = signText.getRenderMessages(filtered, component -> {
             List<FormattedCharSequence> list = font.split(component, lineWidth);
             return list.isEmpty() ? FormattedCharSequence.EMPTY : list.get(0);
         });
-        for (int i = 0; i < formattedCharSequences.length; i++) {
-            TextUtil.renderLine(formattedCharSequences[i], font, lineHeight * i, poseStack, buffer, properties);
+
+        int color = properties.outline() ? properties.textColor() : properties.darkenedColor();
+        int outline = properties.outline() ? properties.darkenedColor() : 0;
+        int midPoint = 4 * lineHeight / 2;
+        for (int i = 0; i < lines.length; i++) {
+            FormattedCharSequence line = lines[i];
+            if (line == null) continue;
+            float x = -font.width(line) / 2f;
+            collector.submitText(poseStack, x, i * lineHeight - midPoint, line, false,
+                    Font.DisplayMode.POLYGON_OFFSET, properties.light(), color, 0, outline);
         }
     }
 
-    private static void renderBannerPattern(Level level, SignText sign, PoseStack poseStack, MultiBufferSource bufferSource,
-                                            int packedLight, BannerPatternItem banner) {
-
-        SpriteId renderMaterial = SuppCompatClient.getFlagMaterial(level, banner);
-        if (renderMaterial != null) {
-            poseStack.pushPose();
-            poseStack.translate(0, -9 / 16f, 1 / 16f + 0.001);
-
-            float scale = ClientConfigs.getItemPixelScale() / 14f;
-            poseStack.scale(scale, -scale, -1);
-            VertexConsumer consumer = renderMaterial.buffer(bufferSource, RenderTypes::entityNoOutline);
-
-            int color = sign.getColor().getTextureDiffuseColor();
-            int b = ARGB.blue(color);
-            int g = ARGB.green(color);
-            int r = ARGB.red(color);
-            int light = packedLight;
-            if (sign.hasGlowingText()) {
-                light = LightCoordsUtil.FULL_BRIGHT;
-            }
-
-            int lu = light & '\uffff';
-            int lv = light >> 16 & '\uffff';
-
-            VertexUtil.addQuad(consumer, poseStack, -0.4375F, -0.4375F, 0.4375F, 0.4375F,
-                    0.5f + 0.09375f, 1 - 0.0625f, 0.15625f, 0.0625f, r, g, b, 255, lu, lv);
-
-            poseStack.popPose();
-        }
-    }
-
-    public static void renderItem(ItemStack stack, PoseStack poseStack, MultiBufferSource buffer, int light, int overlay, Level level) {
-        ItemRenderer itemRenderer = Minecraft.getInstance().getItemRenderer();
-        BakedModel model = itemRenderer.getModel(stack, level, null, 0);
+    private static void submitFlag(SignText sign, PoseStack poseStack, SubmitNodeCollector collector,
+                                   int packedLight, SpriteId flag) {
         poseStack.pushPose();
-        float z = model.isGui3d() ? 7 / 64f : 5 / 64f;
-        poseStack.translate(0, -9 / 16f, -z);
+        poseStack.translate(0, -9 / 16f, 1 / 16f + 0.001);
+
+        float scale = ClientConfigs.getItemPixelScale() / 14f;
+        poseStack.scale(scale, -scale, -1);
+
+        int color = sign.getColor().getTextureDiffuseColor();
+        int r = ARGB.red(color);
+        int g = ARGB.green(color);
+        int b = ARGB.blue(color);
+        int light = sign.hasGlowingText() ? LightCoordsUtil.FULL_BRIGHT : packedLight;
+        int lu = light & 0xffff;
+        int lv = light >> 16 & 0xffff;
+
+        collector.submitCustomGeometry(poseStack, flag.renderType(tex -> RenderTypes.entityCutout(tex, false)),
+                (pose, consumer) -> addFlagQuad(consumer, pose, r, g, b, lu, lv));
+
+        poseStack.popPose();
+    }
+
+    private static void addFlagQuad(VertexConsumer consumer, PoseStack.Pose pose, int r, int g, int b, int lu, int lv) {
+        float x0 = -0.4375F, y0 = -0.4375F, x1 = 0.4375F, y1 = 0.4375F;
+        float u0 = 0.5f + 0.09375f, v0 = 1 - 0.0625f, u1 = 0.15625f, v1 = 0.0625f;
+        flagVertex(consumer, pose, x0, y1, u1, v0, r, g, b, lu, lv);
+        flagVertex(consumer, pose, x1, y1, u0, v0, r, g, b, lu, lv);
+        flagVertex(consumer, pose, x1, y0, u0, v1, r, g, b, lu, lv);
+        flagVertex(consumer, pose, x0, y0, u1, v1, r, g, b, lu, lv);
+    }
+
+    private static void flagVertex(VertexConsumer consumer, PoseStack.Pose pose, float x, float y,
+                                   float u, float v, int r, int g, int b, int lu, int lv) {
+        //not chained because of MC263524
+        consumer.addVertex(pose.pose(), x, y, 0);
+        consumer.setColor(r, g, b, 255);
+        consumer.setUv(u, v);
+        consumer.setUv1(0, 10);
+        consumer.setUv2(lu, lv);
+        consumer.setNormal(pose, 0, 0, -1);
+    }
+
+    private static void submitItem(ItemStackRenderState item, PoseStack poseStack, SubmitNodeCollector collector,
+                                   int light, int overlay) {
+        poseStack.pushPose();
+        boolean flat = item.getModelBoundingBox().getZsize() <= 1 / 16f;
+        poseStack.translate(0, -9 / 16f, -(flat ? 5 / 64f : 7 / 64f));
 
         float scale = ClientConfigs.getItemPixelScale() / 16f;
         poseStack.scale(scale, scale, scale);
 
-        itemRenderer.render(stack, ItemDisplayContext.FIXED, true, poseStack, buffer, light, overlay, model);
+        item.submit(poseStack, collector, light, overlay, 0);
         poseStack.popPose();
     }
-
 }
