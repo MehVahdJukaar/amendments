@@ -3,6 +3,7 @@ package net.mehvahdjukaar.amendments;
 import com.google.common.base.Suppliers;
 import net.mehvahdjukaar.amendments.client.ClientResourceGenerator;
 import net.mehvahdjukaar.amendments.client.ItemHoldingAnimationsManager;
+import net.mehvahdjukaar.amendments.client.ModRenderTypes;
 import net.mehvahdjukaar.amendments.client.colors.BrewingStandColor;
 import net.mehvahdjukaar.amendments.client.colors.CarpetBlockColor;
 import net.mehvahdjukaar.amendments.client.colors.MimicBlockColor;
@@ -141,6 +142,7 @@ public class AmendmentsClient {
         RegHelper.registerDynamicResourceProvider(new ClientResourceGenerator());
 
         ClientHelper.addClientSetup(AmendmentsClient::setup);
+        ClientHelper.addRenderPipelineRegistration(e -> e.register(ModRenderTypes.ENTITY_LIT_PIPELINE));
         ClientHelper.addBlockEntityRenderersRegistration(AmendmentsClient::registerTileRenderers);
         ClientHelper.addBlockModelRegistration(AmendmentsClient::registerBlockModels);
         ClientHelper.addBlockColorsRegistration(AmendmentsClient::registerBlockColors);
@@ -324,8 +326,8 @@ public class AmendmentsClient {
                 }
             }
             if (CompatHandler.CAVERNS_AND_CHASMS) {
-                Item i = BuiltInRegistries.ITEM.get(Identifier.fromNamespaceAndPath("caverns_and_chasms", "music_disc_copy"));
-                RECORD_MATERIALS.put(i, discMaterial(i));
+                Item i = BuiltInRegistries.ITEM.getValue(Identifier.fromNamespaceAndPath("caverns_and_chasms", "music_disc_copy"));
+                if (i != null) RECORD_MATERIALS.put(i, discMaterial(i));
             }
         }
         return RECORD_MATERIALS;

@@ -144,6 +144,7 @@ public class DoubleSkullBlockTile extends EnhancedSkullBlockTile {
 
     @Nullable
     public BlockEntity getSkullTileUp() {
+        if (innerTileUp != null && this.level != null && !innerTileUp.hasLevel()) innerTileUp.setLevel(this.level);
         return this.innerTileUp;
     }
 

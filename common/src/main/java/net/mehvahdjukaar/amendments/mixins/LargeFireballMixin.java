@@ -9,7 +9,6 @@ import net.mehvahdjukaar.amendments.configs.CommonConfigs;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.projectile.hurtingprojectile.LargeFireball;
-import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.HitResult;
 import org.spongepowered.asm.mixin.Mixin;
@@ -24,17 +23,18 @@ public abstract class LargeFireballMixin extends Entity {
         super(entityType, level);
     }
 
-    @WrapOperation(method = "onHit", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;explode(Lnet/minecraft/world/entity/Entity;DDDFZLnet/minecraft/world/level/Level$ExplosionInteraction;)Lnet/minecraft/world/level/Explosion;"))
-    public Explosion amendments$fireballExplosion(Level instance, Entity source, double x, double y, double z,
-                                                  float radius, boolean fire, Level.ExplosionInteraction explosionInteraction, Operation<Explosion> original) {
+    @WrapOperation(method = "onHit", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;explode(Lnet/minecraft/world/entity/Entity;DDDFZLnet/minecraft/world/level/Level$ExplosionInteraction;)V"))
+    public void amendments$fireballExplosion(Level instance, Entity source, double x, double y, double z,
+                                             float radius, boolean fire, Level.ExplosionInteraction explosionInteraction, Operation<Void> original) {
         if (CommonConfigs.FIREBALL_EXPLOSION.get()) {
             var settings = new FireballExplosion.ExtraSettings();
             settings.onFireSeconds = ProjectileStats.GHAST_FIREBALL.indirectHitFireSeconds();
             settings.soundVolume = ProjectileStats.GHAST_FIREBALL.soundVolume();
-            return FireballExplosion.explodeServer(instance, source, null, null,
+            FireballExplosion.explodeServer(instance, source, null, null,
                     x, y, z, radius, fire, explosionInteraction, settings);
+            return;
         }
-        return original.call(instance, source, x, y, z, radius, fire, explosionInteraction);
+        original.call(instance, source, x, y, z, radius, fire, explosionInteraction);
     }
 
     @Inject(method = "onHit", at = @At(value = "HEAD"), cancellable = true)

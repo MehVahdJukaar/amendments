@@ -8,19 +8,19 @@ import net.minecraft.client.model.geom.builders.CubeListBuilder;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
-import org.joml.Matrix4f;
 
-public abstract class ThrownProjectile3DRenderer<E extends Entity> extends EntityRenderer<E> {
+public abstract class ThrownProjectile3DRenderer<E extends Entity, S extends ThrownProjectile3DRenderState>
+        extends EntityRenderer<E, S> {
 
     private final Identifier texture;
     private final float scale;
-
 
     public ThrownProjectile3DRenderer(EntityRendererProvider.Context context, float scale, Identifier texture) {
         super(context);
@@ -28,35 +28,41 @@ public abstract class ThrownProjectile3DRenderer<E extends Entity> extends Entit
         this.texture = texture;
     }
 
-    @Override
-    public void render(E entity, float entityYaw, float partialTick, PoseStack poseStack,
-                       MultiBufferSource bufferSource, int packedLight) {
-        if (entity.tickCount >= 2 || !(this.entityRenderDispatcher.camera.getEntity().distanceToSqr(entity) < 12.25)) {
-            super.render(entity, entityYaw, partialTick, poseStack, bufferSource, packedLight);
-            poseStack.pushPose();
-            poseStack.translate(0, entity.getBbHeight() / 2f, 0);
-            poseStack.scale(scale, scale, scale);
-
-            poseStack.mulPose(Axis.YN.rotationDegrees(180.0F - Mth.rotLerp(partialTick, entity.yRotO, entity.getYRot())));
-            poseStack.mulPose(Axis.XN.rotationDegrees(-Mth.rotLerp(partialTick, entity.xRotO, entity.getXRot())));
-
-
-            if (entity instanceof IVisualTransformationProvider vp) {
-                Matrix4f rotation = vp.amendments$getVisualTransformation(partialTick);
-                poseStack.mulPose(rotation);
-            }
-
-            renderBall(entity, partialTick, poseStack, bufferSource, packedLight);
-            poseStack.popPose();
-        }
-    }
-
-    public abstract void renderBall(E entity, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight);
-
-    @Override
-    public Identifier getTextureLocation(E entity) {
+    public Identifier getTexture() {
         return texture;
     }
+
+    @Override
+    public void extractRenderState(E entity, S state, float partialTicks) {
+        super.extractRenderState(entity, state, partialTicks);
+        state.yRot = Mth.rotLerp(partialTicks, entity.yRotO, entity.getYRot());
+        state.xRot = Mth.rotLerp(partialTicks, entity.xRotO, entity.getXRot());
+        state.visualTransformation = entity instanceof IVisualTransformationProvider vp ?
+                vp.amendments$getVisualTransformation(partialTicks) : null;
+    }
+
+    @Override
+    public void submit(S state, PoseStack poseStack, SubmitNodeCollector collector, CameraRenderState camera) {
+        //freshly shot balls sit inside the shooters face for a tick or two
+        if (state.ageInTicks < 2 && state.distanceToCameraSq < 12.25) return;
+        super.submit(state, poseStack, collector, camera);
+
+        poseStack.pushPose();
+        poseStack.translate(0, state.boundingBoxHeight / 2f, 0);
+        poseStack.scale(scale, scale, scale);
+
+        poseStack.mulPose(Axis.YN.rotationDegrees(180.0F - state.yRot));
+        poseStack.mulPose(Axis.XN.rotationDegrees(-state.xRot));
+
+        if (state.visualTransformation != null) {
+            poseStack.mulPose(state.visualTransformation);
+        }
+
+        submitBall(state, poseStack, collector, camera);
+        poseStack.popPose();
+    }
+
+    protected abstract void submitBall(S state, PoseStack poseStack, SubmitNodeCollector collector, CameraRenderState camera);
 
     public static LayerDefinition createMesh(int size) {
         int r = size / 2;
@@ -79,5 +85,4 @@ public abstract class ThrownProjectile3DRenderer<E extends Entity> extends Entit
 
         return LayerDefinition.create(mesh, 64, 64);
     }
-
 }

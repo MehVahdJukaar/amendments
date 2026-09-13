@@ -1,44 +1,29 @@
 package net.mehvahdjukaar.amendments.client;
 
-import com.mojang.blaze3d.vertex.VertexFormat;
-import com.mojang.blaze3d.vertex.VertexFormatElement;
+import com.mojang.blaze3d.pipeline.RenderPipeline;
 import net.mehvahdjukaar.amendments.Amendments;
+import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.client.renderer.rendertype.RenderSetup;
 import net.minecraft.client.renderer.rendertype.RenderType;
-import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.Util;
 
 import java.util.function.Function;
 
-public abstract class ModRenderTypes extends RenderType {
-    public ModRenderTypes(String name, VertexFormat format, VertexFormat.Mode mode, int bufferSize, boolean affectsCrumbling, boolean sortOnUpload, Runnable setupState, Runnable clearState) {
-        super(name, format, mode, bufferSize, affectsCrumbling, sortOnUpload, setupState, clearState);
-    }
+public class ModRenderTypes {
 
-
-    public static final VertexFormat POSITION_COLOR_TEX = VertexFormat.builder()
-            .add("Position", VertexFormatElement.POSITION)
-            .add("Color", VertexFormatElement.COLOR)
-            .add("UV0", VertexFormatElement.UV0)
+    //entity cutout that ignores both the lightmap and directional shading
+    public static final RenderPipeline ENTITY_LIT_PIPELINE = RenderPipeline.builder(RenderPipelines.ENTITY_EMISSIVE_SNIPPET)
+            .withLocation(Amendments.res("pipeline/entity_lit"))
+            .withShaderDefine("ALPHA_CUTOUT", 0.1F)
+            .withShaderDefine("NO_CARDINAL_LIGHTING")
+            .withShaderDefine("NO_OVERLAY")
+            .withCull(false)
             .build();
 
-    // clone of render type TEXT with equivalent shader in vanilla (using crumbling) because iris hard crashes the game when this is used...
     public static final Function<Identifier, RenderType> ENTITY_LIT = Util.memoize(
-            resourceLocation -> RenderTypes.create(
-                    Amendments.res("entity_lit").toString(),
-                    POSITION_COLOR_TEX,
-                    VertexFormat.Mode.QUADS,
-                    256,
-                    true,
-                    false,
-                    CompositeState.builder()
-                            .setShaderState(RENDERTYPE_CRUMBLING_SHADER)//because it isnt lit
-                            .setTextureState(new TextureStateShard(resourceLocation, false, false))
-                            .setTransparencyState(NO_TRANSPARENCY)
-                            .setOverlayState(OVERLAY)
-                            .createCompositeState(true)
-            )
-    );
-
-
+            texture -> RenderType.create("entity_lit", RenderSetup.builder(ENTITY_LIT_PIPELINE)
+                    .withTexture("Sampler0", texture)
+                    .affectsCrumbling()
+                    .createRenderSetup()));
 }

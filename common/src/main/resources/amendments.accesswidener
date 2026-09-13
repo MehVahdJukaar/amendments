@@ -60,3 +60,12 @@ accessible field net/minecraft/world/entity/Entity wasTouchingWater Z
 # pot fabric
 accessible field net/minecraft/world/level/block/FlowerPotBlock POTTED_BY_CONTENT Ljava/util/Map;
 accessible class net/minecraft/client/gui/screens/MenuScreens$ScreenConstructor
+#entity_lit render type, snippets are all private in vanilla
+accessible field net/minecraft/client/renderer/RenderPipelines ENTITY_EMISSIVE_SNIPPET Lcom/mojang/blaze3d/pipeline/RenderPipeline$Snippet;
+#held lantern draws the vanilla first person arm itself
+accessible method net/minecraft/client/renderer/ItemInHandRenderer renderPlayerArm (Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/SubmitNodeCollector;IFFLnet/minecraft/world/entity/HumanoidArm;)V
+#dragon head render type override
+accessible field net/minecraft/client/renderer/blockentity/SkullBlockRenderer SKIN_BY_TYPE Ljava/util/Map;
+#ink and quill write format codes straight into the page, past MultilineTextField filtering
+accessible field net/minecraft/client/gui/components/MultiLineEditBox textField Lnet/minecraft/client/gui/components/MultilineTextField;
+accessible class net/minecraft/client/gui/components/MultilineTextField$StringView

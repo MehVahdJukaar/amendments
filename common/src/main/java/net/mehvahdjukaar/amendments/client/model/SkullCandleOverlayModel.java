@@ -1,7 +1,5 @@
 package net.mehvahdjukaar.amendments.client.model;
 
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.CubeListBuilder;
@@ -12,12 +10,12 @@ import net.minecraft.client.model.object.skull.SkullModelBase;
 import net.minecraft.util.Mth;
 
 public class SkullCandleOverlayModel extends SkullModelBase {
-    private final ModelPart root;
-    protected final ModelPart head;
 
-    public SkullCandleOverlayModel(ModelPart modelPart) {
-        this.root = modelPart;
-        this.head = modelPart.getChild("head");
+    private final ModelPart head;
+
+    public SkullCandleOverlayModel(ModelPart root) {
+        super(root);
+        this.head = root.getChild("head");
     }
 
     public static LayerDefinition createMesh() {
@@ -29,13 +27,9 @@ public class SkullCandleOverlayModel extends SkullModelBase {
     }
 
     @Override
-    public void setupAnim(float f, float g, float h) {
-        this.head.yRot = g * (Mth.DEG_TO_RAD);
-        this.head.xRot = h * (Mth.DEG_TO_RAD);
-    }
-
-    @Override
-    public void renderToBuffer(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay, int color) {
-        this.root.render(poseStack, buffer, packedLight, packedOverlay, color);
+    public void setupAnim(SkullModelBase.State state) {
+        super.setupAnim(state);
+        this.head.yRot = state.yRot * Mth.DEG_TO_RAD;
+        this.head.xRot = state.xRot * Mth.DEG_TO_RAD;
     }
 }

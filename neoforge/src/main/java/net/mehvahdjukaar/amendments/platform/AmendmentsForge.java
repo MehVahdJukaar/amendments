@@ -41,7 +41,7 @@ public class AmendmentsForge {
 
     private static void registerCapabilities(RegisterCapabilitiesEvent event) {
         event.registerBlockEntity(
-                Capabilities.FluidHandler.BLOCK,
+                Capabilities.Fluid.BLOCK,
                 ModRegistry.LIQUID_CAULDRON_TILE.get(),
                 (myBlockEntity, side) -> SoftFluidTankFluidHandlerWrapper.wrap(myBlockEntity)
         );
@@ -83,9 +83,9 @@ public class AmendmentsForge {
     public void onUseItem(PlayerInteractEvent.RightClickItem event) {
         if (!event.isCanceled()) {
             var ret = ModEvents.onUseItem(event.getEntity(), event.getLevel(), event.getHand());
-            if (ret.getResult() != InteractionResult.PASS) {
+            if (ret != InteractionResult.PASS) {
                 event.setCanceled(true);
-                event.setCancellationResult(ret.getResult());
+                event.setCancellationResult(ret);
             }
         }
     }

@@ -4,7 +4,6 @@ import com.llamalad7.mixinextras.sugar.Local;
 import net.mehvahdjukaar.amendments.common.IBellConnection;
 import net.mehvahdjukaar.amendments.integration.CompatHandler;
 import net.mehvahdjukaar.amendments.integration.SuppCompat;
-import net.minecraft.client.renderer.blockentity.SignRenderer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.Entity;

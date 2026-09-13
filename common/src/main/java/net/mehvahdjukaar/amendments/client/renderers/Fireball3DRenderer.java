@@ -1,15 +1,15 @@
 package net.mehvahdjukaar.amendments.client.renderers;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.mehvahdjukaar.amendments.client.ModRenderTypes;
 import net.mehvahdjukaar.amendments.common.entity.IExtinguishableFireball;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.Identifier;
@@ -20,7 +20,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Function;
 
-public class Fireball3DRenderer<E extends Entity> extends ThrownProjectile3DRenderer<E> {
+public class Fireball3DRenderer<E extends Entity> extends ThrownProjectile3DRenderer<E, Fireball3DRenderState> {
 
     private final ModelPart cube;
     private final ModelPart cubeEmissive;
@@ -47,6 +47,11 @@ public class Fireball3DRenderer<E extends Entity> extends ThrownProjectile3DRend
     }
 
     @Override
+    public Fireball3DRenderState createRenderState() {
+        return new Fireball3DRenderState();
+    }
+
+    @Override
     protected int getBlockLightLevel(E entity, BlockPos pos) {
         if (!isLit(entity) && noOverlayTexture != null) return super.getBlockLightLevel(entity, pos);
         // otherwise its always 15 since its on fire
@@ -54,21 +59,27 @@ public class Fireball3DRenderer<E extends Entity> extends ThrownProjectile3DRend
     }
 
     @Override
-    public void renderBall(E entity, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {
-        boolean hasOverlay = isLit(entity) || noOverlayTexture == null;
-        Identifier mainTexture = hasOverlay ? getTextureLocation(entity) : noOverlayTexture;
-        RenderType mainRedderType = renderTypeFunction.apply(mainTexture);
-        VertexConsumer vertexConsumer = bufferSource.getBuffer(mainRedderType);
-        cube.render(poseStack, vertexConsumer, packedLight, OverlayTexture.NO_OVERLAY);
-        cubeEmissive.render(poseStack, vertexConsumer, LightCoordsUtil.FULL_BRIGHT, OverlayTexture.NO_OVERLAY);
+    public void extractRenderState(E entity, Fireball3DRenderState state, float partialTicks) {
+        super.extractRenderState(entity, state, partialTicks);
+        state.lit = isLit(entity);
+    }
+
+    @Override
+    protected void submitBall(Fireball3DRenderState state, PoseStack poseStack,
+                              SubmitNodeCollector collector, CameraRenderState camera) {
+        boolean hasOverlay = state.lit || noOverlayTexture == null;
+        Identifier mainTexture = hasOverlay ? this.getTexture() : noOverlayTexture;
+        RenderType mainRenderType = renderTypeFunction.apply(mainTexture);
+        collector.submitModelPart(cube, poseStack, mainRenderType, state.lightCoords, OverlayTexture.NO_OVERLAY, null);
+        collector.submitModelPart(cubeEmissive, poseStack, mainRenderType, LightCoordsUtil.FULL_BRIGHT,
+                OverlayTexture.NO_OVERLAY, null);
 
         if (hasOverlay) {
-            float f = (float) entity.tickCount + partialTick;
+            float f = state.ageInTicks;
             RenderType fireRenderType = RenderTypes.energySwirl(overlayTexture,
                     this.fireXOffset(f) % 1.0F, f * 0.01F % 1.0F);
-            VertexConsumer outlineVertexConsumer = bufferSource.getBuffer(fireRenderType);
-
-            overlay.render(poseStack, outlineVertexConsumer, LightCoordsUtil.FULL_BRIGHT, OverlayTexture.NO_OVERLAY);
+            collector.submitModelPart(overlay, poseStack, fireRenderType, LightCoordsUtil.FULL_BRIGHT,
+                    OverlayTexture.NO_OVERLAY, null);
         }
     }
 
@@ -81,6 +92,4 @@ public class Fireball3DRenderer<E extends Entity> extends ThrownProjectile3DRend
     private float fireXOffset(float tickCount) {
         return tickCount * 0.01F;
     }
-
-
 }

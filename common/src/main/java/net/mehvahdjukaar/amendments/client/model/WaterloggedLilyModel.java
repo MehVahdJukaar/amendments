@@ -49,7 +49,7 @@ public class WaterloggedLilyModel implements CustomBlockModel {
     }
 
     private static BlockStateModel blockModel(BlockState state) {
-        return Minecraft.getInstance().getBlockRenderer().getBlockModel(state);
+        return Minecraft.getInstance().getModelManager().getBlockStateModelSet().get(state);
     }
 
     public record Unbaked() implements CustomUnbakedModel {

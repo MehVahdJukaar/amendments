@@ -5,7 +5,7 @@ import net.mehvahdjukaar.amendments.client.renderers.LanternRendererExtension;
 import net.mehvahdjukaar.amendments.client.renderers.TorchRendererExtension;
 import net.mehvahdjukaar.amendments.common.LanternRegistry;
 import net.mehvahdjukaar.amendments.configs.ClientConfigs;
-import net.mehvahdjukaar.moonlight.api.item.IThirdPersonSpecialItemRenderer;
+import net.mehvahdjukaar.moonlight.api.item.ClientAnimationExtension;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
@@ -26,14 +26,14 @@ public class ItemHoldingAnimationsManager {
             LanternRegistry.INSTANCE.getValues().stream()
                     .map(t -> t.lantern.asItem()).filter(i -> i != Items.AIR)
                     .collect(Collectors.toSet()).forEach(item ->
-                            IThirdPersonSpecialItemRenderer.attachToItem(item, anim));
+                            ClientAnimationExtension.attach(item, () -> anim));
         }
         if (ClientConfigs.TORCH_HOLDING.get()) {
             var anim = new TorchRendererExtension();
             BlockScanner.getInstance().getTorches()
                     .stream().map(Block::asItem).filter(i -> i != Items.AIR)
                     .collect(Collectors.toSet()).forEach(item ->
-                            IThirdPersonSpecialItemRenderer.attachToItem(item, anim));
+                            ClientAnimationExtension.attach(item, () -> anim));
         }
         if (ClientConfigs.CANDLE_HOLDER_HOLDING.get()) {
             BlockScanner.getInstance().getCandleHolders()
@@ -42,8 +42,8 @@ public class ItemHoldingAnimationsManager {
                     .filter(i -> i instanceof BlockItem)
                     .map(i -> (BlockItem) i)
                     .collect(Collectors.toSet()).forEach(item ->
-                            IThirdPersonSpecialItemRenderer.attachToItem(item,
-                                    new CandleHolderRendererExtension(item)));
+                            ClientAnimationExtension.attach(item,
+                                    () -> new CandleHolderRendererExtension(item)));
         }
     }
 }

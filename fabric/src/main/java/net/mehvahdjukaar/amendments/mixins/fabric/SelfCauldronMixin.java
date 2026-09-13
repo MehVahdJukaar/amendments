@@ -8,7 +8,7 @@ import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
 import net.mehvahdjukaar.amendments.common.tile.LiquidCauldronBlockTile;
 import net.mehvahdjukaar.moonlight.api.block.ISoftFluidTankProvider;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidStack;
-import net.mehvahdjukaar.moonlight.api.fluids.fabric.SoftFluidStackImpl;
+import net.mehvahdjukaar.moonlight.api.fluids.platform.SoftFluidStackImpl;
 import net.mehvahdjukaar.moonlight.api.util.Utils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.entity.BlockEntity;

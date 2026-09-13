@@ -71,7 +71,7 @@ public class CarpetedBlockModel implements CustomBlockModel {
     }
 
     private static BlockStateModel blockModel(BlockState state) {
-        return Minecraft.getInstance().getBlockRenderer().getBlockModel(state);
+        return Minecraft.getInstance().getModelManager().getBlockStateModelSet().get(state);
     }
 
     private static TextureAtlasSprite particle(BlockState state) {

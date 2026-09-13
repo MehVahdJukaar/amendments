@@ -1,13 +1,14 @@
 package net.mehvahdjukaar.amendments.client.gui;
 
 import net.mehvahdjukaar.amendments.Amendments;
-import net.mehvahdjukaar.candlelight.api.VirtualOverride;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
-import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.client.input.MouseButtonInfo;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 
@@ -25,7 +26,6 @@ public class InkButton extends AbstractWidget {
 
     public InkButton(LecternBookEditScreen screen) {
         super(screen.width / 2 - 130, 90, 52, 50, Component.empty());
-        screen.hasShiftDown();
         refreshTooltip();
         clickCallback = screen::onInkClicked;
     }
@@ -40,25 +40,20 @@ public class InkButton extends AbstractWidget {
     }
 
     @Override
-    public void onClick(double mouseX, double mouseY) {
+    public void onClick(MouseButtonEvent event, boolean doubleClick) {
         int length = Ink.values().length;
-        if (Screen.hasShiftDown()) {
-            this.type = (length + type - 1) % length;
-        } else {
-            this.type = (type + 1) % length;
-        }
+        this.type = (type + (backwards(event) ? -1 : 1) + length) % length;
         this.refreshTooltip();
         this.clickCallback.run();
     }
 
-    @VirtualOverride("neoforge")
-    public void onClick(double mouseX, double mouseY, int button) {
-        this.onClick(mouseX, mouseY);
+    static boolean backwards(MouseButtonEvent event) {
+        return event.hasShiftDown() || event.button() == 1;
     }
 
     @Override
-    protected boolean isValidClickButton(int button) {
-        return super.isValidClickButton(button) || button == 1;
+    protected boolean isValidClickButton(MouseButtonInfo buttonInfo) {
+        return super.isValidClickButton(buttonInfo) || buttonInfo.button() == 1;
     }
 
     public ChatFormatting getChatFormatting() {
@@ -83,8 +78,8 @@ public class InkButton extends AbstractWidget {
     }
 
     @Override
-    protected void renderWidget(GuiGraphics guiGraphics, int i, int j, float f) {
-        guiGraphics.blit(textures[type], this.getX(), this.getY(), 0, 0, width, height, 64, 64);
+    protected void extractWidgetRenderState(GuiGraphicsExtractor guiGraphics, int i, int j, float f) {
+        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, textures[type], this.getX(), this.getY(), 0, 0, width, height, 64, 64);
 
     }
 

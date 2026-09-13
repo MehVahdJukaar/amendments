@@ -67,7 +67,7 @@ public class WallLanternBakedModel implements CustomBlockModel {
     }
 
     private static BlockStateModel blockModel(BlockState state) {
-        return Minecraft.getInstance().getBlockRenderer().getBlockModel(state);
+        return Minecraft.getInstance().getModelManager().getBlockStateModelSet().get(state);
     }
 
     public record Unbaked(BlockStateModel.Unbaked support) implements CustomUnbakedModel {

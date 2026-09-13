@@ -6,53 +6,43 @@ import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 import net.mehvahdjukaar.amendments.common.entity.FireballExplosion;
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.level.Explosion;
-import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.ServerExplosion;
 import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyArg;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import java.util.Set;
+import java.util.List;
 
-//TODO: change in 1.21
-@Mixin(Explosion.class)
+@Mixin(ServerExplosion.class)
 public class ExplosionMixin {
 
-    @WrapOperation(method = "explode", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;hurt(Lnet/minecraft/world/damagesource/DamageSource;F)Z"))
-    public boolean amendments$HurtWithContext(Entity entity, DamageSource source, float amount, Operation<Boolean> original) {
+    @WrapOperation(method = "hurtEntities(Ljava/util/List;)V", at = @At(value = "INVOKE",
+            target = "Lnet/minecraft/world/entity/Entity;hurtServer(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/damagesource/DamageSource;F)Z"))
+    public boolean amendments$HurtWithContext(Entity entity, ServerLevel level, DamageSource source, float amount,
+                                              Operation<Boolean> original) {
         if (((Object) this) instanceof FireballExplosion fe) {
             return fe.hurtHitEntity(entity, source, amount);
-        } else {
-            return original.call(entity, source, amount);
         }
+        return original.call(entity, level, source, amount);
     }
 
-    @WrapWithCondition(method = "explode", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;setDeltaMovement(Lnet/minecraft/world/phys/Vec3;)V"))
-    public boolean amendments$cancelKnockback(Entity instance, Vec3 deltaMovement) {
+    @WrapWithCondition(method = "hurtEntities(Ljava/util/List;)V", at = @At(value = "INVOKE",
+            target = "Lnet/minecraft/world/entity/Entity;push(Lnet/minecraft/world/phys/Vec3;)V"))
+    public boolean amendments$cancelKnockback(Entity instance, Vec3 knockback) {
         return !(((Object) this) instanceof FireballExplosion fe) || fe.hasKnockback();
     }
 
-    @Inject(method = "explode", at = @At(value = "INVOKE",
+    //every position the blast walks through, not just the ones that end up broken
+    @Inject(method = "calculateExplodedPositions", at = @At(value = "INVOKE",
             target = "Lnet/minecraft/world/level/ExplosionDamageCalculator;getBlockExplosionResistance(Lnet/minecraft/world/level/Explosion;Lnet/minecraft/world/level/BlockGetter;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/material/FluidState;)Ljava/util/Optional;"))
-    public void amendments$addBlockSideEffects(CallbackInfo ci, @Local BlockPos pos, @Local BlockState state, @Local Set<BlockPos> set) {
+    public void amendments$addBlockSideEffects(CallbackInfoReturnable<List<BlockPos>> cir, @Local BlockPos pos) {
         if (((Object) this) instanceof FireballExplosion fe) {
-            fe.addVisitedBlock(pos, state);
+            fe.addVisitedBlock(pos);
         }
-    }
-
-    @ModifyArg(method = "finalizeExplosion",
-            index = 5,
-            at = @At(value = "INVOKE",
-                    target = "Lnet/minecraft/world/level/Level;playLocalSound(DDDLnet/minecraft/sounds/SoundEvent;Lnet/minecraft/sounds/SoundSource;FFZ)V"))
-    public float amendments$changeSoundVolume(float volume) {
-        if (((Object) this) instanceof FireballExplosion fe) {
-            return fe.getExplosionVolume();
-        }
-        return volume;
     }
 }

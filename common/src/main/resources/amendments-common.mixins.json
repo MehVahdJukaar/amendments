@@ -46,7 +46,7 @@
   ],
   "client": [
     "BellRendererMixin",
-    "DisplayCacheMixin",
+    "BookEditScreenAccessor",
     "DragonBreathParticleMixin",
     "CompatFarmersDelightHangingSignMixin",
     "CompatFarmersDelightSignRendererMixin",

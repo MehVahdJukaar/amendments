@@ -14,15 +14,16 @@ import net.mehvahdjukaar.moonlight.api.client.model.QuadEmitter;
 import net.mehvahdjukaar.moonlight.api.fluids.MLBuiltinSoftFluids;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluid;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidRegistry;
-import net.mehvahdjukaar.moonlight.api.platform.ClientHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
+import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.ModelBaker;
 import net.minecraft.client.resources.model.ResolvableModel;
 import net.minecraft.client.resources.model.geometry.BakedQuad;
+import net.minecraft.client.resources.model.sprite.SpriteId;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.Identifier;
@@ -64,7 +65,7 @@ public class CauldronBakedModel implements CustomBlockModel {
             return;
         }
 
-        SoftFluid fluid = SoftFluidRegistry.get(access).get(fluidKey);
+        SoftFluid fluid = SoftFluidRegistry.get(access).getValue(fluidKey);
         // fluid might not be received immediately so it can be empty for a split second
         if (fluid == null || MLBuiltinSoftFluids.EMPTY.is(fluidKey)) return;
 
@@ -84,7 +85,8 @@ public class CauldronBakedModel implements CustomBlockModel {
             stillTexture = AmendmentsClient.SUS_STEW;
         }
 
-        TextureAtlasSprite sprite = ClientHelper.getBlockMaterial(stillTexture).sprite();
+        TextureAtlasSprite sprite = Minecraft.getInstance().getAtlasManager()
+                .get(new SpriteId(TextureAtlas.LOCATION_BLOCKS, stillTexture));
         int emissivity = Math.max(glowing ? 14 : 0, fluid.getEmissivity());
         for (BakedQuad q : liquidQuads) {
             emitter.fromQuad(q)

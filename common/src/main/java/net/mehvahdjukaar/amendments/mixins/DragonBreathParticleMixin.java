@@ -14,8 +14,8 @@ public abstract class DragonBreathParticleMixin extends Particle {
     }
 
     @Override
-    protected int getLightColor(float partialTick) {
-        int light = super.getLightColor(partialTick);
+    protected int getLightCoords(float partialTick) {
+        int light = super.getLightCoords(partialTick);
         if (!ClientConfigs.DRAGON_BREATH_EMISSIBE.get()) {
             return light;
         }

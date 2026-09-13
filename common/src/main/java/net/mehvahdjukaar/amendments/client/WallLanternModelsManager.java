@@ -49,6 +49,6 @@ public class WallLanternModelsManager {
         //if (special != null) {
         //    return ClientHelper.getModel(Minecraft.getInstance().getModelManager(), special);
         //}
-        return Minecraft.getInstance().getBlockRenderer().getBlockModel(lanternState);
+        return Minecraft.getInstance().getModelManager().getBlockStateModelSet().get(lanternState);
     }
 }

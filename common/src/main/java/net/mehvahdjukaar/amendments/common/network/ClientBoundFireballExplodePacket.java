@@ -2,58 +2,47 @@ package net.mehvahdjukaar.amendments.common.network;
 
 import net.mehvahdjukaar.amendments.Amendments;
 import net.mehvahdjukaar.amendments.AmendmentsClient;
-import net.mehvahdjukaar.amendments.common.entity.FireballExplosion;
+import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.moonlight.api.platform.network.Message;
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
-import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.network.protocol.game.ClientboundExplodePacket;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.world.level.Explosion;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.phys.Vec3;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
+import java.util.Optional;
 
-public record ClientBoundFireballExplodePacket(ClientboundExplodePacket vanilla, float soundVolume) implements Message {
+public record ClientBoundFireballExplodePacket(Vec3 center, float radius, Optional<Vec3> knockback,
+                                               Holder<SoundEvent> sound, float soundVolume) implements Message {
 
     public static final TypeAndCodec<RegistryFriendlyByteBuf, ClientBoundFireballExplodePacket> TYPE = Message.makeType(
             Amendments.res("client_bound_fireball_explode"), ClientBoundFireballExplodePacket::new);
 
-    public ClientBoundFireballExplodePacket(double x, double y, double z, float power, List<BlockPos> toBlow,
-                                            @Nullable Vec3 knockback, Explosion.BlockInteraction blockInteraction,
-                                            ParticleOptions smallExplosionParticles, ParticleOptions largeExplosionParticles,
-                                            Holder<SoundEvent> explosionSound, float soundVolume) {
-        this(new ClientboundExplodePacket(x, y, z, power, toBlow, knockback, blockInteraction,
-                smallExplosionParticles, largeExplosionParticles, explosionSound), soundVolume);
-    }
-
     public ClientBoundFireballExplodePacket(RegistryFriendlyByteBuf buffer) {
-        this(new ClientboundExplodePacket(buffer),buffer.readFloat());
+        this(Vec3.STREAM_CODEC.decode(buffer), buffer.readFloat(),
+                buffer.readOptional(Vec3.STREAM_CODEC::decode),
+                SoundEvent.STREAM_CODEC.decode(buffer), buffer.readFloat());
     }
 
     @Override
     public void write(RegistryFriendlyByteBuf buf) {
-        vanilla.write(buf);
+        Vec3.STREAM_CODEC.encode(buf, this.center);
+        buf.writeFloat(this.radius);
+        buf.writeOptional(this.knockback, Vec3.STREAM_CODEC::encode);
+        SoundEvent.STREAM_CODEC.encode(buf, this.sound);
         buf.writeFloat(this.soundVolume);
     }
 
     @Override
     public void handle(Context context) {
         AmendmentsClient.withClientLevel(level -> {
-            var settings = new FireballExplosion.ExtraSettings();
-            settings.soundVolume = this.soundVolume;
-            FireballExplosion explosion = new FireballExplosion(level, null, vanilla.getX(), vanilla.getY(), vanilla.getZ(),
-                    vanilla.getPower(), vanilla.getToBlow(),
-                    vanilla.getBlockInteraction(), vanilla.getSmallExplosionParticles(),
-                    vanilla.getLargeExplosionParticles(), vanilla.getExplosionSound(),
-                    settings);
-            explosion.finalizeExplosion(true);
-            context.getPlayer().setDeltaMovement(context.getPlayer().getDeltaMovement()
-                    .add(vanilla.getKnockbackX(), vanilla.getKnockbackY(), vanilla.getKnockbackZ()));
-
+            float pitch = (1.0F + (level.getRandom().nextFloat() - level.getRandom().nextFloat()) * 0.2F) * 0.7F;
+            level.playLocalSound(center.x, center.y, center.z, this.sound.value(), SoundSource.BLOCKS,
+                    this.soundVolume, pitch, false);
+            level.addParticle(ModRegistry.FIREBALL_EMITTER_PARTICLE.get(), center.x, center.y, center.z,
+                    this.radius, 0.0, 0.0);
+            this.knockback.ifPresent(context.getPlayer()::addDeltaMovement);
         });
     }
 
@@ -61,6 +50,4 @@ public record ClientBoundFireballExplodePacket(ClientboundExplodePacket vanilla,
     public Type<? extends CustomPacketPayload> type() {
         return TYPE.type();
     }
-
-
 }

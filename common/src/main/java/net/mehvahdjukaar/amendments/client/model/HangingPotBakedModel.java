@@ -32,7 +32,7 @@ public class HangingPotBakedModel implements CustomBlockModel {
         if (state == null) return;
         BlockState mimic = data.get(MimicBlockTile.MIMIC_KEY);
         if (mimic != null) {
-            emitter.emitAll(Minecraft.getInstance().getBlockRenderer().getBlockModel(mimic), level, pos, mimic, random);
+            emitter.emitAll(Minecraft.getInstance().getModelManager().getBlockStateModelSet().get(mimic), level, pos, mimic, random);
         }
         emitter.emitAll(this.rope, level, pos, state, random);
     }
@@ -41,7 +41,7 @@ public class HangingPotBakedModel implements CustomBlockModel {
     public TextureAtlasSprite getParticle(ExtraModelData data) {
         BlockState mimic = data.get(MimicBlockTile.MIMIC_KEY);
         if (mimic != null && !mimic.isAir()) {
-            return Minecraft.getInstance().getBlockRenderer().getBlockModel(mimic).particleMaterial().sprite();
+            return Minecraft.getInstance().getModelManager().getBlockStateModelSet().get(mimic).particleMaterial().sprite();
         }
         return this.rope.particleMaterial().sprite();
     }

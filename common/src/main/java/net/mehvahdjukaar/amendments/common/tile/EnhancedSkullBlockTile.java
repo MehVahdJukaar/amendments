@@ -3,6 +3,7 @@ package net.mehvahdjukaar.amendments.common.tile;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.ProblemReporter;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.InteractionHand;
@@ -103,7 +104,15 @@ public class EnhancedSkullBlockTile extends BlockEntity {
 
     @Nullable
     public BlockEntity getSkullTile() {
+        //the inner skull is never placed in the world so nothing else gives it a level, and the
+        //renderer needs one to read light and to be extracted at all
+        if (innerTile != null && this.level != null && !innerTile.hasLevel()) innerTile.setLevel(this.level);
         return innerTile;
+    }
+
+    @Nullable
+    public Identifier getWaxTexture() {
+        return null;
     }
 
     protected void tick(Level level, BlockPos pos, BlockState state) {

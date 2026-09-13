@@ -1,13 +1,15 @@
 package net.mehvahdjukaar.amendments.client.gui;
 
 import net.mehvahdjukaar.amendments.Amendments;
-import net.mehvahdjukaar.candlelight.api.VirtualOverride;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.client.input.MouseButtonInfo;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 
@@ -37,30 +39,21 @@ public class QuillButton extends AbstractWidget {
     }
 
     @Override
-    public void onClick(double mouseX, double mouseY) {
+    public void onClick(MouseButtonEvent event, boolean doubleClick) {
         int length = QuillType.values().length;
-        int inc = Screen.hasShiftDown() ? 1 : -1;
-        type =  (type + inc + length) % length;
-        this.refreshTooltip();
-    }
-
-    @VirtualOverride("neoforge")
-    public void onClick(double mouseX, double mouseY, int button) {
-        int length = QuillType.values().length;
-        int inc = (button == 0)? 1 : -1;
-        type =  (type + inc + length) % length;
+        type = (type + (InkButton.backwards(event) ? -1 : 1) + length) % length;
         this.refreshTooltip();
     }
 
     @Override
-    protected boolean isValidClickButton(int button) {
-        return super.isValidClickButton(button) || button == 1;
+    protected boolean isValidClickButton(MouseButtonInfo buttonInfo) {
+        return super.isValidClickButton(buttonInfo) || buttonInfo.button() == 1;
     }
 
 
     @Override
-    protected void renderWidget(GuiGraphics guiGraphics, int i, int j, float f) {
-        guiGraphics.blit(textures[type], this.getX(), this.getY(), 0, 0, width, height, width, height);
+    protected void extractWidgetRenderState(GuiGraphicsExtractor guiGraphics, int i, int j, float f) {
+        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, textures[type], this.getX(), this.getY(), 0, 0, width, height, width, height);
 
     }
 
