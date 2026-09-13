@@ -9,7 +9,7 @@ accessible method net/minecraft/server/level/ServerLevel getDestroyType (Lnet/mi
 accessible field net/minecraft/world/entity/item/ItemEntity pickupDelay I
 accessible field net/minecraft/client/gui/screens/inventory/AbstractSignEditScreen isFrontText Z
 
-accessible field net/minecraft/world/level/block/AbstractCauldronBlock interactions Lnet/minecraft/core/cauldron/CauldronInteraction$InteractionMap;
+accessible field net/minecraft/world/level/block/AbstractCauldronBlock interactions Lnet/minecraft/core/cauldron/CauldronInteraction$Dispatcher;
 
 #explode
 #particles ride the packet as a WeightedList now, these three dont exist

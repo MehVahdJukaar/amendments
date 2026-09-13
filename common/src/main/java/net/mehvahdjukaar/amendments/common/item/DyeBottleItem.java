@@ -17,6 +17,9 @@ import net.minecraft.world.entity.animal.sheep.Sheep;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.component.TooltipDisplay;
+
+import java.util.function.Consumer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.DyedItemColor;
@@ -35,8 +38,8 @@ public class DyeBottleItem extends Item {
             .collect(Collectors.toMap(Function.identity(), DyeColor::getTextureDiffuseColor,
                     (color, color2) -> color2, HashBiMap::create));
 
-    private static final DyedItemColor DEFAULT_COLOR = new DyedItemColor(getDyeInt(DyeColor.WHITE), false);
-    public static final DyedItemColor RED_COLOR = new DyedItemColor(getDyeInt(DyeColor.RED), false);
+    private static final DyedItemColor DEFAULT_COLOR = new DyedItemColor(getDyeInt(DyeColor.WHITE));
+    public static final DyedItemColor RED_COLOR = new DyedItemColor(getDyeInt(DyeColor.RED));
 
     public DyeBottleItem(Properties properties) {
         super(properties);
@@ -44,7 +47,7 @@ public class DyeBottleItem extends Item {
 
     public static SoftFluidStack createFluidStack(DyeColor color, int amount, Level level) {
         SoftFluidStack stack = SoftFluidStack.of(ModRegistry.DYE_SOFT_FLUID.getHolder(level), amount);
-        stack.set(DataComponents.DYED_COLOR, new DyedItemColor(getDyeInt(color), true));
+        stack.set(DataComponents.DYED_COLOR, new DyedItemColor(getDyeInt(color)));
         return stack;
     }
 
@@ -91,19 +94,19 @@ public class DyeBottleItem extends Item {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> list, TooltipFlag tooltipFlag) {
-        super.appendHoverText(stack, context, list, tooltipFlag);
+    public void appendHoverText(ItemStack stack, TooltipContext context, TooltipDisplay display, Consumer<Component> list, TooltipFlag tooltipFlag) {
+        super.appendHoverText(stack, context, display, list, tooltipFlag);
 
         DyedItemColor color = stack.get(DataComponents.DYED_COLOR);
         if (color == null) return;
         DyeColor dye = COLOR_TO_DIFFUSE.inverse().get(color.rgb());
         if (dye != null) {
-            list.add(Component.translatable("item.amendments.dye_bottle." + dye.getName()).withStyle(ChatFormatting.GRAY));
+            list.accept(Component.translatable("item.amendments.dye_bottle." + dye.getName()).withStyle(ChatFormatting.GRAY));
         } else {
             if (tooltipFlag.isAdvanced()) {
-                list.add(Component.translatable("item.color", String.format(Locale.ROOT, "#%06X", color.rgb())).withStyle(ChatFormatting.GRAY));
+                list.accept(Component.translatable("item.color", String.format(Locale.ROOT, "#%06X", color.rgb())).withStyle(ChatFormatting.GRAY));
             } else {
-                list.add(Component.translatable("item.dyed").withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
+                list.accept(Component.translatable("item.dyed").withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
             }
         }
     }

@@ -34,7 +34,7 @@ public abstract class AbstractSkullBlockMixin extends BaseEntityBlock {
     //fixing vanilla bug don't mind me. Should not be invisible, so it can be called by render single block
     @Override
     public RenderShape getRenderShape(BlockState pState) {
-        return RenderShape.ENTITYBLOCK_ANIMATED;
+        return RenderShape.MODEL;
     }
 
 

@@ -9,7 +9,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.DyeItem;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -37,12 +38,13 @@ public class CauldronDyeWater implements BlockUse {
     public InteractionResult tryPerformingAction(BlockState state, BlockPos pos, Level level, Player player, InteractionHand hand, ItemStack stack, BlockHitResult hit) {
         if (player.isSecondaryUseActive()) return InteractionResult.PASS;
         if (state.is(Blocks.WATER_CAULDRON)) {
-            if (stack.getItem() instanceof DyeItem dye) {
+            DyeColor dye = stack.get(DataComponents.DYE);
+            if (dye != null) {
                 Integer l = state.getValue(LayeredCauldronBlock.LEVEL);
                 level.setBlockAndUpdate(pos, ModRegistry.DYE_CAULDRON.get().defaultBlockState().setValue(DyeCauldronBlock.LEVEL, l));
                 if (level.getBlockEntity(pos) instanceof LiquidCauldronBlockTile te) {
                     level.gameEvent(player, GameEvent.BLOCK_CHANGE, pos);
-                    te.getSoftFluidTank().setFluid(DyeBottleItem.createFluidStack(dye.getDyeColor(), l, level));
+                    te.getSoftFluidTank().setFluid(DyeBottleItem.createFluidStack(dye, l, level));
                 }
 
                 DyeCauldronBlock.playDyeSoundAndConsume(state, pos, level, player, stack);

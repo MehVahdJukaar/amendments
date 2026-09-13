@@ -85,8 +85,8 @@ public class ModBlockProperties {
             } else if (state.is(ModTags.COLUMN_SHAPE_8X8)) {
                 if ((state.getBlock() instanceof WallBlock) && !state.getValue(WallBlock.UP)) {
                     //ignoring not full height ones. might use hitbox here instead
-                    if (needsFullHeight && (state.getValue(WallBlock.NORTH_WALL) == WallSide.LOW ||
-                            state.getValue(WallBlock.WEST_WALL) == WallSide.LOW)) return null;
+                    if (needsFullHeight && (state.getValue(WallBlock.NORTH) == WallSide.LOW ||
+                            state.getValue(WallBlock.WEST) == WallSide.LOW)) return null;
                     type = PostType.PALISADE;
                 } else {
                     type = PostType.WALL;

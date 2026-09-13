@@ -10,6 +10,7 @@ import net.minecraft.client.renderer.BiomeColors;
 import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.cauldron.CauldronInteractions;
 import net.minecraft.core.cauldron.CauldronInteraction;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
@@ -24,6 +25,7 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.LayeredCauldronBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.entity.InsideBlockEffectApplier;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.phys.BlockHitResult;
@@ -31,14 +33,14 @@ import net.minecraft.world.phys.BlockHitResult;
 public class BoilingWaterCauldronBlock extends LayeredCauldronBlock {
     public static final MapCodec<BoilingWaterCauldronBlock> CODEC = RecordCodecBuilder.mapCodec((i) -> i.group(
             Biome.Precipitation.CODEC.fieldOf("precipitation").forGetter((c) -> c.precipitationType),
-            CauldronInteraction.CODEC.fieldOf("interactions").forGetter((c) -> c.interactions),
+            CauldronInteractions.CODEC.fieldOf("interactions").forGetter((c) -> c.interactions),
             propertiesCodec()).apply(i, BoilingWaterCauldronBlock::new));
 
     public static final BooleanProperty BOILING = ModBlockProperties.BOILING;
     private final Biome.Precipitation precipitationType;
 
     public BoilingWaterCauldronBlock(Biome.Precipitation precipitationType,
-                                     CauldronInteraction.InteractionMap interactions,
+                                     CauldronInteraction.Dispatcher interactions,
                                      Properties properties) {
         super(precipitationType, interactions, properties);
         this.precipitationType = precipitationType;
@@ -58,8 +60,8 @@ public class BoilingWaterCauldronBlock extends LayeredCauldronBlock {
     }
 
     @Override
-    public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
-        super.entityInside(state, level, pos, entity);
+    public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity, InsideBlockEffectApplier effectApplier, boolean isPrecise) {
+        super.entityInside(state, level, pos, entity, effectApplier, isPrecise);
         CommonCauldronCode.entityInside(state, level, pos, entity, () -> this.getContentHeight(state));
     }
 
@@ -86,8 +88,8 @@ public class BoilingWaterCauldronBlock extends LayeredCauldronBlock {
     }
 
     @Override
-    public void fallOn(Level level, BlockState state, BlockPos pos, Entity entity, float fallDistance) {
-        if (this.isEntityInsideContent(state, pos, entity)) {
+    public void fallOn(Level level, BlockState state, BlockPos pos, Entity entity, double fallDistance) {
+        if (CommonCauldronCode.isEntityInsideContent(pos, entity, this.getContentHeight(state))) {
             CommonCauldronCode.onEntityFallOnContent(level, state, entity, this.getContentHeight(state));
             super.fallOn(level, state, pos, entity, 0);
         } else super.fallOn(level, state, pos, entity, fallDistance);
@@ -115,9 +117,9 @@ public class BoilingWaterCauldronBlock extends LayeredCauldronBlock {
     @Override
     public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource random) {
         super.animateTick(state, level, pos, random);
-        if (state.getValue(BOILING)) {
+        if (state.getValue(BOILING) && level instanceof BlockAndTintGetter tintGetter) {
             CommonCauldronCode.playBubblingAnimation(level, pos, getContentHeight(state), random,
-                    getWaterColor(state, level, pos, 1), 0);
+                    getWaterColor(state, tintGetter, pos, 1), 0);
         }
     }
 

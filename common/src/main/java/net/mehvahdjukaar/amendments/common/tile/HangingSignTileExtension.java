@@ -11,6 +11,8 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Mth;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
@@ -70,44 +72,39 @@ public class HangingSignTileExtension {
         return leftAttachment;
     }
 
-    public void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+    public void saveAdditional(ValueOutput output) {
         if (!isCeiling) {
             if (leftAttachment != null) {
-                tag.putByte("left_attachment", (byte) leftAttachment.ordinal());
+                output.putByte("left_attachment", (byte) leftAttachment.ordinal());
             }
             if (rightAttachment != null) {
-                tag.putByte("right_attachment", (byte) rightAttachment.ordinal());
+                output.putByte("right_attachment", (byte) rightAttachment.ordinal());
             }
         }
         if (!canSwing) {
-            tag.putBoolean("can_swing", false);
+            output.putBoolean("can_swing", false);
         }
         if (!frontItem.isEmpty()) {
-            tag.put("front_item", frontItem.save(registries));
+            output.store("front_item", ItemStack.CODEC, frontItem);
         }
         if (!backItem.isEmpty()) {
-            tag.put("back_item", backItem.save(registries));
+            output.store("back_item", ItemStack.CODEC, backItem);
         }
     }
 
-    public void load(CompoundTag tag, HolderLookup.Provider registries) {
+    public void load(ValueInput input) {
         if (!isCeiling) {
-            if (tag.contains("left_attachment")) {
-                leftAttachment = ModBlockProperties.PostType.values()[tag.getByte("left_attachment")];
-            }
-            if (tag.contains("right_attachment")) {
-                rightAttachment = ModBlockProperties.PostType.values()[tag.getByte("right_attachment")];
-            }
+            leftAttachment = postType(input.getByteOr("left_attachment", (byte) -1));
+            rightAttachment = postType(input.getByteOr("right_attachment", (byte) -1));
         }
-        if (tag.contains("can_swing")) {
-            canSwing = tag.getBoolean("can_swing");
-        } else canSwing = true;
-        if (tag.contains("front_item")) {
-            this.setFrontItem(ItemStack.parseOptional(registries, tag.getCompound("front_item")));
-        } else setFrontItem(ItemStack.EMPTY);
-        if (tag.contains("back_item")) {
-            this.setBackItem(ItemStack.parseOptional(registries, tag.getCompound("back_item")));
-        } else setBackItem(ItemStack.EMPTY);
+        canSwing = input.getBooleanOr("can_swing", true);
+        this.setFrontItem(input.read("front_item", ItemStack.CODEC).orElse(ItemStack.EMPTY));
+        this.setBackItem(input.read("back_item", ItemStack.CODEC).orElse(ItemStack.EMPTY));
+    }
+
+    @Nullable
+    private static ModBlockProperties.PostType postType(byte ordinal) {
+        return ordinal < 0 ? null : ModBlockProperties.PostType.values()[ordinal];
     }
 
 

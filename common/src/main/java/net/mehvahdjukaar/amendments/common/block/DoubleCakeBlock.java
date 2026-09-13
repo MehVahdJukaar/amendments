@@ -75,7 +75,7 @@ public class DoubleCakeBlock extends DirectionalCakeBlock {
         if (stack.is(ItemTags.CANDLES) && Block.byItem(item) instanceof CandleBlock) {
             if (hitResult.getDirection() == Direction.UP) {
                 //try place candle on cake
-                return InteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION;
+                return InteractionResult.PASS;
             }
             return InteractionResult.TRY_WITH_EMPTY_HAND; //blocks candle interaction
         }
@@ -142,7 +142,7 @@ public class DoubleCakeBlock extends DirectionalCakeBlock {
 
     @Override
     protected ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state, boolean includeData) {
-        return mimic.getBlock().getCloneItemStack(level, pos, state, includeData);
+        return mimic.getCloneItemStack(level, pos, includeData);
     }
 
 }

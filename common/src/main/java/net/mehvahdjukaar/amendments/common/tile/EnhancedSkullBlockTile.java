@@ -1,10 +1,9 @@
 package net.mehvahdjukaar.amendments.common.tile;
 
-import net.mehvahdjukaar.moonlight.api.util.Utils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtUtils;
+import net.minecraft.util.ProblemReporter;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
@@ -16,6 +15,10 @@ import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.entity.SkullBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.TagValueInput;
+import net.minecraft.world.level.storage.TagValueOutput;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import org.jetbrains.annotations.Nullable;
 
 public class EnhancedSkullBlockTile extends BlockEntity {
@@ -28,39 +31,37 @@ public class EnhancedSkullBlockTile extends BlockEntity {
     }
 
     @Override
-    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.saveAdditional(tag, registries);
-        this.saveInnerTile("Skull", this.innerTile, tag, registries);
+    protected void saveAdditional(ValueOutput output) {
+        super.saveAdditional(output);
+        this.saveInnerTile("Skull", this.innerTile, output);
     }
 
     @Override
-    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.loadAdditional(tag, registries);
-        this.innerTile = loadInnerTile("Skull", this.innerTile, tag, registries);
+    protected void loadAdditional(ValueInput input) {
+        super.loadAdditional(input);
+        this.innerTile = loadInnerTile("Skull", this.innerTile, input);
     }
 
-    protected void saveInnerTile(String tagName, @Nullable SkullBlockEntity tile, CompoundTag tag, HolderLookup.Provider registries) {
+    protected void saveInnerTile(String tagName, @Nullable SkullBlockEntity tile, ValueOutput output) {
         if (tile != null) {
-            tag.put(tagName + "State", NbtUtils.writeBlockState(tile.getBlockState()));
-            tag.put(tagName, tile.saveWithFullMetadata(registries));
+            output.store(tagName + "State", BlockState.CODEC, tile.getBlockState());
+            tile.saveWithoutMetadata(output.child(tagName));
         }
     }
 
     @Nullable
-    protected SkullBlockEntity loadInnerTile(String tagName, @Nullable SkullBlockEntity tile, CompoundTag tag,
-                                             HolderLookup.Provider registries) {
-        if (tag.contains(tagName)) {
-            BlockState state = Utils.readBlockState(tag.getCompound(tagName + "State"), this.level);
-            CompoundTag tileTag = tag.getCompound(tagName);
-            if (tile == null) {
-                BlockEntity newTile = BlockEntity.loadStatic(this.getBlockPos(), state, tileTag, registries);
-                if (newTile instanceof SkullBlockEntity skullTile) return skullTile;
-            } else {
-                tile.loadWithComponents(tileTag, registries);
-                return tile;
-            }
+    protected SkullBlockEntity loadInnerTile(String tagName, @Nullable SkullBlockEntity tile, ValueInput input) {
+        var tileInput = input.child(tagName);
+        var state = input.read(tagName + "State", BlockState.CODEC);
+        if (tileInput.isEmpty() || state.isEmpty()) return null;
+        if (tile == null) {
+            if (!(state.get().getBlock() instanceof EntityBlock eb)) return null;
+            if (!(eb.newBlockEntity(this.getBlockPos(), state.get()) instanceof SkullBlockEntity skullTile))
+                return null;
+            tile = skullTile;
         }
-        return null;
+        tile.loadWithComponents(tileInput.get());
+        return tile;
     }
 
     @Override
@@ -85,8 +86,11 @@ public class EnhancedSkullBlockTile extends BlockEntity {
         // this.setOwner(oldTile.getOwnerProfile());
         var registries = player.level().registryAccess();
         this.innerTile = (SkullBlockEntity) oldTile.getType().create(this.getBlockPos(), oldTile.getBlockState());
-        if (this.innerTile != null) this.innerTile.loadWithComponents(oldTile
-                .saveWithoutMetadata(registries), registries);
+        if (this.innerTile != null) {
+            TagValueOutput copy = TagValueOutput.createWithContext(ProblemReporter.DISCARDING, registries);
+            oldTile.saveWithoutMetadata(copy);
+            this.innerTile.loadWithComponents(TagValueInput.create(ProblemReporter.DISCARDING, registries, copy.buildResult()));
+        }
     }
 
     @Nullable

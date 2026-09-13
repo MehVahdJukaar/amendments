@@ -20,6 +20,8 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
@@ -45,10 +47,9 @@ public class CarpetedBlockTile extends MimicBlockTile {
     }
 
     @Override
-    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.loadAdditional(tag, registries);
-        HolderGetter<Block> holderGetter = this.level != null ? this.level.holderLookup(Registries.BLOCK) : BuiltInRegistries.BLOCK.asLookup();
-        this.setCarpet(NbtUtils.readBlockState(holderGetter, tag.getCompound("Carpet")));
+    protected void loadAdditional(ValueInput input) {
+        super.loadAdditional(input);
+        this.setCarpet(input.read("Carpet", BlockState.CODEC).orElse(Blocks.AIR.defaultBlockState()));
     }
 
     public void setCarpet(BlockState carpet) {
@@ -60,9 +61,9 @@ public class CarpetedBlockTile extends MimicBlockTile {
     }
 
     @Override
-    public void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.saveAdditional(tag, registries);
-        tag.put("Carpet", NbtUtils.writeBlockState(carpet));
+    public void saveAdditional(ValueOutput output) {
+        super.saveAdditional(output);
+        output.store("Carpet", BlockState.CODEC, carpet);
     }
 
     @Override

@@ -24,7 +24,7 @@ public abstract class LavaCauldronMixin extends Block {
         super.animateTick(state, level, pos, rand);
         if (rand.nextInt(4) == 0) {
             BlockPos blockPos = pos.above();
-            if (level.getBlockState(blockPos).isAir() && !level.getBlockState(blockPos).isSolidRender(level, blockPos)) {
+            if (level.getBlockState(blockPos).isAir() && !level.getBlockState(blockPos).isSolidRender()) {
                 var c = pos.getCenter();
                 if (rand.nextInt(20) == 0) {
                     CommonCauldronCode.addSurfaceParticles(ParticleTypes.LAVA, level, pos, 1, 15 / 16f, rand, 0, 0, 0);

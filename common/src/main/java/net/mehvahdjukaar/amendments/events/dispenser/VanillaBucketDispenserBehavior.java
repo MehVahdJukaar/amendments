@@ -2,7 +2,7 @@ package net.mehvahdjukaar.amendments.events.dispenser;
 
 import net.mehvahdjukaar.moonlight.api.util.DispenserHelper;
 import net.minecraft.core.dispenser.BlockSource;
-import net.minecraft.world.InteractionResult;
+import net.mehvahdjukaar.moonlight.api.util.ItemStackResult;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
@@ -13,8 +13,8 @@ public class VanillaBucketDispenserBehavior  extends DispenserHelper.AdditionalD
     }
 
     @Override
-    protected InteractionResult customBehavior(BlockSource blockSource, ItemStack itemStack) {
-        return null;
+    protected ItemStackResult customBehavior(BlockSource blockSource, ItemStack itemStack) {
+        return ItemStackResult.pass(itemStack);
     }
 //TODO: add water behavior here and lava and powder snow
 

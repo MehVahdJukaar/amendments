@@ -21,6 +21,7 @@ import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -34,13 +35,15 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.CampfireBlock;
 import net.minecraft.world.level.block.LayeredCauldronBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,24 +64,24 @@ public final class CommonCauldronCode {
         if (canFluidExtinguish) {
             entity.wasTouchingWater = true;
         }
-        if (level.isClientSide()) return;
+        if (!(level instanceof ServerLevel serverLevel)) return;
 
         if (state.getValue(ModCauldronBlock.BOILING) && entity instanceof LivingEntity) {
-            entity.hurt(new DamageSource(ModRegistry.BOILING_DAMAGE.getHolder(level)), 1.0F);
+            entity.hurtServer(serverLevel, new DamageSource(ModRegistry.BOILING_DAMAGE.getHolder(level)), 1.0F);
         }
         if (entity.isOnFire() && canFluidExtinguish) {
             playExtinguishSound(level, pos, entity);
 
             //same as super of layered cauldron
             if (!(state.getBlock() instanceof LayeredCauldronBlock)) {
-                extinguishLikeSuperLayeredCauldron(level, pos, entity);
+                extinguishLikeSuperLayeredCauldron(serverLevel, pos, entity);
             }
         }
 
         attemptInWorldCrafting(state, level, pos, entity, heightProvider);
     }
 
-    private static void extinguishLikeSuperLayeredCauldron(Level level, BlockPos pos, Entity entity) {
+    private static void extinguishLikeSuperLayeredCauldron(ServerLevel level, BlockPos pos, Entity entity) {
         entity.clearFire();
         if (entity.mayInteract(level, pos)) {
             if (level.getBlockEntity(pos) instanceof LiquidCauldronBlockTile te) {
@@ -88,13 +91,22 @@ public final class CommonCauldronCode {
         }
     }
 
+    //vanilla used to have this on AbstractCauldronBlock
+    static boolean isEntityInsideContent(BlockPos pos, Entity entity, double contentHeight) {
+        return entity.getY() < pos.getY() + contentHeight && entity.getBoundingBox().maxY > pos.getY() + 0.25;
+    }
+
+    static VoxelShape contentShape(double contentHeight) {
+        return Shapes.box(0, 0.25, 0, 1, contentHeight, 1);
+    }
+
     private static void playExtinguishSound(Level level, BlockPos pos, Entity entity) {
         level.playSound(null, pos, SoundEvents.GENERIC_EXTINGUISH_FIRE, entity.getSoundSource(),
                 0.7F, 1.6F + (level.getRandom().nextFloat() - level.getRandom().nextFloat()) * 0.4F);
     }
 
 
-    public static BlockState updateBoilingState(Direction direction, BlockState neighborState, LevelAccessor level, BlockPos neighborPos, BlockState newState, BlockPos currentPos) {
+    public static BlockState updateBoilingState(Direction direction, BlockState neighborState, LevelReader level, BlockPos neighborPos, BlockState newState, BlockPos currentPos) {
         if (direction == Direction.DOWN) {
             SoftFluidStack fluidStack = getFluidOrWater(newState, currentPos, level);
             boolean isFire = shouldBoil(neighborState, fluidStack, level, neighborPos);
@@ -103,7 +115,7 @@ public final class CommonCauldronCode {
         return newState;
     }
 
-    private static SoftFluidStack getFluidOrWater(BlockState newState, BlockPos pos, LevelAccessor level) {
+    private static SoftFluidStack getFluidOrWater(BlockState newState, BlockPos pos, LevelReader level) {
         if (newState.getBlock() instanceof ModCauldronBlock modCauldron) {
             if (level.getBlockEntity(pos) instanceof LiquidCauldronBlockTile te) {
                 return te.getSoftFluidTank().getFluid();
@@ -119,7 +131,7 @@ public final class CommonCauldronCode {
         return SoftFluidStack.empty(level.registryAccess());
     }
 
-    public static boolean shouldBoil(BlockState belowState, SoftFluidStack fluid, LevelAccessor level, BlockPos pos) {
+    public static boolean shouldBoil(BlockState belowState, SoftFluidStack fluid, LevelReader level, BlockPos pos) {
         if (!belowState.is(ModTags.HEAT_SOURCES) || fluid.is(ModTags.CANT_BOIL)) return false;
 
         if (belowState.hasProperty(CampfireBlock.LIT)) {

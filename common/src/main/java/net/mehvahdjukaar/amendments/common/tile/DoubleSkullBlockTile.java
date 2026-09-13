@@ -25,6 +25,8 @@ import net.minecraft.world.level.block.SkullBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.SkullBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
@@ -42,25 +44,23 @@ public class DoubleSkullBlockTile extends EnhancedSkullBlockTile {
     }
 
     @Override
-    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.saveAdditional(tag, registries);
-        this.saveInnerTile("SkullUp", this.innerTileUp, tag, registries);
+    protected void saveAdditional(ValueOutput output) {
+        super.saveAdditional(output);
+        this.saveInnerTile("SkullUp", this.innerTileUp, output);
 
         if (candleUp != null) {
-            tag.putString("CandleAbove", Utils.getID(candleUp).toString());
+            output.putString("CandleAbove", Utils.getID(candleUp).toString());
         }
     }
 
     @Override
-    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.loadAdditional(tag, registries);
-        this.innerTileUp = this.loadInnerTile("SkullUp", this.innerTileUp, tag, registries);
-        Block b = null;
-        if (tag.contains("CandleAbove")) {
-            Identifier candle = Identifier.tryParse(tag.getString("CandleAbove"));
-            var o = BuiltInRegistries.BLOCK.getOptional(candle);
-            if (o.isPresent()) b = o.get();
-        }
+    protected void loadAdditional(ValueInput input) {
+        super.loadAdditional(input);
+        this.innerTileUp = this.loadInnerTile("SkullUp", this.innerTileUp, input);
+        Block b = input.getString("CandleAbove")
+                .map(Identifier::tryParse)
+                .flatMap(BuiltInRegistries.BLOCK::getOptional)
+                .orElse(null);
         setCandleUp(b);
     }
 
@@ -104,7 +104,7 @@ public class DoubleSkullBlockTile extends EnhancedSkullBlockTile {
                 if (entity instanceof SkullBlockEntity blockEntity) {
                     this.innerTileUp = blockEntity;
                     //sets owner of upper tile
-                    this.innerTileUp.setOwner(skullStack.get(DataComponents.PROFILE));
+                    this.innerTileUp.applyComponentsFromItemStack(skullStack);
                 }
             }
         }

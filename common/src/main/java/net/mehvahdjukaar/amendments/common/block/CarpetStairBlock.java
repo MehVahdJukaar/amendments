@@ -130,8 +130,8 @@ public class CarpetStairBlock extends ModStairBlock implements EntityBlock, IRec
     }
 
     @Override
-    public VoxelShape getOcclusionShape(BlockState state, BlockGetter level, BlockPos pos) {
-        return state.getValue(SOLID) ? super.getOcclusionShape(state, level, pos) : Shapes.empty();
+    public VoxelShape getOcclusionShape(BlockState state) {
+        return state.getValue(SOLID) ? super.getOcclusionShape(state) : Shapes.empty();
     }
 
     private static int getShapeIndex(BlockState state) {
@@ -208,7 +208,7 @@ public class CarpetStairBlock extends ModStairBlock implements EntityBlock, IRec
     protected ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state, boolean includeData) {
         if (level.getBlockEntity(pos) instanceof CarpetedBlockTile tile) {
             BlockState mimic = tile.getHeldBlock();
-            return mimic.getBlock().getCloneItemStack(level, pos, state, includeData);
+            return mimic.getCloneItemStack(level, pos, includeData);
         }
         return super.getCloneItemStack(level, pos, state, includeData);
     }
@@ -233,18 +233,14 @@ public class CarpetStairBlock extends ModStairBlock implements EntityBlock, IRec
                 }
             }
 
-            BlockState newHeld = oldHeld.updateShape(facing, facingState, world, currentPos, facingPos);
+            BlockState newHeld = oldHeld.updateShape(world, ticks, currentPos, facing, facingPos, facingState, randomSource);
 
-            //manually refreshTextures facing states
-
-            BlockState newFacing = facingState.updateShape(facing.getOpposite(), newHeld, world, facingPos, currentPos);
-
-            if (newFacing != facingState) {
-                if (otherTile != null) {
+            //held blocks arent real blocks so vanilla never sends them a shape update. do the other side by hand
+            if (otherTile != null) {
+                BlockState newFacing = facingState.updateShape(world, ticks, facingPos, facing.getOpposite(), currentPos, newHeld, randomSource);
+                if (newFacing != facingState) {
                     otherTile.setHeldBlock(newFacing);
                     otherTile.setChanged();
-                } else {
-                    world.setBlock(facingPos, newFacing, 2);
                 }
             }
 

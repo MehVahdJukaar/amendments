@@ -40,7 +40,7 @@ public class FallingLanternEntity extends ImprovedFallingBlockEntity {
     }
 
     @Override
-    public boolean causeFallDamage(float height, float amount, DamageSource source) {
+    public boolean causeFallDamage(double height, float amount, DamageSource source) {
         boolean r = super.causeFallDamage(height, amount, source);
         if (CommonConfigs.FALLING_LANTERNS.get().hasFire() && this.getDeltaMovement().lengthSqr() > 0.4 * 0.4) {
             BlockState state = this.getBlockState();
@@ -58,8 +58,8 @@ public class FallingLanternEntity extends ImprovedFallingBlockEntity {
                         level.setBlockAndUpdate(pos, BaseFireBlock.getState(level, pos));
                     }
                 }
-            } else {
-                this.spawnAtLocation(state.getBlock());
+            } else if (level instanceof ServerLevel sl) {
+                this.spawnAtLocation(sl, state.getBlock());
             }
             this.setCancelDrop(true);
             this.discard();
@@ -81,7 +81,7 @@ public class FallingLanternEntity extends ImprovedFallingBlockEntity {
     }
 
     public static boolean createFallingLantern(BlockState state, BlockPos pos, Level level) {
-        if (FallingBlock.isFree(level.getBlockState(pos.below())) && pos.getY() >= level.getMinBuildHeight()) {
+        if (FallingBlock.isFree(level.getBlockState(pos.below())) && pos.getY() >= level.getMinY()) {
             if (state.hasProperty(LanternBlock.HANGING)) {
                 double maxY = state.getShape(level, pos).bounds().maxY;
                 state = state.setValue(LanternBlock.HANGING, false);

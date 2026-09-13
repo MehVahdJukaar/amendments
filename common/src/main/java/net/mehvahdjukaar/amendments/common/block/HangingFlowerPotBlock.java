@@ -119,7 +119,7 @@ public class HangingFlowerPotBlock extends Block implements EntityBlock {
                         itemstack.consume(1, player);
                     } else {
                         //drop item
-                        ItemStack flowerItem = pot.getCloneItemStack(level, pos, state, true);
+                        ItemStack flowerItem = state.getCloneItemStack(level, pos, true);
                         if (!flowerItem.equals(new ItemStack(this))) {
                             if (itemstack.isEmpty()) {
                                 player.setItemInHand(hand, flowerItem);
@@ -182,7 +182,7 @@ public class HangingFlowerPotBlock extends Block implements EntityBlock {
     }
 
     @Override
-    public VoxelShape getOcclusionShape(BlockState state, BlockGetter worldIn, BlockPos pos) {
+    public VoxelShape getOcclusionShape(BlockState state) {
         return Shapes.block();
     }
 

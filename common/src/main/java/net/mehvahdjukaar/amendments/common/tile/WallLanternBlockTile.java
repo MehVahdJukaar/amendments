@@ -16,6 +16,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 
@@ -76,11 +77,12 @@ public class WallLanternBlockTile extends SwayingBlockTile implements IBlockHold
     }
 
     @Override
-    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.loadAdditional(tag, registries);
-        if (tag.contains("Lantern")) {
-            pendingLegacyLantern = Utils.readBlockState(tag.getCompound("Lantern"), level);
-            pendingLegacyRedstone = tag.getBoolean("IsRedstone");
+    protected void loadAdditional(ValueInput input) {
+        super.loadAdditional(input);
+        var legacy = input.read("Lantern", BlockState.CODEC);
+        if (legacy.isPresent()) {
+            pendingLegacyLantern = legacy.get();
+            pendingLegacyRedstone = input.getBooleanOr("IsRedstone", false);
             tryMigrateLegacyLantern();
         }
     }
@@ -148,8 +150,4 @@ public class WallLanternBlockTile extends SwayingBlockTile implements IBlockHold
                 .setValue(WallLanternBlock.LIGHT_LEVEL, Math.max(light, 5));
     }
 
-    @Override
-    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.saveAdditional(tag, registries);
-    }
 }

@@ -40,14 +40,14 @@ public class StructureCauldronHack extends Block implements EntityBlock {
     }
 
     private static final Supplier<StructureCauldronHack> BLOCK = RegHelper.registerBlock(Amendments.res("cauldron_hack"),
-            StructureCauldronHack::new);
+            StructureCauldronHack::new, Properties.of().overrideLootTable(Blocks.CAULDRON.getLootTable()));
     private static final Supplier<BlockEntityType<Tile>> TILE = RegHelper.registerBlockEntityType(Amendments.res("cauldron_hack"),
             () -> PlatHelper.newBlockEntityType(Tile::new, BLOCK.get()));
 
     private static final BooleanProperty POTION = BooleanProperty.create("potion");
 
-    public StructureCauldronHack() {
-        super(Properties.of().dropsLike(Blocks.CAULDRON));
+    public StructureCauldronHack(Properties properties) {
+        super(properties);
     }
 
     @Override

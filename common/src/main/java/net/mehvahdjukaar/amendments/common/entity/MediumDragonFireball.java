@@ -8,6 +8,7 @@ import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.moonlight.api.entity.ImprovedProjectileEntity;
 import net.mehvahdjukaar.moonlight.api.entity.ParticleTrailEmitter;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.particles.PowerParticleOption;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
@@ -19,6 +20,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
@@ -58,7 +60,7 @@ public class MediumDragonFireball extends ImprovedProjectileEntity implements IV
             if (this.isInWater()) return;
 
             // Spawn particle with the calculated direction
-            level().addParticle(ParticleTypes.DRAGON_BREATH,
+            level().addParticle(PowerParticleOption.create(ParticleTypes.DRAGON_BREATH, 1.0F),
                     p.x, p.y, p.z,
                     random.nextGaussian() * 0.04,
                     random.nextGaussian() * 0.04,
@@ -105,12 +107,12 @@ public class MediumDragonFireball extends ImprovedProjectileEntity implements IV
             areaEffectCloud.setOwner((LivingEntity) entity);
         }
 
-        areaEffectCloud.setParticle(ParticleTypes.DRAGON_BREATH);
+        areaEffectCloud.setCustomParticle(PowerParticleOption.create(ParticleTypes.DRAGON_BREATH, 1.0F));
         areaEffectCloud.setRadius(1.0F);
         areaEffectCloud.setDuration(40);
         areaEffectCloud.setWaitTime(0);
         areaEffectCloud.setRadiusPerTick((6.5F - areaEffectCloud.getRadius()) / (float) areaEffectCloud.getDuration());
-        areaEffectCloud.addEffect(new MobEffectInstance(MobEffects.HARM, 1, 1));
+        areaEffectCloud.addEffect(new MobEffectInstance(MobEffects.INSTANT_DAMAGE, 1, 1));
         this.level().addFreshEntity(areaEffectCloud);
 
     }
@@ -131,7 +133,7 @@ public class MediumDragonFireball extends ImprovedProjectileEntity implements IV
     }
 
     @Override
-    public boolean hurt(DamageSource source, float amount) {
+    public boolean hurtServer(ServerLevel level, DamageSource source, float amount) {
         return false;
     }
 
@@ -153,7 +155,7 @@ public class MediumDragonFireball extends ImprovedProjectileEntity implements IV
                 double sx = (Mth.cos(angle) * speed);
                 double sy = 0.01 + random.nextDouble() * f * 0.2;
                 double sz = (Mth.sin(angle) * speed);
-                level.addParticle(ParticleTypes.DRAGON_BREATH,
+                level.addParticle(PowerParticleOption.create(ParticleTypes.DRAGON_BREATH, 1.0F),
                         this.getX() + sx * 0.1, this.getY() + 0.3, this.getZ() + sz * 0.1, sx, sy, sz);
             }
         }

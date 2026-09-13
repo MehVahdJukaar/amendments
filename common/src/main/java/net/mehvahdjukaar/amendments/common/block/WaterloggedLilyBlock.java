@@ -11,6 +11,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -26,6 +27,7 @@ import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.level.pathfinder.PathComputationType;
+import net.minecraft.world.level.redstone.Orientation;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
@@ -36,7 +38,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class WaterloggedLilyBlock extends WaterlilyBlock implements LiquidBlockContainer, EntityBlock {
+public class WaterloggedLilyBlock extends LilyPadBlock implements LiquidBlockContainer, EntityBlock {
 
     protected static final VoxelShape AABB = Block.box(1.0D, 15.0D, 1.0D, 15.0D, 16D, 15.0D);
     protected static final VoxelShape AABB_EXTENDED = Block.box(1.0D, 15.0D, 1.0D, 15.0D, 17.5, 15.0D);
@@ -46,7 +48,7 @@ public class WaterloggedLilyBlock extends WaterlilyBlock implements LiquidBlockC
     public static final BooleanProperty EXTENDED = BlockStateProperties.EXTENDED;
 
     public WaterloggedLilyBlock(Properties properties) {
-        super(properties);
+        super(properties.overrideDescription(Blocks.LILY_PAD.getDescriptionId()));
         this.registerDefaultState(this.defaultBlockState().setValue(EXTENDED, false));
     }
 
@@ -83,16 +85,14 @@ public class WaterloggedLilyBlock extends WaterlilyBlock implements LiquidBlockC
 
     @Override
     public BlockState updateShape(BlockState stateIn, LevelReader worldIn, ScheduledTickAccess ticks, BlockPos currentPos, Direction facing, BlockPos facingPos, BlockState facingState, RandomSource randomSource) {
-        worldIn.scheduleTick(currentPos, Fluids.WATER, Fluids.WATER.getTickDelay(worldIn));
+        ticks.scheduleTick(currentPos, Fluids.WATER, Fluids.WATER.getTickDelay(worldIn));
         return stateIn;
     }
 
     @Override
-    public void neighborChanged(BlockState state, Level world, BlockPos pos, Block neighborBlock, BlockPos fromPos, boolean moving) {
-        super.neighborChanged(state, world, pos, neighborBlock, fromPos, moving);
-        if (pos.above().equals(fromPos)) {
-            maybeConvertToVanilla(state, world, pos);
-        }
+    public void neighborChanged(BlockState state, Level world, BlockPos pos, Block neighborBlock, @Nullable Orientation orientation, boolean moving) {
+        super.neighborChanged(state, world, pos, neighborBlock, orientation, moving);
+        maybeConvertToVanilla(state, world, pos);
     }
 
     @Override
@@ -122,7 +122,7 @@ public class WaterloggedLilyBlock extends WaterlilyBlock implements LiquidBlockC
     }
 
     @Override
-    public boolean canPlaceLiquid(@Nullable Player player, BlockGetter level, BlockPos pos, BlockState state, Fluid fluid) {
+    public boolean canPlaceLiquid(@Nullable LivingEntity entity, BlockGetter level, BlockPos pos, BlockState state, Fluid fluid) {
         return false;
     }
 
@@ -212,16 +212,10 @@ public class WaterloggedLilyBlock extends WaterlilyBlock implements LiquidBlockC
         if (level.getBlockEntity(pos) instanceof IBlockHolder tile) {
             BlockState mimic = tile.getHeldBlock();
             if (!mimic.isAir() && !(mimic.getBlock() instanceof WaterloggedLilyBlock)) {
-                return mimic.getBlock().getCloneItemStack(level, pos, mimic, includeData);
+                return mimic.getCloneItemStack(level, pos, includeData);
             }
         }
         return super.getCloneItemStack(level, pos, state, includeData);
-    }
-
-
-    @Override
-    public String getDescriptionId() {
-        return Blocks.LILY_PAD.getDescriptionId();
     }
 
 

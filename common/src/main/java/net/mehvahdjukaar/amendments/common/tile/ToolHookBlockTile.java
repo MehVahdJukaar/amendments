@@ -7,7 +7,9 @@ import net.mehvahdjukaar.amendments.reg.ModTags;
 import net.mehvahdjukaar.moonlight.api.block.DynamicRenderedItemDisplayTile;
 import net.mehvahdjukaar.moonlight.api.client.model.ExtraModelData;
 import net.mehvahdjukaar.moonlight.api.client.model.ModelDataKey;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.block.Blocks;
@@ -48,22 +50,22 @@ public class ToolHookBlockTile extends DynamicRenderedItemDisplayTile {
     }
 
     public static boolean isValidTool(Item item) {
-        return item instanceof DiggerItem || item instanceof SwordItem || item instanceof TridentItem ||
+        return item.components().has(DataComponents.TOOL) || item instanceof TridentItem ||
                 item.builtInRegistryHolder().is(ModTags.GOES_IN_TRIPWIRE_HOOK);
     }
 
 
     @Override
-    public void updateTileOnInventoryChanged() {
-        super.updateTileOnInventoryChanged();
+    public void serverSideUpdateWhenChanged(HolderLookup.Provider registries) {
+        super.serverSideUpdateWhenChanged(registries);
         if (this.getDisplayedItem().isEmpty() && level != null) {
             this.level.setBlockAndUpdate(worldPosition, Blocks.TRIPWIRE_HOOK.withPropertiesOf(this.getBlockState()));
         }
     }
 
     @Override
-    public void updateClientVisualsOnLoad() {
-        super.updateClientVisualsOnLoad();
+    public void clientSideUpdateWhenChanged(HolderLookup.Provider registries) {
+        super.clientSideUpdateWhenChanged(registries);
         this.requestModelReload();
     }
 }

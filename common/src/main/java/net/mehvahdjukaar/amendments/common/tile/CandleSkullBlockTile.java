@@ -22,6 +22,8 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.CandleBlock;
 import net.minecraft.world.level.block.entity.SkullBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 
 //import net.mehvahdjukaar.amendments.integration.CaveEnhancementsCompat;
 
@@ -41,19 +43,15 @@ public class CandleSkullBlockTile extends EnhancedSkullBlockTile {
     }
 
     @Override
-    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.saveAdditional(tag, registries);
-        tag.put("Candle", NbtUtils.writeBlockState(this.candle));
+    protected void saveAdditional(ValueOutput output) {
+        super.saveAdditional(output);
+        output.storeNullable("Candle", BlockState.CODEC, this.candle);
     }
 
     @Override
-    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.loadAdditional(tag, registries);
-        BlockState c = null;
-        if (tag.contains("Candle", 10)) {
-            c = Utils.readBlockState(tag.getCompound("Candle"), level);
-        }
-        setCandle(c);
+    protected void loadAdditional(ValueInput input) {
+        super.loadAdditional(input);
+        setCandle(input.read("Candle", BlockState.CODEC).orElse(null));
     }
 
     public BlockState getCandle() {

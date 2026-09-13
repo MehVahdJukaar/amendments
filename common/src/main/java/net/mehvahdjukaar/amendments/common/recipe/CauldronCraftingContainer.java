@@ -18,6 +18,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.*;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 
@@ -119,37 +120,27 @@ public class CauldronCraftingContainer implements RecipeInput{
         for (int j = 0; j < this.originalItems.size(); j++) {
             this.items.set(j, this.originalItems.get(j));
         }
-        List<RecipeHolder<CauldronRecipe>> recipes = level.getRecipeManager()
-                .getRecipesFor(ModRegistry.CAULDRON_RECIPE_TYPE.get(), this, level);
-        for (var h : recipes) {
-            CauldronRecipe r = h.value();
-            if (!r.matches(this, level)) continue;
-            FluidAndItemCraftResult resultFluid = r.assembleFluid(this, level.registryAccess());
-            var remainingItems = r.getRemainingItems(this);
-            //doesnt support remaining items
-            if (remainingItems.stream().allMatch(ItemStack::isEmpty)) {
-                //is this correct?
-                return resultFluid;
-            }
-        }
-        return null;
+        if (!(level instanceof ServerLevel serverLevel)) return null;
+        return serverLevel.recipeAccess().getRecipeFor(ModRegistry.CAULDRON_RECIPE_TYPE.get(), this, level)
+                .map(h -> h.value().assembleFluid(this, level.registryAccess()))
+                .orElse(null);
     }
 
 
     @Nullable
     public FluidAndItemCraftResult craftWithCraftingRecipes(Level level) {
+        if (!(level instanceof ServerLevel serverLevel)) return null;
         for (var cont : equivalentFluidContainers.entries()) {
             var category = cont.getKey();
             ItemStack fluidInBottle = cont.getValue();
             setupFluidItem(fluidInBottle);
             CraftingInput input = this.makeCraftingInput();
-            List<RecipeHolder<CraftingRecipe>> recipes = level.getRecipeManager().getRecipesFor(RecipeType.CRAFTING, input, level);
-            for (var h : recipes) {
-                CraftingRecipe r = h.value();
-                if (!r.matches(input, level)) continue;
+            var found = serverLevel.recipeAccess().getRecipeFor(RecipeType.CRAFTING, input, level);
+            if (found.isPresent()) {
+                CraftingRecipe r = found.get().value();
                 int newFluidCount = fluid.getCount() - category.getCapacity();
                 if (newFluidCount < 0 || newFluidCount > fluidContainerSize) continue;
-                ItemStack craftedItem = r.assemble(input, level.registryAccess());
+                ItemStack craftedItem = r.assemble(input);
                 if (!craftedItem.isEmpty()) {
                     var remainingItems = r.getRemainingItems(input);
                     //is this correct?

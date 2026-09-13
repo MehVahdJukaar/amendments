@@ -32,6 +32,9 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.PotionContents;
+import net.mehvahdjukaar.moonlight.api.fluids.client.SoftFluidColors;
+import net.minecraft.client.renderer.block.BlockAndTintGetter;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
@@ -129,13 +132,14 @@ public class LiquidCauldronBlock extends ModCauldronBlock {
     @Override
     protected void handleEntityInsideFluidSpecial(BlockState state, Level level, BlockPos pos, Entity entity) {
 
-        if (entity.mayInteract(level, pos) && level.getBlockEntity(pos) instanceof LiquidCauldronBlockTile tile) {
+        if (level instanceof ServerLevel serverLevel && entity.mayInteract(serverLevel, pos)
+                && level.getBlockEntity(pos) instanceof LiquidCauldronBlockTile tile) {
 
             SoftFluidStack fluid = tile.getSoftFluidTank().getFluid();
             PotionBottleType potType = getPotType(fluid);
             if (entity instanceof LivingEntity living) {
                 if (potType != null && potType != PotionBottleType.REGULAR &&
-                        applyPotionFluidEffects(level, pos, living, fluid)) {
+                        applyPotionFluidEffects(serverLevel, pos, living, fluid)) {
                     tile.consumeOneLayer();
                     level.gameEvent(entity, GameEvent.BLOCK_CHANGE, pos);
                 }
@@ -148,7 +152,7 @@ public class LiquidCauldronBlock extends ModCauldronBlock {
             //TODO: improve
             if (!tile.isGlowing() && fluid.is(ModTags.CAN_GLOW) && entity instanceof ItemEntity ie
                     && ie.getItem().is(Items.GLOW_INK_SAC)
-                    && isEntityInsideContent(state, pos, entity)
+                    && CommonCauldronCode.isEntityInsideContent(pos, entity, getContentHeight(state))
             ) {
                 //only potions can glow
                 CommonCauldronCode.playSplashEffects(entity, getContentHeight(state));
@@ -164,14 +168,14 @@ public class LiquidCauldronBlock extends ModCauldronBlock {
         }
     }
 
-    private boolean applyPotionFluidEffects(Level level, BlockPos pos, LivingEntity living, SoftFluidStack stack) {
+    private boolean applyPotionFluidEffects(ServerLevel level, BlockPos pos, LivingEntity living, SoftFluidStack stack) {
         List<MobEffectInstance> effects = getPotionEffects(stack);
         boolean success = false;
         for (MobEffectInstance effect : effects) {
             Holder<MobEffect> ef = effect.getEffect();
             if (living.hasEffect(ef)) continue;
             if (ef.value().isInstantenous()) {
-                ef.value().applyInstantenousEffect(null, null, living,
+                ef.value().applyInstantenousEffect(level, null, null, living,
                         effect.getAmplifier(), 1.0D);
             } else {
                 living.addEffect(new MobEffectInstance(effect));
@@ -190,7 +194,8 @@ public class LiquidCauldronBlock extends ModCauldronBlock {
     public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource rand) {
         super.animateTick(state, level, pos, rand);
 
-        if (level.getBlockEntity(pos) instanceof LiquidCauldronBlockTile te) {
+        if (level instanceof BlockAndTintGetter tintGetter
+                && level.getBlockEntity(pos) instanceof LiquidCauldronBlockTile te) {
             SoftFluidTank tank = te.getSoftFluidTank();
 
             if (level.getRandom().nextInt(4) == 0) {
@@ -203,7 +208,7 @@ public class LiquidCauldronBlock extends ModCauldronBlock {
                     }
                     if (type != PotionBottleType.REGULAR) {
 
-                        int color = tank.getCachedParticleColor(level, pos);
+                        int color = SoftFluidColors.getCachedParticleColor(tank, tintGetter, pos);
                         int alpha = type == PotionBottleType.SPLASH ? Mth.floor(38.25F) : 255;
                         ParticleOptions particle = ColorParticleOption.create(ParticleTypes.ENTITY_EFFECT,
                                 ARGB.color(alpha, color));
@@ -216,7 +221,7 @@ public class LiquidCauldronBlock extends ModCauldronBlock {
                 //}
 
                 BlockPos blockPos = pos.above();
-                if (fluid.is(MLBuiltinSoftFluids.LAVA) && level.getBlockState(blockPos).isAir() && !level.getBlockState(blockPos).isSolidRender(level, blockPos)) {
+                if (fluid.is(MLBuiltinSoftFluids.LAVA) && level.getBlockState(blockPos).isAir() && !level.getBlockState(blockPos).isSolidRender()) {
                     var c = pos.getCenter();
                     if (rand.nextInt(20) == 0) {
                         CommonCauldronCode.addSurfaceParticles(ParticleTypes.LAVA, level, pos, 1, height, rand, 0, 0, 0);

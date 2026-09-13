@@ -5,6 +5,7 @@ import net.mehvahdjukaar.moonlight.api.block.ISoftFluidTankProvider;
 import net.minecraft.client.color.block.BlockTintSource;
 import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.core.BlockPos;
+import net.mehvahdjukaar.moonlight.api.fluids.client.SoftFluidColors;
 import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.List;
@@ -27,7 +28,7 @@ public class SoftFluidColor implements BlockTintSource {
         if (level != null && pos != null && level.getBlockEntity(pos) instanceof ISoftFluidTankProvider bh) {
             var tank = bh.getSoftFluidTank();
             if (!tank.getFluid().is(ModTags.NO_TINT_IN_CAULDRON)) {
-                return tank.getCachedStillColor(level, pos);
+                return SoftFluidColors.getCachedStillColor(tank, level, pos);
             }
         }
         return -1;

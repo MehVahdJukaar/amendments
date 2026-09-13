@@ -5,6 +5,8 @@ import net.mehvahdjukaar.candlelight.api.VirtualOverride;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.level.block.entity.BellBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -35,19 +37,17 @@ public abstract class BellTileEntityMixin extends BlockEntity implements IBellCo
     }
 
     @Override
-    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.saveAdditional(tag, registries);
+    protected void saveAdditional(ValueOutput output) {
+        super.saveAdditional(output);
         if (this.amendments$connection != null) {
-            tag.putInt("Connection", this.amendments$connection.ordinal());
+            output.putInt("Connection", this.amendments$connection.ordinal());
         }
     }
 
     @Override
-    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.loadAdditional(tag, registries);
-        if (tag.contains("Connection")) {
-            this.amendments$connection = Type.values()[tag.getInt("Connection")];
-        }else this.amendments$connection = Type.NONE;
+    protected void loadAdditional(ValueInput input) {
+        super.loadAdditional(input);
+        this.amendments$connection = Type.values()[input.getIntOr("Connection", Type.NONE.ordinal())];
     }
 
     @Override

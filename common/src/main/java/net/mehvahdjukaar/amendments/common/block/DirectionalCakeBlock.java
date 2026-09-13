@@ -62,7 +62,7 @@ public class DirectionalCakeBlock extends CakeBlock implements SimpleWaterlogged
     public final CakeRegistry.CakeType type;
 
     public DirectionalCakeBlock(CakeRegistry.CakeType type) {
-        this(Utils.copyPropertySafe(type.cake).dropsLike(type.cake), type);
+        this(Utils.copyPropertySafe(type.cake).overrideLootTable(type.cake.getLootTable()), type);
     }
 
     public DirectionalCakeBlock(Properties properties, CakeRegistry.CakeType type) {
@@ -80,7 +80,7 @@ public class DirectionalCakeBlock extends CakeBlock implements SimpleWaterlogged
     @Override
     public BlockState updateShape(BlockState stateIn, LevelReader worldIn, ScheduledTickAccess ticks, BlockPos currentPos, Direction facing, BlockPos facingPos, BlockState facingState, RandomSource randomSource) {
         if (stateIn.getValue(WATERLOGGED)) {
-            worldIn.scheduleTick(currentPos, Fluids.WATER, Fluids.WATER.getTickDelay(worldIn));
+            ticks.scheduleTick(currentPos, Fluids.WATER, Fluids.WATER.getTickDelay(worldIn));
         }
         return super.updateShape(stateIn, worldIn, ticks, currentPos, facing, facingPos, facingState, randomSource);
     }
@@ -156,7 +156,7 @@ public class DirectionalCakeBlock extends CakeBlock implements SimpleWaterlogged
             case EAST -> SHAPES_EAST[state.getValue(BITES)];
             case SOUTH -> SHAPES_SOUTH[state.getValue(BITES)];
             case NORTH -> SHAPES_NORTH[state.getValue(BITES)];
-            default -> SHAPE_BY_BITE[state.getValue(BITES)];
+            default -> super.getShape(state, worldIn, pos, context);
         };
     }
 

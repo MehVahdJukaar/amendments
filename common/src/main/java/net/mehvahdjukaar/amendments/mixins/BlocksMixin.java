@@ -20,7 +20,7 @@ public class BlocksMixin {
     //redirect or this specific case is ok? we want to crash if another mod does it
     @Redirect(method = "<clinit>", at = @At(
             value = "NEW",
-            target = "(Lnet/minecraft/world/level/biome/Biome$Precipitation;Lnet/minecraft/core/cauldron/CauldronInteraction$InteractionMap;Lnet/minecraft/world/level/block/state/BlockBehaviour$Properties;)Lnet/minecraft/world/level/block/LayeredCauldronBlock;",
+            target = "(Lnet/minecraft/world/level/biome/Biome$Precipitation;Lnet/minecraft/core/cauldron/CauldronInteraction$Dispatcher;Lnet/minecraft/world/level/block/state/BlockBehaviour$Properties;)Lnet/minecraft/world/level/block/LayeredCauldronBlock;",
             ordinal = 0
     ),
             slice = @Slice(
@@ -30,7 +30,7 @@ public class BlocksMixin {
                     )
             )
     )
-    private static LayeredCauldronBlock amendments$overrideCauldron(Biome.Precipitation precipitation, CauldronInteraction.InteractionMap interactions, BlockBehaviour.Properties properties) {
+    private static LayeredCauldronBlock amendments$overrideCauldron(Biome.Precipitation precipitation, CauldronInteraction.Dispatcher interactions, BlockBehaviour.Properties properties) {
         return new BoilingWaterCauldronBlock(precipitation, interactions, properties);
     }
 }

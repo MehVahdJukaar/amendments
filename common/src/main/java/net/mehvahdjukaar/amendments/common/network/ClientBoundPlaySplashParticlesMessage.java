@@ -12,6 +12,8 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.util.RandomSource;
+import net.mehvahdjukaar.moonlight.api.fluids.client.SoftFluidColors;
+import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
@@ -23,12 +25,12 @@ public record ClientBoundPlaySplashParticlesMessage(Vec3 hitPos, double speed, f
             Amendments.res("client_bound_play_splash_particles"), ClientBoundPlaySplashParticlesMessage::new);
 
     public ClientBoundPlaySplashParticlesMessage(FriendlyByteBuf buffer) {
-        this(buffer.readVec3(), buffer.readDouble(), buffer.readFloat());
+        this(Vec3.STREAM_CODEC.decode(buffer), buffer.readDouble(), buffer.readFloat());
     }
 
     @Override
     public void write(RegistryFriendlyByteBuf buf) {
-        buf.writeVec3(this.hitPos);
+        Vec3.STREAM_CODEC.encode(buf, this.hitPos);
         buf.writeDouble(this.speed);
         buf.writeFloat(this.width);
     }
@@ -37,15 +39,16 @@ public record ClientBoundPlaySplashParticlesMessage(Vec3 hitPos, double speed, f
     public void handle(Context context) {
 
         Level level = context.getPlayer().level();
+        if (!(level instanceof BlockAndTintGetter tintGetter)) return;
         BlockPos pos = BlockPos.containing(this.hitPos);
         BlockState state = level.getBlockState(pos);
-        if (state.getBlock() instanceof ModCauldronBlock mc &&
+        if (state.getBlock() instanceof ModCauldronBlock &&
                 level.getBlockEntity(pos) instanceof LiquidCauldronBlockTile tile) {
-            int color = tile.getSoftFluidTank().getCachedParticleColor(level, pos);
+            int color = SoftFluidColors.getCachedParticleColor(tile.getSoftFluidTank(), tintGetter, pos);
             int light = tile.getSoftFluidTank().getFluidValue().getEmissivity();
             playSplashAnimation(level, pos, color, light);
         } else if (state.getBlock() instanceof BoilingWaterCauldronBlock) {
-            int color = BoilingWaterCauldronBlock.getWaterColor(state, level, pos, 1);
+            int color = BoilingWaterCauldronBlock.getWaterColor(state, tintGetter, pos, 1);
             playSplashAnimation(level, pos, color, 0);
         }
     }

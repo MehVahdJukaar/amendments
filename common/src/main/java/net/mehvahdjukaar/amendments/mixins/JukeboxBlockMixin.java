@@ -21,7 +21,7 @@ public abstract class JukeboxBlockMixin extends Block {
     }
 
     @Override
-    public VoxelShape getOcclusionShape(BlockState state, BlockGetter level, BlockPos pos) {
+    public VoxelShape getOcclusionShape(BlockState state) {
         return SMALL_SHAPE;
     }
 

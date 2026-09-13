@@ -6,6 +6,7 @@ import net.mehvahdjukaar.amendments.common.entity.IVisualTransformationProvider;
 import net.mehvahdjukaar.amendments.configs.ClientConfigs;
 import net.mehvahdjukaar.moonlight.api.entity.ParticleTrailEmitter;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.particles.PowerParticleOption;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.projectile.hurtingprojectile.AbstractHurtingProjectile;
 import net.minecraft.world.entity.projectile.hurtingprojectile.DragonFireball;
@@ -41,7 +42,7 @@ public abstract class DragonFireballMixin extends AbstractHurtingProjectile impl
                     if (this.isInWater()) return;
 
                     // Spawn particle with the calculated direction
-                    level().addParticle(ParticleTypes.DRAGON_BREATH,
+                    level().addParticle(PowerParticleOption.create(ParticleTypes.DRAGON_BREATH, 1.0F),
                             p.x, p.y, p.z,
                             random.nextGaussian() * 0.05,
                             random.nextGaussian() * 0.05,

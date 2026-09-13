@@ -49,9 +49,10 @@ public class LiquidMixer {
 
         mergedMap.entrySet().removeIf(e -> e.getValue().getDuration() <= 0 || e.getValue().getAmplifier() < 0);
 
-        int customPotionColor = PotionContents.getColor(mergedMap.values());
+        var customPotionColor = PotionContents.getColorOptional(mergedMap.values());
         PotionContents mergedContents = new PotionContents(Optional.empty(),
-                Optional.of(customPotionColor), mergedMap.values().stream().toList());
+                customPotionColor.isPresent() ? Optional.of(customPotionColor.getAsInt()) : Optional.empty(),
+                mergedMap.values().stream().toList(), Optional.empty());
 
         SoftFluidStack returnStack = firstFluid.copy();
         returnStack.set(DataComponents.POTION_CONTENTS, mergedContents);
@@ -92,7 +93,7 @@ public class LiquidMixer {
         int newColor = DyeBottleItem.mixColor(firstColor.rgb(), secondColor.rgb(), oldAmount, newAmount);
 
         SoftFluidStack returnStack = firstFluid.copy();
-        returnStack.set(DataComponents.DYED_COLOR, new DyedItemColor(newColor, true));
+        returnStack.set(DataComponents.DYED_COLOR, new DyedItemColor(newColor));
 
         return returnStack;
     }

@@ -54,6 +54,10 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+
+import net.mehvahdjukaar.moonlight.api.util.Utils;
+
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 import static net.mehvahdjukaar.amendments.Amendments.res;
@@ -87,7 +91,7 @@ public class ModRegistry {
         }
         if (CommonConfigs.CEILING_BANNERS.get()) {
             for (var e : CEILING_BANNERS.entrySet()) {
-                Item item = BannerBlock.byColor(e.getKey()).asItem();
+                Item item = BlocksColorAPI.getColoredItem("banner", e.getKey());
                 if (item == Items.AIR) {
                     throw new IllegalStateException("Block " + e.getValue().get() + " has no corresponding item! How did this happen? Some OTHER mod must have screwed up the block to items map!");
                 }
@@ -124,7 +128,7 @@ public class ModRegistry {
             res("cauldron_crafting"));
 
     public static final Supplier<RecipeSerializer<CauldronRecipe>> CAULDRON_RECIPE_SERIALIZER = RegHelper.registerRecipeSerializer(
-            res("cauldron_crafting"), CauldronRecipe.Serializer::new);
+            res("cauldron_crafting"), () -> new RecipeSerializer<>(CauldronRecipe.MAP_CODEC, CauldronRecipe.STREAM_CODEC));
 
     public static final Supplier<EntityType<MediumDragonFireball>> MEDIUM_DRAGON_FIREBALL =
             regEntity("medium_dragon_fireball",
@@ -143,18 +147,18 @@ public class ModRegistry {
                             .updateInterval(5));
 
     public static final Supplier<Item> DRAGON_CHARGE = regItem(DRAGON_CHARGE_NAME,
-            () -> new DragonChargeItem(new Item.Properties()));
+            DragonChargeItem::new, new Item.Properties());
 
     public static final Supplier<Item> DYE_BOTTLE_ITEM = regItem(DYE_BOTTLE_NAME,
-            () -> new DyeBottleItem(new Item.Properties()
+            DyeBottleItem::new, new Item.Properties()
                     .component(DataComponents.DYED_COLOR, DyeBottleItem.RED_COLOR)
                     .stacksTo(1)
-                    .craftRemainder(Items.GLASS_BOTTLE)));
+                    .craftRemainder(Items.GLASS_BOTTLE));
 
     //lilypad
     public static final Supplier<Block> WATERLILY_BLOCK = regBlock(WATER_LILY_NAME,
-            () -> new WaterloggedLilyBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.LILY_PAD).instabreak()
-                    .sound(SoundType.LILY_PAD).noOcclusion())
+            WaterloggedLilyBlock::new, () -> BlockBehaviour.Properties.ofFullCopy(Blocks.LILY_PAD).instabreak()
+                    .sound(SoundType.LILY_PAD).noOcclusion()
     );
 
     public static final Supplier<BlockEntityType<WaterloggedLilyBlockTile>> WATERLILY_TILE = regTile(WATER_LILY_NAME,
@@ -163,10 +167,10 @@ public class ModRegistry {
 
     //cauldron
     public static final Supplier<LiquidCauldronBlock> LIQUID_CAULDRON = regBlock(LIQUID_CAULDRON_NAME,
-            () -> new LiquidCauldronBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.CAULDRON))
+            LiquidCauldronBlock::new, () -> BlockBehaviour.Properties.ofFullCopy(Blocks.CAULDRON)
     );
     public static final Supplier<Block> DYE_CAULDRON = regBlock(DYE_CAULDRON_NAME,
-            () -> new DyeCauldronBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.CAULDRON))
+            DyeCauldronBlock::new, () -> BlockBehaviour.Properties.ofFullCopy(Blocks.CAULDRON)
     );
 
     public static final Supplier<BlockEntityType<LiquidCauldronBlockTile>> LIQUID_CAULDRON_TILE = regTile(LIQUID_CAULDRON_NAME,
@@ -175,7 +179,7 @@ public class ModRegistry {
 
     //hanging flower pot
     public static final Supplier<Block> HANGING_FLOWER_POT = regBlock(HANGING_FLOWER_POT_NAME,
-            () -> new HangingFlowerPotBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.FLOWER_POT)));
+            HangingFlowerPotBlock::new, () -> BlockBehaviour.Properties.ofFullCopy(Blocks.FLOWER_POT));
 
     public static final Supplier<BlockEntityType<HangingFlowerPotBlockTile>> HANGING_FLOWER_POT_TILE = regTile(
             HANGING_FLOWER_POT_NAME, () -> PlatHelper.newBlockEntityType(
@@ -187,15 +191,14 @@ public class ModRegistry {
         Map<DyeColor, Supplier<Block>> map = new Object2ObjectLinkedOpenHashMap<>();
         for (DyeColor color : BlocksColorAPI.SORTED_COLORS) {
             String name = "ceiling_banner" + "_" + color.getName();
-            map.put(color, regBlock(name, () -> new CeilingBannerBlock(color,
-                            BlockBehaviour.Properties.of()
-                                    .ignitedByLava()
-                                    .forceSolidOn()
-                                    .mapColor(color.getMapColor())
-                                    .strength(1.0F)
-                                    .noCollission()
-                                    .sound(SoundType.WOOD)
-                    )
+            map.put(color, regBlock(name, p -> new CeilingBannerBlock(color, p),
+                    () -> BlockBehaviour.Properties.of()
+                            .ignitedByLava()
+                            .forceSolidOn()
+                            .mapColor(color.getMapColor())
+                            .strength(1.0F)
+                            .noCollision()
+                            .sound(SoundType.WOOD)
             ));
         }
         return Collections.unmodifiableMap(map);
@@ -209,11 +212,11 @@ public class ModRegistry {
 
     //carpeted blocks
     public static final Supplier<Block> CARPET_STAIRS = regBlock(CARPETED_STAIR_NAME,
-            () -> new CarpetStairBlock(Blocks.OAK_STAIRS, BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_STAIRS))
+            p -> new CarpetStairBlock(Blocks.OAK_STAIRS, p), () -> BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_STAIRS)
     );
 
     public static final Supplier<Block> CARPET_SLAB = regBlock(CARPETED_SLAB_NAME,
-            () -> new CarpetSlabBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_SLAB))
+            CarpetSlabBlock::new, () -> BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_SLAB)
     );
 
     public static final Supplier<BlockEntityType<CarpetedBlockTile>> CARPET_STAIRS_TILE = regTile("carpeted_block",
@@ -262,10 +265,9 @@ public class ModRegistry {
                     .updateInterval(20));
 
     //tool hook
-    public static final Supplier<ToolHookBlock> TOOL_HOOK = regBlock(TOOL_HOOK_NAME, () -> {
-        var p = BlockBehaviour.Properties.ofFullCopy(Blocks.TRIPWIRE_HOOK).dropsLike(Blocks.TRIPWIRE_HOOK);
-        return new ToolHookBlock(p);
-    });
+    public static final Supplier<ToolHookBlock> TOOL_HOOK = regBlock(TOOL_HOOK_NAME, ToolHookBlock::new,
+            () -> BlockBehaviour.Properties.ofFullCopy(Blocks.TRIPWIRE_HOOK)
+                    .overrideLootTable(Blocks.TRIPWIRE_HOOK.getLootTable()));
 
     public static final Supplier<BlockEntityType<ToolHookBlockTile>> TOOL_HOOK_TILE = regTile(
             TOOL_HOOK_NAME, () -> PlatHelper.newBlockEntityType(
@@ -273,30 +275,27 @@ public class ModRegistry {
 
 
     //stackable skulls
-    public static final Supplier<Block> SKULL_PILE = regBlock(SKULL_PILE_NAME, () -> {
-        var p = BlockBehaviour.Properties.ofFullCopy(Blocks.SKELETON_SKULL).sound(SoundType.BONE_BLOCK);
-
-        return new DoubleSkullBlock(p);
-    });
+    public static final Supplier<Block> SKULL_PILE = regBlock(SKULL_PILE_NAME, DoubleSkullBlock::new,
+            () -> BlockBehaviour.Properties.ofFullCopy(Blocks.SKELETON_SKULL).sound(SoundType.BONE_BLOCK));
 
     public static final Supplier<BlockEntityType<DoubleSkullBlockTile>> SKULL_PILE_TILE = regTile(
             SKULL_PILE_NAME, () -> PlatHelper.newBlockEntityType(
                     DoubleSkullBlockTile::new, SKULL_PILE.get()));
 
     //skulls candles
-    public static final Supplier<Block> SKULL_CANDLE = regBlock(SKULL_CANDLE_NAME, () ->
-            new FloorCandleSkullBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.SKELETON_SKULL).sound(SoundType.BONE_BLOCK)));
+    public static final Supplier<Block> SKULL_CANDLE = regBlock(SKULL_CANDLE_NAME, FloorCandleSkullBlock::new,
+            () -> BlockBehaviour.Properties.ofFullCopy(Blocks.SKELETON_SKULL).sound(SoundType.BONE_BLOCK));
 
-    public static final Supplier<Block> SKULL_CANDLE_WALL = regBlock(SKULL_CANDLE_NAME + "_wall", () ->
-            new WallCandleSkullBlock(BlockBehaviour.Properties.ofFullCopy(SKULL_CANDLE.get())));
+    public static final Supplier<Block> SKULL_CANDLE_WALL = regBlock(SKULL_CANDLE_NAME + "_wall", WallCandleSkullBlock::new,
+            () -> BlockBehaviour.Properties.ofFullCopy(SKULL_CANDLE.get()));
 
 
     //needed for tag so it can repel piglins
-    public static final Supplier<Block> SKULL_CANDLE_SOUL = regBlock(SKULL_CANDLE_SOUL_NAME, () ->
-            new FloorCandleSkullBlock(BlockBehaviour.Properties.ofFullCopy(SKULL_CANDLE.get())));
+    public static final Supplier<Block> SKULL_CANDLE_SOUL = regBlock(SKULL_CANDLE_SOUL_NAME, FloorCandleSkullBlock::new,
+            () -> BlockBehaviour.Properties.ofFullCopy(SKULL_CANDLE.get()));
 
-    public static final Supplier<Block> SKULL_CANDLE_SOUL_WALL = regBlock(SKULL_CANDLE_SOUL_NAME + "_wall", () ->
-            new WallCandleSkullBlock(BlockBehaviour.Properties.ofFullCopy(SKULL_CANDLE.get())));
+    public static final Supplier<Block> SKULL_CANDLE_SOUL_WALL = regBlock(SKULL_CANDLE_SOUL_NAME + "_wall", WallCandleSkullBlock::new,
+            () -> BlockBehaviour.Properties.ofFullCopy(SKULL_CANDLE.get()));
 
 
     public static final Supplier<BlockEntityType<CandleSkullBlockTile>> SKULL_CANDLE_TILE = regTile(
@@ -305,9 +304,10 @@ public class ModRegistry {
                     SKULL_CANDLE_SOUL.get(), SKULL_CANDLE_SOUL_WALL.get()));
 
     //directional cake
-    public static final Supplier<Block> DIRECTIONAL_CAKE = regBlock(DIRECTIONAL_CAKE_NAME, () -> new DirectionalCakeBlock(
-            CakeRegistry.VANILLA
-    ));
+    public static final Supplier<Block> DIRECTIONAL_CAKE = regBlock(DIRECTIONAL_CAKE_NAME,
+            p -> new DirectionalCakeBlock(p, CakeRegistry.VANILLA),
+            () -> Utils.copyPropertySafe(CakeRegistry.VANILLA.cake)
+                    .overrideLootTable(CakeRegistry.VANILLA.cake.getLootTable()));
 
     public static final Map<CakeRegistry.CakeType, DoubleCakeBlock> DOUBLE_CAKES = new LinkedHashMap<>();
 
@@ -327,12 +327,14 @@ public class ModRegistry {
         return RegHelper.registerBlockEntityType(res(name), sup);
     }
 
-    public static <T extends Block> RegSupplier<T> regBlock(String name, Supplier<T> sup) {
-        return RegHelper.registerBlock(res(name), sup);
+    public static <T extends Block> RegSupplier<T> regBlock(String name, Function<BlockBehaviour.Properties, T> factory,
+                                                            Supplier<BlockBehaviour.Properties> properties) {
+        return RegHelper.registerBlock(res(name), factory, properties);
     }
 
-    public static <T extends Item> RegSupplier<T> regItem(String name, Supplier<T> sup) {
-        return RegHelper.registerItem(res(name), sup);
+    public static <T extends Item> RegSupplier<T> regItem(String name, Function<Item.Properties, T> factory,
+                                                          Item.Properties properties) {
+        return RegHelper.registerItem(res(name), factory, properties);
     }
 
     public static <T extends Entity> Supplier<EntityType<T>> regEntity(String name, EntityType.Builder<T> builder) {

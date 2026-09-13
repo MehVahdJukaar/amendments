@@ -19,6 +19,8 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
+import net.mehvahdjukaar.moonlight.api.util.ItemStackResult;
+import net.minecraft.core.cauldron.CauldronInteraction;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
@@ -80,7 +82,7 @@ public class CauldronConversion implements BlockUse {
         SoftFluidStack first = fluid.getFirst();
         if (first.is(MLBuiltinSoftFluids.WATER) && (fluidBottle.is(Items.LINGERING_POTION) || fluidBottle.is(Items.SPLASH_POTION))) return null;
 
-        if (checkCauldronInteractions && ((CauldronBlock) Blocks.CAULDRON).interactions.map().containsKey(fluidBottle.getItem())
+        if (checkCauldronInteractions && ((CauldronBlock) Blocks.CAULDRON).interactions.get(fluidBottle) != CauldronInteraction.DEFAULT
                 && !first.is(MLBuiltinSoftFluids.POTION)) return null;
         if (CompatHandler.RATS && fluidBottle.is(Items.MILK_BUCKET)) return null;
         return getNewState(pos, level, first);
@@ -136,12 +138,12 @@ public class CauldronConversion implements BlockUse {
         }
 
         @Override
-        protected InteractionResult customBehavior(BlockSource source, ItemStack stack) {
+        protected ItemStackResult customBehavior(BlockSource source, ItemStack stack) {
             //this.setSuccessful(false);
             ServerLevel level = source.level();
             BlockState originalState = source.state();
             BlockPos pos = source.pos().relative(originalState.getValue(DispenserBlock.FACING));
-            if (!originalState.is(Blocks.CAULDRON)) return InteractionResult.PASS;
+            if (!originalState.is(Blocks.CAULDRON)) return ItemStackResult.pass(stack);
 
             BlockState newState = getNewState(pos, level, stack);
             if (newState != null) {
@@ -151,13 +153,13 @@ public class CauldronConversion implements BlockUse {
                     ItemStack returnStack = tank.interactWithItem(stack, level, pos, false);
                     if (returnStack != null) {
                         level.gameEvent(null, GameEvent.BLOCK_CHANGE, pos);
-                        return InteractionResult.SUCCESS;
+                        return ItemStackResult.success(returnStack);
                     } else {
                         level.setBlockAndUpdate(pos, originalState);
                     }
                 }
             }
-            return InteractionResult.PASS;
+            return ItemStackResult.pass(stack);
         }
     }
 }

@@ -1,31 +1,33 @@
 package net.mehvahdjukaar.amendments.common.recipe;
 
 import com.mojang.serialization.Codec;
-import com.mojang.serialization.DataResult;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidStack;
 import net.mehvahdjukaar.moonlight.api.util.codec.BiggerStreamCodecs;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.NonNullList;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.world.entity.player.StackedContents;
+import net.minecraft.world.entity.player.StackedItemContents;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.PlacementInfo;
 import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeBookCategories;
+import net.minecraft.world.item.crafting.RecipeBookCategory;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
+import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
 import java.util.Optional;
-import java.util.function.Function;
 
 public class CauldronRecipe implements Recipe<CauldronCraftingContainer> {
     private final String group;
-    private final NonNullList<Ingredient> inputItems;
+    private final List<Ingredient> inputItems;
     private final SoftFluidIngredient inputFluid; //amount is unused
 
     private final Optional<SoftFluidIngredient> outputFluid; //amount is unused
@@ -35,8 +37,11 @@ public class CauldronRecipe implements Recipe<CauldronCraftingContainer> {
 
     private final int fluidAmountDifference; //amount difference from before and after crafting
 
+    @Nullable
+    private PlacementInfo placementInfo;
+
     protected CauldronRecipe(String group, SoftFluidIngredient inputFluid,
-                             NonNullList<Ingredient> inputItems, Optional<SoftFluidIngredient> outputFluid, ItemStack outputItem,
+                             List<Ingredient> inputItems, Optional<SoftFluidIngredient> outputFluid, ItemStack outputItem,
                              int fluidAmountDifference, boolean requireBoiling) {
         this.group = group;
         this.inputItems = inputItems;
@@ -48,28 +53,36 @@ public class CauldronRecipe implements Recipe<CauldronCraftingContainer> {
     }
 
     @Override
-    public RecipeSerializer<?> getSerializer() {
+    public RecipeSerializer<CauldronRecipe> getSerializer() {
         return ModRegistry.CAULDRON_RECIPE_SERIALIZER.get();
     }
 
     @Override
-    public RecipeType<?> getType() {
+    public RecipeType<CauldronRecipe> getType() {
         return ModRegistry.CAULDRON_RECIPE_TYPE.get();
     }
 
     @Override
-    public String getGroup() {
+    public String group() {
         return this.group;
     }
 
     @Override
-    public ItemStack getResultItem(HolderLookup.Provider registries) {
-        return outputItem;
+    public boolean showNotification() {
+        return false;
     }
 
     @Override
-    public NonNullList<Ingredient> getIngredients() {
-        return this.inputItems;
+    public RecipeBookCategory recipeBookCategory() {
+        return RecipeBookCategories.CRAFTING_MISC;
+    }
+
+    @Override
+    public PlacementInfo placementInfo() {
+        if (this.placementInfo == null) {
+            this.placementInfo = PlacementInfo.create(this.inputItems);
+        }
+        return this.placementInfo;
     }
 
     @Override
@@ -77,7 +90,7 @@ public class CauldronRecipe implements Recipe<CauldronCraftingContainer> {
         if (this.requireBoiling && !inv.isBoiling()) {
             return false; //if recipe requires boiling, but cauldron is not boiling
         }
-        StackedContents stackedContents = new StackedContents();
+        StackedItemContents stackedContents = new StackedItemContents();
         int i = 0;
 
         for (int j = 0; j < inv.size(); j++) {
@@ -96,10 +109,9 @@ public class CauldronRecipe implements Recipe<CauldronCraftingContainer> {
         return i == this.inputItems.size() && stackedContents.canCraft(this, null);
     }
 
-    @Deprecated
     @Override
-    public ItemStack assemble(CauldronCraftingContainer input, HolderLookup.Provider registries) {
-        return getResultItem(registries);
+    public ItemStack assemble(CauldronCraftingContainer input) {
+        return this.outputItem.copy();
     }
 
     public FluidAndItemCraftResult assembleFluid(CauldronCraftingContainer container, HolderLookup.Provider registries) {
@@ -113,54 +125,24 @@ public class CauldronRecipe implements Recipe<CauldronCraftingContainer> {
         return FluidAndItemCraftResult.of(craftedItem, newTankFluid);
     }
 
-    @Override
-    public boolean canCraftInDimensions(int width, int height) {
-        return width * height >= this.inputItems.size();
-    }
+    public static final MapCodec<CauldronRecipe> MAP_CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+            Codec.STRING.fieldOf("group").forGetter(recipe -> recipe.group),
+            SoftFluidIngredient.CODEC.fieldOf("input_fluid").forGetter(recipe -> recipe.inputFluid),
+            Ingredient.CODEC.listOf(1, 9).fieldOf("input_items").forGetter(recipe -> recipe.inputItems),
+            SoftFluidIngredient.CODEC.optionalFieldOf("output_fluid").forGetter(recipe -> recipe.outputFluid),
+            ItemStack.CODEC.optionalFieldOf("output_item", ItemStack.EMPTY).forGetter(recipe -> recipe.outputItem),
+            Codec.INT.optionalFieldOf("fluid_amount_difference", 0).forGetter(recipe -> recipe.fluidAmountDifference),
+            Codec.BOOL.optionalFieldOf("require_boiling", false).orElse(false).forGetter(recipe -> recipe.requireBoiling)
+    ).apply(instance, CauldronRecipe::new));
 
-    private static final Codec<NonNullList<Ingredient>> ING_LIST_CODEC = Ingredient.CODEC_NONEMPTY.listOf()
-            .flatXmap((list) -> {
-                Ingredient[] ingredients = list.stream().filter((ingredient) -> !ingredient.isEmpty()).toArray(Ingredient[]::new);
-                if (ingredients.length == 0) {
-                    return DataResult.error(() -> "No ingredients for cauldron recipe");
-                } else {
-                    return DataResult.success(NonNullList.of(Ingredient.EMPTY, ingredients));
-                }
-            }, DataResult::success);
-
-    public static class Serializer implements RecipeSerializer<CauldronRecipe> {
-
-        public static final MapCodec<CauldronRecipe> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-                Codec.STRING.fieldOf("group").forGetter(recipe -> recipe.group),
-                SoftFluidIngredient.CODEC.fieldOf("input_fluid").forGetter(recipe -> recipe.inputFluid),
-                ING_LIST_CODEC.fieldOf("input_items").forGetter(recipe -> recipe.inputItems),
-                SoftFluidIngredient.CODEC.optionalFieldOf("output_fluid").forGetter(recipe -> recipe.outputFluid),
-                ItemStack.CODEC.optionalFieldOf("output_item", ItemStack.EMPTY).forGetter(recipe -> recipe.outputItem),
-                Codec.INT.optionalFieldOf("fluid_amount_difference", 0).forGetter(recipe -> recipe.fluidAmountDifference),
-                Codec.BOOL.optionalFieldOf("require_boiling", false).orElse(false).forGetter(recipe -> recipe.requireBoiling)
-        ).apply(instance, CauldronRecipe::new));
-
-        public static final StreamCodec<RegistryFriendlyByteBuf, CauldronRecipe> STREAM_CODEC = BiggerStreamCodecs.composite(
-                ByteBufCodecs.STRING_UTF8, CauldronRecipe::getGroup,
-                SoftFluidIngredient.STREAM_CODEC, r -> r.inputFluid,
-                Ingredient.CONTENTS_STREAM_CODEC.apply(ByteBufCodecs.list())
-                        .map(l -> NonNullList.of(Ingredient.EMPTY, l.toArray(new Ingredient[0])), Function.identity()),
-                r -> r.inputItems,
-                ByteBufCodecs.optional(SoftFluidIngredient.STREAM_CODEC), r -> r.outputFluid,
-                ItemStack.OPTIONAL_STREAM_CODEC, r -> r.outputItem,
-                ByteBufCodecs.VAR_INT, r -> r.fluidAmountDifference,
-                ByteBufCodecs.BOOL, r -> r.requireBoiling,
-                CauldronRecipe::new
-        );
-
-        @Override
-        public MapCodec<CauldronRecipe> codec() {
-            return CODEC;
-        }
-
-        @Override
-        public StreamCodec<RegistryFriendlyByteBuf, CauldronRecipe> streamCodec() {
-            return STREAM_CODEC;
-        }
-    }
+    public static final StreamCodec<RegistryFriendlyByteBuf, CauldronRecipe> STREAM_CODEC = BiggerStreamCodecs.composite(
+            ByteBufCodecs.STRING_UTF8, CauldronRecipe::group,
+            SoftFluidIngredient.STREAM_CODEC, r -> r.inputFluid,
+            Ingredient.CONTENTS_STREAM_CODEC.apply(ByteBufCodecs.list()), r -> r.inputItems,
+            ByteBufCodecs.optional(SoftFluidIngredient.STREAM_CODEC), r -> r.outputFluid,
+            ItemStack.OPTIONAL_STREAM_CODEC, r -> r.outputItem,
+            ByteBufCodecs.VAR_INT, r -> r.fluidAmountDifference,
+            ByteBufCodecs.BOOL, r -> r.requireBoiling,
+            CauldronRecipe::new
+    );
 }

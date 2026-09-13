@@ -124,12 +124,12 @@ public class MediumFireball extends ImprovedProjectileEntity implements IVisualT
             Entity fireballOwner = this.getOwner();
             DamageSource source = fireballDamage(fireballOwner);
             if (this.isExtinguished) {
-                entity.hurt(source, ProjectileStats.PLAYER_FIREBALL.damageOnHit());
+                entity.hurtServer(serverLevel, source, ProjectileStats.PLAYER_FIREBALL.damageOnHit());
             } else {
                 //actually replace this with explosion
                 int fireTick = entity.getRemainingFireTicks();
                 entity.igniteForSeconds(ProjectileStats.PLAYER_FIREBALL.directHitFireSeconds()); //same as blaze charge
-                if (!entity.hurt(source, ProjectileStats.PLAYER_FIREBALL.damageOnHit())) {
+                if (!entity.hurtServer(serverLevel, source, ProjectileStats.PLAYER_FIREBALL.damageOnHit())) {
                     entity.setRemainingFireTicks(fireTick);
                 } else {
                     EnchantmentHelper.doPostAttackEffects(serverLevel, entity, source);

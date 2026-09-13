@@ -16,12 +16,12 @@ import net.minecraft.world.item.PlaceOnWaterBlockItem;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.WaterlilyBlock;
+import net.minecraft.world.level.block.LilyPadBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import org.spongepowered.asm.mixin.Mixin;
 
-@Mixin(WaterlilyBlock.class)
+@Mixin(LilyPadBlock.class)
 public abstract class WaterLilyMixin extends Block {
     protected WaterLilyMixin(Properties properties) {
         super(properties);

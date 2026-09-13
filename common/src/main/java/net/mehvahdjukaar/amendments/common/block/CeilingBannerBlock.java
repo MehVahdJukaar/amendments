@@ -50,7 +50,7 @@ public class CeilingBannerBlock extends AbstractBannerBlock {
     private static final VoxelShape SHAPE_Z = Block.box(0.0D, 0.0D, 7.0D, 16.0D, 16.0D, 9.0D);
 
     public CeilingBannerBlock(DyeColor color, Properties properties) {
-        super(color, properties);
+        super(color, properties.overrideDescription("block.minecraft." + color.getSerializedName() + "_banner"));
         this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(ATTACHED, false));
     }
 
@@ -61,7 +61,7 @@ public class CeilingBannerBlock extends AbstractBannerBlock {
 
     @Override
     public List<ItemStack> getDrops(BlockState blockState, LootParams.Builder builder) {
-        return BannerBlock.byColor(this.getColor()).defaultBlockState().getDrops(builder);
+        return BlocksColorAPI.getColoredBlock("banner", this.getColor()).defaultBlockState().getDrops(builder);
     }
 
     @Override
@@ -155,19 +155,7 @@ public class CeilingBannerBlock extends AbstractBannerBlock {
         return super.useItemOn(stack, state, level, pos, player, hand, hitResult);
     }
 
-    private String descriptionId;
 
-    @Override
-    public String getDescriptionId() {
-        if (this.descriptionId == null) {
-            Block baseBlock = BlocksColorAPI.getColoredBlock("banner", getColor());
-            if (baseBlock != null) {
-                this.descriptionId = baseBlock.getDescriptionId();
-            } else return "block.amendments.ceiling_banner"; //should never happen
-
-        }
-        return descriptionId;
-    }
 
     @Override
     protected ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state, boolean includeData) {

@@ -15,6 +15,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.ScheduledTickAccess;
@@ -26,6 +27,10 @@ import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.shapes.VoxelShape;
+import net.mehvahdjukaar.moonlight.api.fluids.client.SoftFluidColors;
+import net.minecraft.client.renderer.block.BlockAndTintGetter;
+import net.minecraft.world.entity.InsideBlockEffectApplier;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
@@ -40,7 +45,7 @@ public abstract class ModCauldronBlock extends AbstractCauldronBlock implements 
     private final int maxLevel;
 
     public ModCauldronBlock(BlockBehaviour.Properties properties) {
-        super(properties, new CauldronInteraction.InteractionMap("amendments_empty", Map.of()));
+        super(properties, new CauldronInteraction.Dispatcher());
         this.registerDefaultState(this.defaultBlockState()
                 .setValue(BOILING, false));
         this.maxLevel = this.getLevelProperty().getPossibleValues().size(); //assumes it counts from 1
@@ -71,7 +76,7 @@ public abstract class ModCauldronBlock extends AbstractCauldronBlock implements 
     public abstract IntegerProperty getLevelProperty();
 
     @Override
-    public int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos) {
+    public int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos, Direction direction) {
         return state.getValue(getLevelProperty());
     }
 
@@ -96,8 +101,8 @@ public abstract class ModCauldronBlock extends AbstractCauldronBlock implements 
     }
 
     @Override
-    public void fallOn(Level level, BlockState state, BlockPos pos, Entity entity, float fallDistance) {
-        if (isEntityInsideContent(state, pos, entity)) {
+    public void fallOn(Level level, BlockState state, BlockPos pos, Entity entity, double fallDistance) {
+        if (CommonCauldronCode.isEntityInsideContent(pos, entity, this.getContentHeight(state))) {
             CommonCauldronCode.onEntityFallOnContent(level, state, entity, this.getContentHeight(state));
 
             super.fallOn(level, state, pos, entity, 0);
@@ -106,20 +111,24 @@ public abstract class ModCauldronBlock extends AbstractCauldronBlock implements 
 
 
     @Override
-    public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
-        if (isEntityInsideContent(state, pos, entity)) {
-            CommonCauldronCode.entityInside(state, level, pos, entity, () -> this.getContentHeight(state));
+    public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity, InsideBlockEffectApplier effectApplier, boolean isPrecise) {
+        CommonCauldronCode.entityInside(state, level, pos, entity, () -> this.getContentHeight(state));
 
-            handleEntityInsideFluidSpecial(state, level, pos, entity);
-        }
+        handleEntityInsideFluidSpecial(state, level, pos, entity);
+    }
+
+    @Override
+    protected VoxelShape getEntityInsideCollisionShape(BlockState state, BlockGetter level, BlockPos pos, Entity entity) {
+        return CommonCauldronCode.contentShape(this.getContentHeight(state));
     }
 
     @Override
     public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource random) {
         super.animateTick(state, level, pos, random);
-        if (state.getValue(BOILING) && level.getBlockEntity(pos) instanceof LiquidCauldronBlockTile te) {
+        if (state.getValue(BOILING) && level instanceof BlockAndTintGetter tintGetter
+                && level.getBlockEntity(pos) instanceof LiquidCauldronBlockTile te) {
             SoftFluidTank tank = te.getSoftFluidTank();
-            int color = tank.getCachedParticleColor(level, pos);
+            int color = SoftFluidColors.getCachedParticleColor(tank, tintGetter, pos);
             int light = tank.getFluidValue().getEmissivity();
             CommonCauldronCode.playBubblingAnimation(level, pos, getContentHeight(state), random, color, light);
         }

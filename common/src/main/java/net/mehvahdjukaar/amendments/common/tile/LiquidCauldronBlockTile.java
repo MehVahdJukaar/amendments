@@ -30,9 +30,12 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.DyeItem;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -83,10 +86,10 @@ public class LiquidCauldronBlockTile extends BlockEntity implements IExtraModelD
     }
 
     @Override
-    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.loadAdditional(tag, registries);
-        this.hasGlowInk = tag.getBoolean("glow_ink");
-        this.getOrCreateTank(registries).load(tag, registries);
+    protected void loadAdditional(ValueInput input) {
+        super.loadAdditional(input);
+        this.hasGlowInk = input.getBooleanOr("glow_ink", false);
+        this.getOrCreateTank(input.lookup()).load(input);
         if (this.level != null && this.level.isClientSide()) {
             getSoftFluidTank().refreshTintCache();
             this.requestModelReload();
@@ -94,10 +97,10 @@ public class LiquidCauldronBlockTile extends BlockEntity implements IExtraModelD
     }
 
     @Override
-    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.saveAdditional(tag, registries);
-        if (this.hasGlowInk) tag.putBoolean("glow_ink", true);
-        this.getSoftFluidTank().save(tag, registries);
+    protected void saveAdditional(ValueOutput output) {
+        super.saveAdditional(output);
+        if (this.hasGlowInk) output.putBoolean("glow_ink", true);
+        this.getSoftFluidTank().save(output);
     }
 
     @Override
@@ -158,7 +161,7 @@ public class LiquidCauldronBlockTile extends BlockEntity implements IExtraModelD
             List<MobEffectInstance> potionEffects = getAllPotionEffects(stack);
             int potionEffectAmount = potionEffects.size();
             if (potionEffectAmount == CommonConfigs.POTION_MIXING_LIMIT.get()) {
-                player.displayClientMessage(Component.translatable("message.amendments.cauldron"), true);
+                player.sendOverlayMessage(Component.translatable("message.amendments.cauldron"));
             }
         }
     }
@@ -200,7 +203,7 @@ public class LiquidCauldronBlockTile extends BlockEntity implements IExtraModelD
                     SoftFluidStack newStack = LiquidMixer.mixPotions(this.fluidStack, incoming);
                     if (newStack != null) {
                         this.setFluid(newStack);
-                        needsColorRefresh = true;
+                        refreshTintCache();
                     }
                 }
                 super.addFluidOntoExisting(incoming);
@@ -227,7 +230,7 @@ public class LiquidCauldronBlockTile extends BlockEntity implements IExtraModelD
                     var mixed = LiquidMixer.mixDye(this.fluidStack, fluidStack);
                     if (mixed != null) {
                         this.setFluid(mixed);
-                        needsColorRefresh = true;
+                        refreshTintCache();
                     }
                 }
                 super.addFluidOntoExisting(fluidStack);
@@ -236,22 +239,23 @@ public class LiquidCauldronBlockTile extends BlockEntity implements IExtraModelD
             @Override
             public @Nullable ItemStack interactWithItem(ItemStack stack, Level world, @Nullable BlockPos pos, boolean simulate) {
                 //always allows adding dye. they dont add water
-                if (stack.getItem() instanceof DyeItem di) {
+                DyeColor dye = stack.get(DataComponents.DYE);
+                if (dye != null) {
                     if (!simulate) {
                         //can always add dye
-                        addDyeItem(di, world, pos);
+                        addDyeItem(dye, world, pos);
                     }
                     return ItemStack.EMPTY;
                 }
                 return super.interactWithItem(stack, world, pos, simulate);
             }
 
-            private void addDyeItem(DyeItem dyeItem, Level world, @Nullable BlockPos pos) {
+            private void addDyeItem(DyeColor dye, Level world, @Nullable BlockPos pos) {
                 SoftFluidStack fluid = this.getFluid();
                 if (!world.isClientSide()) {
                     int count = fluid.getCount();
                     if (count == 3) fluid.setCount(2); //hack!!
-                    SoftFluidStack dummyStack = DyeBottleItem.createFluidStack(dyeItem.getDyeColor(), 1, world);
+                    SoftFluidStack dummyStack = DyeBottleItem.createFluidStack(dye, 1, world);
 
                     SoftFluidStack newFluid = LiquidMixer.mixDye(fluid, dummyStack);
                     if (newFluid != null) {

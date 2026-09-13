@@ -28,6 +28,8 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.redstone.Orientation;
+import net.minecraft.world.entity.InsideBlockEffectApplier;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
@@ -157,7 +159,7 @@ public class WallLanternBlock extends WaterBlock implements EntityBlock {
         return state.rotate(mirrorIn.getRotation(state.getValue(FACING)));
     }
 
-    public static BlockState getConnectedState(BlockState state, BlockState facingState, LevelAccessor world, BlockPos pos, Direction dir) {
+    public static BlockState getConnectedState(BlockState state, BlockState facingState, LevelReader world, BlockPos pos, Direction dir) {
         ModBlockProperties.BlockAttachment attachment = ModBlockProperties.BlockAttachment.get(facingState, pos, world, dir);
         if (attachment == null) {
             return state;
@@ -198,7 +200,7 @@ public class WallLanternBlock extends WaterBlock implements EntityBlock {
     }
 
     @Override
-    public void neighborChanged(BlockState state, Level world, BlockPos pos, Block block, BlockPos fromPos, boolean notify) {
+    public void neighborChanged(BlockState state, Level world, BlockPos pos, Block block, @Nullable Orientation orientation, boolean movedByPiston) {
         //if (CompatHandler.THIN_AIR && world.getBlockEntity(pos) instanceof WallLanternBlockTile te) {
         //    BlockState lantern = wall.getLanternState(state);
         //    if (ThinAirCompat.isAirLantern(lantern)) {
@@ -242,8 +244,8 @@ public class WallLanternBlock extends WaterBlock implements EntityBlock {
     }
 
     @Override
-    public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
-        super.entityInside(state, level, pos, entity);
+    public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity, InsideBlockEffectApplier effectApplier, boolean isPrecise) {
+        super.entityInside(state, level, pos, entity, effectApplier, isPrecise);
         if (level.isClientSide()) {
             if (level.getBlockEntity(pos) instanceof WallLanternBlockTile tile) {
                 tile.amendments$getAnimation().hitByEntity(entity, state, pos);

@@ -170,13 +170,7 @@ public class InteractEvents {
 
         ItemUse override = ITEM_USE.get(item);
         if (override != null && override.isEnabled()) {
-            var ret = override.tryPerformingAction(level, player, hand, stack, null);
-            return switch (ret) {
-                case CONSUME -> InteractionResult.CONSUME;
-                case SUCCESS -> InteractionResult.SUCCESS;
-                case FAIL -> InteractionResult.FAIL;
-                default -> InteractionResult.PASS;
-            };
+            return override.tryPerformingAction(level, player, hand, stack, null);
         }
         return InteractionResult.PASS;
     }

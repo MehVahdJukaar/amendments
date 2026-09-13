@@ -65,8 +65,8 @@ public class CarpetSlabBlock extends SlabBlock implements EntityBlock, IRecolora
     }
 
     @Override
-    public VoxelShape getOcclusionShape(BlockState state, BlockGetter level, BlockPos pos) {
-        return state.getValue(SOLID) ? super.getOcclusionShape(state, level, pos) : Shapes.empty();
+    public VoxelShape getOcclusionShape(BlockState state) {
+        return state.getValue(SOLID) ? super.getOcclusionShape(state) : Shapes.empty();
     }
 
     @Override
@@ -134,7 +134,7 @@ public class CarpetSlabBlock extends SlabBlock implements EntityBlock, IRecolora
     protected ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state, boolean includeData) {
         if (level.getBlockEntity(pos) instanceof CarpetedBlockTile tile) {
             BlockState mimic = tile.getHeldBlock();
-            return mimic.getBlock().getCloneItemStack(level, pos, state, includeData);
+            return mimic.getCloneItemStack(level, pos, includeData);
         }
         return super.getCloneItemStack(level, pos, state, includeData);
     }
