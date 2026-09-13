@@ -2,15 +2,9 @@
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
   "ingredients": [
-    {
-      "item": "minecraft:obsidian"
-    },
-    {
-      "item": "minecraft:dragon_breath"
-    },
-    {
-      "item": "minecraft:gunpowder"
-    }
+    "minecraft:obsidian",
+    "minecraft:dragon_breath",
+    "minecraft:gunpowder"
   ],
   "result": {
     "id": "amendments:dragon_charge"

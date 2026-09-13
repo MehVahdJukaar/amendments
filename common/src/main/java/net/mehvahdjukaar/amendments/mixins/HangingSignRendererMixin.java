@@ -5,6 +5,7 @@ import net.mehvahdjukaar.amendments.AmendmentsClient;
 import net.mehvahdjukaar.amendments.client.renderers.ExtendedSignRenderState;
 import net.mehvahdjukaar.amendments.client.renderers.HangingSignRenderData;
 import net.mehvahdjukaar.amendments.client.renderers.HangingSignRendererExtension;
+import net.mehvahdjukaar.candlelight.api.VirtualOverride;
 import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
 import net.minecraft.client.model.Model;
 import net.minecraft.client.model.geom.ModelPart;
@@ -20,6 +21,7 @@ import net.minecraft.client.resources.model.sprite.SpriteGetter;
 import net.minecraft.client.resources.model.sprite.SpriteId;
 import net.minecraft.world.level.block.entity.SignBlockEntity;
 import net.minecraft.world.level.block.state.properties.WoodType;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
@@ -74,6 +76,12 @@ public abstract class HangingSignRendererMixin extends AbstractSignRenderer<Hang
         if (this.amendments$chains == null) return;
         HangingSignRendererExtension.extract(blockEntity, state, partialTicks, this.amendments$itemModels,
                 AmendmentsClient.HANGING_SIGN_EXTENSIONS.get().get(state.woodType));
+    }
+
+    //extension bars and items poke out of the block
+    @VirtualOverride("neoforge")
+    public AABB getRenderBoundingBox(SignBlockEntity blockEntity) {
+        return new AABB(blockEntity.getBlockPos()).inflate(0.5);
     }
 
     @Override

@@ -10,7 +10,9 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -30,7 +32,7 @@ public abstract class BellMixin extends Block {
 
     //for bells
     @Unique
-    public boolean amendments$tryConnect(BlockPos pos, BlockState facingState, LevelAccessor world) {
+    public boolean amendments$tryConnect(BlockPos pos, BlockState facingState, LevelReader world) {
         BlockEntity te = world.getBlockEntity(pos);
         if (te instanceof IBellConnection bc) {
             IBellConnection.Type connection = IBellConnection.Type.NONE;
@@ -46,8 +48,8 @@ public abstract class BellMixin extends Block {
     }
 
     @Inject(method = "updateShape", at = @At("HEAD"))
-    public void updateShape(BlockState stateIn, Direction facing, BlockState facingState, LevelAccessor worldIn,
-                            BlockPos currentPos, BlockPos facingPos, CallbackInfoReturnable<BlockState> info) {
+    public void updateShape(BlockState stateIn, LevelReader worldIn, ScheduledTickAccess ticks, BlockPos currentPos, Direction facing,
+                            BlockPos facingPos, BlockState facingState, RandomSource random, CallbackInfoReturnable<BlockState> info) {
         try {
             if (facing == Direction.DOWN && this.amendments$tryConnect(currentPos, facingState, worldIn)) {
                 if (worldIn instanceof Level level)
@@ -59,7 +61,7 @@ public abstract class BellMixin extends Block {
     }
 
     @Inject(method = "attemptToRing(Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/core/Direction;)Z",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;playSound(Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/core/BlockPos;Lnet/minecraft/sounds/SoundEvent;Lnet/minecraft/sounds/SoundSource;FF)V"))
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;playSound(Lnet/minecraft/world/entity/Entity;Lnet/minecraft/core/BlockPos;Lnet/minecraft/sounds/SoundEvent;Lnet/minecraft/sounds/SoundSource;FF)V"))
     public void amendments$updateObservers(Entity entity, Level level, BlockPos pos, Direction direction,
                                            CallbackInfoReturnable<Boolean> cir, @Local BlockEntity blockEntity) {
         BlockState state = blockEntity.getBlockState();

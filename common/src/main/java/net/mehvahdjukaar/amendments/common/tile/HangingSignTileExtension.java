@@ -15,7 +15,7 @@ import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.CeilingHangingSignBlock;
 import net.minecraft.world.level.block.WallHangingSignBlock;
@@ -109,7 +109,7 @@ public class HangingSignTileExtension {
 
 
     //just called by wall hanging sign
-    public void updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor level,
+    public void updateShape(BlockState state, Direction direction, BlockState neighborState, LevelReader level,
                             BlockPos pos, BlockPos neighborPos) {
 
         if (!isCeiling) {
@@ -129,7 +129,7 @@ public class HangingSignTileExtension {
         }
     }
 
-    private void updateCanSwing(BlockState state, BlockState neighborState, LevelAccessor level, BlockPos pos) {
+    private void updateCanSwing(BlockState state, BlockState neighborState, LevelReader level, BlockPos pos) {
         canSwing = isCeiling ? !state.getValue(CeilingHangingSignBlock.ATTACHED) :
                 !Amendments.canConnectDown(neighborState, level, pos);
     }

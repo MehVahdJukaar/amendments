@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 @Mixin(MerchantScreen.class)
 public abstract class MerchantScreenMixin {
 
-    @ModifyVariable(method = "render", at = @At("STORE"), index = 17)
+    @ModifyVariable(method = "extractContents", at = @At("STORE"), index = 17)
     public int amendments$centerTradeRow(int rowY) {
         return ClientConfigs.TRADE_BUTTONS.get() ? rowY + 1 : rowY;
     }

@@ -4,6 +4,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -33,7 +34,7 @@ public abstract class BrewingStandMixin extends BlockEntity {
     }
 
     @Inject(method = "loadAdditional", at = @At("TAIL"))
-    public void amendments$refreshModel(CompoundTag tag, HolderLookup.Provider registries, CallbackInfo ci){
+    public void amendments$refreshModel(ValueInput input, CallbackInfo ci) {
         if (level != null && level.isClientSide()) {
             //this for some reason marks block for re-render
             level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);

@@ -25,7 +25,6 @@ import net.minecraft.world.entity.ai.village.poi.PoiTypes;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SupportType;
@@ -190,7 +189,7 @@ public class Amendments {
         return Block.canSupportCenter(world, pos, Direction.DOWN);
     }
 
-    public static boolean canConnectDown(BlockState neighborState, LevelAccessor level, BlockPos pos) {
+    public static boolean canConnectDown(BlockState neighborState, LevelReader level, BlockPos pos) {
         if (CompatHandler.SUPPLEMENTARIES) return SuppCompat.canConnectDown(neighborState);
         return neighborState.isFaceSturdy(level, pos, Direction.UP, SupportType.CENTER);
     }

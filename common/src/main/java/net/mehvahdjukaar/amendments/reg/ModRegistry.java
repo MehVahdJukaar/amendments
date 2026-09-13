@@ -32,6 +32,7 @@ import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.util.Util;
 import net.minecraft.world.damagesource.DamageType;
@@ -227,15 +228,17 @@ public class ModRegistry {
     public static final Map<LanternRegistry.LanternType, WallLanternBlock> WALL_LANTERNS = new LinkedHashMap<>();
     // Lantern block id -> its wall lantern, so copper wall lanterns can resolve their oxidation/wax siblings.
     public static final Map<Identifier, WallLanternBlock> WALL_LANTERNS_BY_LANTERN = new HashMap<>();
+    //dynamic blocks are registered before block entity types so the map is filled here. vanilla rejects an empty block list
     public static Supplier<BlockEntityType<WallLanternBlockTile>> WALL_LANTERN_TILE = RegHelper.registerBlockEntityType(res(WALL_LANTERN_NAME), () ->
-            PlatHelper.newBlockEntityType(WallLanternBlockTile::new));
+            PlatHelper.newBlockEntityType(WallLanternBlockTile::new, WALL_LANTERNS.values().toArray(new Block[0])));
 
     private static void registerWallLanterns(Registrator<Block> event) {
         for (LanternRegistry.LanternType type : LanternRegistry.INSTANCE) {
             Identifier id = res(type.getVariantId("wall"));
             var p = BlockBehaviour.Properties.ofFullCopy(type.lantern)
                     .pushReaction(PushReaction.DESTROY)
-                    .noLootTable();
+                    .noLootTable()
+                    .setId(ResourceKey.create(Registries.BLOCK, id));
             WallLanternBlock block = makeWallLantern(p, type);
             type.addChild("wall_lantern", block);
             event.register(id, block);
@@ -315,7 +318,10 @@ public class ModRegistry {
         for (CakeRegistry.CakeType type : CakeRegistry.INSTANCE) {
 
             Identifier id = res(type.getVariantId("double"));
-            DoubleCakeBlock block = new DoubleCakeBlock(type);
+            var p = Utils.copyPropertySafe(type.cake)
+                    .overrideLootTable(type.cake.getLootTable())
+                    .setId(ResourceKey.create(Registries.BLOCK, id));
+            DoubleCakeBlock block = new DoubleCakeBlock(p, type);
             type.addChild("double_cake", block);
             event.register(id, block);
             ModRegistry.DOUBLE_CAKES.put(type, block);

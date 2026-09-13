@@ -288,5 +288,7 @@
   "amendments.configuration.misc.fixed_holding_animations": "Fixed Holding Animations",
   "amendments.configuration.misc.fixed_holding_animations.description": "Makes Torch and Lantern holding animation be fixed, not changing with player facing",
   "amendments.configuration.misc.campfire_smoke_through_blocks": "Campfire Smoke Through Blocks",
-  "amendments.configuration.misc.campfire_smoke_through_blocks.description": "Prevents campfire smoke from rendering if there is a solid block above it"
+  "amendments.configuration.misc.campfire_smoke_through_blocks.description": "Prevents campfire smoke from rendering if there is a solid block above it",
+  "amendments.configuration.misc.villager_trade_buttons": "Villager Trade Buttons",
+  "amendments.configuration.misc.villager_trade_buttons.description": "Gives the villager trade buttons the same look loom and stonecutter buttons have"
 }

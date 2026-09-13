@@ -21,7 +21,7 @@ import java.util.List;
 @Mixin(ServerExplosion.class)
 public class ExplosionMixin {
 
-    @WrapOperation(method = "hurtEntities(Ljava/util/List;)V", at = @At(value = "INVOKE",
+    @WrapOperation(method = "hurtEntities", at = @At(value = "INVOKE",
             target = "Lnet/minecraft/world/entity/Entity;hurtServer(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/damagesource/DamageSource;F)Z"))
     public boolean amendments$HurtWithContext(Entity entity, ServerLevel level, DamageSource source, float amount,
                                               Operation<Boolean> original) {
@@ -31,7 +31,7 @@ public class ExplosionMixin {
         return original.call(entity, level, source, amount);
     }
 
-    @WrapWithCondition(method = "hurtEntities(Ljava/util/List;)V", at = @At(value = "INVOKE",
+    @WrapWithCondition(method = "hurtEntities", at = @At(value = "INVOKE",
             target = "Lnet/minecraft/world/entity/Entity;push(Lnet/minecraft/world/phys/Vec3;)V"))
     public boolean amendments$cancelKnockback(Entity instance, Vec3 knockback) {
         return !(((Object) this) instanceof FireballExplosion fe) || fe.hasKnockback();
