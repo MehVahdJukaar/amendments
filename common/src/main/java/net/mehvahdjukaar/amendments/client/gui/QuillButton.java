@@ -1,5 +1,6 @@
 package net.mehvahdjukaar.amendments.client.gui;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import net.mehvahdjukaar.amendments.Amendments;
 import net.mehvahdjukaar.moonlight.api.misc.ForgeOverride;
 import net.minecraft.ChatFormatting;
@@ -56,7 +57,7 @@ public class QuillButton extends AbstractWidget {
 
     @Override
     protected boolean isValidClickButton(int button) {
-        return super.isValidClickButton(button) || button == 1;
+        return super.isValidClickButton(button) || button == InputConstants.MOUSE_BUTTON_RIGHT;
     }
 
 
