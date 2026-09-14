@@ -1,5 +1,6 @@
 package net.mehvahdjukaar.amendments.client.gui;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import net.mehvahdjukaar.amendments.Amendments;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -48,12 +49,12 @@ public class InkButton extends AbstractWidget {
     }
 
     static boolean backwards(MouseButtonEvent event) {
-        return event.hasShiftDown() || event.button() == 1;
+        return event.hasShiftDown() || event.button() == InputConstants.MOUSE_BUTTON_RIGHT;
     }
 
     @Override
     protected boolean isValidClickButton(MouseButtonInfo buttonInfo) {
-        return super.isValidClickButton(buttonInfo) || buttonInfo.button() == 1;
+        return super.isValidClickButton(buttonInfo) || buttonInfo.button() == InputConstants.MOUSE_BUTTON_RIGHT;
     }
 
     public ChatFormatting getChatFormatting() {

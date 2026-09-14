@@ -1,5 +1,6 @@
 package net.mehvahdjukaar.amendments.client.gui;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import net.mehvahdjukaar.amendments.Amendments;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -47,7 +48,7 @@ public class QuillButton extends AbstractWidget {
 
     @Override
     protected boolean isValidClickButton(MouseButtonInfo buttonInfo) {
-        return super.isValidClickButton(buttonInfo) || buttonInfo.button() == 1;
+        return super.isValidClickButton(buttonInfo) || buttonInfo.button() == InputConstants.MOUSE_BUTTON_RIGHT;
     }
 
 

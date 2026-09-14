@@ -1,5 +1,6 @@
 package net.mehvahdjukaar.amendments.client.gui;
 
+import net.minecraft.util.CommonColors;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
@@ -43,7 +44,7 @@ public class LecternBookSignScreen extends Screen {
         this.titleBox.setMaxLength(15);
         this.titleBox.setBordered(false);
         this.titleBox.setCentered(true);
-        this.titleBox.setTextColor(-16777216);
+        this.titleBox.setTextColor(CommonColors.BLACK);
         this.titleBox.setTextShadow(false);
         this.titleBox.setResponder(value -> finalizeButton.active = !StringUtil.isBlank(value));
         this.titleBox.setValue(this.titleValue);
@@ -88,10 +89,10 @@ public class LecternBookSignScreen extends Screen {
         super.extractRenderState(graphics, mouseX, mouseY, a);
         int xo = (this.width - 192) / 2;
         int titleHeaderWidth = this.font.width(EDIT_TITLE_LABEL);
-        graphics.text(this.font, EDIT_TITLE_LABEL, xo + 36 + (114 - titleHeaderWidth) / 2, 34, -16777216, false);
+        graphics.text(this.font, EDIT_TITLE_LABEL, xo + 36 + (114 - titleHeaderWidth) / 2, 34, CommonColors.BLACK, false);
         int nameWidth = this.font.width(this.ownerText);
-        graphics.text(this.font, this.ownerText, xo + 36 + (114 - nameWidth) / 2, 60, -16777216, false);
-        graphics.textWithWordWrap(this.font, FINALIZE_WARNING_LABEL, xo + 36, 82, 114, -16777216, false);
+        graphics.text(this.font, this.ownerText, xo + 36 + (114 - nameWidth) / 2, 60, CommonColors.BLACK, false);
+        graphics.textWithWordWrap(this.font, FINALIZE_WARNING_LABEL, xo + 36, 82, 114, CommonColors.BLACK, false);
     }
 
     @Override
