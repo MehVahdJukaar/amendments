@@ -16,7 +16,10 @@ class HeldBlockModel {
 
     static void submit(BlockState state, PoseStack poseStack, SubmitNodeCollector collector, int light) {
         BlockStateModel model = Minecraft.getInstance().getModelManager().getBlockStateModelSet().get(state);
+        poseStack.pushPose();
+        poseStack.translate(-0.5, -0.5, -0.5);
         RenderUtil.submitBlockModel(poseStack, collector, model, null, null, state, RANDOM, true,
                 light, OverlayTexture.NO_OVERLAY);
+        poseStack.popPose();
     }
 }

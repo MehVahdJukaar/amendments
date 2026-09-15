@@ -42,6 +42,8 @@ public record MimicBlockColor(int tint) implements BlockTintSource {
     }
 
     public static int tintOf(BlockState state, BlockAndTintGetter level, BlockPos pos, int tint) {
-        return Minecraft.getInstance().getBlockColors().getTintSource(state, tint).colorInWorld(state, level, pos);
+        BlockTintSource source = Minecraft.getInstance().getBlockColors().getTintSource(state, tint);
+        if (source == null) return -1;
+        return source.colorInWorld(state, level, pos);
     }
 }

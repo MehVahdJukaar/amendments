@@ -21,27 +21,12 @@ import java.util.Collection;
 import java.util.List;
 import java.util.function.Consumer;
 
-/**
- * Wall lantern blocks are registered dynamically (one per detected lantern type), so their tags and copper
- * data maps can't be shipped statically. This generates:
- * <ul>
- *   <li>the {@code amendments:wall_lanterns} block tag with every wall lantern block;</li>
- *   <li>the {@code oxidizables}/{@code waxables} block data maps for copper wall lanterns, so they oxidize,
- *       scrape and wax through the loader's own copper system - exactly like their standalone lantern. The
- *       file is the standard NeoForge data map (read natively there) plus Moonlight's Fabric marker (read by
- *       {@code DataMapBridge} on Fabric), so one file drives both loaders.</li>
- * </ul>
- */
 public class WallLanternServerResources extends DynamicServerResourceProvider {
 
-    /**
-     * Weather stage prefixes in oxidation order (the universal copper naming convention).
-     */
     private static final String[] WEATHER_PREFIXES = {"", "exposed_", "weathered_", "oxidized_"};
-    /**
-     * Tells Moonlight's Fabric DataMapBridge to parse this NeoForge-format file; ignored by NeoForge.
-     */
+
     private static final String FABRIC_MARKER = "moonlight_parse_on_fabric";
+    private static final String DATA_MAP_NAMESPACE = "neoforge";
 
     public WallLanternServerResources() {
         super(Amendments.res("generated_server_pack"), PackGenerationStrategy.REGEN_ON_EVERY_RELOAD);
@@ -49,7 +34,7 @@ public class WallLanternServerResources extends DynamicServerResourceProvider {
 
     @Override
     protected Collection<String> gatherSupportedNamespaces() {
-        return List.of("minecraft");
+        return List.of("minecraft", DATA_MAP_NAMESPACE);
     }
 
     @Override
@@ -74,12 +59,16 @@ public class WallLanternServerResources extends DynamicServerResourceProvider {
                 if (waxed != null) putPair(waxables, wall, waxed, "waxed");
             }
             if (!oxidizables.keySet().isEmpty()) {
-                sink.addJson(Amendments.res("data_maps/block/oxidizables"), wrap(oxidizables), ResType.JSON);
+                sink.addJson(dataMap("oxidizables"), wrap(oxidizables), ResType.JSON);
             }
             if (!waxables.keySet().isEmpty()) {
-                sink.addJson(Amendments.res("data_maps/block/waxables"), wrap(waxables), ResType.JSON);
+                sink.addJson(dataMap("waxables"), wrap(waxables), ResType.JSON);
             }
         });
+    }
+
+    private static Identifier dataMap(String name) {
+        return Identifier.fromNamespaceAndPath(DATA_MAP_NAMESPACE, "data_maps/block/" + name);
     }
 
     private static void putPair(JsonObject values, WallLanternBlock from, WallLanternBlock to, String field) {
@@ -100,9 +89,6 @@ public class WallLanternServerResources extends DynamicServerResourceProvider {
         return lanternId == null ? null : ModRegistry.WALL_LANTERNS_BY_LANTERN.get(lanternId);
     }
 
-    /**
-     * Returns the lantern id one oxidation step away ({@code +1} more weathered, {@code -1} scraped), or null past the ends.
-     */
     @Nullable
     private static Identifier shiftOxidation(Identifier lanternId, int step) {
         String path = lanternId.getPath();
@@ -116,9 +102,6 @@ public class WallLanternServerResources extends DynamicServerResourceProvider {
                 (waxed ? "waxed_" : "") + WEATHER_PREFIXES[next] + base);
     }
 
-    /**
-     * Returns the waxed or unwaxed counterpart of the given copper lantern id, keeping its weather stage.
-     */
     private static Identifier withWaxed(Identifier lanternId, boolean waxed) {
         String path = lanternId.getPath();
         boolean alreadyWaxed = path.startsWith("waxed_");

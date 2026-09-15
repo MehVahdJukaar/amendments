@@ -20,6 +20,7 @@ import net.mehvahdjukaar.amendments.integration.CompatObjects;
 import net.mehvahdjukaar.amendments.integration.SuppCompat;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.candlelight.api.PlatformImpl;
+import net.mehvahdjukaar.amendments.client.WallLanternModelsManager;
 import net.mehvahdjukaar.moonlight.api.client.model.NestedUnbakedModel;
 import net.mehvahdjukaar.moonlight.api.misc.EventCalled;
 import net.mehvahdjukaar.moonlight.api.platform.ClientHelper;
@@ -148,7 +149,7 @@ public class AmendmentsClient {
         ClientHelper.addBlockModelRegistration(AmendmentsClient::registerBlockModels);
         ClientHelper.addBlockColorsRegistration(AmendmentsClient::registerBlockColors);
         ClientHelper.addModelLayerRegistration(AmendmentsClient::registerModelLayers);
-        ClientHelper.addSpecialModelRegistration(AmendmentsClient::registerSpecialModels);
+        ClientHelper.addStandaloneModelRegistration(WallLanternModelsManager::registerStandaloneModels);
         ClientHelper.addEntityRenderersRegistration(AmendmentsClient::registerEntityRenderers);
         //item tints are json only now, these live in assets/amendments/items/<id>.json
         //ClientHelper.addItemColorsRegistration(AmendmentsClient::registerItemColors);
@@ -272,15 +273,6 @@ public class AmendmentsClient {
             event.register(SuppCompat.getSlimeBall(), context -> new Small3DBallRenderer(context,
                     modelScale, SLIMEBALL_TEXTURE, true));
         }
-    }
-
-    @EventCalled
-    private static void registerSpecialModels(ClientHelper.SpecialModelEvent event) {
-        //bell rope and chain were standalone models, no cross loader api for those yet
-        //WallLanternModelsManager.refreshModels(Minecraft.getInstance().getResourceManager());
-        //WallLanternModelsManager.registerSpecialModels(event);
-        //event.register(BELL_CHAIN);
-        //if (CompatHandler.SUPPLEMENTARIES) event.register(BELL_ROPE);
     }
 
     @EventCalled

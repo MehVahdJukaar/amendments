@@ -17,9 +17,6 @@ public class WallLanternTextureGen {
     private static final Identifier IRON_MOUNT = Amendments.res("block/wall_lanterns/wall_lantern");
     private static final Identifier GOLD_MOUNT = Amendments.res("block/wall_lanterns/wall_lantern_gold");
 
-    // Lanterns whose texture doesn't sample into a decent mount (colored glass, glowing bulbs, vines)
-    // so the recolor comes out garish. They all hang off a plain metal frame anyway, so give them a
-    // handmade mount.
     private static final Map<Identifier, Identifier> HANDMADE_MOUNTS = Map.of(
             Identifier.fromNamespaceAndPath("suppsquared", "crimson_lantern"), GOLD_MOUNT,
             Identifier.fromNamespaceAndPath("enderscape", "bulb_lantern"), IRON_MOUNT,
@@ -53,19 +50,6 @@ public class WallLanternTextureGen {
         }
     }
 
-    /**
-     * Grabs the lantern's metal palette with progressively looser sampling:
-     * <ol>
-     *   <li>the metal base band at the bottom of the lantern (see {@link #createMetalMask}). This
-     *       matches the vanilla texture layout, so vanilla-metal lanterns reproduce the builtin mount
-     *       exactly.</li>
-     *   <li>the whole opaque lantern, for modded textures (e.g. Caverns &amp; Chasms copper lanterns)
-     *       that pack their art higher up and leave the base band transparent - the narrow sample
-     *       would otherwise come back empty.</li>
-     * </ol>
-     * Returns {@code null} if neither yields any colors, so the caller can fall back to the default
-     * mount texture.
-     */
     @Nullable
     private static Palette extractMetalPalette(TextureImage source) {
         try (TextureImage mask = createMetalMask(source)) {
@@ -87,10 +71,6 @@ public class WallLanternTextureGen {
         }
     }
 
-    /**
-     * Lantern textures may be animated (frames stacked vertically). Only the first frame
-     * represents the lit lantern, so we recolor from that single frame rather than the whole sheet.
-     */
     private static TextureImage firstFrame(TextureImage image) {
         int fw = image.frameWidth();
         int fh = image.frameHeight();
@@ -103,14 +83,6 @@ public class WallLanternTextureGen {
         return frame;
     }
 
-    /**
-     * Builds a palette mask that samples only the metal base at the bottom of the lantern.
-     * Moonlight reads colors from the mask's transparent pixels, so everything above the base is
-     * made opaque (ignored). The base carries the full metal palette - the wall mount texture is a
-     * recolor of exactly those shades, so for lanterns whose metal matches vanilla the generated
-     * mount comes out identical to the builtin one. It also sits farthest from the glowing core in
-     * the upper-middle of the cage, which modded lanterns may draw larger than vanilla.
-     */
     private static TextureImage createMetalMask(TextureImage image) {
         TextureImage mask = TextureImage.createNew(image.imageWidth(), image.imageHeight(), image.getMcMeta());
         int baseStart = Math.round(image.frameHeight() * 0.75f);
@@ -122,18 +94,11 @@ public class WallLanternTextureGen {
         return mask;
     }
 
-    /**
-     * Where the wall mount texture for this lantern lives. Always a per lantern path so a resource
-     * pack can drop its own texture there and win over whatever we make, be it a recolor or a copy
-     * of one of our handmade mounts.
-     */
     public static Identifier getSupportTextureLocation(LanternRegistry.LanternType type) {
         Identifier reg = type.getId();
         if (type.isVanilla() && reg.getPath().equals("lantern")) {
             return IRON_MOUNT;
         }
-        // Skinned lanterns all reuse the vanilla metal frame so they just share the base mount.
-        // Copying it to a hundred odd paths would only waste atlas space.
         if (reg.getNamespace().equals("skinnedlanterns")) {
             return IRON_MOUNT;
         }
@@ -141,28 +106,17 @@ public class WallLanternTextureGen {
         return Amendments.res("block/wall_lanterns/" + namespace + reg.getPath());
     }
 
-    /**
-     * The handmade mount this lantern should copy instead of getting a generated recolor,
-     * or null if it has none and must be generated.
-     */
     @Nullable
     public static Identifier getHandmadeMount(LanternRegistry.LanternType type) {
         Identifier reg = type.getId();
         Identifier manual = HANDMADE_MOUNTS.get(reg);
         if (manual != null) return manual;
-        if (reg.getNamespace().equals("caverns_and_chasms")) {
+        if (reg.getNamespace().equals("minecraft") || reg.getNamespace().equals("caverns_and_chasms")) {
             return copperMountTexture(reg.getPath());
         }
         return null;
     }
 
-    /**
-     * Caverns &amp; Chasms copper lanterns use the standard copper weathering colors, so their wall
-     * mounts are just the shared, handmade copper mount textures rather than runtime palette
-     * generation (which their texture layout - a transparent metal base - can't feed). Waxed variants
-     * share their unwaxed colour; cupric reuses the plain iron mount. Returns {@code null} for any
-     * other C&amp;C lantern so it falls back to normal generation.
-     */
     @Nullable
     private static Identifier copperMountTexture(String path) {
         String p = path.startsWith("waxed_") ? path.substring("waxed_".length()) : path;
