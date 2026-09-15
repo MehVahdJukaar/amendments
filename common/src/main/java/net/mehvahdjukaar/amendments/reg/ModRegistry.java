@@ -222,7 +222,6 @@ public class ModRegistry {
 
 
     public static final Map<LanternRegistry.LanternType, WallLanternBlock> WALL_LANTERNS = new LinkedHashMap<>();
-    // Lantern block id -> its wall lantern, so copper wall lanterns can resolve their oxidation/wax siblings.
     public static final Map<ResourceLocation, WallLanternBlock> WALL_LANTERNS_BY_LANTERN = new HashMap<>();
     public static Supplier<BlockEntityType<WallLanternBlockTile>> WALL_LANTERN_TILE = RegHelper.registerBlockEntityType(res(WALL_LANTERN_NAME), () ->
             PlatHelper.newBlockEntityType(WallLanternBlockTile::new));
@@ -242,10 +241,6 @@ public class ModRegistry {
     }
 
     private static WallLanternBlock makeWallLantern(BlockBehaviour.Properties p, LanternRegistry.LanternType type) {
-        // Copper lanterns (e.g. Caverns & Chasms) become fully fledged copper blocks. Unwaxed ones are
-        // WeatheringCopper so they oxidize over time; the oxidation/waxing block pairs are contributed to
-        // the loader's copper data maps so axes and honeycomb also work through vanilla plumbing. Waxed
-        // copper lanterns stay plain wall lanterns - they only need to be a target/source of those pairs.
         if (type.lantern instanceof WeatheringCopper) {
             return new WeatheringWallLanternBlock(p, type);
         }

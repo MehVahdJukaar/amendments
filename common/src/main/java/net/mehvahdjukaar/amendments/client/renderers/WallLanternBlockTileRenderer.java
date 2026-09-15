@@ -49,8 +49,6 @@ public class WallLanternBlockTileRenderer implements BlockEntityRenderer<WallLan
 
         Direction facing = tile.getBlockState().getValue(WallLanternBlock.FACING);
 
-        // Position and sway are applied in the facing frame so the lantern hangs off the right wall
-        // and swings about the correct world axis.
         poseStack.translate(0.5, 0.875, 0.5);
         poseStack.mulPose(RotHlpr.rot(facing));
         float angle = tile.amendments$getAnimation().getAngle(partialTicks);
@@ -74,25 +72,18 @@ public class WallLanternBlockTileRenderer implements BlockEntityRenderer<WallLan
 
     private void renderModel(LanternRegistry.LanternType type, BlockState lanternState, Direction facing, boolean entityShading,
                              PoseStack poseStack, MultiBufferSource buffer, int light, int overlay, Level level, BlockPos pos) {
-        // Facing-aware lantern models bake the blockstate rotation into their quads, so make the model
-        // match the wall it's on.
         if (lanternState.hasProperty(HorizontalDirectionalBlock.FACING)) {
             lanternState = lanternState.setValue(HorizontalDirectionalBlock.FACING, facing);
         }
 
         poseStack.pushPose();
         poseStack.translate(0.5, 0.5, 0.5);
-        // Cancel the pose's facing rotation (applied above for position/sway) on the model itself.
-        // Facing-less models end up axis-aligned, so block-baked per-face shading stays correct; facing-
-        // aware models keep their own baked blockstate rotation, so they still face the wall without being
-        // rotated twice. This also compensates the baked rotation for the item renderer.
         poseStack.mulPose(new Quaternionf(RotHlpr.rot(facing)).conjugate());
         poseStack.translate(-0.5, -0.5, -0.5);
 
         BakedModel model = WallLanternModelsManager.getLanternModel(blockRenderer.getBlockModelShaper(), type, lanternState);
         if (entityShading) {
-            // Item/entity rendering shades from the (pose-transformed) normals instead of the block
-            // model's baked per-face shade, so rotated (facing-aware) lanterns shade correctly.
+            //shades off the pose normals instead of the baked per face shade
             ItemRenderer itemRenderer = Minecraft.getInstance().getItemRenderer();
             RenderType renderType = ItemBlockRenderTypes.getRenderType(lanternState, true);
             VertexConsumer vc = buffer.getBuffer(renderType);

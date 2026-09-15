@@ -108,7 +108,6 @@ public final class CommonCauldronCode {
             if (level.getBlockEntity(pos) instanceof LiquidCauldronBlockTile te) {
                 return te.getSoftFluidTank().getFluid();
             }
-            // Block entity not loaded yet (e.g. Create contraption placement) — use mod cauldron level property
             return SoftFluidStack.of(MLBuiltinSoftFluids.WATER.getHolder(level.registryAccess()),
                     newState.getValue(modCauldron.getLevelProperty()));
         }

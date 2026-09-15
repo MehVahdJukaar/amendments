@@ -67,9 +67,6 @@ public class BoilingWaterCauldronBlock extends LayeredCauldronBlock {
         return CommonCauldronCode.updateBoilingState(direction, neighborState, level, neighborPos, newState, currentPos);
     }
 
-    // No block entity here, so water-level changes (bottle, dripstone, rain, vanilla interactions)
-    // never pass through updateShape. onPlace fires on every server-side state change at this pos
-    // (see LevelChunk#setBlockState), so recompute boiling here against the current heat source.
     @Override
     public void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean movedByPiston) {
         super.onPlace(state, level, pos, oldState, movedByPiston);
@@ -78,7 +75,6 @@ public class BoilingWaterCauldronBlock extends LayeredCauldronBlock {
         boolean shouldBoil = CommonCauldronCode.shouldBoil(level.getBlockState(below),
                 SoftFluidStack.of(MLBuiltinSoftFluids.WATER.getHolder(level), state.getValue(LEVEL)), level, below);
         if (state.getValue(BOILING) != shouldBoil) {
-            // re-entrant setBlock is safe (no BE to desync); the guard makes the recursive onPlace a no-op
             level.setBlock(pos, state.setValue(BOILING, shouldBoil), Block.UPDATE_ALL);
         }
     }

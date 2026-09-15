@@ -449,15 +449,11 @@ public class ClientResourceGenerator extends DynamicClientResourceProvider {
 
             try {
                 ResourceLocation wlId = Utils.getID(wallBlock);
-                // Lanterns we ship builtin assets for (vanilla soul + curated mod lanterns) bring their own
-                // blockstate/models/textures - don't override them.
                 if (manager.getResource(ResType.BLOCKSTATES.getPath(wlId)).isPresent()) continue;
 
                 ResourceLocation supportTexture = WallLanternTextureGen.getSupportTextureLocation(type);
                 ResourceLocation handmade = WallLanternTextureGen.getHandmadeMount(type);
                 if (handmade != null) {
-                    // copy instead of pointing the model straight at the handmade texture, else a pack
-                    // couldn't override just this lantern's mount
                     if (!sink.alreadyHasTextureAtLocation(manager, supportTexture)) {
                         sink.copyResource(manager, ResType.TEXTURES.getPath(handmade),
                                 ResType.TEXTURES.getPath(supportTexture), true);

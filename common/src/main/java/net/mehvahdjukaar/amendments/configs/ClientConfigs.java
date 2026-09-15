@@ -9,12 +9,9 @@ import net.mehvahdjukaar.moonlight.api.platform.configs.ConfigType;
 import net.mehvahdjukaar.moonlight.api.platform.configs.ModConfigHolder;
 import net.mehvahdjukaar.moonlight.api.set.wood.WoodType;
 import net.mehvahdjukaar.moonlight.api.set.wood.WoodTypeRegistry;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -60,7 +57,7 @@ public class ClientConfigs {
     public static final Supplier<Boolean> TRADE_BUTTONS;
 
     public static final Supplier<Boolean> PIXEL_CONSISTENT_SIGNS;
-    public static final Supplier<List<String>> SIGN_BLACKLIST;
+    public static final Supplier<List<Block>> SIGN_BLACKLIST;
 
     public static final Supplier<Boolean> COLORED_ARROWS;
     public static final Supplier<Boolean> FAST_HOOKS;
@@ -87,7 +84,7 @@ public class ClientConfigs {
         ConfigBuilder builder = ConfigBuilder.create(Amendments.MOD_ID, ConfigType.CLIENT);
 
 
-        builder.push("general");
+        builder.icon("minecraft:comparator").push("general");
         TOOLTIP_HINTS = builder.define("tooltip_hints", true);
         TEXTURE_PACK_SUPPORT = builder.comment("Makes dynamically generated assets depend on texture packs too and not just vanilla files")
                 .define("texture_pack_support", false);
@@ -97,17 +94,16 @@ public class ClientConfigs {
 
         builder.pop();
 
-        builder.push("sign");
+        builder.icon("minecraft:oak_sign").push("sign");
         PIXEL_CONSISTENT_SIGNS = builder.comment("Gives signs a pixel consistent model and texture. Also affects other mods. This also makes them use a Block Model, making them render much much much faster than as block entities")
                 .define("pixel_consistent", true);
         BRIGHTEN_SIGN_TEXT_COLOR = builder.comment("A scalar multiplier that will be applied to sign text making it brighter, supposedly more legible")
-                .define("text_color_multiplier", 1.2d, 0, 5);
-        SIGN_BLACKLIST = builder.comment("A list of sign blocks that will NOT be affected by the pixel consistent sign setting. Use full registry names separated by commas")
-                .define("sign_blacklist", new ArrayList<>(),
-                        o -> o instanceof String s && !s.isEmpty());
+                .defineSlider("text_color_multiplier", 1.2d, 0, 5);
+        SIGN_BLACKLIST = builder.comment("A list of sign blocks that will NOT be affected by the pixel consistent sign setting")
+                .defineBlockList("sign_blacklist", List.of());
         builder.pop();
 
-        builder.push("projectiles");
+        builder.icon("minecraft:snowball").push("projectiles");
 
         SNOWBALL_3D = builder.comment("Makes snowballs render in 3D")
                 .define("snowball_3d", true);
@@ -123,7 +119,7 @@ public class ClientConfigs {
                 .define("charges_tumble", true);
         PROJECTILE_TUMBLE = builder.comment("Makes 3D snowballs and slimeballs (supp compat) tumble in the air when moving")
                 .define("projectiles_tumble", false);
-        builder.push("dragon_fireball");
+        builder.icon("minecraft:dragon_breath").push("dragon_fireball");
         DRAGON_BREATH_EMISSIBE = builder.comment("Makes dragon's breath particles emissive to better match new visuals")
                 .define("dragon_breath_emissive", true);
 
@@ -132,38 +128,38 @@ public class ClientConfigs {
         builder.pop();
 
 
-        builder.push("lily_pad");
+        builder.icon("minecraft:lily_pad").push("lily_pad");
         LILY_OFFSET = builder.comment("set to 0 tho have lilypads at the same exact position as vanilla." +
                         "negative numbers will place them in their own blockspace right below avoiding any clipping." +
                         "best of both worlds at default as its barely within its space")
                 .define("y_offset", -0.25 / 16d - 0.001, -1, 1);
         builder.pop();
 
-        builder.push("bell");
+        builder.icon("minecraft:bell").push("bell");
         BELL_CONNECTION = builder.comment("Visually attach chains and ropes to bells")
                 .define("chain_attachment", true);
         builder.pop();
 
-        builder.push("brewing_stand");
+        builder.icon("minecraft:brewing_stand").push("brewing_stand");
         COLORED_BREWING_STAND = builder.comment("Colors the brewing stand potion texture depending on the potions it's brewing.\n" +
                         "If using a resource pack add tint index from 0 to 3 to the 3 potion layers")
                 .define("brewing_stand_colors", true);
         builder.pop();
 
-        builder.push("arrows");
+        builder.icon("minecraft:arrow").push("arrows");
         //Keep?
         COLORED_ARROWS = builder.comment("Makes tipped arrows show their colors when loaded with a crossbow")
                 .define("crossbows_colors", true);
         builder.pop();
 
-        builder.push("tripwire_hook");
+        builder.icon("minecraft:tripwire_hook").push("tripwire_hook");
         FAST_HOOKS = builder.comment("Makes hooks render faster using a block model instead of tile renderer. Cost is that animated and enchanted items will appear static")
                 .define("fast_hooks", false);
         builder.pop();
 
-        builder.push("hanging_sign");
+        builder.icon("minecraft:oak_hanging_sign").push("hanging_sign");
         ITEM_SCALE = builder.comment("Scale of items on hanging signs (unit is in pixel they would occupy). Set to 8 to better match the pixels on the sign")
-                .define("item_pixel_scale", 10d, 0, 32);
+                .defineSlider("item_pixel_scale", 10d, 0, 32);
         SWINGING_SIGNS = builder.comment("Makes signs swing!")
                 .define("swinging_signs", true);
         SIGN_ATTACHMENT = builder.comment("Signs have visual attachment to walls and fences")
@@ -173,32 +169,31 @@ public class ClientConfigs {
                 PendulumAnimation.Config.CODEC);
         builder.pop();
 
-        builder.push("lantern");
+        builder.icon("minecraft:lantern").push("lantern");
         FAST_LANTERNS = builder.comment("Makes wall lantern use a simple block model instead of the animated tile entity renderer. This will make them render much faster but will also remove the animation" +
                         "Note that this option only affect lanterns close by as the one far away render as fast by default")
                 .define("fast_lanterns", false);
 
-        LANTERN_ENTITY_SHADING = builder.comment("Renders the swaying wall lantern through the item renderer so its shading comes from the model's normals instead of the block model's baked per-face shading. " +
-                        "This makes the lantern shade correctly no matter which wall it faces, at the cost of losing block ambient occlusion. Only affects the animated (close-up) renderer")
+        LANTERN_ENTITY_SHADING = builder.comment("Shades swinging wall lanterns like an item instead of like a block. Makes them look the same on every wall, but loses ambient occlusion")
                 .define("entity_shading", true);
 
         WALL_LANTERN_CONFIG = builder.defineObject("swing_physics",
                 PendulumAnimation.Config::new,
                 PendulumAnimation.Config.CODEC);
         LANTERN_HOLDING_SIZE = builder.comment("Size lanterns when held in hand")
-                .define("lantern_item_size", 10 / 16d, 0, 2);
+                .defineSlider("lantern_item_size", 10 / 16d, 0, 2);
         LANTERN_HOLDING = builder.comment("Gives a special animation to lanterns when held in hand")
                 .define("lantern_item_holding", true);
         LANTERN_HOLDING_UP = builder.comment("Makes lantern holding animation have the arm angled more upwards. Looks better if you have dynamic lights on")
                 .define("lantern_item_holding_up", false);
         builder.pop();
 
-        builder.push("cauldron");
+        builder.icon("minecraft:cauldron").push("cauldron");
         POTION_TEXTURE = builder.comment("Gives a unique texture to potion cauldrons")
                 .define("potion_texture", true);
         builder.pop();
 
-        builder.push("jukebox");
+        builder.icon("minecraft:jukebox").push("jukebox");
         JUKEBOX_MODEL = builder.comment("Use the new jukebox model")
                 .gameRestart()
                 .define("new_model", true);
@@ -206,28 +201,28 @@ public class ClientConfigs {
                 .define("disc_spin", true);
         builder.pop();
 
-        builder.push("misc");
+        builder.icon("minecraft:bundle").push("misc");
 
-        TORCH_HOLDING = builder.comment("Gives a special animation to torches when held in hand")
+        TORCH_HOLDING = builder.icon("minecraft:torch").comment("Gives a special animation to torches when held in hand")
                 .define("torch_item_holding", true);
         TORCH_HOLDING_SIZE = builder.comment("Size lanterns when held in hand")
-                .define("torch_item_size", 1d, 0, 2);
+                .defineSlider("torch_item_size", 1d, 0, 2);
         TORCH_HOLDING_FLAME = builder.comment("Renders a flame particle on top of held torches")
                 .define("torch_item_flame", false);
 
-        CANDLE_HOLDER_HOLDING = builder.comment("Gives a special animation to supplementaries candle holders when held in hand")
+        CANDLE_HOLDER_HOLDING = builder.icon("supplementaries:candle_holder").comment("Gives a special animation to supplementaries candle holders when held in hand")
                 .define("candle_holder_item_holding", true);
         CANDLE_HOLDING_SIZE = builder.comment("Size lanterns when held in hand")
-                .define("handle_holder_item_size", 10 / 16f, 0, 2d);
+                .defineSlider("handle_holder_item_size", 10 / 16d, 0, 2);
 
 
-        HOLDING_ANIMATION_FIXED = builder.comment("Makes Torch and Lantern holding animation be fixed, not changing with player facing")
+        HOLDING_ANIMATION_FIXED = builder.icon("minecraft:lantern").comment("Makes Torch and Lantern holding animation be fixed, not changing with player facing")
                 .define("fixed_holding_animations", false);
 
-        CAMPFIRE_SMOKE = builder.comment("Prevents campfire smoke from rendering if there is a solid block above it")
+        CAMPFIRE_SMOKE = builder.icon("minecraft:campfire").comment("Prevents campfire smoke from rendering if there is a solid block above it")
                 .define("campfire_smoke_through_blocks", false);
 
-        TRADE_BUTTONS = builder.comment("Gives the villager trade buttons the same look loom and stonecutter buttons have")
+        TRADE_BUTTONS = builder.icon("minecraft:emerald").comment("Gives the villager trade buttons the same look loom and stonecutter buttons have")
                 .define("villager_trade_buttons", true);
         builder.pop();
 
@@ -267,10 +262,7 @@ public class ClientConfigs {
             if (b != null) KNOWN_WOOD_SIGNS.add(b);
             if (b1 != null) KNOWN_WOOD_SIGNS.add(b1);
         }
-        for (String s : SIGN_BLACKLIST.get()) {
-            var b = BuiltInRegistries.BLOCK.getOptional(ResourceLocation.parse(s));
-            b.ifPresent(KNOWN_WOOD_SIGNS::remove);
-        }
+        KNOWN_WOOD_SIGNS.removeAll(SIGN_BLACKLIST.get());
     }
 
 

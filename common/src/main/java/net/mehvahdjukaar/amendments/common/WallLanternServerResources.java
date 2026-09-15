@@ -21,26 +21,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.function.Consumer;
 
-/**
- * Wall lantern blocks are registered dynamically (one per detected lantern type), so their tags and copper
- * data maps can't be shipped statically. This generates:
- * <ul>
- *   <li>the {@code amendments:wall_lanterns} block tag with every wall lantern block;</li>
- *   <li>the {@code oxidizables}/{@code waxables} block data maps for copper wall lanterns, so they oxidize,
- *       scrape and wax through the loader's own copper system - exactly like their standalone lantern. The
- *       file is the standard NeoForge data map (read natively there) plus Moonlight's Fabric marker (read by
- *       {@code DataMapBridge} on Fabric), so one file drives both loaders.</li>
- * </ul>
- */
 public class WallLanternServerResources extends DynamicServerResourceProvider {
 
-    /**
-     * Weather stage prefixes in oxidation order (the universal copper naming convention).
-     */
     private static final String[] WEATHER_PREFIXES = {"", "exposed_", "weathered_", "oxidized_"};
-    /**
-     * Tells Moonlight's Fabric DataMapBridge to parse this NeoForge-format file; ignored by NeoForge.
-     */
     private static final String FABRIC_MARKER = "moonlight_parse_on_fabric";
 
     public WallLanternServerResources() {
@@ -100,9 +83,6 @@ public class WallLanternServerResources extends DynamicServerResourceProvider {
         return lanternId == null ? null : ModRegistry.WALL_LANTERNS_BY_LANTERN.get(lanternId);
     }
 
-    /**
-     * Returns the lantern id one oxidation step away ({@code +1} more weathered, {@code -1} scraped), or null past the ends.
-     */
     @Nullable
     private static ResourceLocation shiftOxidation(ResourceLocation lanternId, int step) {
         String path = lanternId.getPath();
@@ -116,9 +96,6 @@ public class WallLanternServerResources extends DynamicServerResourceProvider {
                 (waxed ? "waxed_" : "") + WEATHER_PREFIXES[next] + base);
     }
 
-    /**
-     * Returns the waxed or unwaxed counterpart of the given copper lantern id, keeping its weather stage.
-     */
     private static ResourceLocation withWaxed(ResourceLocation lanternId, boolean waxed) {
         String path = lanternId.getPath();
         boolean alreadyWaxed = path.startsWith("waxed_");

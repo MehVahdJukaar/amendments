@@ -88,16 +88,16 @@ public class CommonConfigs {
     static {
         ConfigBuilder builder = ConfigBuilder.create(Amendments.MOD_ID, ConfigType.COMMON_SYNCED);
 
-        builder.push("lectern");
+        builder.icon("minecraft:lectern").push("lectern");
         LECTERN_STUFF = builder.comment("Improved lectern screen allowing to edit font of a book while on it")
-                .define("improved_screen", true);
+                .feature("improved_screen");
         builder.pop();
 
-        builder.push("fireball");
+        builder.icon("minecraft:fire_charge").push("fireball");
         CHARGES_COOLDOWN = builder.comment("Cooldown for fire & dragon charges in ticks")
-                .define("thrown_cooldown", 10, 0, 1000);
+                .defineSlider("thrown_cooldown", 10, 0, 1000);
         DRAGON_CHARGE = builder.comment("Adds dragons charge item")
-                .define("dragon_charge", true);
+                .feature("dragon_charge");
         FIRE_CHARGE_GRAVITY = builder.comment("Makes fire & dragon charges have gravity")
                 .define("gravity", true);
         DEFLECT_FIRE_CHARGES = builder.comment("Makes fire charges deflectable by punching")
@@ -111,19 +111,19 @@ public class CommonConfigs {
 
         builder.pop();
 
-        builder.push("snowball");
+        builder.icon("minecraft:snowball").push("snowball");
         SNOWBALL_FREEZE = builder.comment("Allows snowballs to freeze entities on hit. Config is for how many ticks it will freeze")
-                .define("freeze_ticks", 35, 0, 1000);
+                .defineSlider("freeze_ticks", 35, 0, 1000);
         builder.pop();
 
-        builder.push("hanging_signs");
+        builder.icon("minecraft:oak_hanging_sign").push("hanging_signs");
         HANGING_SIGN_ITEM = builder.comment("Allows placing items on hanging signs")
-                .define("items_on_signs", true);
+                .feature("items_on_signs");
         builder.pop();
 
-        builder.push("cauldron");
+        builder.icon("minecraft:cauldron").push("cauldron");
         LIQUID_CAULDRON = builder.comment("Enables enhanced cauldron")
-                .define("enhanced_cauldron", true);
+                .feature("enhanced_cauldron");
         CAULDRON_HAND_CRAFTING = builder.comment("Allows crafting items using cauldrons by clicking on them")
                 .define("hand_crafting", true);
         CAULDRON_IN_WORLD_CRAFTING = builder.comment("Allows crafting items using cauldrons by throwing items in them")
@@ -132,14 +132,14 @@ public class CommonConfigs {
                 .define("dye_water", true);
         DYE_RECIPES_PER_LAYER = builder.comment("Max amount of items that 1 cauldron layer can recolor." +
                         "This is a multiplier on top of vanilla crafting recipe amount")
-                .define("dye_recipes_per_layer", 4, 1, 64);
+                .defineSlider("dye_recipes_per_layer", 4, 1, 64);
         POTION_RECIPES_PER_LAYER = builder.comment("Max amount of items that 1 cauldron layer can craft with potions." +
                         "This is a multiplier on top of vanilla crafting recipe amount")
-                .define("potion_recipes_per_layer", 2, 1, 64);
+                .defineSlider("potion_recipes_per_layer", 2, 1, 64);
         POTION_MIXING = builder.comment("Allows mixin potions in cauldrons")
                 .define("potions_mixing", MixingMode.ON);
         POTION_MIXING_LIMIT = builder.comment("Max amount of effects allowed in a mixed potion")
-                .define("potion_mixing_limit", 8, 1, 64);
+                .defineSlider("potion_mixing_limit", 8, 1, 64);
         INVERSE_POTIONS = builder.comment("Map of potion ids to their inverse ids. Used for potion mixing")
                 .defineObject("inverse_potions", CommonConfigs::getInverseEffects,
                         CodecUtils.optionalMapCodec(BuiltInRegistries.MOB_EFFECT.byNameCodec(),
@@ -151,28 +151,26 @@ public class CommonConfigs {
                 .define("consistent_lava_layers", false);
         builder.pop();
 
-        builder.push("tripwire_hook");
+        builder.icon("minecraft:tripwire_hook").push("tripwire_hook");
         TOOL_HOOK = builder.comment("Allows placing tools on tripwire hooks")
-                .define("tool_hook", true);
+                .feature("tool_hook");
         builder.pop();
 
-        builder.push("carpets");
+        builder.icon("minecraft:white_carpet").push("carpets");
         CARPETED_STAIRS = builder.comment("Allows you to place carpets on stairs")
                 .define("carpeted_stairs", true);
         CARPETED_SLABS = builder.comment("Allows you to place carpets on slabs")
                 .define("carpeted_slabs", true);
         builder.pop();
 
-        //double cake
-        builder.push("cake");
+        builder.icon("minecraft:cake").push("cake");
         DOUBLE_CAKES = builder.comment("Allows you to place a cake on top of another")
                 .define("double_cake", true);
         DIRECTIONAL_CAKE = builder.comment("Allows eating a cake from every side")
                 .define("directional_cake", true);
         builder.pop();
 
-        //skulls stuff
-        builder.push("mob_head");
+        builder.icon("minecraft:skeleton_skull").push("mob_head");
         SKULL_PILES = builder.comment("Allows you to place two mob heads on top of each other")
                 .define("skull_piles", true);
         SKULL_CANDLES = builder.comment("Allows candles to be placed on top of skulls")
@@ -181,16 +179,14 @@ public class CommonConfigs {
                 .define("multiple_candles", true);
         builder.pop();
 
-        //hanging pot
-        builder.push("flower_pot");
+        builder.icon("minecraft:flower_pot").push("flower_pot");
         HANGING_POT = builder.comment("allows you to place hanging flower pots. Works with any modded pot too")
-                .define("hanging_pot", true);
+                .feature("hanging_pot");
         builder.pop();
 
-        //wall lantern
-        builder.push("lantern");
+        builder.icon("minecraft:lantern").push("lantern");
         WALL_LANTERN = builder.comment("Allow wall lanterns placement")
-                .define("wall_lanterns", true);
+                .feature("wall_lanterns");
 
         WALL_LANTERN_HIGH_PRIORITY = builder.comment("Gives high priority to wall lantern placement. Enable to override other wall lanterns placements, disable if it causes issues with other mods that use lower priority block click events")
                 .define("high_priority", true);
@@ -200,45 +196,43 @@ public class CommonConfigs {
                 .define("falling_lanterns", FallingLanternEntity.FallMode.ON);
         builder.pop();
 
-        //keep this?. yeah keep this
-        //bells
-        builder.push("bell");
+        builder.icon("minecraft:bell").push("bell");
         BELL_CHAIN_RINGING = builder.comment("Ring a bell by clicking on a chain that's connected to it")
-                .define("chain_ringing", true);
+                .feature("chain_ringing");
         BELL_CHAIN_LENGTH = builder.comment("Max chain length that allows a bell to ring")
-                .define("chain_length", 16, 0, 256);
+                .defineSlider("chain_length", 16, 0, 256);
         builder.pop();
 
-        builder.push("banners");
+        builder.icon("minecraft:white_banner").push("banners");
         CEILING_BANNERS = builder.comment("Allow banners to be placed on ceilings")
-                .define("ceiling_banners", true);
+                .feature("ceiling_banners");
         builder.pop();
 
 
-        builder.push("misc");
+        builder.icon("minecraft:bundle").push("misc");
 
-        DYE_BLOCKS = builder.comment("Allows dying blocks by right clicking them with dye")
+        DYE_BLOCKS = builder.icon("minecraft:red_dye").comment("Allows dying blocks by right clicking them with dye")
                 .define("dye_blocks", false);
 
-        PASSENGER_NO_SUFFOCATION = builder.comment("Prevents entities from taking suffocation damage while riding another entity")
+        PASSENGER_NO_SUFFOCATION = builder.icon("minecraft:minecart").comment("Prevents entities from taking suffocation damage while riding another entity")
                 .define("passenger_no_suffocation", false);
 
         builder.pop();
 
-        builder.push("torch");
+        builder.icon("minecraft:torch").push("torch");
 
         TORCH_FIRE = builder.comment("Allows torches to set entities on fire")
-                .define("torch_fire", true);
+                .feature("torch_fire");
         TORCH_FIRE_OFFHAND = builder.comment("Allows torches to set entities on fire when held in offhand given you are attacking with a sword")
                 .define("torch_fire_offhand", false);
         TORCH_FIRE_DURATION = builder.comment("Duration of the on fire effect applied by torches. In seconds")
-                .define("torch_fire_duration", 2, 1, 60);
+                .defineSlider("torch_fire_duration", 2, 1, 60);
 
         builder.pop();
 
-        builder.push("lily_pad");
+        builder.icon("minecraft:lily_pad").push("lily_pad");
         LILY_PADS_ON = builder.comment("Allows lilypads to have any block placed ontop")
-                .define("better_lilypads", true);
+                .feature("better_lilypads");
         builder.pop();
 
         SPEC = builder.build();

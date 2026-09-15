@@ -18,7 +18,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import java.util.IdentityHashMap;
 import java.util.Map;
 
-// Optional per-type overrides for the dangling lantern model (BER + fast mode).
 public class WallLanternModelsManager {
 
     private static final Map<LanternRegistry.LanternType, ModelResourceLocation> CUSTOM_LANTERN_MODELS = new IdentityHashMap<>();
@@ -32,14 +31,13 @@ public class WallLanternModelsManager {
         for (LanternRegistry.LanternType type : LanternRegistry.INSTANCE.getValues()) {
             ResourceLocation reg = type.getId();
             String namespace = (reg.getNamespace().equals("minecraft") || reg.getNamespace().equals(Amendments.MOD_ID)) ? "" : reg.getNamespace() + "/";
-            // legacy override path
+            //legacy path
             String legacy = "block/custom_wall_lanterns/" + namespace + reg.getPath();
             ResourceLocation legacyPath = Amendments.res("models/" + legacy + ".json");
             if (manager.getResource(legacyPath).isPresent()) {
                 CUSTOM_LANTERN_MODELS.put(type, RenderUtil.getStandaloneModelLocation(Amendments.res(legacy)));
                 continue;
             }
-            // per-type override for the dangling lantern only
             WallLanternBlock wallBlock = ModRegistry.WALL_LANTERNS.get(type);
             if (wallBlock != null) {
                 ResourceLocation id = Utils.getID(wallBlock);
