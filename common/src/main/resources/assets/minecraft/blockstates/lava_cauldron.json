@@ -1,8 +1,14 @@
 {
   "variants": {
     "": {
-      "model": "amendments:block/lava_cauldron_full"
+      "type": "amendments:cauldron",
+      "fabric:type": "amendments:cauldron",
+      "cauldron": {
+        "model": "amendments:block/cauldron"
+      },
+      "fluid": {
+        "model": "amendments:block/lava_cauldron_full"
+      }
     }
-  },
-  "translucent": false
+  }
 }

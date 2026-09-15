@@ -1,13 +1,7 @@
 {
-  "loader": "amendments:hanging_pot",
-  "rope": {
-    "parent": "amendments:block/hanging_flower_pot_rope",
-    "textures": {
-      "3": "amendments:block/hanging_flower_pot",
-      "particle": "block/flower_pot"
-    }
-  },
+  "parent": "amendments:block/hanging_flower_pot_rope",
   "textures": {
+    "3": "amendments:block/hanging_flower_pot",
     "particle": "block/flower_pot"
   }
 }

@@ -1,4 +1,1 @@
-{
-	"loader": "amendments:wall_lantern",
-	"support": "amendments:block/wall_lantern_template"
-}
+"amendments:block/wall_lantern_template"

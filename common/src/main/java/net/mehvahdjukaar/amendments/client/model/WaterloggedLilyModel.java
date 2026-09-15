@@ -8,9 +8,8 @@ import net.mehvahdjukaar.moonlight.api.client.model.CustomBlockModel;
 import net.mehvahdjukaar.moonlight.api.client.model.CustomUnbakedModel;
 import net.mehvahdjukaar.moonlight.api.client.model.ExtraModelData;
 import net.mehvahdjukaar.moonlight.api.client.model.QuadEmitter;
-import net.minecraft.client.Minecraft;
+import net.mehvahdjukaar.moonlight.api.client.util.RenderUtil;
 import net.minecraft.client.renderer.block.BlockAndTintGetter;
-import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.ModelBaker;
 import net.minecraft.client.resources.model.ResolvableModel;
@@ -31,25 +30,21 @@ public class WaterloggedLilyModel implements CustomBlockModel {
 
         double dy = 1 + (state.getValue(WaterloggedLilyBlock.EXTENDED) ? 0 : ClientConfigs.LILY_OFFSET.get());
         emitter.transform(new Matrix4f().translate(0, (float) dy, 0));
-        emitter.emitAll(blockModel(mimic), level, pos, mimic, random);
+        emitter.emitBlock(mimic, level, pos, random);
         emitter.transform((Matrix4f) null);
     }
 
     @Override
     public TextureAtlasSprite getParticle(ExtraModelData data) {
         BlockState mimic = data.get(WaterloggedLilyBlockTile.MIMIC_KEY);
-        if (mimic != null && !mimic.isAir()) return blockModel(mimic).particleMaterial().sprite();
-        return blockModel(Blocks.LILY_PAD.defaultBlockState()).particleMaterial().sprite();
+        if (mimic != null && !mimic.isAir()) return RenderUtil.getBlockModel(mimic).particleMaterial().sprite();
+        return RenderUtil.getBlockModel(Blocks.LILY_PAD.defaultBlockState()).particleMaterial().sprite();
     }
 
     @Override
     public @Nullable Object geometryKey(BlockAndTintGetter level, BlockPos pos, BlockState state,
                                         RandomSource random, ExtraModelData data) {
         return data.get(WaterloggedLilyBlockTile.MIMIC_KEY);
-    }
-
-    private static BlockStateModel blockModel(BlockState state) {
-        return Minecraft.getInstance().getModelManager().getBlockStateModelSet().get(state);
     }
 
     public record Unbaked() implements CustomUnbakedModel {

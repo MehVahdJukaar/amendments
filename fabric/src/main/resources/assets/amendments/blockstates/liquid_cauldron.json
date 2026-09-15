@@ -1,13 +1,37 @@
 {
   "variants": {
     "level=1": {
-      "model": "amendments:block/liquid_cauldron_level1"
+      "type": "amendments:cauldron",
+      "fabric:type": "amendments:cauldron",
+      "cauldron": {
+        "model": "amendments:block/cauldron"
+      },
+      "fluid": {
+        "model": "amendments:block/cauldron_level_9"
+      },
+      "translucent": true
     },
     "level=2": {
-      "model": "amendments:block/dye_cauldron_level2"
+      "type": "amendments:cauldron",
+      "fabric:type": "amendments:cauldron",
+      "cauldron": {
+        "model": "amendments:block/cauldron"
+      },
+      "fluid": {
+        "model": "amendments:block/cauldron_level_12"
+      },
+      "translucent": true
     },
     "level=3": {
-      "model": "amendments:block/liquid_cauldron_full"
+      "type": "amendments:cauldron",
+      "fabric:type": "amendments:cauldron",
+      "cauldron": {
+        "model": "amendments:block/cauldron"
+      },
+      "fluid": {
+        "model": "amendments:block/cauldron_level_15"
+      },
+      "translucent": true
     }
   }
 }

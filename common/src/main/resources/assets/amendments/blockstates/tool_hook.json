@@ -1,19 +1,35 @@
 {
   "variants": {
     "facing=north": {
-      "model": "amendments:block/tool_hook"
+      "type": "amendments:tool_hook",
+      "fabric:type": "amendments:tool_hook",
+      "hook": {
+        "model": "minecraft:block/tripwire_hook"
+      }
     },
     "facing=east": {
-      "model": "amendments:block/tool_hook",
-      "y": 90
+      "type": "amendments:tool_hook",
+      "fabric:type": "amendments:tool_hook",
+      "hook": {
+        "model": "minecraft:block/tripwire_hook",
+        "y": 90
+      }
     },
     "facing=south": {
-      "model": "amendments:block/tool_hook",
-      "y": 180
+      "type": "amendments:tool_hook",
+      "fabric:type": "amendments:tool_hook",
+      "hook": {
+        "model": "minecraft:block/tripwire_hook",
+        "y": 180
+      }
     },
     "facing=west": {
-      "model": "amendments:block/tool_hook",
-      "y": 270
+      "type": "amendments:tool_hook",
+      "fabric:type": "amendments:tool_hook",
+      "hook": {
+        "model": "minecraft:block/tripwire_hook",
+        "y": 270
+      }
     }
   }
 }

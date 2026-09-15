@@ -1,6 +1,0 @@
-{
-  "loader": "amendments:cauldron",
-  "cauldron": "amendments:block/cauldron",
-  "fluid": "amendments:block/cauldron_level_13",
-  "translucent": true
-}

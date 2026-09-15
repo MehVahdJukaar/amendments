@@ -1,16 +1,11 @@
 package net.mehvahdjukaar.amendments.client.model;
 
-import com.mojang.serialization.MapCodec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.mehvahdjukaar.moonlight.api.client.model.CustomBlockModel;
-import net.mehvahdjukaar.moonlight.api.client.model.CustomUnbakedModel;
 import net.mehvahdjukaar.moonlight.api.client.model.ExtraModelData;
 import net.mehvahdjukaar.moonlight.api.client.model.QuadEmitter;
 import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.resources.model.ModelBaker;
-import net.minecraft.client.resources.model.ResolvableModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.state.BlockState;
@@ -36,27 +31,5 @@ public class ToolHookBakedModel implements CustomBlockModel {
     @Override
     public TextureAtlasSprite getParticle(ExtraModelData data) {
         return this.tripwireHook.particleMaterial().sprite();
-    }
-
-    public record Unbaked(BlockStateModel.Unbaked hook) implements CustomUnbakedModel {
-
-        public static final MapCodec<Unbaked> CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
-                BlockStateModel.Unbaked.CODEC.fieldOf("hook").forGetter(Unbaked::hook)
-        ).apply(i, Unbaked::new));
-
-        @Override
-        public CustomBlockModel bake(ModelBaker baker) {
-            return new ToolHookBakedModel(this.hook.bake(baker));
-        }
-
-        @Override
-        public MapCodec<? extends CustomUnbakedModel> codec() {
-            return CODEC;
-        }
-
-        @Override
-        public void resolveDependencies(ResolvableModel.Resolver resolver) {
-            this.hook.resolveDependencies(resolver);
-        }
     }
 }

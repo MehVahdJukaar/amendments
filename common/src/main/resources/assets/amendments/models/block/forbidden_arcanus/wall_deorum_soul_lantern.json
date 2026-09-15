@@ -1,9 +1,6 @@
 {
-	"loader": "amendments:wall_lantern",
-	"support": {
-		"parent": "amendments:block/wall_lantern_template",
-		"textures": {
-			"1": "amendments:block/wall_lanterns/wall_lantern_deorum"
-		}
-	}
+  "parent": "amendments:block/wall_lantern_template",
+  "textures": {
+    "1": "amendments:block/wall_lanterns/wall_lantern_deorum"
+  }
 }

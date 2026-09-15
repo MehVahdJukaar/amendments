@@ -1,9 +1,8 @@
 {
   "variants": {
-    "": [
-      {
-        "model": "amendments:block/lily_pad"
-      }
-    ]
+    "": {
+      "type": "amendments:waterlogged_lily",
+      "fabric:type": "amendments:waterlogged_lily"
+    }
   }
 }

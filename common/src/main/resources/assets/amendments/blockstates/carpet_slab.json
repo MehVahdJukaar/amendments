@@ -1,7 +1,11 @@
 {
   "variants": {
     "": {
-      "model": "amendments:block/carpet_slab"
+      "type": "amendments:carpet_overlay",
+      "fabric:type": "amendments:carpet_overlay",
+      "carpet": {
+        "model": "amendments:block/carpet_slab"
+      }
     }
   }
 }

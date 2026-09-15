@@ -1,7 +1,11 @@
 {
   "variants": {
     "": {
-      "model": "amendments:block/hanging_flower_pot"
+      "type": "amendments:hanging_pot",
+      "fabric:type": "amendments:hanging_pot",
+      "rope": {
+        "model": "amendments:block/hanging_flower_pot"
+      }
     }
   }
 }

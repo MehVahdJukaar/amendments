@@ -1,10 +1,7 @@
 {
-  "loader": "amendments:carpet_overlay",
-  "carpet": {
-    "parent": "amendments:block/carpet_stairs_inner_overlay",
-    "textures": {
-      "particle": "block/oak_planks",
-      "side": "block/white_wool"
-    }
+  "parent": "amendments:block/carpet_stairs_inner_overlay",
+  "textures": {
+    "particle": "block/oak_planks",
+    "side": "block/white_wool"
   }
 }

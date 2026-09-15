@@ -20,6 +20,7 @@ import net.mehvahdjukaar.amendments.integration.CompatObjects;
 import net.mehvahdjukaar.amendments.integration.SuppCompat;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.candlelight.api.PlatformImpl;
+import net.mehvahdjukaar.moonlight.api.client.model.NestedUnbakedModel;
 import net.mehvahdjukaar.moonlight.api.misc.EventCalled;
 import net.mehvahdjukaar.moonlight.api.platform.ClientHelper;
 import net.mehvahdjukaar.moonlight.api.platform.RegHelper;
@@ -284,12 +285,12 @@ public class AmendmentsClient {
 
     @EventCalled
     private static void registerBlockModels(ClientHelper.BlockModelEvent event) {
-        event.register(Amendments.res("carpet_overlay"), CarpetedBlockModel.Unbaked.CODEC);
+        event.register(Amendments.res("carpet_overlay"), NestedUnbakedModel.codec("carpet", CarpetedBlockModel::new));
         event.register(Amendments.res("waterlogged_lily"), WaterloggedLilyModel.Unbaked.CODEC);
-        event.register(Amendments.res("wall_lantern"), WallLanternBakedModel.Unbaked.CODEC);
+        event.register(Amendments.res("wall_lantern"), NestedUnbakedModel.codec("support", WallLanternBakedModel::new));
         event.register(Amendments.res("cauldron"), CauldronBakedModel.Unbaked.CODEC);
-        event.register(Amendments.res("hanging_pot"), HangingPotBakedModel.Unbaked.CODEC);
-        event.register(Amendments.res("tool_hook"), ToolHookBakedModel.Unbaked.CODEC);
+        event.register(Amendments.res("hanging_pot"), NestedUnbakedModel.codec("rope", HangingPotBakedModel::new));
+        event.register(Amendments.res("tool_hook"), NestedUnbakedModel.codec("hook", ToolHookBakedModel::new));
     }
 
     @EventCalled
