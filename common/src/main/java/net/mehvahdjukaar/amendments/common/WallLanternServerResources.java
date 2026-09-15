@@ -24,7 +24,6 @@ import java.util.function.Consumer;
 public class WallLanternServerResources extends DynamicServerResourceProvider {
 
     private static final String[] WEATHER_PREFIXES = {"", "exposed_", "weathered_", "oxidized_"};
-
     private static final String FABRIC_MARKER = "moonlight_parse_on_fabric";
     private static final String DATA_MAP_NAMESPACE = "neoforge";
 

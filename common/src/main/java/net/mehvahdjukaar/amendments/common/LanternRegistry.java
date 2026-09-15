@@ -100,7 +100,6 @@ public class LanternRegistry extends BlockTypeRegistry<LanternRegistry.LanternTy
         }
 
         private static double computeAttachmentOffset(Identifier id, Block lantern) {
-            // twigs lanterns keep the default mount height.
             if (id.getNamespace().equals("twigs")) return 0;
             try {
                 BlockState state = lantern.defaultBlockState();
@@ -112,7 +111,7 @@ public class LanternRegistry extends BlockTypeRegistry<LanternRegistry.LanternTy
                 if (shape.isEmpty()) return manual;
                 return shape.bounds().maxY - (9 / 16d) + manual;
             } catch (Exception e) {
-                // A modded lantern with a level-dependent shape may not tolerate an empty getter.
+                //modded shapes that read the level dont like an empty getter
                 return SPECIAL_OFFSETS.getOrDefault(id, 0d);
             }
         }

@@ -32,7 +32,6 @@ public abstract class WaterLilyMixin extends Block {
     protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
         if (!Utils.mayPerformBlockAction(player, pos, stack) ||
                 !CommonConfigs.LILY_PADS_ON.get()) return InteractionResult.TRY_WITH_EMPTY_HAND;
-        // Already a shifted waterlogged lily — let vanilla/mimic handle further interactions (candles, etc.)
         if (state.getBlock() instanceof WaterloggedLilyBlock) {
             return InteractionResult.TRY_WITH_EMPTY_HAND;
         }

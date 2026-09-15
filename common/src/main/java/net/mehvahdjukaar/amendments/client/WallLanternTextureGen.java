@@ -44,8 +44,6 @@ public class WallLanternTextureGen {
                 Amendments.LOGGER.warn("Failed to generate wall mount texture for lantern {}. " +
                         "Using the default wall mount texture", lanternTexture, e);
             }
-            // Last resort: emit the vanilla (iron) wall mount unchanged. A plain mount is far better
-            // than a missing/broken texture.
             return template.makeCopy();
         }
     }
@@ -55,7 +53,6 @@ public class WallLanternTextureGen {
         try (TextureImage mask = createMetalMask(source)) {
             Palette base = trySample(source, mask);
             if (base != null) return base;
-            // The vanilla-shaped base band was empty; sample the entire lantern instead.
             return trySample(source, null);
         }
     }
@@ -63,7 +60,6 @@ public class WallLanternTextureGen {
     @Nullable
     private static Palette trySample(TextureImage source, @Nullable TextureImage mask) {
         try {
-            // Palette.fromImage throws when the sampled region has no opaque pixels.
             Palette p = Palette.fromImage(source, mask);
             return p.isEmpty() ? null : p;
         } catch (Exception e) {
@@ -99,6 +95,7 @@ public class WallLanternTextureGen {
         if (type.isVanilla() && reg.getPath().equals("lantern")) {
             return IRON_MOUNT;
         }
+        //all of these reuse the vanilla frame, no point in copying the mount to a hundred paths
         if (reg.getNamespace().equals("skinnedlanterns")) {
             return IRON_MOUNT;
         }

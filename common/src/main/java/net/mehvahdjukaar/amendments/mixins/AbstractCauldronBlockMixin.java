@@ -33,8 +33,6 @@ public class AbstractCauldronBlockMixin extends Block {
         if (original == InteractionResult.TRY_WITH_EMPTY_HAND && this == Blocks.CAULDRON && CommonConfigs.LIQUID_CAULDRON.get()) {
             return CauldronConversion.convert(state, pos, level, player, hand, stack, false);
         }
-        // boiling state on the resulting water cauldron is handled generically by
-        // BoilingWaterCauldronBlock#onPlace, which fires on the interaction's setBlock
         return original;
     }
 

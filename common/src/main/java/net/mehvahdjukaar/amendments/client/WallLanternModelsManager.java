@@ -31,7 +31,7 @@ public class WallLanternModelsManager {
             Identifier reg = type.getId();
             String namespace = (reg.getNamespace().equals("minecraft") || reg.getNamespace().equals(Amendments.MOD_ID)) ?
                     "" : reg.getNamespace() + "/";
-            // legacy override path
+            //legacy path
             String legacy = "block/custom_wall_lanterns/" + namespace + reg.getPath();
             if (manager.getResource(Amendments.res("models/" + legacy + ".json")).isPresent()) {
                 CUSTOM_LANTERN_MODELS.put(type, Amendments.res(legacy));
