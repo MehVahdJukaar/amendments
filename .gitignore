@@ -22,8 +22,8 @@ classes/
 /fabric/build/
 /neoforge/build/
 /forge/build/
-/build/reports/problems/problems-report.html
 /settings.gradle.kts
 
 /build/
 /tools/
+/docs/

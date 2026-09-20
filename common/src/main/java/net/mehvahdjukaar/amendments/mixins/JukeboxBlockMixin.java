@@ -1,5 +1,8 @@
 package net.mehvahdjukaar.amendments.mixins;
 
+import net.mehvahdjukaar.amendments.AmendmentsClient;
+import net.mehvahdjukaar.amendments.configs.ClientConfigs;
+import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
@@ -20,13 +23,21 @@ public abstract class JukeboxBlockMixin extends Block {
         super(properties);
     }
 
+    @Unique
+    private static boolean amendments$hasNewModel() {
+        return PlatHelper.getPhysicalSide().isClient() && AmendmentsClient.WAS_INIT &&
+                ClientConfigs.JUKEBOX_MODEL.get();
+    }
+
     @Override
     public VoxelShape getOcclusionShape(BlockState state, BlockGetter level, BlockPos pos) {
-        return SMALL_SHAPE;
+        if (amendments$hasNewModel()) return SMALL_SHAPE;
+        return super.getOcclusionShape(state, level, pos);
     }
 
     @Override
     public SoundType getSoundType(BlockState state) {
-        return SoundType.WOOD;
+        if (amendments$hasNewModel()) return SoundType.WOOD;
+        return super.getSoundType(state);
     }
 }

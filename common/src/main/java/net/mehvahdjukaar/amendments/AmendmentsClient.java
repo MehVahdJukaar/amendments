@@ -205,7 +205,9 @@ public class AmendmentsClient {
 
     @EventCalled
     private static void registerTileRenderers(ClientHelper.BlockEntityRendererEvent event) {
-        event.register(BlockEntityType.JUKEBOX, JukeboxTileRenderer::new);
+        if (ClientConfigs.JUKEBOX_MODEL.get()) {
+            event.register(BlockEntityType.JUKEBOX, JukeboxTileRenderer::new);
+        }
         event.register(ModRegistry.CEILING_BANNER_TILE.get(), CeilingBannerBlockTileRenderer::new);
         event.register(ModRegistry.SKULL_PILE_TILE.get(), DoubleSkullBlockTileRenderer::new);
         event.register(ModRegistry.SKULL_CANDLE_TILE.get(), CandleSkullBlockTileRenderer::new);
