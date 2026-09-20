@@ -98,8 +98,7 @@ public class CarpetSlabBlock extends SlabBlock implements EntityBlock, IRecolora
     public float getDestroyProgress(BlockState state, Player player, BlockGetter worldIn, BlockPos pos) {
         if (worldIn.getBlockEntity(pos) instanceof IBlockHolder tile) {
             BlockState mimicState = tile.getHeldBlock();
-            //prevent infinite recursion
-            if (!mimicState.isAir() && !(mimicState.getBlock() instanceof CarpetSlabBlock))
+            if (!mimicState.isAir() && !mimicState.hasBlockEntity())
                 return mimicState.getDestroyProgress(player, worldIn, pos);
         }
         return super.getDestroyProgress(state, player, worldIn, pos);
@@ -124,6 +123,7 @@ public class CarpetSlabBlock extends SlabBlock implements EntityBlock, IRecolora
             //checks again if the content itself can be mined
             BlockState heldState = tile.getHeldBlock(0);
             BlockState carpet = tile.getHeldBlock(1);
+            builder = builder.withOptionalParameter(LootContextParams.BLOCK_ENTITY, null);
             if (builder.getOptionalParameter(LootContextParams.THIS_ENTITY) instanceof ServerPlayer player) {
                 if (ForgeHelper.canHarvestBlock(heldState, builder.getLevel(), BlockPos.containing(builder.getParameter(LootContextParams.ORIGIN)), player)) {
                     drops.addAll(heldState.getDrops(builder));

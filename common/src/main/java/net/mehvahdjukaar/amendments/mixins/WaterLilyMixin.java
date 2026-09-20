@@ -39,7 +39,7 @@ public abstract class WaterLilyMixin extends Block {
         Item item = stack.getItem();
         if (!stack.isEmpty() && !(item instanceof PlaceOnWaterBlockItem) && !(stack.getItem() instanceof BoneMealItem)) {
             BlockPos below = pos.below();
-            if (level.getBlockState(below).is(Blocks.WATER)) {
+            if (!level.isClientSide && level.getBlockState(below).is(Blocks.WATER)) {
 
                 level.setBlock(pos, Blocks.AIR.defaultBlockState(), 2);
                 level.setBlock(below, ModRegistry.WATERLILY_BLOCK.get().defaultBlockState()

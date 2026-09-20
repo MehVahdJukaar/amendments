@@ -155,8 +155,7 @@ public class WaterloggedLilyBlock extends WaterlilyBlock implements LiquidBlockC
     public float getDestroyProgress(BlockState state, Player player, BlockGetter worldIn, BlockPos pos) {
         if (worldIn.getBlockEntity(pos) instanceof IBlockHolder tile) {
             BlockState mimicState = tile.getHeldBlock();
-            //prevent infinite recursion
-            if (!mimicState.isAir() && !(mimicState.getBlock() instanceof WaterloggedLilyBlock))
+            if (!mimicState.isAir() && !mimicState.hasBlockEntity())
                 return Math.min(super.getDestroyProgress(state, player, worldIn, pos),
                         mimicState.getDestroyProgress(player, worldIn, pos));
         }
@@ -186,7 +185,8 @@ public class WaterloggedLilyBlock extends WaterlilyBlock implements LiquidBlockC
                     return drops;
                 }
             }
-            if (!heldState.isAir() && !(heldState.getBlock() instanceof WaterloggedLilyBlock)) {
+            if (!heldState.isAir()) {
+                builder = builder.withOptionalParameter(LootContextParams.BLOCK_ENTITY, null);
                 drops.addAll(heldState.getDrops(builder));
             }
         }
@@ -202,7 +202,7 @@ public class WaterloggedLilyBlock extends WaterlilyBlock implements LiquidBlockC
     public float getExplosionResistance(BlockState state, BlockGetter world, BlockPos pos, Explosion explosion) {
         if (world instanceof Level l && l.getBlockEntity(pos) instanceof IBlockHolder tile) {
             BlockState mimicState = tile.getHeldBlock();
-            if (!mimicState.isAir() && !(mimicState.getBlock() instanceof WaterloggedLilyBlock)) {
+            if (!mimicState.isAir() && !mimicState.hasBlockEntity()) {
                 return Math.max(ForgeHelper.getExplosionResistance(mimicState, l, pos, explosion),
                         state.getBlock().getExplosionResistance());
             }
@@ -214,7 +214,7 @@ public class WaterloggedLilyBlock extends WaterlilyBlock implements LiquidBlockC
     public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state) {
         if (level.getBlockEntity(pos) instanceof IBlockHolder tile) {
             BlockState mimic = tile.getHeldBlock();
-            if (!mimic.isAir() && !(mimic.getBlock() instanceof WaterloggedLilyBlock)) {
+            if (!mimic.isAir() && !mimic.hasBlockEntity()) {
                 return mimic.getBlock().getCloneItemStack(level, pos, mimic);
             }
         }
