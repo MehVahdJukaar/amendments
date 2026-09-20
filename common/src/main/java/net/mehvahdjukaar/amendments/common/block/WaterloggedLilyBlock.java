@@ -200,10 +200,10 @@ public class WaterloggedLilyBlock extends WaterlilyBlock implements LiquidBlockC
 
     @ForgeOverride
     public float getExplosionResistance(BlockState state, BlockGetter world, BlockPos pos, Explosion explosion) {
-        if (world.getBlockEntity(pos) instanceof IBlockHolder tile) {
+        if (world instanceof Level l && l.getBlockEntity(pos) instanceof IBlockHolder tile) {
             BlockState mimicState = tile.getHeldBlock();
             if (!mimicState.isAir() && !(mimicState.getBlock() instanceof WaterloggedLilyBlock)) {
-                return Math.max(ForgeHelper.getExplosionResistance(mimicState, (Level) world, pos, explosion),
+                return Math.max(ForgeHelper.getExplosionResistance(mimicState, l, pos, explosion),
                         state.getBlock().getExplosionResistance());
             }
         }
