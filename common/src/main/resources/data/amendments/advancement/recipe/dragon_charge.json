@@ -1,0 +1,44 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "amendments:flag",
+      "flag": "dragon_charge"
+    }
+  ],
+  "fabric:load_conditions": [
+    {
+      "condition": "amendments:flag",
+      "flag": "dragon_charge"
+    }
+  ],
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_dragon_breath": {
+      "conditions": {
+        "items": [
+          {
+            "items": "minecraft:dragon_breath"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "amendments:dragon_charge"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_dragon_breath"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "amendments:dragon_charge"
+    ]
+  }
+}
