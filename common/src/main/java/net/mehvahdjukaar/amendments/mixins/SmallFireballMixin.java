@@ -1,8 +1,6 @@
 package net.mehvahdjukaar.amendments.mixins;
 
 import net.mehvahdjukaar.amendments.configs.CommonConfigs;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.projectile.hurtingprojectile.SmallFireball;
@@ -16,22 +14,11 @@ public abstract class SmallFireballMixin extends Entity {
         super(entityType, level);
     }
 
-    //returning true makes the player attack push it around
-    @Override
-    public boolean hurtServer(ServerLevel level, DamageSource source, float amount) {
-        return true;
-    }
-
-    @Override
-    public boolean hurtClient(DamageSource source) {
-        return true;
-    }
-
+    //pickable so the player can actually hit it. PlayerMixin lets the punch deflect it
     @Override
     public boolean isPickable() {
-        if(this.getType() == EntityType.SMALL_FIREBALL &&
-                CommonConfigs.DEFLECT_FIRE_CHARGES.get()){
-            return false;
+        if (this.getType() == EntityType.SMALL_FIREBALL && CommonConfigs.DEFLECT_FIRE_CHARGES.get()) {
+            return true;
         }
         return super.isPickable();
     }

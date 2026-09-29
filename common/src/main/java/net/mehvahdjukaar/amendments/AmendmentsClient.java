@@ -8,12 +8,12 @@ import net.mehvahdjukaar.amendments.client.colors.BrewingStandColor;
 import net.mehvahdjukaar.amendments.client.colors.CarpetBlockColor;
 import net.mehvahdjukaar.amendments.client.colors.MimicBlockColor;
 import net.mehvahdjukaar.amendments.client.colors.SoftFluidColor;
+import net.mehvahdjukaar.amendments.client.colors.WaterCauldronColor;
 import net.mehvahdjukaar.amendments.client.gui.LecternBookEditScreen;
 import net.mehvahdjukaar.amendments.client.model.*;
 import net.mehvahdjukaar.amendments.client.particles.*;
 import net.mehvahdjukaar.amendments.client.renderers.*;
 import net.mehvahdjukaar.amendments.common.ProjectileStats;
-import net.mehvahdjukaar.amendments.common.block.BoilingWaterCauldronBlock;
 import net.mehvahdjukaar.amendments.configs.ClientConfigs;
 import net.mehvahdjukaar.amendments.integration.CompatHandler;
 import net.mehvahdjukaar.amendments.integration.CompatObjects;
@@ -114,8 +114,8 @@ public class AmendmentsClient {
     public static final ModelLayerLocation MEDIUM_THROWN_BALL = loc("medium_thrown_ball");
     public static final ModelLayerLocation SMALL_THROWN_BALL = loc("small_thrown_ball");
 
-    public static final Identifier BELL_ROPE = Amendments.res("block/bell_rope");
-    public static final Identifier BELL_CHAIN = Amendments.res("block/bell_chain");
+    public static final Identifier BELL_ROPE = Amendments.res("special_models/bell_rope");
+    public static final Identifier BELL_CHAIN = Amendments.res("special_models/bell_chain");
     public static final Identifier LECTERN_GUI = Amendments.res("textures/gui/lectern.png");
     public static final WidgetSprites BUTTON_SPRITES = new WidgetSprites(
             Amendments.res("widget/button"), Amendments.res("widget/button_highlighted"));
@@ -305,7 +305,7 @@ public class AmendmentsClient {
         event.register(MimicBlockColor.layers(), mimics.toArray(new Block[0]));
         event.register(CarpetBlockColor.layers(), ModRegistry.CARPET_SLAB.get(), ModRegistry.CARPET_STAIRS.get());
         //event.register(new LilyBlockColor(), ModRegistry.WATERLILY_BLOCK.get());
-        event.register(List.of(BoilingWaterCauldronBlock.waterColor()), Blocks.WATER_CAULDRON);
+        event.register(List.of(new WaterCauldronColor()), Blocks.WATER_CAULDRON);
         event.register(BrewingStandColor.layers(), Blocks.BREWING_STAND);
         event.register(SoftFluidColor.layers(), ModRegistry.DYE_CAULDRON.get(), ModRegistry.LIQUID_CAULDRON.get());
     }

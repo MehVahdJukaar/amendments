@@ -5,7 +5,6 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.mehvahdjukaar.amendments.reg.ModBlockProperties;
 import net.mehvahdjukaar.moonlight.api.fluids.MLBuiltinSoftFluids;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidStack;
-import net.minecraft.client.color.block.BlockTintSource;
 import net.minecraft.client.renderer.BiomeColors;
 import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.core.BlockPos;
@@ -98,20 +97,6 @@ public class BoilingWaterCauldronBlock extends LayeredCauldronBlock {
 
     public static int getWaterColor(BlockState state, BlockAndTintGetter level, BlockPos pos, int i) {
         return i == 1 && level != null && pos != null ? BiomeColors.getAverageWaterColor(level, pos) : -1;
-    }
-
-    public static BlockTintSource waterColor() {
-        return new BlockTintSource() {
-            @Override
-            public int color(BlockState state) {
-                return -1;
-            }
-
-            @Override
-            public int colorInWorld(BlockState state, BlockAndTintGetter level, BlockPos pos) {
-                return BiomeColors.getAverageWaterColor(level, pos);
-            }
-        };
     }
 
     @Override
