@@ -1,6 +1,5 @@
 package net.mehvahdjukaar.amendments.common.tile;
 
-import net.mehvahdjukaar.amendments.configs.ClientConfigs;
 import net.mehvahdjukaar.amendments.reg.ModBlockProperties;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
 import net.mehvahdjukaar.amendments.reg.ModTags;
@@ -31,7 +30,7 @@ public class ToolHookBlockTile extends DynamicRenderedItemDisplayTile {
 
     @Override
     public boolean isNeverFancy() {
-        return ClientConfigs.FAST_HOOKS.get();
+        return false;
     }
 
     @Override

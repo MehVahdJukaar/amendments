@@ -247,8 +247,6 @@
   "amendments.configuration.arrows": "Arrows",
   "amendments.configuration.arrows.crossbows_colors": "Crossbows Colors",
   "amendments.configuration.arrows.crossbows_colors.description": "Makes tipped arrows show their colors when loaded with a crossbow",
-  "amendments.configuration.tripwire_hook.fast_hooks": "Fast Hooks",
-  "amendments.configuration.tripwire_hook.fast_hooks.description": "Makes hooks render faster using a block model instead of tile renderer. Cost is that animated and enchanted items will appear static",
   "amendments.configuration.hanging_sign": "Hanging Sign",
   "amendments.configuration.hanging_sign.item_pixel_scale": "Item Pixel Scale",
   "amendments.configuration.hanging_sign.item_pixel_scale.description": "Scale of items on hanging signs (unit is in pixel they would occupy). Set to 8 to better match the pixels on the sign",

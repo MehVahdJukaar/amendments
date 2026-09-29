@@ -104,13 +104,66 @@ public class ClientResourceGenerator extends DynamicClientResourceProvider {
                                     }
                                 }
                                 """));
+
+                sink.addItemModelDefinition(Identifier.withDefaultNamespace("crossbow"), JsonParser.parseString(
+                        """
+                                {
+                                  "model": {
+                                    "type": "minecraft:select",
+                                    "property": "minecraft:charge_type",
+                                    "cases": [
+                                      {
+                                        "when": "arrow",
+                                        "model": {
+                                          "type": "minecraft:model",
+                                          "model": "minecraft:item/crossbow_arrow",
+                                          "tints": [
+                                            {"type": "minecraft:constant", "value": 16777215},
+                                            {"type": "amendments:crossbow_arrow"}
+                                          ]
+                                        }
+                                      },
+                                      {
+                                        "when": "rocket",
+                                        "model": {
+                                          "type": "minecraft:model",
+                                          "model": "minecraft:item/crossbow_firework"
+                                        }
+                                      }
+                                    ],
+                                    "fallback": {
+                                      "type": "minecraft:condition",
+                                      "property": "minecraft:using_item",
+                                      "on_false": {
+                                        "type": "minecraft:model",
+                                        "model": "minecraft:item/crossbow"
+                                      },
+                                      "on_true": {
+                                        "type": "minecraft:range_dispatch",
+                                        "property": "minecraft:crossbow/pull",
+                                        "entries": [
+                                          {"threshold": 0.58, "model": {"type": "minecraft:model", "model": "minecraft:item/crossbow_pulling_1"}},
+                                          {"threshold": 1.0, "model": {"type": "minecraft:model", "model": "minecraft:item/crossbow_pulling_2"}}
+                                        ],
+                                        "fallback": {
+                                          "type": "minecraft:model",
+                                          "model": "minecraft:item/crossbow_pulling_0"
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                                """));
             }
 
             if (ClientConfigs.JUKEBOX_MODEL.get()) {
-                sink.addItemModel(Identifier.withDefaultNamespace("jukebox"), JsonParser.parseString(
-                        """ 
+                sink.addItemModelDefinition(Identifier.withDefaultNamespace("jukebox"), JsonParser.parseString(
+                        """
                                 {
-                                  "parent": "amendments:block/jukebox"
+                                  "model": {
+                                    "type": "minecraft:model",
+                                    "model": "amendments:block/jukebox"
+                                  }
                                 }
                                 """));
 

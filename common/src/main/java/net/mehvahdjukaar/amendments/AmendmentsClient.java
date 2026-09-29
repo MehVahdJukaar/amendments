@@ -6,6 +6,7 @@ import net.mehvahdjukaar.amendments.client.ItemHoldingAnimationsManager;
 import net.mehvahdjukaar.amendments.client.ModRenderTypes;
 import net.mehvahdjukaar.amendments.client.colors.BrewingStandColor;
 import net.mehvahdjukaar.amendments.client.colors.CarpetBlockColor;
+import net.mehvahdjukaar.amendments.client.colors.CrossbowArrowTint;
 import net.mehvahdjukaar.amendments.client.colors.MimicBlockColor;
 import net.mehvahdjukaar.amendments.client.colors.SoftFluidColor;
 import net.mehvahdjukaar.amendments.client.colors.WaterCauldronColor;
@@ -151,8 +152,7 @@ public class AmendmentsClient {
         ClientHelper.addModelLayerRegistration(AmendmentsClient::registerModelLayers);
         ClientHelper.addStandaloneModelRegistration(WallLanternModelsManager::registerStandaloneModels);
         ClientHelper.addEntityRenderersRegistration(AmendmentsClient::registerEntityRenderers);
-        //item tints are json only now, these live in assets/amendments/items/<id>.json
-        //ClientHelper.addItemColorsRegistration(AmendmentsClient::registerItemColors);
+        ClientHelper.addItemTintSourceRegistration(e -> e.register(Amendments.res("crossbow_arrow"), CrossbowArrowTint.MAP_CODEC));
         ClientHelper.addParticleRegistration(AmendmentsClient::registerParticles);
         ClientHelper.addMenuScreensRegistration(AmendmentsClient::registerMenuScreens);
         if (CompatHandler.ENHANCED_BLOCK_ENTITIES) {
@@ -179,18 +179,6 @@ public class AmendmentsClient {
 
     @EventCalled
     public static void setup() {
-        //render type goes in the block model jsons instead
-        //ClientHelper.registerRenderType(ModRegistry.CARPET_STAIRS.get(), RenderTypes.cutout(), RenderTypes.solid(), RenderTypes.translucent());
-        //ClientHelper.registerRenderType(ModRegistry.CARPET_SLAB.get(), RenderTypes.cutout(), RenderTypes.solid(), RenderTypes.translucent());
-        //ClientHelper.registerRenderType(ModRegistry.WATERLILY_BLOCK.get(), RenderTypes.cutout());
-        //ClientHelper.registerRenderType(Blocks.WATER_CAULDRON, RenderTypes.cutout(), RenderTypes.translucent());
-        //ClientHelper.registerRenderType(ModRegistry.LIQUID_CAULDRON.get(), RenderTypes.cutout(), RenderTypes.translucent());
-        //ClientHelper.registerRenderType(ModRegistry.DYE_CAULDRON.get(), RenderTypes.cutout(), RenderTypes.translucent());
-        //ClientHelper.registerRenderType(ModRegistry.HANGING_FLOWER_POT.get(), RenderTypes.cutout());
-        //for (var wallLantern : ModRegistry.WALL_LANTERNS.values()) {
-        //    ClientHelper.registerRenderType(wallLantern, RenderTypes.cutout());
-        //}
-        //ClientHelper.registerRenderType(ModRegistry.TOOL_HOOK.get(), RenderTypes.cutout());
     }
 
     public static void afterTagSetup() {
@@ -201,14 +189,6 @@ public class AmendmentsClient {
     private static void registerMenuScreens(ClientHelper.MenuScreenEvent event) {
         event.register(ModRegistry.LECTERN_EDIT_MENU.get(), LecternBookEditScreen::new);
     }
-
-    //@EventCalled
-    //private static void registerItemColors(ClientHelper.ItemColorEvent event) {
-    //    event.register((itemStack, i) -> i > 0 ? -1 :
-    //            itemStack.get(DataComponents.DYED_COLOR).rgb(), ModRegistry.DYE_BOTTLE_ITEM.get());
-    //
-    //    event.register(new CrossbowColor(), Items.CROSSBOW);
-    //}
 
     @EventCalled
     private static void registerTileRenderers(ClientHelper.BlockEntityRendererEvent event) {

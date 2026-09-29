@@ -1,0 +1,12 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "amendments:item/dye_bottle",
+    "tints": [
+      {
+        "type": "minecraft:dye",
+        "default": 11546150
+      }
+    ]
+  }
+}

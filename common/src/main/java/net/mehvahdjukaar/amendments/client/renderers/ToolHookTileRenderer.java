@@ -32,11 +32,6 @@ public class ToolHookTileRenderer implements BlockEntityRenderer<ToolHookBlockTi
     }
 
     @Override
-    public boolean shouldRender(ToolHookBlockTile blockEntity, Vec3 cameraPos) {
-        return blockEntity.shouldRenderFancy();
-    }
-
-    @Override
     public void extractRenderState(ToolHookBlockTile blockEntity, ToolHookRenderState state, float partialTicks,
                                    Vec3 cameraPosition, ModelFeatureRenderer.@Nullable CrumblingOverlay breakProgress) {
         BlockEntityRenderer.super.extractRenderState(blockEntity, state, partialTicks, cameraPosition, breakProgress);

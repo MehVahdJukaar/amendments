@@ -63,7 +63,6 @@ public class ClientConfigs {
     public static final Supplier<List<String>> SIGN_BLACKLIST;
 
     public static final Supplier<Boolean> COLORED_ARROWS;
-    public static final Supplier<Boolean> FAST_HOOKS;
 
     public static final Supplier<Boolean> FIREBALL_3D;
     public static final Supplier<Boolean> GHAST_FIREBALL_TRAIL;
@@ -156,10 +155,6 @@ public class ClientConfigs {
                 .define("crossbows_colors", true);
         builder.pop();
 
-        builder.push("tripwire_hook");
-        FAST_HOOKS = builder.comment("Makes hooks render faster using a block model instead of tile renderer. Cost is that animated and enchanted items will appear static")
-                .define("fast_hooks", false);
-        builder.pop();
 
         builder.push("hanging_sign");
         ITEM_SCALE = builder.comment("Scale of items on hanging signs (unit is in pixel they would occupy). Set to 8 to better match the pixels on the sign")
