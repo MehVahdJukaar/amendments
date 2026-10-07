@@ -134,6 +134,7 @@ public class LanternRegistry extends BlockTypeRegistry<LanternRegistry.LanternTy
 
         @Override
         protected void initializeChildrenItems() {
+
         }
     }
 }
