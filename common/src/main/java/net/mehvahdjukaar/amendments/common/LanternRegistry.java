@@ -20,19 +20,9 @@ public class LanternRegistry extends BlockTypeRegistry<LanternRegistry.LanternTy
 
     public static final LanternRegistry INSTANCE = new LanternRegistry();
 
-    /**
-     * Manual vertical corrections (block units, {@code 1/16} = one pixel; positive pushes down) for
-     * modded lanterns whose collision shape doesn't line up with their visual model. Added on top of
-     * the shape-derived offset in {@link LanternType#computeAttachmentOffset}. Must be initialized
-     * before the static {@link #VANILLA}/{@link #SOUL} types below, which read it during construction.
-     */
     private static final Map<Identifier, Double> SPECIAL_OFFSETS = new HashMap<>();
 
     static {
-        // Caverns & Chasms copper lanterns (WeatheringCopperLanternBlock) use a taller collision box
-        // than a vanilla lantern, so the shape-derived offset drops them 1px below the wall mount,
-        // leaving a gap. Raise them back up. Only these 8 share that model - cupric_lantern is a plain
-        // vanilla-shaped LanternBlock (no correction) and golden_lantern isn't a hanging lantern.
         for (String path : List.of(
                 "copper_lantern", "exposed_copper_lantern", "weathered_copper_lantern",
                 "oxidized_copper_lantern", "waxed_copper_lantern", "waxed_exposed_copper_lantern",
@@ -64,8 +54,18 @@ public class LanternRegistry extends BlockTypeRegistry<LanternRegistry.LanternTy
     }
 
     @Override
+    public void buildAll() {
+        if (Blocks.LANTERN.asItem() == Items.AIR) {
+            throw new IllegalStateException("Lantern has no item. Lantern block set was filled before items were registered or a mod invalidated the block item map. Cant proceed further this is likely an issue of another mod");
+        }
+        super.buildAll();
+    }
+
+    @Override
     public Optional<LanternType> detectTypeFromBlock(Block block, Identifier blockId) {
-        if (block.asItem() == Items.AIR) return Optional.empty();
+        if (block.asItem() == Items.AIR) {
+            return Optional.empty();
+        }
 
         if (WHITELIST.contains(blockId)) return Optional.of(new LanternType(blockId, block));
 
@@ -91,11 +91,6 @@ public class LanternRegistry extends BlockTypeRegistry<LanternRegistry.LanternTy
 
     public static class LanternType extends BlockType {
         public final Block lantern;
-        /**
-         * How far the dangling wall lantern sits below its mount, in block units. Derived once from
-         * the lantern's shape (plus any manual {@link #SPECIAL_OFFSETS} correction) since it never
-         * changes for a given lantern - see {@link #computeAttachmentOffset}.
-         */
         public final double attachmentOffset;
 
         public LanternType(Identifier name, Block lantern) {
@@ -105,11 +100,10 @@ public class LanternRegistry extends BlockTypeRegistry<LanternRegistry.LanternTy
         }
 
         private static double computeAttachmentOffset(Identifier id, Block lantern) {
-            // Paper (twigs) lanterns keep the default mount height.
+            // twigs lanterns keep the default mount height.
             if (id.getNamespace().equals("twigs")) return 0;
             try {
                 BlockState state = lantern.defaultBlockState();
-                // Match the (non-hanging) state the wall lantern actually renders with.
                 if (state.hasProperty(LanternBlock.HANGING)) {
                     state = state.setValue(LanternBlock.HANGING, false);
                 }
