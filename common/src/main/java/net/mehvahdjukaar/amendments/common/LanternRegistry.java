@@ -54,8 +54,18 @@ public class LanternRegistry extends BlockTypeRegistry<LanternRegistry.LanternTy
     }
 
     @Override
+    public void buildAll() {
+        if (Blocks.LANTERN.asItem() == Items.AIR) {
+            throw new IllegalStateException("Lantern has no item. Lantern block set was filled before items were registered or a mod invalidated the block item map. Cant proceed further this is likely an issue of another mod");
+        }
+        super.buildAll();
+    }
+
+    @Override
     public Optional<LanternType> detectTypeFromBlock(Block block, ResourceLocation blockId) {
-        if (block.asItem() == Items.AIR) return Optional.empty();
+        if (block.asItem() == Items.AIR) {
+            return Optional.empty();
+        }
 
         if (WHITELIST.contains(blockId)) return Optional.of(new LanternType(blockId, block));
 
