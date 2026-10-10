@@ -505,6 +505,7 @@ public class ClientResourceGenerator extends DynamicClientResourceProvider {
             entry.add("model", plainItemModel(variantTexture));
             cases.add(entry);
         }
+
         JsonObject select = new JsonObject();
         select.addProperty("type", "minecraft:select");
         select.addProperty("property", "minecraft:component");

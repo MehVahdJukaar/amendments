@@ -10,15 +10,17 @@ neoforge {
 val moonlight_version: String by extra
 val codecui_version: String by extra
 val supplementaries_version: String by extra
+val polytone_version: String by extra
 
 dependencies {
     modImplementation("net.mehvahdjukaar:moonlight-neoforge:${moonlight_version}")
     accessTransformers("net.mehvahdjukaar:moonlight-neoforge:${moonlight_version}")
     modRuntimeOnly("net.mehvahdjukaar:codecui-neoforge:${codecui_version}")
 
+    modCompileOnly("net.mehvahdjukaar:polytone-neoforge:${polytone_version}")
+
     //temp
     compileOnly(files("/home/matteo/IdeaProjects/Supplementaries/common/build/classes/java/main"))
-    //fd is fabric only for now so we compile against the local 26.1 worktree classes
     compileOnly(files("/home/matteo/IdeaProjects/FarmersDelightRefabricated-26.1/build/classes/java/main"))
 
     //modCompileOnly("curse.maven:flan-404578:5290167")

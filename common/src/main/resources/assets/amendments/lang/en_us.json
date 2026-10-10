@@ -300,5 +300,6 @@
   "amendments.configuration.buckets.axolotl_variants": "Axolotl Variants",
   "amendments.configuration.buckets.axolotl_variants.description": "Axolotl buckets show the color of the axolotl inside",
   "amendments.configuration.misc.villager_trade_buttons": "Villager Trade Buttons",
-  "amendments.configuration.misc.villager_trade_buttons.description": "Gives the villager trade buttons the same look loom and stonecutter buttons have"
+  "amendments.configuration.misc.villager_trade_buttons.description": "Gives the villager trade buttons the same look loom and stonecutter buttons have",
+  "amendments.configuration.misc.hotbar_slot_animation_wrap.description": "If the hotbar slot animation wraps around the edges"
 }

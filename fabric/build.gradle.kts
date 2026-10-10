@@ -11,14 +11,16 @@ val moonlight_version: String by extra
 val codecui_version: String by extra
 val supplementaries_version: String by extra
 val modmenu_version: String by extra
+val polytone_version: String by extra
 
 dependencies {
     modImplementation("net.mehvahdjukaar:moonlight-fabric:${moonlight_version}")
     modRuntimeOnly("net.mehvahdjukaar:codecui-fabric:${codecui_version}")
     modCompileOnly("com.terraformersmc:modmenu:${modmenu_version}")
 
+    modCompileOnly("net.mehvahdjukaar:polytone-fabric:${polytone_version}")
+
     compileOnly(files("/home/matteo/IdeaProjects/Supplementaries/common/build/classes/java/main"))
-    //fd is fabric only for now so we compile against the local 26.1 worktree classes
     compileOnly(files("/home/matteo/IdeaProjects/FarmersDelightRefabricated-26.1/build/classes/java/main"))
 
     //modCompileOnly("com.jozufozu.flywheel:flywheel-forge-${flywheel_version}")

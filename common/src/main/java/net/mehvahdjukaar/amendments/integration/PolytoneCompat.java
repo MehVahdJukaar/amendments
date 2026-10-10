@@ -8,7 +8,7 @@ import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidTank;
 import net.mehvahdjukaar.moonlight.api.fluids.client.SoftFluidColors;
 import net.mehvahdjukaar.polytone.api.VoxelCell;
 import net.mehvahdjukaar.polytone.api.VoxelVolumeApi;
-import net.minecraft.world.level.BlockAndTintGetter;
+import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
 
 public class PolytoneCompat {
