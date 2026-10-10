@@ -13,6 +13,7 @@ import net.mehvahdjukaar.amendments.common.ProjectileStats;
 import net.mehvahdjukaar.amendments.common.block.BoilingWaterCauldronBlock;
 import net.mehvahdjukaar.amendments.configs.ClientConfigs;
 import net.mehvahdjukaar.amendments.integration.CompatHandler;
+import net.mehvahdjukaar.amendments.integration.PolytoneCompat;
 import net.mehvahdjukaar.amendments.integration.CompatObjects;
 import net.mehvahdjukaar.amendments.integration.SuppCompat;
 import net.mehvahdjukaar.amendments.reg.ModRegistry;
@@ -150,6 +151,7 @@ public class AmendmentsClient {
         if (CompatHandler.ENHANCED_BLOCK_ENTITIES) {
             ClientHelper.addClientLoginCallback(AmendmentsClient::warnAboutEnhancedBlockEntities);
         }
+        if (CompatHandler.POLYTONE) PolytoneCompat.setupClient();
         // TODO: rewrite as Vanillin compat for 1.21
         // if (CompatHandler.FLYWHEEL) FlywheelCompat.init();
     }

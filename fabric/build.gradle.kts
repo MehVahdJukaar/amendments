@@ -12,6 +12,7 @@ val soul_fire_d_version: String by extra
 val minecraft_min_version: String by extra
 val flywheel_version: String by extra
 val codecui_version: String by extra
+val polytone_version: String by extra
 
 dependencies {
     modImplementation("net.mehvahdjukaar:moonlight-fabric:${moonlight_version}")
@@ -19,6 +20,7 @@ dependencies {
 
     // Mirror of common deps (new setup requires every common modImplementation/modCompileOnly to live here too)
     modImplementation("curse.maven:supplementaries-412082:8044262")
+    modCompileOnly("net.mehvahdjukaar:polytone-fabric:${polytone_version}")
     //modCompileOnly("com.jozufozu.flywheel:flywheel-forge-${flywheel_version}")
     modCompileOnly("curse.maven:flan-404578:5290167")
     modCompileOnly("curse.maven:farmers-delight-398521:8083481")

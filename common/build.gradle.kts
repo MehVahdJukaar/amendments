@@ -12,6 +12,7 @@ val flywheel_version: String by extra
 val soul_fire_d_version: String by extra
 val fabric_loader_version: String by extra
 val mixin_extras_version: String by extra
+val polytone_version: String by extra
 
 dependencies {
 
@@ -19,6 +20,7 @@ dependencies {
     accessTransformers("net.mehvahdjukaar:moonlight-common:${moonlight_version}")
 
     modImplementation("curse.maven:supplementaries-412082:8044262")
+    modCompileOnly("net.mehvahdjukaar:polytone-common:${polytone_version}")
 
     modCompileOnly("com.jozufozu.flywheel:flywheel-forge-${flywheel_version}")
     modCompileOnly("curse.maven:flan-404578:5290167")

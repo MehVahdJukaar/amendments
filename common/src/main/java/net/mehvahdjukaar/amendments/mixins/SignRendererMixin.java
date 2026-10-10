@@ -23,7 +23,6 @@ import net.minecraft.world.level.block.state.properties.WoodType;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3f;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -39,28 +38,20 @@ public abstract class SignRendererMixin {
     private static Boolean amendments$front;
     @Unique
     private static boolean amendments$rendersPixelConsistent;
-    //screw this
-    //if you find an incompatibility pls report
 
-    /**
-     * @author MehVahDjukaar
-     * @reason adding color normal shading and color modifier
-     */
-    @Overwrite
-    public static int getDarkColor(SignText signText) {
+    @ModifyReturnValue(method = "getDarkColor", at = @At("RETURN"))
+    private static int amendments$shadeDarkColor(int original, SignText signText) {
         int color = signText.getColor().getTextColor();
-        if (color == DyeColor.BLACK.getTextColor() && signText.hasGlowingText()) {
-            return -988212;
-        } else {
-            float scale = (0.4f * ClientConfigs.getSignColorMult());
-            if (amendments$front != null && amendments$signYaw != null) {
-                Vector3f normal = new Vector3f(0, 0, 1);
-                normal.rotateY(amendments$signYaw * Mth.DEG_TO_RAD * (amendments$front ? 1 : -1));
-                amendments$front = null;
-                scale *= ColorUtils.getShading(normal);
-            }
-            return ColorUtils.multiply(color, scale);
+        boolean isBlackGlow = color == DyeColor.BLACK.getTextColor() && signText.hasGlowingText();
+        if (isBlackGlow) return original;
+        float scale = (0.4f * ClientConfigs.getSignColorMult());
+        if (amendments$front != null && amendments$signYaw != null) {
+            Vector3f normal = new Vector3f(0, 0, 1);
+            normal.rotateY(amendments$signYaw * Mth.DEG_TO_RAD * (amendments$front ? 1 : -1));
+            amendments$front = null;
+            scale *= ColorUtils.getShading(normal);
         }
+        return ColorUtils.multiply(color, scale);
     }
 
 

@@ -12,6 +12,7 @@ val soul_fire_d_version: String by extra
 val flywheel_version: String by extra
 val minecraft_min_version: String by extra
 val codecui_version = extra["codecui_version"] as String
+val polytone_version: String by extra
 
 dependencies {
     modImplementation("net.mehvahdjukaar:moonlight-neoforge:${moonlight_version}")
@@ -20,6 +21,7 @@ dependencies {
 
     // Mirror of common deps (new setup requires every common modImplementation/modCompileOnly to live here too)
     modImplementation("curse.maven:supplementaries-412082:8044262")
+    modCompileOnly("net.mehvahdjukaar:polytone-neoforge:${polytone_version}")
     modCompileOnly("curse.maven:flan-404578:5290167")
     modCompileOnly("curse.maven:new-thin-air-878379:5068247")
     modCompileOnly("curse.maven:cave-enhancements-597562:4388535")
