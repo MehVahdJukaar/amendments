@@ -22,6 +22,7 @@
     "FireballMixin",
     "FireChargeMixin",
     "FlowerPotBlockMixin",
+    "IronBarsBlockMixin",
     "HangingSignBlockEntityMixin",
     "JukeboxBlockEntityMixin",
     "JukeboxBlockMixin",
@@ -41,6 +42,7 @@
     "SnowballMixin",
     "VineMixin",
     "WallHangingSignBlockMixin",
+    "WallBlockMixin",
     "WallSignBlockMixin",
     "WaterLilyMixin"
   ],
@@ -48,6 +50,7 @@
     "BellRendererMixin",
     "DisplayCacheMixin",
     "DragonBreathParticleMixin",
+    "GuiMixin",
     "HangingSignRendererMixin",
     "MerchantScreenMixin",
     "SignEditScreenMixin",

@@ -31,5 +31,8 @@
     "fabric": "*",
     "minecraft": "=${minecraft_version}",
     "moonlight": ">=${moonlight_min_version}"
+  },
+  "breaks": {
+    "immersivewind": "<=0.9"
   }
 }

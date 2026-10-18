@@ -386,4 +386,17 @@ public class AmendmentsClient {
         o.accept(Minecraft.getInstance().level);
     }
 
+    private static float hotbarSlotAnimation = -1;
+
+    public static float getHotbarSlotAnimation(int selected, double speed, float elapsedTicks) {
+        if (hotbarSlotAnimation < 0) {
+            hotbarSlotAnimation = selected;
+            return selected;
+        }
+        //framerate idndpendent
+        hotbarSlotAnimation += (selected - hotbarSlotAnimation) * (float) (1 - Math.exp(-speed * elapsedTicks));
+        if (Math.abs(selected - hotbarSlotAnimation) < 0.01f) hotbarSlotAnimation = selected;
+        return hotbarSlotAnimation;
+    }
+
 }

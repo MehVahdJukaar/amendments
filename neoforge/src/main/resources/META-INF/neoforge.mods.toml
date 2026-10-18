@@ -39,3 +39,11 @@ modUrl = "${mod_homepage}"
     versionRange = "[${moonlight_min_version},)"
     ordering = "NONE"
     side = "BOTH"
+
+[[dependencies.${ mod_id }]]
+modId = "immersivewind"
+type = "incompatible"
+reason = "Its client only LanternBlock mixin desyncs registered wall lanterns between client and server"
+versionRange = "(,0.9]"
+ordering = "NONE"
+side = "BOTH"

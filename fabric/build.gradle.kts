@@ -31,5 +31,6 @@ dependencies {
     modCompileOnly("curse.maven:soul-fire-d-662413:6248772")
     modCompileOnly("curse.maven:modmenu-308702:7808443")
     modCompileOnly("curse.maven:modmenu-308702:7808443")
+    modImplementation("maven.modrinth:ebe:0.10.2+1.21")
 
 }
