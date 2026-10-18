@@ -32,5 +32,8 @@
     "fabric-api": ">=0.155.2+26.1.2",
     "minecraft": "${minecraft_version}",
     "moonlight": ">=${moonlight_min_version}"
+  },
+  "breaks": {
+    "immersivewind": "<=0.9"
   }
 }

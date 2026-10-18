@@ -83,6 +83,10 @@ public class CommonConfigs {
 
     public static final Supplier<Boolean> PASSENGER_NO_SUFFOCATION;
 
+    public static final Supplier<Boolean> FENCES_TO_WALLS_AND_BARS;
+    public static final Supplier<Boolean> WOODEN_TO_NETHER_FENCES;
+    public static final Supplier<Boolean> WALL_SIGN_CONNECTIONS;
+
     public static final ModConfigHolder SPEC;
 
     static {
@@ -208,6 +212,15 @@ public class CommonConfigs {
                 .feature("ceiling_banners");
         builder.pop();
 
+
+        builder.icon("minecraft:oak_fence").push("connections");
+        FENCES_TO_WALLS_AND_BARS = builder.comment("Makes fences connect to walls, panes and iron bars")
+                .define("fences_to_walls_and_bars", true);
+        WOODEN_TO_NETHER_FENCES = builder.comment("Makes wooden fences connect to nether brick fences")
+                .define("wooden_to_nether_fences", true);
+        WALL_SIGN_CONNECTIONS = builder.comment("Makes fences, walls, panes and bars connect to wall signs attached to them")
+                .define("wall_signs", true);
+        builder.pop();
 
         builder.icon("minecraft:bundle").push("misc");
 

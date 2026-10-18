@@ -55,6 +55,7 @@ public class ClientConfigs {
     public static final Supplier<Boolean> HOLDING_ANIMATION_FIXED;
     public static final Supplier<Boolean> CAMPFIRE_SMOKE;
     public static final Supplier<Boolean> TRADE_BUTTONS;
+    public static final Supplier<Double> HOTBAR_SLOT_ANIMATION_SPEED;
 
     public static final Supplier<Boolean> PIXEL_CONSISTENT_SIGNS;
     public static final Supplier<List<Block>> SIGN_BLACKLIST;
@@ -219,6 +220,9 @@ public class ClientConfigs {
 
         TRADE_BUTTONS = builder.icon("minecraft:emerald").comment("Gives the villager trade buttons the same look loom and stonecutter buttons have")
                 .define("villager_trade_buttons", true);
+
+        HOTBAR_SLOT_ANIMATION_SPEED = builder.icon("minecraft:clock").comment("Makes the selected hotbar slot slide to its new position. Higher is faster, 0 for vanilla behavior")
+                .defineSlider("hotbar_slot_animation_speed", 2.5d, 0, 5);
         builder.pop();
 
         builder.onChange(ClientConfigs::onChange);

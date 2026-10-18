@@ -28,6 +28,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SupportType;
+import net.minecraft.world.level.block.WallSignBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -192,6 +193,11 @@ public class Amendments {
     public static boolean canConnectDown(BlockState neighborState, LevelReader level, BlockPos pos) {
         if (CompatHandler.SUPPLEMENTARIES) return SuppCompat.canConnectDown(neighborState);
         return neighborState.isFaceSturdy(level, pos, Direction.UP, SupportType.CENTER);
+    }
+
+    public static boolean isWallSignAttachedTo(BlockState neighborState, Direction neighborFace) {
+        return CommonConfigs.WALL_SIGN_CONNECTIONS.get() && neighborState.getBlock() instanceof WallSignBlock
+                && neighborState.getValue(WallSignBlock.FACING) == neighborFace.getOpposite();
     }
 
 }
