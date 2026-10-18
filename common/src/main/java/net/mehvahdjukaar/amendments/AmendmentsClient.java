@@ -29,7 +29,6 @@ import net.mehvahdjukaar.moonlight.api.platform.ClientHelper;
 import net.mehvahdjukaar.moonlight.api.platform.RegHelper;
 import net.mehvahdjukaar.moonlight.api.set.BlocksColorAPI;
 import net.mehvahdjukaar.moonlight.api.util.Utils;
-import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.model.geom.ModelLayerLocation;
@@ -42,7 +41,6 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -156,24 +154,11 @@ public class AmendmentsClient {
         ClientHelper.addItemTintSourceRegistration(e -> e.register(Amendments.res("crossbow_arrow"), CrossbowArrowTint.MAP_CODEC));
         ClientHelper.addParticleRegistration(AmendmentsClient::registerParticles);
         ClientHelper.addMenuScreensRegistration(AmendmentsClient::registerMenuScreens);
-        if (CompatHandler.ENHANCED_BLOCK_ENTITIES) {
-            ClientHelper.addClientLoginCallback(AmendmentsClient::warnAboutEnhancedBlockEntities);
-        }
         if (CompatHandler.POLYTONE) PolytoneCompat.setupClient();
         // TODO: rewrite as Vanillin compat for 1.21
         // if (CompatHandler.FLYWHEEL) FlywheelCompat.init();
     }
 
-
-    @EventCalled
-    private static void warnAboutEnhancedBlockEntities() {
-        boolean disabled = ClientConfigs.NO_EBE_WARN.get();
-        if (disabled) return;
-        Player player = ClientHelper.getLocalPlayer();
-        if (player == null) return;
-        player.sendSystemMessage(Component.translatable("message.amendments.ebe_warning")
-                .withStyle(ChatFormatting.RED));
-    }
 
     public static float x;
     public static float y;
