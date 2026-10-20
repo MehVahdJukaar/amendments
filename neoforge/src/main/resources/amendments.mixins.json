@@ -9,6 +9,7 @@
   ],
   "client": [
     "CompatFarmersDelightHangingCanvasMixin",
+    "CompatFarmersDelightSignMixin",
     "CompatFarmersDelightSignRendererMixin",
     "CompatFDSignEditScreenMixin"
   ],

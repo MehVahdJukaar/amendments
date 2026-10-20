@@ -36,7 +36,7 @@ public abstract class CompatFarmersDelightSignMixin {
 
     /**
      * @author MehVahDjukaar
-     * @reason adding color normal shading and color modifier. Need override because we could loose precision due to int conversion if done on return
+     *  adding color normal shading and color modifier. Need override because we could loose precision due to int conversion if done on return
      */
     @Overwrite(remap = false)
     public static int getDarkColor(SignText signText, boolean isOutlineVisible) {
