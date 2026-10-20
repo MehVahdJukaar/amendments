@@ -29,13 +29,6 @@ import org.joml.Vector3f;
 
 public class TorchRendererExtension implements IThirdPersonAnimationProvider, IThirdPersonSpecialItemRenderer, IFirstPersonSpecialItemRenderer {
 
-    private static final Identifier FLAME_TEXTURE =
-            Identifier.withDefaultNamespace("textures/particle/flame.png");
-    private static final Identifier SOUL_FLAME_TEXTURE =
-            Identifier.withDefaultNamespace("textures/particle/soul_fire_flame.png");
-    private static final Identifier REDSTONE_FLAME_TEXTURE =
-            Identifier.withDefaultNamespace("textures/particle/generic_6.png");
-
     //top-center of the torch model, in centered block coords (tweak Y if the flame sits off)
     private static final Vec3 TORCH_PARTICLE_OFFSET = new Vec3(0, 0.16, 0);
 
@@ -69,7 +62,8 @@ public class TorchRendererExtension implements IThirdPersonAnimationProvider, IT
         HeldBlockModel.submit(torchState(stack), poseStack, collector, light);
 
         if (ClientConfigs.TORCH_HOLDING_FLAME.get() && !state.isInWater) {
-            HeldFlame.submit(poseStack, collector, getFlameTexture(stack), TORCH_PARTICLE_OFFSET, 4, state.ageInTicks);
+            HeldFlame.submit(poseStack, collector, getFlameTexture(stack), TORCH_PARTICLE_OFFSET, 4, state.ageInTicks,
+                    HeldItemRenderUtils.getCameraBillboardRotation());
         }
 
         poseStack.popPose();
@@ -85,14 +79,7 @@ public class TorchRendererExtension implements IThirdPersonAnimationProvider, IT
         poseStack.pushPose();
 
         //this should have been a special item renderer... if we dont render arm or item in weird places
-
-        float n = -0.4F * Mth.sin(Mth.sqrt(attackAnim) * 3.1415927F);
-        float m = 0.2F * Mth.sin(Mth.sqrt(attackAnim) * 6.2831855F);
-        float h = -0.2F * Mth.sin(attackAnim * 3.1415927F);
-
-        poseStack.translate(f * n, m, h);
-        renderer.applyItemArmTransform(poseStack, arm, equipAnim);
-        renderer.applyItemArmAttackTransform(poseStack, arm, attackAnim);
+        HeldItemRenderUtils.applyFirstPersonHandTransform(poseStack, renderer, arm, attackAnim, equipAnim);
 
         //same as generated item model
         ItemTransform transform = new ItemTransform(
@@ -112,7 +99,7 @@ public class TorchRendererExtension implements IThirdPersonAnimationProvider, IT
 
         if (ClientConfigs.TORCH_HOLDING_FLAME.get() && !player.isInWater()) {
             HeldFlame.submit(poseStack, collector, getFlameTexture(stack), TORCH_PARTICLE_OFFSET, 4,
-                    player.tickCount + partialTicks);
+                    player.tickCount + partialTicks, HeldItemRenderUtils.getHandBillboardRotation());
         }
 
         poseStack.popPose();
@@ -128,9 +115,6 @@ public class TorchRendererExtension implements IThirdPersonAnimationProvider, IT
     }
 
     private static Identifier getFlameTexture(ItemStack stack) {
-        String path = Utils.getID(stack.getItem()).getPath();
-        if (path.contains("soul")) return SOUL_FLAME_TEXTURE;
-        if (path.contains("redstone")) return REDSTONE_FLAME_TEXTURE;
-        return FLAME_TEXTURE;
+        return HeldItemRenderUtils.getFlameTexture(Utils.getID(stack.getItem()));
     }
 }

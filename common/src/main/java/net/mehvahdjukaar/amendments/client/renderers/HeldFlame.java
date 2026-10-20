@@ -2,7 +2,6 @@ package net.mehvahdjukaar.amendments.client.renderers;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.texture.OverlayTexture;
@@ -18,17 +17,15 @@ class HeldFlame {
 
     //TODO: fix for animated particles
     static void submit(PoseStack poseStack, SubmitNodeCollector collector, Identifier texture,
-                       Vec3 offset, float size, float ageInTicks) {
+                       Vec3 offset, float size, float ageInTicks, Quaternionf billboardRot) {
         float period = 20;
         float t = (ageInTicks % period) / period;
         float scale = (1.0F - t * t * 0.4F) * size / 16f;
 
-        Matrix4f mat = new Matrix4f();
-        Quaternionf cameraRot = Minecraft.getInstance().gameRenderer.getMainCamera().rotation();
-
         poseStack.translate(offset.x, offset.y, offset.z);
+        Matrix4f mat = new Matrix4f();
         mat.setTranslation(poseStack.last().pose().getTranslation(new Vector3f()));
-        mat.rotate(cameraRot);
+        mat.rotate(billboardRot);
 
         poseStack.last().pose().set(mat);
         poseStack.scale(-scale, scale, -scale);
