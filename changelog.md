@@ -1,4 +1,4 @@
 - new UI for villager trades
-- added smooth hotbar slot animation
+- added smooth animated hotbar slot animation
 - added a feature that makes walls, fence and panes all connect to eachother
 - added some iris compat code since iris broke held candle holder particles
