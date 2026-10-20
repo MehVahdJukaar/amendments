@@ -40,7 +40,7 @@ dependencies {
     modImplementation("curse.maven:skinned-lanterns-414154:6821878")
     // modImplementation("curse.maven:twigs-469410:8191595")
     modCompileOnly("curse.maven:spelunkery-790530:5043883")
-    modCompileOnly("curse.maven:scholar-961802:5214379")
+    modImplementation("curse.maven:scholar-961802:9154700")
     modCompileOnly("curse.maven:map-atlases-forge-519759:5307805")
     modCompileOnly("it.crystalnest:soul-fire-d-fabric:${minecraft_min_version}-${soul_fire_d_version}")
     modCompileOnly("curse.maven:puzzles-lib-495476:5330447")

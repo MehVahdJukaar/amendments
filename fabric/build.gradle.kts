@@ -32,5 +32,6 @@ dependencies {
     modCompileOnly("curse.maven:modmenu-308702:7808443")
     modCompileOnly("curse.maven:modmenu-308702:7808443")
     modImplementation("maven.modrinth:ebe:0.10.2+1.21")
+    modCompileOnly("curse.maven:scholar-961802:9154701")
 
 }
