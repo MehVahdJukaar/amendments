@@ -1,60 +1,35 @@
 package net.mehvahdjukaar.amendments.client.renderers;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import net.mehvahdjukaar.amendments.configs.ClientConfigs;
 import net.mehvahdjukaar.amendments.integration.SuppCompat;
-import net.mehvahdjukaar.moonlight.api.client.util.VertexUtil;
 import net.mehvahdjukaar.moonlight.api.item.IFirstPersonSpecialItemRenderer;
 import net.mehvahdjukaar.moonlight.api.item.IThirdPersonAnimationProvider;
 import net.mehvahdjukaar.moonlight.api.item.IThirdPersonSpecialItemRenderer;
 import net.mehvahdjukaar.moonlight.api.util.Utils;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ArmedModel;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.HeadedModel;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.ItemInHandRenderer;
-import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.ItemTransform;
-import net.minecraft.client.renderer.entity.ItemRenderer;
-import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.CandleBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-import org.joml.Matrix4f;
-import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
 public class CandleHolderRendererExtension implements IThirdPersonAnimationProvider, IThirdPersonSpecialItemRenderer,
         IFirstPersonSpecialItemRenderer {
-
-    private static final ResourceLocation FLAME_TEXTURE =
-            ResourceLocation.withDefaultNamespace("textures/particle/flame.png");
-    private static final ResourceLocation SOUL_FLAME_TEXTURE =
-            ResourceLocation.withDefaultNamespace("textures/particle/soul_fire_flame.png");
-    private static final ResourceLocation ENDER_FLAME_TEXTURE =
-            ResourceLocation.fromNamespaceAndPath("endergetic",
-                    "textures/particle/ender_fire_flame.png");
-    private static final ResourceLocation CUPRIC_FLAME_TEXTURE =
-            ResourceLocation.fromNamespaceAndPath("caverns_and_chasms",
-                    "textures/particle/cupric_fire_flame.png");
-    private static final ResourceLocation REDSTONE_FLAME_TEXTURE =
-            ResourceLocation.withDefaultNamespace("textures/particle/generic_6.png");
 
     private final BlockState offState;
     private final BlockState litState;
@@ -65,20 +40,7 @@ public class CandleHolderRendererExtension implements IThirdPersonAnimationProvi
         offState = blockItem.getBlock().defaultBlockState();
         litState = offState.setValue(CandleBlock.LIT, true);
         candleParticleOffset = SuppCompat.getCandleHolderParticleOffset(offState);
-
-        ResourceLocation id = Utils.getID(blockItem);
-        String path = id.getPath();
-        if (path.endsWith("soul") || path.startsWith("soul")) {
-            this.flameTexture = SOUL_FLAME_TEXTURE;
-        } else if (path.endsWith("ender") || path.startsWith("ender")) {
-            this.flameTexture = ENDER_FLAME_TEXTURE;
-        } else if (path.endsWith("cupric") || path.startsWith("cupric")) {
-            this.flameTexture = CUPRIC_FLAME_TEXTURE;
-        } else if (path.endsWith("redstone") || path.startsWith("redstone")) {
-            this.flameTexture = REDSTONE_FLAME_TEXTURE;
-        } else {
-            this.flameTexture = FLAME_TEXTURE;
-        }
+        flameTexture = HeldItemRenderUtils.getFlameTexture(Utils.getID(blockItem));
     }
 
     @Override
@@ -128,67 +90,20 @@ public class CandleHolderRendererExtension implements IThirdPersonAnimationProvi
 
             transform.apply(left, poseStack);
 
-            renderBlockModel(entity, stack, poseStack, bufferSource, light, left);
+            HeldItemRenderUtils.renderBlockModelAsItem(stack, getHeldState(entity), poseStack, bufferSource, light, left);
 
             if (!entity.isInWater()) {
-                renderFlame(entity, poseStack, bufferSource, stack);
+                HeldItemRenderUtils.renderFlame(entity, poseStack, bufferSource, flameTexture, candleParticleOffset,
+                        2 / 16f, HeldItemRenderUtils.getCameraBillboardRotation());
             }
 
             poseStack.popPose();
         }
     }
 
-    //TODO: improve for animated textures
-
-    private void renderFlame(LivingEntity entity, PoseStack poseStack, MultiBufferSource bufferSource, ItemStack stack) {
-        VertexConsumer builder = bufferSource.getBuffer(RenderType.text(this.flameTexture));
-
-        int lu = LightTexture.FULL_BRIGHT & '\uffff';
-        int lv = LightTexture.FULL_BRIGHT >> 16 & '\uffff';
-
-        int r, g, b, a;
-        a = r = g = b = 255;
-        /*
-        if (stack.is(Items.REDSTONE_TORCH)) {
-            var c = DustParticleOptions.REDSTONE_PARTICLE_COLOR;
-            r = (int) (c.x * 255);
-            g = (int) (c.y * 255);
-            b = (int) (c.z * 255);
-        }*/
-
-        float period = 20;
-        float t = ((entity.tickCount + Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(false)) % period) / period;
-        float ss = (1.0F - t * t * 0.4F);
-
-        float scale = ss * 2 / 16f;
-        Matrix4f mat = new Matrix4f();
-        Quaternionf cameraRot = Minecraft.getInstance().gameRenderer.getMainCamera().rotation();
-
-        poseStack.translate(candleParticleOffset.x, candleParticleOffset.y, candleParticleOffset.z);
-        mat.setTranslation(poseStack.last().pose().getTranslation(new Vector3f()));
-        mat.rotate(cameraRot);
-
-        poseStack.last().pose().set(mat);
-        poseStack.scale(-scale, scale, -scale);
-
-        //TODO: fix for animated particles
-
-        VertexUtil.addQuad(builder, poseStack, -0.5f, -0.5f, 0.5f, 0.5f,
-                r, g, b, a, lu, lv);
+    private BlockState getHeldState(LivingEntity entity) {
+        return entity.isInWater() ? offState : litState;
     }
-
-    private void renderBlockModel(LivingEntity entity, ItemStack itemStack, PoseStack poseStack,
-                                  MultiBufferSource buffer, int light, boolean left) {
-        Minecraft mc = Minecraft.getInstance();
-        ItemRenderer itemRenderer = mc.getItemRenderer();
-        BlockState state = entity.isInWater() ? this.offState : this.litState;
-
-        BakedModel model = mc.getBlockRenderer().getBlockModel(state);
-
-        itemRenderer.render(itemStack, ItemDisplayContext.NONE, left, poseStack,
-                buffer, light, OverlayTexture.NO_OVERLAY, model);
-    }
-
 
     @Override
     public boolean renderFirstPersonItem(AbstractClientPlayer player, ItemStack stack, InteractionHand interactionHand, HumanoidArm arm,
@@ -196,21 +111,11 @@ public class CandleHolderRendererExtension implements IThirdPersonAnimationProvi
                                          MultiBufferSource buffer, int light, ItemInHandRenderer renderer) {
 
         boolean left = arm == HumanoidArm.LEFT;
-        float f = left ? -1.0F : 1.0F;
 
         poseStack.pushPose();
 
-
         //this should have been a special item renderer... if we dont render arm or item in weird places
-
-        float n = -0.4F * Mth.sin(Mth.sqrt(attackAnim) * 3.1415927F);
-        float m = 0.2F * Mth.sin(Mth.sqrt(attackAnim) * 6.2831855F);
-        float h = -0.2F * Mth.sin(attackAnim * 3.1415927F);
-
-        poseStack.translate(f * n, m, h);
-        renderer.applyItemArmTransform(poseStack, arm, equipAnim);
-        renderer.applyItemArmAttackTransform(poseStack, arm, attackAnim);
-
+        HeldItemRenderUtils.applyFirstPersonHandTransform(poseStack, renderer, arm, attackAnim, equipAnim);
 
         poseStack.translate(0, 0.3125, 0);
 
@@ -218,15 +123,15 @@ public class CandleHolderRendererExtension implements IThirdPersonAnimationProvi
 
         poseStack.scale(-scale, scale, -scale);
 
-        renderBlockModel(player, stack, poseStack, buffer, light, left);
+        HeldItemRenderUtils.renderBlockModelAsItem(stack, getHeldState(player), poseStack, buffer, light, left);
 
         if (!player.isInWater()) {
-            poseStack.translate(f * 0.03, 0, -0.04f);
-            renderFlame(player, poseStack, buffer, stack);
+            poseStack.translate((left ? -1 : 1) * 0.03, 0, -0.04f);
+            HeldItemRenderUtils.renderFlame(player, poseStack, buffer, flameTexture, candleParticleOffset,
+                    2 / 16f, HeldItemRenderUtils.getHandBillboardRotation());
         }
 
         poseStack.popPose();
         return true;
     }
 }
-

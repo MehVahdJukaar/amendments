@@ -19,7 +19,6 @@ dependencies {
     accessTransformers("net.mehvahdjukaar:moonlight-neoforge:${moonlight_version}")
     modRuntimeOnly("net.mehvahdjukaar:codecui-neoforge:${codecui_version}")
 
-    // Mirror of common deps (new setup requires every common modImplementation/modCompileOnly to live here too)
     modImplementation("curse.maven:supplementaries-412082:8044262")
     modCompileOnly("net.mehvahdjukaar:polytone-neoforge:${polytone_version}")
     modCompileOnly("curse.maven:flan-404578:5290167")

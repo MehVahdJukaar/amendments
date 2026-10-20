@@ -10,7 +10,6 @@ import net.mehvahdjukaar.moonlight.api.item.IFirstPersonSpecialItemRenderer;
 import net.mehvahdjukaar.moonlight.api.item.IThirdPersonAnimationProvider;
 import net.mehvahdjukaar.moonlight.api.item.IThirdPersonSpecialItemRenderer;
 import net.mehvahdjukaar.moonlight.api.util.math.MthUtils;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ArmedModel;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.HeadedModel;
@@ -18,15 +17,12 @@ import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.ItemInHandRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.entity.ItemRenderer;
-import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.LanternBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -200,8 +196,6 @@ public class LanternRendererExtension implements IThirdPersonAnimationProvider, 
 
     private static void renderLanternModel(LivingEntity entity, ItemStack itemStack, PoseStack poseStack,
                                            MultiBufferSource buffer, int light, boolean left) {
-        Minecraft mc = Minecraft.getInstance();
-        ItemRenderer itemRenderer = mc.getItemRenderer();
         BlockState state = ((BlockItem) itemStack.getItem()).getBlock().defaultBlockState();
         if (CompatHandler.THIN_AIR) {
             var newState = ThinAirCompat.maybeSetAirQuality(state, entity.getEyePosition(), entity.level());
@@ -210,9 +204,7 @@ public class LanternRendererExtension implements IThirdPersonAnimationProvider, 
             }
         }
         if (state.hasProperty(LanternBlock.HANGING)) state = state.setValue(LanternBlock.HANGING, false);
-        var model = mc.getBlockRenderer().getBlockModel(state);
-        itemRenderer.render(itemStack, ItemDisplayContext.NONE, left, poseStack,
-                buffer, light, OverlayTexture.NO_OVERLAY, model);
+        HeldItemRenderUtils.renderBlockModelAsItem(itemStack, state, poseStack, buffer, light, left);
     }
 
 
