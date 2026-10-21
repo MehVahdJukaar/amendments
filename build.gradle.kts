@@ -56,6 +56,11 @@ subprojects {
         options.compilerArgs.addAll(listOf("-Xmaxerrs", "4000"))
     }
 
+    //mixin wants @reason on overwrites
+    tasks.withType<Javadoc>().configureEach {
+        (options as StandardJavadocDocletOptions).tags("reason:a:Reason:")
+    }
+
     repositories {
         // Standard repositories
         mavenLocal()
