@@ -82,6 +82,7 @@ public class CommonConfigs {
     public static final Supplier<Integer> SNOWBALL_FREEZE;
 
     public static final Supplier<Boolean> PASSENGER_NO_SUFFOCATION;
+    public static final Supplier<Boolean> PETS_FOLLOW_TELEPORTS;
 
     public static final Supplier<Boolean> FENCES_TO_WALLS_AND_BARS;
     public static final Supplier<Boolean> WOODEN_TO_NETHER_FENCES;
@@ -229,6 +230,9 @@ public class CommonConfigs {
 
         PASSENGER_NO_SUFFOCATION = builder.icon("minecraft:minecart").comment("Prevents entities from taking suffocation damage while riding another entity")
                 .define("passenger_no_suffocation", false);
+
+        PETS_FOLLOW_TELEPORTS = builder.icon("minecraft:bone").comment("Following pets teleport with you instantly when you teleport")
+                .define("pets_follow_teleports", true);
 
         builder.pop();
 

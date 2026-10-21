@@ -34,6 +34,7 @@
     "LecternBlockMixin",
     "LivingEntityMixin",
     "PotionTooltipMixin",
+    "ServerGamePacketListenerMixin",
     "SignBlockEntityMixin",
     "SignBlockMixin",
     "SkullBlockMixin",
