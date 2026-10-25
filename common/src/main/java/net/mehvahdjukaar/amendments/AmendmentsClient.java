@@ -29,6 +29,7 @@ import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.FallingBlockRenderer;
+import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.resources.model.Material;
@@ -37,7 +38,9 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.animal.axolotl.Axolotl;
 import net.minecraft.world.item.*;
+import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -170,6 +173,10 @@ public class AmendmentsClient {
         }
         ClientHelper.registerRenderType(ModRegistry.TOOL_HOOK.get(), RenderType.cutout());
 
+        ItemProperties.register(Items.AXOLOTL_BUCKET, Amendments.res("axolotl_variant"), (stack, level, entity, seed) -> {
+            CustomData bucketData = stack.getOrDefault(DataComponents.BUCKET_ENTITY_DATA, CustomData.EMPTY);
+            return Axolotl.Variant.byId(bucketData.copyTag().getInt("Variant")).getId() / 10f;
+        });
     }
 
     public static void afterTagSetup() {

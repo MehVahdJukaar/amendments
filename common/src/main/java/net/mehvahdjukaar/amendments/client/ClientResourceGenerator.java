@@ -1,5 +1,7 @@
 package net.mehvahdjukaar.amendments.client;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import net.mehvahdjukaar.amendments.Amendments;
 import net.mehvahdjukaar.amendments.AmendmentsClient;
@@ -30,6 +32,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.world.entity.animal.axolotl.Axolotl;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
@@ -90,6 +93,10 @@ public class ClientResourceGenerator extends DynamicClientResourceProvider {
             executor.accept(this::generateSignTextures);
             if (CompatHandler.FARMERS_DELIGHT) executor.accept(this::generateFdSignTextures);
             executor.accept(this::generateSignBlockModels);
+        }
+
+        if (ClientConfigs.AXOLOTL_BUCKET_VARIANTS.get()) {
+            executor.accept(this::generateAxolotlBucketModels);
         }
 
         executor.accept((manager, sink) -> {
@@ -431,6 +438,36 @@ public class ClientResourceGenerator extends DynamicClientResourceProvider {
         }
     }
 
+
+    private void generateAxolotlBucketModels(ResourceManager manager, ResourceSink sink) {
+        JsonArray overrides = new JsonArray();
+        for (Axolotl.Variant variant : Axolotl.Variant.values()) {
+            //pink vanila
+            if (variant == Axolotl.Variant.LUCY) continue;
+            ResourceLocation variantId = Amendments.res("axolotl_bucket_" + variant.getName());
+            ResourceLocation variantTexture = variantId.withPrefix("item/");
+            sink.addItemModel(variantId, itemGeneratedModel(variantTexture));
+
+            JsonObject predicate = new JsonObject();
+            predicate.addProperty(Amendments.res("axolotl_variant").toString(), variant.getId() / 10f);
+            JsonObject override = new JsonObject();
+            override.add("predicate", predicate);
+            override.addProperty("model", variantTexture.toString());
+            overrides.add(override);
+        }
+        JsonObject vanillaModel = itemGeneratedModel(ResourceLocation.withDefaultNamespace("item/axolotl_bucket"));
+        vanillaModel.add("overrides", overrides);
+        sink.addItemModel(ResourceLocation.withDefaultNamespace("axolotl_bucket"), vanillaModel);
+    }
+
+    private static JsonObject itemGeneratedModel(ResourceLocation texture) {
+        JsonObject textures = new JsonObject();
+        textures.addProperty("layer0", texture.toString());
+        JsonObject model = new JsonObject();
+        model.addProperty("parent", "minecraft:item/generated");
+        model.add("textures", textures);
+        return model;
+    }
 
     private void generateWallLanternAssets(ResourceManager manager, ResourceSink sink) {
         StaticResource blockState = StaticResource.getOrLog(manager,

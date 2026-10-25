@@ -60,6 +60,7 @@ public class ClientConfigs {
     public static final Supplier<List<Block>> SIGN_BLACKLIST;
 
     public static final Supplier<Boolean> COLORED_ARROWS;
+    public static final Supplier<Boolean> AXOLOTL_BUCKET_VARIANTS;
     public static final Supplier<Boolean> FAST_HOOKS;
 
     public static final Supplier<Boolean> FIREBALL_3D;
@@ -148,6 +149,11 @@ public class ClientConfigs {
         //Keep?
         COLORED_ARROWS = builder.comment("Makes tipped arrows show their colors when loaded with a crossbow")
                 .define("crossbows_colors", true);
+        builder.pop();
+
+        builder.icon("minecraft:axolotl_bucket").push("buckets");
+        AXOLOTL_BUCKET_VARIANTS = builder.comment("Axolotl buckets show the color of the axolotl inside")
+                .define("axolotl_variants", true);
         builder.pop();
 
         builder.icon("minecraft:tripwire_hook").push("tripwire_hook");
