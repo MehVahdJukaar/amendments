@@ -60,6 +60,7 @@ public class ClientConfigs {
     public static final Supplier<List<Block>> SIGN_BLACKLIST;
 
     public static final Supplier<Boolean> COLORED_ARROWS;
+    public static final Supplier<Boolean> AXOLOTL_BUCKET_VARIANTS;
 
     public static final Supplier<Boolean> FIREBALL_3D;
     public static final Supplier<Boolean> GHAST_FIREBALL_TRAIL;
@@ -149,6 +150,10 @@ public class ClientConfigs {
                 .define("crossbows_colors", true);
         builder.pop();
 
+        builder.icon("minecraft:axolotl_bucket").push("buckets");
+        AXOLOTL_BUCKET_VARIANTS = builder.comment("Axolotl buckets show the color of the axolotl inside")
+                .define("axolotl_variants", true);
+        builder.pop();
 
         builder.icon("minecraft:oak_hanging_sign").push("hanging_sign");
         ITEM_SCALE = builder.comment("Scale of items on hanging signs (unit is in pixel they would occupy). Set to 8 to better match the pixels on the sign")

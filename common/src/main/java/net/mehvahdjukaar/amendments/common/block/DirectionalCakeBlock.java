@@ -7,7 +7,11 @@ import net.mehvahdjukaar.amendments.integration.SuppCompat;
 import net.mehvahdjukaar.moonlight.api.util.Utils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.particles.BlockParticleOption;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.stats.Stats;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
@@ -92,6 +96,7 @@ public class DirectionalCakeBlock extends CakeBlock implements SimpleWaterlogged
         var d = getHitDir(player, hit);
         if (level.isClientSide()) {
             if (eatSliceD(level, pos, state, player, d).consumesAction()) {
+                spawnEatingCrumbs(level, hit, state);
                 return InteractionResult.SUCCESS;
             }
 
@@ -116,10 +121,25 @@ public class DirectionalCakeBlock extends CakeBlock implements SimpleWaterlogged
             player.awardStat(Stats.EAT_CAKE_SLICE);
             level.gameEvent(player, GameEvent.EAT, pos);
             player.getFoodData().eat(2, 0.1F);
+            player.playSound(SoundEvents.GENERIC_EAT.value(), 1, 1);
             if (!level.isClientSide()) {
                 this.removeSlice(state, pos, level, player, dir);
             }
             return InteractionResult.SUCCESS;
+        }
+    }
+
+    //similar to suppl pankcae
+    private static void spawnEatingCrumbs(Level level, BlockHitResult hit, BlockState state) {
+        RandomSource random = level.getRandom();
+        Vec3 bite = hit.getLocation().add(hit.getDirection().getUnitVec3().scale(0.05));
+        BlockParticleOption crumb = new BlockParticleOption(ParticleTypes.BLOCK, state);
+        for (int i = 0; i < 6; i++) {
+            level.addParticle(crumb,
+                    bite.x + (random.nextFloat() - 0.5) * 0.2,
+                    bite.y + (random.nextFloat() - 0.5) * 0.2,
+                    bite.z + (random.nextFloat() - 0.5) * 0.2,
+                    0, 0.05, 0);
         }
     }
 
