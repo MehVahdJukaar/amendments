@@ -65,17 +65,6 @@ public abstract class JukeboxBlockEntityMixin extends BlockEntity implements IBe
     }
 
     @Override
-    public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
-        return this.saveWithoutMetadata(registries);
-    }
-
-    @Nullable
-    @Override
-    public Packet<ClientGamePacketListener> getUpdatePacket() {
-        return ClientboundBlockEntityDataPacket.create(this);
-    }
-
-    @Override
     public float amendments$getRotation(float partialTicks) {
         return Mth.rotLerp(partialTicks, amendments$prevRot, amendments$rot);
     }

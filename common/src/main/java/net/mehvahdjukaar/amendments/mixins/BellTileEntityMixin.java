@@ -47,14 +47,4 @@ public abstract class BellTileEntityMixin extends BlockEntity implements IBellCo
         super.loadAdditional(input);
         this.amendments$connection = Type.values()[input.getIntOr("Connection", Type.NONE.ordinal())];
     }
-
-    @Override
-    public ClientboundBlockEntityDataPacket getUpdatePacket() {
-        return ClientboundBlockEntityDataPacket.create(this);
-    }
-
-    @Override
-    public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
-        return this.saveWithoutMetadata(registries);
-    }
 }

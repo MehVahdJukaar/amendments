@@ -33,10 +33,20 @@ public abstract class GuiMixin {
             return;
         }
         int selected = player.getInventory().getSelectedSlot();
-        float offset = (AmendmentsClient.getHotbarSlotAnimation(selected, speed, deltaTracker.getRealtimeDeltaTicks()) - selected) * 20;
+        float animatedSlot = AmendmentsClient.getHotbarSlotAnimation(selected, speed, deltaTracker.getRealtimeDeltaTicks());
+        float offset = (animatedSlot - selected) * 20;
+        boolean wrappingOverEdge = animatedSlot > 8;
+
+        int barLeft = x - selected * 20;
+        if (wrappingOverEdge) graphics.enableScissor(barLeft, y, barLeft + 184, y + height);
         graphics.pose().pushMatrix();
         graphics.pose().translate(offset, 0);
         original.call(graphics, pipeline, sprite, x, y, width, height);
+        if (wrappingOverEdge) {
+            graphics.pose().translate(-180, 0);
+            original.call(graphics, pipeline, sprite, x, y, width, height);
+        }
         graphics.pose().popMatrix();
+        if (wrappingOverEdge) graphics.disableScissor();
     }
 }

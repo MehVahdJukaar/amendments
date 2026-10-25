@@ -10,6 +10,7 @@
     "AbstractSkullBlockMixin",
     "BellMixin",
     "BellTileEntityMixin",
+    "BlockEntityUpdateMixin",
     "BlocksMixin",
     "BrewingMixin",
     "BrewingStandMixin",
