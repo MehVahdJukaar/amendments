@@ -1,4 +1,1 @@
-- added smooth animated hotbar slot animation
-- added a feature that makes walls, fence and panes all connect to eachother
-- Enhanced Block Entities now leaves signs and bells alone when amendments changes them, removed the chat warning
-- added some iris compat code since iris broke held candle holder particles
+- improved slot animation

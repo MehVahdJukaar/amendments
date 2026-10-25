@@ -1,6 +1,8 @@
 package net.mehvahdjukaar.amendments.mixins.fabric;
 
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
+import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.mehvahdjukaar.amendments.client.renderers.SignRendererExtension;
@@ -21,7 +23,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3f;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Pseudo;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -43,15 +44,12 @@ public abstract class CompatFarmersDelightSignRendererMixin extends SignRenderer
         super(context);
     }
 
-    /**
-     * @author MehVahDjukaar
-     * @reason adding color normal shading and color modifier. Need override because we could loose precision due to int conversion if done on return
-     */
-    @Overwrite(remap = false)
-    public static int getDarkColor(SignText signText, boolean isOutlineVisible) {
+    //not a return modifier, int conversion would lose precision
+    @WrapMethod(method = "getDarkColor", remap = false)
+    private static int amendments$getDarkColor(SignText signText, boolean isOutlineVisible, Operation<Integer> original) {
         int color = signText.getColor().getTextColor();
         if (color == DyeColor.BLACK.getTextColor() && signText.hasGlowingText()) {
-            return -988212;
+            return original.call(signText, isOutlineVisible);
         } else {
             float brightness = isOutlineVisible ? 0.4f : 0.6f;
             float scale = (brightness * ClientConfigs.getSignColorMult());

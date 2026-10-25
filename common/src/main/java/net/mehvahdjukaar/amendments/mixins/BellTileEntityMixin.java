@@ -50,16 +50,6 @@ public abstract class BellTileEntityMixin extends BlockEntity implements IBellCo
         }else this.amendments$connection = Type.NONE;
     }
 
-    @Override
-    public ClientboundBlockEntityDataPacket getUpdatePacket() {
-        return ClientboundBlockEntityDataPacket.create(this);
-    }
-
-    @Override
-    public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
-        return this.saveWithoutMetadata(registries);
-    }
-
     @ForgeOverride
     public AABB getRenderBoundingBox() {
         return new AABB(this.worldPosition);

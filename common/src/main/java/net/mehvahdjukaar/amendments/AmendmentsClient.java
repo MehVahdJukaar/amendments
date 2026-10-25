@@ -385,9 +385,15 @@ public class AmendmentsClient {
             hotbarSlotAnimation = selected;
             return selected;
         }
+        float distance = selected - hotbarSlotAnimation;
+        distance -= 9 * Math.round(distance / 9);
         //framerate idndpendent
-        hotbarSlotAnimation += (selected - hotbarSlotAnimation) * (float) (1 - Math.exp(-speed * elapsedTicks));
-        if (Math.abs(selected - hotbarSlotAnimation) < 0.01f) hotbarSlotAnimation = selected;
+        hotbarSlotAnimation += distance * (float) (1 - Math.exp(-speed * elapsedTicks));
+        hotbarSlotAnimation = ((hotbarSlotAnimation % 9) + 9) % 9;
+        float remaining = selected - hotbarSlotAnimation;
+        if (Math.abs(remaining - 9 * Math.round(remaining / 9)) < 0.01f) {
+            hotbarSlotAnimation = selected;
+        }
         return hotbarSlotAnimation;
     }
 
