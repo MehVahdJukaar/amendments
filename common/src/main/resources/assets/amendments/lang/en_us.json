@@ -287,6 +287,7 @@
   "amendments.configuration.misc.torch_item_flame.description": "Renders a flame particle on top of held torches",
   "amendments.configuration.misc.hotbar_slot_animation_speed": "Hotbar Slot Animation Speed",
   "amendments.configuration.misc.hotbar_slot_animation_speed.description": "Makes the selected hotbar slot slide to its new position. Higher is faster, 0 for vanilla behavior",
+  "amendments.configuration.misc.hotbar_slot_animation_wrap": "Hotbar Slot Animation Wrap",
   "amendments.configuration.misc.candle_holder_item_holding": "Candle Holder Item Holding",
   "amendments.configuration.misc.candle_holder_item_holding.description": "Gives a special animation to supplementaries candle holders when held in hand",
   "amendments.configuration.misc.handle_holder_item_size": "Handle Holder Item Size",
@@ -294,5 +295,12 @@
   "amendments.configuration.misc.fixed_holding_animations": "Fixed Holding Animations",
   "amendments.configuration.misc.fixed_holding_animations.description": "Makes Torch and Lantern holding animation be fixed, not changing with player facing",
   "amendments.configuration.misc.campfire_smoke_through_blocks": "Campfire Smoke Through Blocks",
-  "amendments.configuration.misc.campfire_smoke_through_blocks.description": "Prevents campfire smoke from rendering if there is a solid block above it"
+  "amendments.configuration.misc.campfire_smoke_through_blocks.description": "Prevents campfire smoke from rendering if there is a solid block above it",
+  "amendments.configuration.misc.pets_follow_teleports": "Pets Follow Teleports",
+  "amendments.configuration.misc.pets_follow_teleports.description": "Following pets teleport with you instantly when you teleport",
+  "amendments.configuration.buckets": "Buckets",
+  "amendments.configuration.buckets.axolotl_variants": "Axolotl Variants",
+  "amendments.configuration.buckets.axolotl_variants.description": "Axolotl buckets show the color of the axolotl inside",
+  "amendments.configuration.misc.villager_trade_buttons": "Villager Trade Buttons",
+  "amendments.configuration.misc.villager_trade_buttons.description": "Gives the villager trade buttons the same look loom and stonecutter buttons have"
 }

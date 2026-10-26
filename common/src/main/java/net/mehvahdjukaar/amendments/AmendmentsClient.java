@@ -381,17 +381,20 @@ public class AmendmentsClient {
     private static float hotbarSlotAnimation = -1;
 
     public static float getHotbarSlotAnimation(int selected, double speed, float elapsedTicks) {
+        boolean wrap = ClientConfigs.HOTBAR_SLOT_ANIMATION_WRAP.get();
         if (hotbarSlotAnimation < 0) {
             hotbarSlotAnimation = selected;
             return selected;
         }
         float distance = selected - hotbarSlotAnimation;
-        distance -= 9 * Math.round(distance / 9);
+        if (wrap) distance -= 9 * Math.round(distance / 9);
         //framerate idndpendent
         hotbarSlotAnimation += distance * (float) (1 - Math.exp(-speed * elapsedTicks));
-        hotbarSlotAnimation = ((hotbarSlotAnimation % 9) + 9) % 9;
+        if (wrap) hotbarSlotAnimation = ((hotbarSlotAnimation % 9) + 9) % 9;
+        else hotbarSlotAnimation = Math.clamp(hotbarSlotAnimation, 0, 8);
         float remaining = selected - hotbarSlotAnimation;
-        if (Math.abs(remaining - 9 * Math.round(remaining / 9)) < 0.01f) {
+        if (wrap) remaining -= 9 * Math.round(remaining / 9);
+        if (Math.abs(remaining) < 0.01f) {
             hotbarSlotAnimation = selected;
         }
         return hotbarSlotAnimation;

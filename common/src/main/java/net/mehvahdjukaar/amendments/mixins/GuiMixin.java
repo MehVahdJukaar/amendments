@@ -3,6 +3,7 @@ package net.mehvahdjukaar.amendments.mixins;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.mehvahdjukaar.amendments.AmendmentsClient;
 import net.mehvahdjukaar.amendments.configs.ClientConfigs;
 import net.minecraft.client.DeltaTracker;
@@ -38,14 +39,15 @@ public abstract class GuiMixin {
 
         int barLeft = x - selected * 20;
         if (wrappingOverEdge) graphics.enableScissor(barLeft, y, barLeft + 184, y + height);
-        graphics.pose().pushPose();
-        graphics.pose().translate(offset, 0, 270); //forward
+        PoseStack pose = graphics.pose();
+        pose.pushPose();
+        pose.translate(offset, 0, 270); //forward
         original.call(graphics, sprite, x, y, width, height);
         if (wrappingOverEdge) {
-            graphics.pose().translate(-180, 0, 0);
+            pose.translate(-180, 0, 0);
             original.call(graphics, sprite, x, y, width, height);
         }
-        graphics.pose().popPose();
+        pose.popPose();
         if (wrappingOverEdge) graphics.disableScissor();
     }
 }
