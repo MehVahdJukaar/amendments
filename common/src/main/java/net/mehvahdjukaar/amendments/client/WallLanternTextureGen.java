@@ -26,9 +26,6 @@ public class WallLanternTextureGen {
             Identifier.fromNamespaceAndPath("darkerdepths", "glowshroom_lantern"), IRON_MOUNT
     );
 
-    private WallLanternTextureGen() {
-    }
-
     public static TextureImage generate(ResourceManager manager, Identifier lanternTexture) throws Exception {
         try (TextureImage template = TextureImage.open(manager, IRON_MOUNT)) {
             try (TextureImage fullLantern = TextureImage.open(manager, lanternTexture);
