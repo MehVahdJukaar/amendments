@@ -1,4 +1,4 @@
-//TODO: add back. the gui is retained mode now, drawing the block model needs a custom PictureInPictureRenderer
+//TODO: add back.not done yet
 //package net.mehvahdjukaar.amendments.mixins;
 //
 //import net.mehvahdjukaar.amendments.AmendmentsClient;

@@ -104,8 +104,6 @@ public class EnhancedSkullBlockTile extends BlockEntity {
 
     @Nullable
     public BlockEntity getSkullTile() {
-        //the inner skull is never placed in the world so nothing else gives it a level, and the
-        //renderer needs one to read light and to be extracted at all
         if (innerTile != null && this.level != null && !innerTile.hasLevel()) innerTile.setLevel(this.level);
         return innerTile;
     }
@@ -119,13 +117,6 @@ public class EnhancedSkullBlockTile extends BlockEntity {
         tickInner(level, pos, innerTile);
     }
 
-    /**
-     * Drives the wrapped skull's own block-entity ticker (e.g. Caverns &amp; Chasms peeper/mime heads
-     * turn to track the nearest player when powered). The inner skull isn't a real block entity in
-     * the world, so the level never ticks it - we have to pump its ticker ourselves. Without this its
-     * animation state never advances and, because the renderer interpolates by partial tick, the head
-     * jitters wildly on the client instead of holding still.
-     */
     @SuppressWarnings({"rawtypes", "unchecked"})
     protected static void tickInner(Level level, BlockPos pos, @Nullable SkullBlockEntity inner) {
         if (inner == null) return;

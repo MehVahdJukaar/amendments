@@ -45,8 +45,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-//import net.mehvahdjukaar.amendments.integration.ThinAirCompat;
-
 public class WallLanternBlock extends WaterBlock implements EntityBlock {
 
     public static final MapCodec<WallLanternBlock> CODEC = simpleCodec(WallLanternBlock::new);

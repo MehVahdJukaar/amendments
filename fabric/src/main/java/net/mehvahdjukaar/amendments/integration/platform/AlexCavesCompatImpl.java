@@ -1,4 +1,4 @@
-//TODO: add back. no 26.1.2 alexs caves yet, uncomment when it ports
+//TODO: add back.
 //package net.mehvahdjukaar.amendments.integration.platform;
 
 //import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidStack;

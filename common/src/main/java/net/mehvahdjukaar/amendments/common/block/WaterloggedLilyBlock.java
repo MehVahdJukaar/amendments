@@ -131,10 +131,6 @@ public class WaterloggedLilyBlock extends LilyPadBlock implements LiquidBlockCon
         return false;
     }
 
-    /**
-     * Return a random long to be passed to {@link net.minecraft.client.resources.model.BakedModel#getQuads}, used for
-     * random model rotations
-     */
     @Override
     public long getSeed(BlockState pState, BlockPos pPos) {
         return Mth.getSeed(pPos.above());

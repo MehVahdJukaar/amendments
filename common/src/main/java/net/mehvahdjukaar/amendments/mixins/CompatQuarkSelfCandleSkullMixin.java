@@ -1,4 +1,4 @@
-//TODO: add back. no 26.1.2 quark yet. also needs adding back to amendments-common.mixins.json
+//TODO: add back.
 //package net.mehvahdjukaar.amendments.mixins;
 
 //import net.mehvahdjukaar.amendments.common.block.AbstractCandleSkullBlock;
