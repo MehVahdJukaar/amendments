@@ -13,7 +13,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.level.redstone.Orientation;
 import org.jetbrains.annotations.Nullable;
 
 public class RedstoneWallLanternBlock extends WallLanternBlock {
@@ -61,7 +60,7 @@ public class RedstoneWallLanternBlock extends WallLanternBlock {
     protected void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean movedByPiston) {
         super.onPlace(state, level, pos, oldState, movedByPiston);
         for (Direction direction : Direction.values()) {
-            level.updateNeighborsAt(pos.relative(direction), this, null);
+            level.updateNeighborsAt(pos.relative(direction), this);
         }
 
         if (state.getValue(LIT) == hasWallSignal(level, pos, state)) {
@@ -70,16 +69,17 @@ public class RedstoneWallLanternBlock extends WallLanternBlock {
     }
 
     @Override
-    protected void affectNeighborsAfterRemoval(BlockState state, ServerLevel level, BlockPos pos, boolean movedByPiston) {
-        if (!movedByPiston) {
+    protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
+        super.onRemove(state, level, pos, newState, movedByPiston);
+        if (!movedByPiston && !state.is(newState.getBlock())) {
             for (Direction direction : Direction.values()) {
-                level.updateNeighborsAt(pos.relative(direction), this, null);
+                level.updateNeighborsAt(pos.relative(direction), this);
             }
         }
     }
 
     @Override
-    public void neighborChanged(BlockState state, Level level, BlockPos pos, Block block, @Nullable Orientation orientation, boolean movedByPiston) {
+    public void neighborChanged(BlockState state, Level level, BlockPos pos, Block block, BlockPos fromPos, boolean movedByPiston) {
         if (state.getValue(LIT) == this.hasWallSignal(level, pos, state) && !level.getBlockTicks().willTickThisTick(pos, this)) {
             level.scheduleTick(pos, this, 2);
         }
