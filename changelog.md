@@ -1,1 +1,2 @@
-- improved slot animation
+- minor fixes
+- compat with supplementaries redstone wall lantern
