@@ -244,6 +244,9 @@ public class ModRegistry {
         if (type.lantern instanceof WeatheringCopper) {
             return new WeatheringWallLanternBlock(p, type);
         }
+        if (type.getId().getPath().equals("redstone_lantern")) {
+            return new RedstoneWallLanternBlock(p, type);
+        }
         return new WallLanternBlock(p, type);
     }
 

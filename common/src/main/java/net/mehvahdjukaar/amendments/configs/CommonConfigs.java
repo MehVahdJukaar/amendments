@@ -65,6 +65,7 @@ public class CommonConfigs {
     public static final Supplier<Boolean> DYE_BLOCKS;
 
     public static final Supplier<Boolean> LILY_PADS_ON;
+    public static final Supplier<Boolean> BUBBLE_COLUMN_GRATES;
     public static final Supplier<Boolean> LECTERN_STUFF;
 
     public static final Supplier<Boolean> TORCH_FIRE;
@@ -250,6 +251,11 @@ public class CommonConfigs {
         builder.icon("minecraft:lily_pad").push("lily_pad");
         LILY_PADS_ON = builder.comment("Allows lilypads to have any block placed ontop")
                 .feature("better_lilypads");
+        builder.pop();
+
+        builder.icon("minecraft:copper_grate").push("bubble_column");
+        BUBBLE_COLUMN_GRATES = builder.comment("Makes bubble columns to extend up through grate like blocks (amendments:bubble_column_passable tag)")
+                .feature("bubble_column_grates");
         builder.pop();
 
         SPEC = builder.build();
