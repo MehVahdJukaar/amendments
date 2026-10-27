@@ -31,6 +31,8 @@ public class ModTags {
 
     public static final TagKey<Block> WALL_LANTERNS = blockTag("wall_lanterns");
 
+    public static final TagKey<Block> BUBBLE_COLUMN_PASSABLE = blockTag("bubble_column_passable");
+
 
     //item tags
 

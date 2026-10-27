@@ -12,6 +12,7 @@
     "BellTileEntityMixin",
     "BlockEntityUpdateMixin",
     "BlocksMixin",
+    "BubbleColumnBlockMixin",
     "BrewingMixin",
     "BrewingStandMixin",
     "CampfireBlockEntityMixin",
