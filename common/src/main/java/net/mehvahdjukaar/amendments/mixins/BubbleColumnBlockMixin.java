@@ -9,7 +9,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.BubbleColumnBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import org.spongepowered.asm.mixin.Mixin;
@@ -27,13 +26,13 @@ public abstract class BubbleColumnBlockMixin {
     }
 
 
-    @ModifyReturnValue(method = "canOccupy", at = @At("RETURN"))
-    private static boolean amendments$occupyThroughGrates(boolean original, Block bubbleColumn, BlockState occupyState) {
+    @ModifyReturnValue(method = "canExistIn", at = @At("RETURN"))
+    private static boolean amendments$occupyThroughGrates(boolean original, BlockState occupyState) {
         return original || amendments$isWaterloggedGrate(occupyState);
     }
 
 
-    @WrapOperation(method = "updateColumn(Lnet/minecraft/world/level/block/Block;Lnet/minecraft/world/level/LevelAccessor;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/block/state/BlockState;)V",
+    @WrapOperation(method = "updateColumn(Lnet/minecraft/world/level/LevelAccessor;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/block/state/BlockState;)V",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/LevelAccessor;setBlock(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;I)Z"))
     private static boolean amendments$dontReplaceGrates(LevelAccessor level, BlockPos pos, BlockState state,
                                                         int flags, Operation<Boolean> original) {
@@ -41,9 +40,9 @@ public abstract class BubbleColumnBlockMixin {
         return original.call(level, pos, state, flags);
     }
 
-    @ModifyVariable(method = "updateColumn(Lnet/minecraft/world/level/block/Block;Lnet/minecraft/world/level/LevelAccessor;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/block/state/BlockState;)V",
+    @ModifyVariable(method = "updateColumn(Lnet/minecraft/world/level/LevelAccessor;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/block/state/BlockState;)V",
             at = @At("HEAD"), argsOnly = true, ordinal = 1)
-    private static BlockState amendments$seeBelowGrates(BlockState belowState, Block bubbleColumn, LevelAccessor level, BlockPos occupyAt, BlockState occupyState) {
+    private static BlockState amendments$seeBelowGrates(BlockState belowState, LevelAccessor level, BlockPos occupyAt, BlockState occupyState) {
         if (!amendments$isWaterloggedGrate(belowState)) return belowState;
 
         BlockPos.MutableBlockPos pos = occupyAt.mutable().move(0, -2, 0);
