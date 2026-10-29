@@ -4,7 +4,7 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.mehvahdjukaar.amendments.AmendmentsClient;
+import net.mehvahdjukaar.amendments.client.HotbarSelectionAnimation;
 import net.mehvahdjukaar.amendments.configs.ClientConfigs;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.gui.Gui;
@@ -33,7 +33,7 @@ public abstract class GuiMixin {
             return;
         }
         int selected = player.getInventory().selected;
-        float animatedSlot = AmendmentsClient.getHotbarSlotAnimation(selected, speed, deltaTracker.getRealtimeDeltaTicks());
+        float animatedSlot = HotbarSelectionAnimation.getHotbarSlotAnimation(selected, speed, deltaTracker.getRealtimeDeltaTicks());
         float offset = (animatedSlot - selected) * 20;
         boolean wrappingOverEdge = animatedSlot > 8;
 
@@ -41,7 +41,7 @@ public abstract class GuiMixin {
         if (wrappingOverEdge) graphics.enableScissor(barLeft, y, barLeft + 184, y + height);
         PoseStack pose = graphics.pose();
         pose.pushPose();
-        pose.translate(offset, 0, 270); //forward
+        pose.translate(offset, 0, HotbarSelectionAnimation.isSelectionOnBackground() ? 0 : 270);
         original.call(graphics, sprite, x, y, width, height);
         if (wrappingOverEdge) {
             pose.translate(-180, 0, 0);

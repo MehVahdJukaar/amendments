@@ -35,6 +35,7 @@
     "LecternBlockEntityUpdateMixin",
     "LecternBlockMixin",
     "LivingEntityMixin",
+    "MobAccessor",
     "PotionTooltipMixin",
     "ServerGamePacketListenerMixin",
     "SignBlockEntityMixin",

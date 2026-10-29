@@ -7,10 +7,12 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.world.entity.RelativeMovement;
 import net.minecraft.world.entity.TamableAnimal;
+import net.minecraft.world.entity.ai.goal.FollowOwnerGoal;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -36,11 +38,20 @@ public abstract class ServerGamePacketListenerMixin {
                                            @Share("oldPos") LocalRef<Vec3> oldPos) {
         if (!CommonConfigs.PETS_FOLLOW_TELEPORTS.get()) return;
         var followingPets = player.serverLevel().getEntitiesOfClass(TamableAnimal.class, AABB.ofSize(oldPos.get(), 24, 12, 24),
-                pet -> pet.isOwnedBy(player) && !pet.unableToMoveToOwner());
+                pet -> pet.isOwnedBy(player) && !pet.unableToMoveToOwner() && amendments$canFollowsOwner(pet));
         for (TamableAnimal pet : followingPets) {
             if (pet.shouldTryTeleportToOwner()) {
                 pet.tryToTeleportToOwner();
             }
         }
+    }
+
+    //for mods that have pets that cant follow meaning we probably sholdnt teleport them
+    @Unique
+    private static boolean amendments$canFollowsOwner(TamableAnimal pet) {
+        for (var wrapped : ((MobAccessor) pet).amendments$getGoalSelector().getAvailableGoals()) {
+            if (wrapped.getGoal() instanceof FollowOwnerGoal) return true;
+        }
+        return false;
     }
 }

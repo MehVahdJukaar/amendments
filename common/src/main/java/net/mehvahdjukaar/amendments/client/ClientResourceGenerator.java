@@ -73,6 +73,8 @@ public class ClientResourceGenerator extends DynamicClientResourceProvider {
 
     @Override
     public void regenerateDynamicAssets(Consumer<ResourceGenTask> executor) {
+        executor.accept((manager, sink) -> HotbarSelectionAnimation.checkSelectionLayer(manager));
+
         if (ClientConfigs.JUKEBOX_MODEL.get()) {
             executor.accept(this::generateJukeboxAssets);
         }
