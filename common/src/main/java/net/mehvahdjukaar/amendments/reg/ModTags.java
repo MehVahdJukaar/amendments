@@ -6,6 +6,7 @@ import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidRegistry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 
@@ -40,6 +41,9 @@ public class ModTags {
     public static final TagKey<Item> GOES_IN_TRIPWIRE_HOOK = itemTag("goes_in_tripwire_hook");
     public static final TagKey<Item> SET_ENTITY_ON_FIRE = itemTag("sets_on_fire");
     public static final TagKey<Item> SKULL_PILE_BLACKLIST = itemTag("non_stackable_heads");
+
+    //entity tags
+    public static final TagKey<EntityType<?>> PETS_FOLLOW_TELEPORTS_WHITELIST = TagKey.create(Registries.ENTITY_TYPE, Amendments.res("pets_follow_teleports_whitelist"));
 
     private static TagKey<Item> itemTag(String name) {
         return TagKey.create(Registries.ITEM, Amendments.res(name));

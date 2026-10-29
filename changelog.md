@@ -1,2 +1,2 @@
-- minor fixes
-- compat with supplementaries redstone wall lantern
+- better pet teleport feature
+- slot animation happesn in the background if one has a pack that textures the slot background opaque

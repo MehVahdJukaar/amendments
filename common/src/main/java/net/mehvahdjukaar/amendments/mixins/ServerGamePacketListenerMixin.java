@@ -3,6 +3,7 @@ package net.mehvahdjukaar.amendments.mixins;
 import com.llamalad7.mixinextras.sugar.Share;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import net.mehvahdjukaar.amendments.configs.CommonConfigs;
+import net.mehvahdjukaar.amendments.reg.ModTags;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.world.entity.RelativeMovement;
@@ -49,6 +50,7 @@ public abstract class ServerGamePacketListenerMixin {
     //for mods that have pets that cant follow meaning we probably sholdnt teleport them
     @Unique
     private static boolean amendments$canFollowsOwner(TamableAnimal pet) {
+        if (pet.getType().is(ModTags.PETS_FOLLOW_TELEPORTS_WHITELIST)) return true;
         for (var wrapped : ((MobAccessor) pet).amendments$getGoalSelector().getAvailableGoals()) {
             if (wrapped.getGoal() instanceof FollowOwnerGoal) return true;
         }
