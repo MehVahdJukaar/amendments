@@ -1,2 +1,1 @@
-- better pet teleport feature
-- slot animation happesn in the background if one has a pack that textures the slot background opaque
+more configs and compat code
