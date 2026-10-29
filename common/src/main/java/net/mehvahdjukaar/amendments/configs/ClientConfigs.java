@@ -56,6 +56,7 @@ public class ClientConfigs {
     public static final Supplier<Boolean> TRADE_BUTTONS;
     public static final Supplier<Double> HOTBAR_SLOT_ANIMATION_SPEED;
     public static final Supplier<Boolean> HOTBAR_SLOT_ANIMATION_WRAP;
+    public static final Supplier<OpaqueBehavior> HOTBAR_SLOT_OPAQUE_BEHAVIOR;
 
     public static final Supplier<Boolean> PIXEL_CONSISTENT_SIGNS;
     public static final Supplier<List<Block>> SIGN_BLACKLIST;
@@ -217,8 +218,8 @@ public class ClientConfigs {
 
         CANDLE_HOLDER_HOLDING = builder.icon("supplementaries:candle_holder").comment("Gives a special animation to supplementaries candle holders when held in hand")
                 .define("candle_holder_item_holding", true);
-        CANDLE_HOLDING_SIZE = builder.comment("Size lanterns when held in hand")
-                .defineSlider("handle_holder_item_size", 10 / 16d, 0, 2);
+        CANDLE_HOLDING_SIZE = builder.comment("Size of candle holders when held in hand")
+                .defineSlider("candle_holder_item_size", 10 / 16d, 0, 2);
 
 
         HOLDING_ANIMATION_FIXED = builder.icon("minecraft:lantern").comment("Makes Torch and Lantern holding animation be fixed, not changing with player facing")
@@ -230,10 +231,14 @@ public class ClientConfigs {
         TRADE_BUTTONS = builder.icon("minecraft:emerald").comment("Gives the villager trade buttons the same look loom and stonecutter buttons have")
                 .define("villager_trade_buttons", true);
 
+        builder.push("hotbar_slot_animation");
         HOTBAR_SLOT_ANIMATION_SPEED = builder.comment("Makes the selected hotbar slot slide to its new position. Higher is faster, 0 for vanilla behavior")
-                .defineSlider("hotbar_slot_animation_speed", 2.5d, 0, 5);
+                .defineSlider("speed", 2.5d, 0, 5);
         HOTBAR_SLOT_ANIMATION_WRAP = builder.comment("If the hotbar slot animation wraps around the edges")
-                .define("hotbar_slot_animation_wrap", true);
+                .define("wrap", true);
+        HOTBAR_SLOT_OPAQUE_BEHAVIOR = builder.comment("What the animation does when the selection texture is opaque. NONE keeps it on top of the items, IN_BACKGROUND moves it behind them, TURNS_OFF disables the animation")
+                .define("opaque_behavior", OpaqueBehavior.IN_BACKGROUND);
+        builder.pop();
         builder.pop();
 
         builder.onChange(ClientConfigs::onChange);

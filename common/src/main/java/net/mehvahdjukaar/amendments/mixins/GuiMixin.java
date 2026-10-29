@@ -6,6 +6,7 @@ import com.llamalad7.mixinextras.sugar.Local;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.mehvahdjukaar.amendments.client.HotbarSelectionAnimation;
 import net.mehvahdjukaar.amendments.configs.ClientConfigs;
+import net.mehvahdjukaar.amendments.configs.OpaqueBehavior;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphics;
@@ -28,7 +29,9 @@ public abstract class GuiMixin {
     private void amendments$animate(GuiGraphics graphics, ResourceLocation sprite, int x, int y, int width, int height,
                                     Operation<Void> original, @Local Player player, @Local(argsOnly = true) DeltaTracker deltaTracker) {
         double speed = ClientConfigs.HOTBAR_SLOT_ANIMATION_SPEED.get();
-        if (sprite != HOTBAR_SELECTION_SPRITE || speed <= 0) {
+        boolean opaque = HotbarSelectionAnimation.isSelectionOnBackground();
+        var opaqueBehavior = ClientConfigs.HOTBAR_SLOT_OPAQUE_BEHAVIOR.get();
+        if (sprite != HOTBAR_SELECTION_SPRITE || speed <= 0 || (opaque && opaqueBehavior == OpaqueBehavior.TURNS_OFF)) {
             original.call(graphics, sprite, x, y, width, height);
             return;
         }
@@ -41,7 +44,7 @@ public abstract class GuiMixin {
         if (wrappingOverEdge) graphics.enableScissor(barLeft, y, barLeft + 184, y + height);
         PoseStack pose = graphics.pose();
         pose.pushPose();
-        pose.translate(offset, 0, HotbarSelectionAnimation.isSelectionOnBackground() ? 0 : 270);
+        pose.translate(offset, 0, opaque && opaqueBehavior == OpaqueBehavior.IN_BACKGROUND ? 0 : 270);
         original.call(graphics, sprite, x, y, width, height);
         if (wrappingOverEdge) {
             pose.translate(-180, 0, 0);

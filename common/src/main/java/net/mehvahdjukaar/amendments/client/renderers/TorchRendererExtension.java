@@ -17,6 +17,7 @@ import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.ItemInHandRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.block.model.ItemTransform;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.HumanoidArm;
@@ -26,14 +27,28 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
 public class TorchRendererExtension implements IThirdPersonAnimationProvider, IThirdPersonSpecialItemRenderer, IFirstPersonSpecialItemRenderer {
 
-    //top-center of the torch model, in centered block coords (tweak Y if the flame sits off)
     private static final Vec3 TORCH_PARTICLE_OFFSET = new Vec3(0, 0.16, 0);
+
+    private final BlockState heldState;
+    private final ResourceLocation flameTexture;
+
+    public TorchRendererExtension(Item item) {
+        Item modelItem = item == CompatObjects.SCONCE_LEVER.get() ? CompatObjects.SCONCE.get() : item;
+        BlockState state = ((BlockItem) modelItem).getBlock().defaultBlockState();
+        if (state.hasProperty(BlockStateProperties.LIT)) {
+            state = state.setValue(BlockStateProperties.LIT, true);
+        }
+        this.heldState = state;
+
+        this.flameTexture = HeldItemRenderUtils.getFlameTexture(Utils.getID(item));
+    }
 
     @Override
     public <T extends LivingEntity> boolean poseRightArm(ItemStack itemStack, HumanoidModel<T> model, T t, HumanoidArm arm) {
@@ -78,27 +93,26 @@ public class TorchRendererExtension implements IThirdPersonAnimationProvider, IT
 
             renderTorchModel(stack, poseStack, bufferSource, light, left);
 
-            if (ClientConfigs.TORCH_HOLDING_FLAME.get() && !entity.isInWater()) {
-                renderFlame(entity, poseStack, bufferSource, stack, HeldItemRenderUtils.getCameraBillboardRotation());
+            if (hasFlame(entity)) {
+                renderFlame(entity, poseStack, bufferSource, HeldItemRenderUtils.getCameraBillboardRotation());
             }
 
             poseStack.popPose();
         }
     }
 
-    private static void renderTorchModel(ItemStack itemStack, PoseStack poseStack,
-                                         MultiBufferSource buffer, int light, boolean left) {
-        Item item = itemStack.getItem();
-        if(item == CompatObjects.SCONCE_LEVER.get()){
-            item = CompatObjects.SCONCE.get();
-        }
-        BlockState state = ((BlockItem) item).getBlock().defaultBlockState();
-        HeldItemRenderUtils.renderBlockModelAsItem(itemStack, state, poseStack, buffer, light, left);
+    private void renderTorchModel(ItemStack itemStack, PoseStack poseStack,
+                                  MultiBufferSource buffer, int light, boolean left) {
+        HeldItemRenderUtils.renderBlockModelAsItem(itemStack, heldState, poseStack, buffer, light, left);
     }
 
-    private static void renderFlame(LivingEntity entity, PoseStack poseStack, MultiBufferSource buffer, ItemStack stack,
-                                    Quaternionf billboardRot) {
-        HeldItemRenderUtils.renderFlame(entity, poseStack, buffer, HeldItemRenderUtils.getFlameTexture(Utils.getID(stack.getItem())),
+    protected boolean hasFlame(LivingEntity entity) {
+        return ClientConfigs.TORCH_HOLDING_FLAME.get() && !entity.isInWater();
+    }
+
+    protected void renderFlame(LivingEntity entity, PoseStack poseStack, MultiBufferSource buffer,
+                               Quaternionf billboardRot) {
+        HeldItemRenderUtils.renderFlame(entity, poseStack, buffer, flameTexture,
                 TORCH_PARTICLE_OFFSET, 4 / 16f, billboardRot);
     }
 
@@ -132,8 +146,8 @@ public class TorchRendererExtension implements IThirdPersonAnimationProvider, IT
 
         renderTorchModel(stack, poseStack, buffer, light, left);
 
-        if (ClientConfigs.TORCH_HOLDING_FLAME.get() && !player.isInWater()) {
-            renderFlame(player, poseStack, buffer, stack, HeldItemRenderUtils.getHandBillboardRotation());
+        if (hasFlame(player)) {
+            renderFlame(player, poseStack, buffer, HeldItemRenderUtils.getHandBillboardRotation());
         }
 
         poseStack.popPose();

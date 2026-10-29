@@ -10,6 +10,8 @@ import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.client.renderer.texture.TextureAtlas;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
@@ -63,8 +65,21 @@ public class HeldItemRenderUtils {
     //TODO: improve for animated textures
     public static void renderFlame(LivingEntity entity, PoseStack poseStack, MultiBufferSource bufferSource,
                                    ResourceLocation texture, Vec3 offset, float size, Quaternionf billboardRot) {
-        VertexConsumer builder = bufferSource.getBuffer(RenderType.text(texture));
+        renderFlame(entity, poseStack, bufferSource.getBuffer(RenderType.text(texture)), offset, size, billboardRot, 0);
+    }
 
+    public static void renderParticleSpriteFlame(LivingEntity entity, PoseStack poseStack, MultiBufferSource bufferSource,
+                                                 ResourceLocation spriteId, Vec3 offset, float size, Quaternionf billboardRot,
+                                                 float depthPullTowardCamera) {
+        TextureAtlas particleAtlas = (TextureAtlas) Minecraft.getInstance().getTextureManager()
+                .getTexture(TextureAtlas.LOCATION_PARTICLES);
+        TextureAtlasSprite sprite = particleAtlas.getSprite(spriteId);
+        VertexConsumer builder = sprite.wrap(bufferSource.getBuffer(RenderType.text(TextureAtlas.LOCATION_PARTICLES)));
+        renderFlame(entity, poseStack, builder, offset, size, billboardRot, depthPullTowardCamera);
+    }
+
+    private static void renderFlame(LivingEntity entity, PoseStack poseStack, VertexConsumer builder,
+                                    Vec3 offset, float size, Quaternionf billboardRot, float depthPullTowardCamera) {
         int lu = LightTexture.FULL_BRIGHT & '\uffff';
         int lv = LightTexture.FULL_BRIGHT >> 16 & '\uffff';
 
@@ -83,8 +98,19 @@ public class HeldItemRenderUtils {
         float scale = (1.0F - t * t * 0.4F) * size;
 
         poseStack.translate(offset.x, offset.y, offset.z);
+        Vector3f pos = poseStack.last().pose().getTranslation(new Vector3f());
+
+        float distance = pos.length();
+        //slide along the view ray and shrink to match so only depth changes
+        //fake depth test offset
+        if (depthPullTowardCamera > 0 && distance > depthPullTowardCamera) {
+            float shrink = 1 - depthPullTowardCamera / distance;
+            pos.mul(shrink);
+            scale *= shrink;
+        }
+
         Matrix4f mat = new Matrix4f();
-        mat.setTranslation(poseStack.last().pose().getTranslation(new Vector3f()));
+        mat.setTranslation(pos);
         mat.rotate(billboardRot);
 
         poseStack.last().pose().set(mat);

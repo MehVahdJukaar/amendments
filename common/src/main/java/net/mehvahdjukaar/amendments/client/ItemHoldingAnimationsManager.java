@@ -2,6 +2,7 @@ package net.mehvahdjukaar.amendments.client;
 
 import net.mehvahdjukaar.amendments.client.renderers.CandleHolderRendererExtension;
 import net.mehvahdjukaar.amendments.client.renderers.LanternRendererExtension;
+import net.mehvahdjukaar.amendments.client.renderers.SparklerRendererExtension;
 import net.mehvahdjukaar.amendments.client.renderers.TorchRendererExtension;
 import net.mehvahdjukaar.amendments.common.LanternRegistry;
 import net.mehvahdjukaar.amendments.configs.ClientConfigs;
@@ -29,11 +30,11 @@ public class ItemHoldingAnimationsManager {
                             IThirdPersonSpecialItemRenderer.attachToItem(item, anim));
         }
         if (ClientConfigs.TORCH_HOLDING.get()) {
-            var anim = new TorchRendererExtension();
             BlockScanner.getInstance().getTorches()
                     .stream().map(Block::asItem).filter(i -> i != Items.AIR)
                     .collect(Collectors.toSet()).forEach(item ->
-                            IThirdPersonSpecialItemRenderer.attachToItem(item, anim));
+                            IThirdPersonSpecialItemRenderer.attachToItem(item, SparklerRendererExtension.isSparkler(item) ?
+                                    new SparklerRendererExtension(item) : new TorchRendererExtension(item)));
         }
         if (ClientConfigs.CANDLE_HOLDER_HOLDING.get()) {
             BlockScanner.getInstance().getCandleHolders()

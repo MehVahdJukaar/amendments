@@ -2,6 +2,7 @@ package net.mehvahdjukaar.amendments;
 
 import com.google.common.base.Suppliers;
 import net.mehvahdjukaar.amendments.client.ClientResourceGenerator;
+import net.mehvahdjukaar.amendments.client.HotbarSelectionAnimation;
 import net.mehvahdjukaar.amendments.client.ItemHoldingAnimationsManager;
 import net.mehvahdjukaar.amendments.client.WallLanternModelsManager;
 import net.mehvahdjukaar.amendments.client.colors.*;
@@ -24,6 +25,7 @@ import net.mehvahdjukaar.moonlight.api.platform.ClientHelper;
 import net.mehvahdjukaar.moonlight.api.platform.RegHelper;
 import net.mehvahdjukaar.moonlight.api.set.BlocksColorAPI;
 import net.mehvahdjukaar.moonlight.api.util.Utils;
+import net.minecraft.server.packs.resources.ResourceManagerReloadListener;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.model.geom.ModelLayerLocation;
@@ -138,6 +140,8 @@ public class AmendmentsClient {
     public static void init() {
         WAS_INIT = true;
         RegHelper.registerDynamicResourceProvider(new ClientResourceGenerator());
+        ClientHelper.addClientReloadListener(() -> (ResourceManagerReloadListener) HotbarSelectionAnimation::checkSelectionLayer,
+                Amendments.res("hotbar_selection"));
 
         ClientHelper.addClientSetup(AmendmentsClient::setup);
         ClientHelper.addBlockEntityRenderersRegistration(AmendmentsClient::registerTileRenderers);

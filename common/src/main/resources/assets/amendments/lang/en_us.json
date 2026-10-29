@@ -288,13 +288,10 @@
   "amendments.configuration.misc.torch_item_size.description": "Size lanterns when held in hand",
   "amendments.configuration.misc.torch_item_flame": "Torch Item Flame",
   "amendments.configuration.misc.torch_item_flame.description": "Renders a flame particle on top of held torches",
-  "amendments.configuration.misc.hotbar_slot_animation_speed": "Hotbar Slot Animation Speed",
-  "amendments.configuration.misc.hotbar_slot_animation_speed.description": "Makes the selected hotbar slot slide to its new position. Higher is faster, 0 for vanilla behavior",
-  "amendments.configuration.misc.hotbar_slot_animation_wrap": "Hotbar Slot Animation Wrap",
   "amendments.configuration.misc.candle_holder_item_holding": "Candle Holder Item Holding",
   "amendments.configuration.misc.candle_holder_item_holding.description": "Gives a special animation to supplementaries candle holders when held in hand",
-  "amendments.configuration.misc.handle_holder_item_size": "Handle Holder Item Size",
-  "amendments.configuration.misc.handle_holder_item_size.description": "Size lanterns when held in hand",
+  "amendments.configuration.misc.candle_holder_item_size": "Candle Holder Item Size",
+  "amendments.configuration.misc.candle_holder_item_size.description": "Size of candle holders when held in hand",
   "amendments.configuration.misc.fixed_holding_animations": "Fixed Holding Animations",
   "amendments.configuration.misc.fixed_holding_animations.description": "Makes Torch and Lantern holding animation be fixed, not changing with player facing",
   "amendments.configuration.misc.campfire_smoke_through_blocks": "Campfire Smoke Through Blocks",
@@ -306,5 +303,11 @@
   "amendments.configuration.buckets.axolotl_variants.description": "Axolotl buckets show the color of the axolotl inside",
   "amendments.configuration.misc.villager_trade_buttons": "Villager Trade Buttons",
   "amendments.configuration.misc.villager_trade_buttons.description": "Gives the villager trade buttons the same look loom and stonecutter buttons have",
-  "amendments.configuration.misc.hotbar_slot_animation_wrap.description": "If the hotbar slot animation wraps around the edges"
+  "amendments.configuration.hotbar_slot_animation": "Hotbar Slot Animation",
+  "amendments.configuration.hotbar_slot_animation.speed": "Speed",
+  "amendments.configuration.hotbar_slot_animation.speed.description": "Makes the selected hotbar slot slide to its new position. Higher is faster, 0 for vanilla behavior",
+  "amendments.configuration.hotbar_slot_animation.wrap": "Wrap",
+  "amendments.configuration.hotbar_slot_animation.wrap.description": "If the hotbar slot animation wraps around the edges",
+  "amendments.configuration.hotbar_slot_animation.opaque_behavior": "Opaque Behavior",
+  "amendments.configuration.hotbar_slot_animation.opaque_behavior.description": "What the animation does when the selection texture is opaque. NONE keeps it on top of the items, IN_BACKGROUND moves it behind them, TURNS_OFF disables the animation"
 }
