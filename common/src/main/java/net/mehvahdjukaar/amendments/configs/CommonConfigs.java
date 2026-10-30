@@ -24,6 +24,10 @@ public class CommonConfigs {
         OFF, ONLY_BOILING, ON
     }
 
+    public enum PickupHands {
+        OFF, OFFHAND, BOTH, MAIN_HAND
+    }
+
     public static final Supplier<Boolean> HANGING_SIGN_ITEM;
 
     public static final Supplier<Boolean> LIQUID_CAULDRON;
@@ -67,6 +71,9 @@ public class CommonConfigs {
     public static final Supplier<Boolean> LILY_PADS_ON;
     public static final Supplier<Boolean> BUBBLE_COLUMN_GRATES;
     public static final Supplier<Boolean> LECTERN_STUFF;
+
+    public static final Supplier<PickupHands> HELD_CONTAINER_PICKUP;
+    public static final Supplier<Boolean> HELD_CONTAINER_PICKUP_SOUND;
 
     public static final Supplier<Boolean> TORCH_FIRE;
     public static final Supplier<Boolean> TORCH_FIRE_OFFHAND;
@@ -235,6 +242,13 @@ public class CommonConfigs {
         PETS_FOLLOW_TELEPORTS = builder.icon("minecraft:bone").comment("Following pets teleport with you instantly when you teleport")
                 .define("pets_follow_teleports", true);
 
+        builder.pop();
+
+        builder.icon("minecraft:shulker_box").push("container_pickup");
+        HELD_CONTAINER_PICKUP = builder.comment("Makes oicked up items go straight into a container held in your offhand (like bundle or shulker). Tag amendments:held_pickup_blacklist")
+                .define("held_container_pickup", PickupHands.OFFHAND);
+        HELD_CONTAINER_PICKUP_SOUND = builder
+                .define("pickup_sound", true);
         builder.pop();
 
         builder.icon("minecraft:torch").push("torch");

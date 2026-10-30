@@ -153,10 +153,14 @@ public class ClientConfigs {
                 .define("crossbows_colors", true);
         builder.pop();
 
-        builder.icon("minecraft:axolotl_bucket").push("buckets");
-        AXOLOTL_BUCKET_VARIANTS = builder.comment("Axolotl buckets show the color of the axolotl inside")
-                .define("axolotl_variants", true);
-        builder.pop();
+        if (!CompatHandler.QUARK) {
+            builder.icon("minecraft:axolotl_bucket").push("buckets");
+            AXOLOTL_BUCKET_VARIANTS = builder.comment("Makes Axolotl buckets show the color of the axolotl inside")
+                    .define("axolotl_variants", true);
+            builder.pop();
+        } else {
+            AXOLOTL_BUCKET_VARIANTS = () -> false;
+        }
 
         builder.icon("minecraft:tripwire_hook").push("tripwire_hook");
         FAST_HOOKS = builder.comment("Makes hooks render faster using a block model instead of tile renderer. Cost is that animated and enchanted items will appear static")

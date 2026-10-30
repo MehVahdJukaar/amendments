@@ -40,6 +40,7 @@ public class ModTags {
     public static final TagKey<Item> GOES_IN_LECTERN = itemTag("goes_in_lectern");
     public static final TagKey<Item> GOES_IN_TRIPWIRE_HOOK = itemTag("goes_in_tripwire_hook");
     public static final TagKey<Item> SET_ENTITY_ON_FIRE = itemTag("sets_on_fire");
+    public static final TagKey<Item> HELD_PICKUP_BLACKLIST = itemTag("held_pickup_blacklist");
     public static final TagKey<Item> SKULL_PILE_BLACKLIST = itemTag("non_stackable_heads");
 
     //entity tags

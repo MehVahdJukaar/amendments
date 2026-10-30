@@ -25,6 +25,7 @@
     "FireChargeMixin",
     "FlowerPotBlockMixin",
     "IronBarsBlockMixin",
+    "ItemEntityMixin",
     "HangingSignBlockEntityMixin",
     "JukeboxBlockEntityMixin",
     "JukeboxBlockMixin",
