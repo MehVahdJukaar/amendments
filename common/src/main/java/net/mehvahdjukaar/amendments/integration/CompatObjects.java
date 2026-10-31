@@ -7,6 +7,7 @@ import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import org.jetbrains.annotations.Nullable;
@@ -25,6 +26,8 @@ public class CompatObjects {
     public static final Supplier<Block> CUPRIC_CANDLE = make("buzzier_bees:cupric_candle", BuiltInRegistries.BLOCK);
     public static final Supplier<Block> SPECTACLE_CANDLE = make("cave_enhancements:spectacle_candle", BuiltInRegistries.BLOCK);
 
+
+    public static final Supplier<EntityType<?>> MUD_BALL = make("environmental:mud_ball", BuiltInRegistries.ENTITY_TYPE);
 
     public static final Supplier<Item> ETCHED_DISC = make("etched:etched_music_disc", BuiltInRegistries.ITEM);
 

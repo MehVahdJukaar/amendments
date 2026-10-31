@@ -19,7 +19,7 @@ dependencies {
     accessTransformers("net.mehvahdjukaar:moonlight-neoforge:${moonlight_version}")
     modRuntimeOnly("net.mehvahdjukaar:codecui-neoforge:${codecui_version}")
 
-    modImplementation("curse.maven:supplementaries-412082:8044262")
+    modImplementation("net.mehvahdjukaar:supplementaries-neoforge:1.21.1-4.1.0") { exclude(group = "dev.ryanhcode.sable-companion") } //local test
     modCompileOnly("net.mehvahdjukaar:polytone-neoforge:${polytone_version}")
     modCompileOnly("curse.maven:flan-404578:5290167")
     modCompileOnly("curse.maven:new-thin-air-878379:5068247")
@@ -37,6 +37,7 @@ dependencies {
     modImplementation("curse.maven:caverns-and-chasms-438005:8155745")
     modCompileOnly("curse.maven:configured-457570:5101367")
     modCompileOnly("curse.maven:rats-323596:4802123")
+    modImplementation("curse.maven:environmental-388992:7122147")
     modImplementation("curse.maven:skinned-lanterns-414154:6821878")
     // modImplementation("curse.maven:twigs-469410:8191595")
     modCompileOnly("curse.maven:spelunkery-790530:5043883")

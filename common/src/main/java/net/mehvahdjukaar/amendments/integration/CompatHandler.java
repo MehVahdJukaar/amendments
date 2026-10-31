@@ -22,6 +22,7 @@ public class CompatHandler {
     public static final boolean THIN_AIR = PlatHelper.isModLoaded("thinair");
     public static final boolean CAVERNS_AND_CHASMS = PlatHelper.isModLoaded("caverns_and_chasms");
     public static final boolean FLYWHEEL = PlatHelper.isModLoaded("flywheel") && false;
+    public static final boolean ENVIRONMENTAL = PlatHelper.isModLoaded("environmental");
     public static final boolean POLYTONE = PlatHelper.isModLoaded("polytone");
 
     static {

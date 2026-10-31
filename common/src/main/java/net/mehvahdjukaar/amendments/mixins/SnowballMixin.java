@@ -47,7 +47,7 @@ public abstract class SnowballMixin extends ThrowableItemProjectile implements I
             }
         }
         if (level().isClientSide) {
-            amendments$trailEmitter.tick(this,
+            if (ClientConfigs.EXTRA_PARTICLES.get()) amendments$trailEmitter.tick(this,
                     (p, v) -> {
                         if (this.isInWater()) return;
                         if (random.nextFloat() < 0.85) return;
@@ -67,7 +67,6 @@ public abstract class SnowballMixin extends ThrowableItemProjectile implements I
 
     @Inject(method = "onHitEntity", at = @At("HEAD"))
     protected void amendments$addFreezing(EntityHitResult result, CallbackInfo ci) {
-        super.onHitEntity(result);
         int freeze = CommonConfigs.SNOWBALL_FREEZE.get();
         Entity entity = result.getEntity();
 
@@ -79,7 +78,7 @@ public abstract class SnowballMixin extends ThrowableItemProjectile implements I
 
     @Inject(method = "handleEntityEvent", at = @At("HEAD"))
     protected void amendments$addParticles(byte id, CallbackInfo ci) {
-        if (id == 3) {
+        if (id == 3 && ClientConfigs.EXTRA_PARTICLES.get()) {
             for (int i = 8; i > 0; --i) {
                 double x = this.getRandomX(1);
                 double y = this.getRandomY();

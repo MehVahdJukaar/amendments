@@ -16,6 +16,7 @@
     "CampfireBlockEntityMixin",
     "CauldronBlockMixin",
     "CeilingHangingSignBlockMixin",
+    "CompatEnvironmentalMudBallMixin",
     "CompatQuarkSelfCandleSkullMixin",
     "DragonFireballMixin",
     "EntityAccessor",
@@ -53,6 +54,7 @@
   ],
   "client": [
     "BellRendererMixin",
+    "CompatEBEMixin",
     "DisplayCacheMixin",
     "DragonBreathParticleMixin",
     "GuiMixin",

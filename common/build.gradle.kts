@@ -19,7 +19,7 @@ dependencies {
     modCompileOnly("net.mehvahdjukaar:moonlight-common:${moonlight_version}")
     accessTransformers("net.mehvahdjukaar:moonlight-common:${moonlight_version}")
 
-    modImplementation("curse.maven:supplementaries-412082:8044262")
+    modImplementation("net.mehvahdjukaar:supplementaries-common:1.21.1-4.1.0") { exclude(group = "dev.ryanhcode.sable-companion") } //local test
     modCompileOnly("net.mehvahdjukaar:polytone-common:${polytone_version}")
 
     modCompileOnly("com.jozufozu.flywheel:flywheel-forge-${flywheel_version}")

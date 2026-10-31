@@ -71,7 +71,9 @@ public class ClientConfigs {
     public static final Supplier<Boolean> DRAGON_FIREBALL_TRAIL;
 
     public static final Supplier<Boolean> SNOWBALL_3D;
+    public static final Supplier<Boolean> EXTRA_PARTICLES;
     public static final Supplier<Boolean> SLIMEBALL_3D;
+    public static final Supplier<Boolean> MUDBALL_3D;
     public static final Supplier<Boolean> CHARGES_TUMBLE;
     public static final Supplier<Boolean> PROJECTILE_TUMBLE;
 
@@ -107,9 +109,13 @@ public class ClientConfigs {
         builder.icon("minecraft:snowball").push("projectiles");
 
         SNOWBALL_3D = builder.comment("Makes snowballs render in 3D")
-                .define("snowball_3d", true);
+                .define("snowball_3d", false);
+        EXTRA_PARTICLES = builder.comment("Makes snowballs leave a trail of snowflakes and spawn more of them on hit")
+                .define("extra_particles", true);
         SLIMEBALL_3D = CompatHandler.SUPPLEMENTARIES ? builder.comment("Makes slimeballs render in 3D (supplementaries only)")
                 .define("slimeball_3d", true) : () -> false;
+        MUDBALL_3D = CompatHandler.ENVIRONMENTAL ? builder.comment("Makes Environmental mud balls render in 3D (environmental only)")
+                .define("mudball_3d", false) : () -> false;
         FIREBALL_3D = builder.comment("Makes ghast & blazes fireballs render in 3D")
                 .define("fireball_3d", true);
         GHAST_FIREBALL_TRAIL = builder.comment("Makes ghast & blazes fireballs leave a trail of particles when moving")
@@ -118,7 +124,7 @@ public class ClientConfigs {
                 .define("dragon_fireball_trail", true);
         CHARGES_TUMBLE = builder.comment("Makes 3D charges tumble in the air when moving")
                 .define("charges_tumble", true);
-        PROJECTILE_TUMBLE = builder.comment("Makes 3D snowballs and slimeballs (supp compat) tumble in the air when moving")
+        PROJECTILE_TUMBLE = builder.comment("Makes 3D snowballs, slimeballs (supp compat) and mud balls (environmental compat) tumble in the air when moving")
                 .define("projectiles_tumble", false);
         builder.icon("minecraft:dragon_breath").push("dragon_fireball");
         DRAGON_BREATH_EMISSIBE = builder.comment("Makes dragon's breath particles emissive to better match new visuals")

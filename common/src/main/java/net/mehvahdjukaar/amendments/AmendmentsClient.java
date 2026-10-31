@@ -130,6 +130,7 @@ public class AmendmentsClient {
     public static final ResourceLocation DRAGON_FIREBALL_OVERLAY_TEXTURE = Amendments.res("textures/entity/projectile/dragon_fireball_3d_overlay.png");
     public static final ResourceLocation SNOWBALL_TEXTURE = Amendments.res("textures/entity/projectile/snowball_3d.png");
     public static final ResourceLocation SLIMEBALL_TEXTURE = Amendments.res("textures/entity/projectile/slimeball_3d.png");
+    public static final ResourceLocation MUDBALL_TEXTURE = Amendments.res("textures/entity/projectile/mudball_3d.png");
 
     private static ModelLayerLocation loc(String name) {
         return new ModelLayerLocation(Amendments.res(name), name);
@@ -265,6 +266,10 @@ public class AmendmentsClient {
         if (CompatHandler.SUPPLEMENTARIES && ClientConfigs.SLIMEBALL_3D.get()) {
             event.register(SuppCompat.getSlimeBall(), context -> new Small3DBallRenderer(context,
                     modelScale, SLIMEBALL_TEXTURE, true));
+        }
+        if (CompatHandler.ENVIRONMENTAL && ClientConfigs.MUDBALL_3D.get()) {
+            event.register(CompatObjects.MUD_BALL.get(), context -> new Small3DBallRenderer(context,
+                    modelScale, MUDBALL_TEXTURE, false));
         }
     }
 
