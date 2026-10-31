@@ -1,1 +1,2 @@
-more configs and compat code
+- added more mod compat for EBE on forge
+- more compat for thrown projectiles to render 3d like snowball (default off, includes environmental mudballs)

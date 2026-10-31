@@ -92,6 +92,7 @@ public class ClientConfigs {
         builder.icon("minecraft:comparator").push("general");
         TOOLTIP_HINTS = builder.define("tooltip_hints", true);
         TEXTURE_PACK_SUPPORT = builder.comment("Makes dynamically generated assets depend on texture packs too and not just vanilla files")
+                .affectsDynamicPacks()
                 .define("texture_pack_support", false);
         DYNAMIC_ASSETS_GEN_MODE = builder.define("dynamic_assets_generation_mode", GenMode.CACHED);
 
@@ -99,6 +100,7 @@ public class ClientConfigs {
 
         builder.icon("minecraft:oak_sign").push("sign");
         PIXEL_CONSISTENT_SIGNS = builder.comment("Gives signs a pixel consistent model and texture. Also affects other mods. This also makes them use a Block Model, making them render much much much faster than as block entities")
+                .affectsDynamicPacks()
                 .define("pixel_consistent", true);
         BRIGHTEN_SIGN_TEXT_COLOR = builder.comment("A scalar multiplier that will be applied to sign text making it brighter, supposedly more legible")
                 .defineSlider("text_color_multiplier", 1.2d, 0, 5);
@@ -156,12 +158,14 @@ public class ClientConfigs {
         builder.icon("minecraft:arrow").push("arrows");
         //Keep?
         COLORED_ARROWS = builder.comment("Makes tipped arrows show their colors when loaded with a crossbow")
+                .affectsDynamicPacks()
                 .define("crossbows_colors", true);
         builder.pop();
 
         if (!CompatHandler.QUARK) {
             builder.icon("minecraft:axolotl_bucket").push("buckets");
             AXOLOTL_BUCKET_VARIANTS = builder.comment("Makes Axolotl buckets show the color of the axolotl inside")
+                    .affectsDynamicPacks()
                     .define("axolotl_variants", true);
             builder.pop();
         } else {
@@ -179,6 +183,7 @@ public class ClientConfigs {
         SWINGING_SIGNS = builder.comment("Makes signs swing!")
                 .define("swinging_signs", true);
         SIGN_ATTACHMENT = builder.comment("Signs have visual attachment to walls and fences")
+                .affectsDynamicPacks()
                 .define("sign_attachment", true);
         HANGING_SIGN_CONFIG = builder.defineObject("swing_physics",
                 PendulumAnimation.Config::new,
