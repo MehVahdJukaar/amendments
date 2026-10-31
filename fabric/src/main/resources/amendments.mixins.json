@@ -9,6 +9,7 @@
     "SelfCauldronMixin"
   ],
   "client": [
+    "CompatEBEMixin",
     "CompatFarmersDelightHangingCanvasMixin",
     "CompatFarmersDelightSignRendererMixin",
     "CompatFDSignEditScreenMixin"

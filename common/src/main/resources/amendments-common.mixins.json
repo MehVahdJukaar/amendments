@@ -54,7 +54,6 @@
   ],
   "client": [
     "BellRendererMixin",
-    "CompatEBEMixin",
     "DisplayCacheMixin",
     "DragonBreathParticleMixin",
     "GuiMixin",

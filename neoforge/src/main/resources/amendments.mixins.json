@@ -8,6 +8,7 @@
     "CompatFDWallSignBlockEntityMixin"
   ],
   "client": [
+    "CompatEBEMixin",
     "CompatFarmersDelightHangingCanvasMixin",
     "CompatFarmersDelightSignMixin",
     "CompatFarmersDelightSignRendererMixin",
